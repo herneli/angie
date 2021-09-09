@@ -1,0 +1,221 @@
+{
+  "index_patterns": "entities-*",
+  "mappings": {
+    "_default_": {
+      "properties": {
+        "demog_status": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "name": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          },
+          "copy_to": "full_name"
+        },
+        "surname": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          },
+          "copy_to": "full_name"
+        },
+        "secondsurname": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          },
+          "copy_to": "full_name"
+        },
+        "full_name": {
+          "type": "text",
+          "fields": {
+            "widget": {
+              
+              "normalizer": "my_normalizer",
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "integration_name": {
+          "type": "keyword",
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "center": {
+          "type": "keyword",
+          "index": true
+        },
+        "integration": {
+          "type": "keyword",
+          "index": true
+        },
+        "birthdate": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "sex": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "center_name": {
+          "type": "keyword",
+          
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "orderiddestination": {
+          "type": "keyword",
+          
+          "index": true,
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "orderIdOrigin": {
+          "type": "keyword",
+          
+          "index": true,
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "uop": {
+          "type": "keyword",
+          
+          "index": true,
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "use": {
+          "type": "keyword",
+          
+          "index": true,
+          "fields": {
+            "widget": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "patient": {
+          "properties": {
+            "pid1": {
+              "type": "keyword",
+              
+              "fields": {
+                "widget": {
+                  "type": "keyword",
+                  "index": false
+                }
+              }
+            },
+            "pid2": {
+              "type": "keyword",
+              
+              "fields": {
+                "widget": {
+                  "type": "keyword",
+                  "index": false
+                }
+              }
+            },
+            "pid3": {
+              "type": "keyword",
+              
+              "fields": {
+                "widget": {
+                  "type": "keyword",
+                  "index": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "dynamic_templates": [
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              
+              "normalizer": "my_normalizer",
+              "fields": {
+                "widget": {
+                  "type": "keyword",
+                  "index": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "settings": {
+    "index.mapping.total_fields.limit": 100000,
+    "analysis": {
+      "normalizer": {
+        "my_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }, 
+		"index.lifecycle.name": "hot-warm-15days", 
+		"index.lifecycle.rollover_alias": "entities" 
+
+  }
+}
