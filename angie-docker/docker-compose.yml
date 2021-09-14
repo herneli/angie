@@ -10,7 +10,7 @@ services:
             - ./postgres/data:/var/lib/postgresql/data
             - ./dbinit:/docker-entrypoint-initdb.d/
         ports:
-            - 5432:5432/tcp
+            - 3132:5432/tcp
         
     angie_elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1

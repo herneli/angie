@@ -19,7 +19,7 @@ module.exports = {
             user: "postgres",
             password: "root",
             host: "localhost",
-            port: 5432,
+            port: 3132,
             database: "angie"
         },
         migrations: {
@@ -34,7 +34,7 @@ module.exports = {
             user: "postgres",
             password: "root",
             host: "localhost",
-            port: 5432,
+            port: 3132,
             database: "angie"
         },
         migrations: {
