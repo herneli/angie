@@ -11,3 +11,5 @@ http.port: 3103
 
 
 cluster.name: angie
+
+bootstrap.memory_lock: true
