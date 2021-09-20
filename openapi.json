@@ -1,0 +1,362 @@
+{
+  "definitions": {},
+  "info": {
+    "title": "angie",
+    "version": "1.0.0",
+    "license": {
+      "name": "SEE LICENSE IN LICENSE"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nAngie's "
+  },
+  "paths": {
+    "*": {
+      "options": {
+        "summary": "*",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "/login",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFjdGl2ZSI6MSwiZGFzaGJvYXJkIjpudWxsLCJuYW1lIjpudWxsLCJ2aXNpYmxlX2ZpbHRlcnMiOm51bGwsImZpbHRlcl92YWx1ZXMiOm51bGwsInN0b3JlZF9maWx0ZXJzIjpudWxsLCJ0YWJsZV9jb25maWciOm51bGwsImFjdGlvbnNfY29uZmlnIjpudWxsLCJsYXN0X2xvZ2luX2RhdGUiOm51bGwsImlhdCI6MTYzMjE0ODM0MSwiZXhwIjoxNjMyMzIxMTQxLCJhdWQiOiJHYXRla2VlcGVyIiwiaXNzIjoiUG9sbG9Tb2Z0Iiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJqdGkiOiJmMWZhNjUyNS02MTUwLTRlNDYtYTNkZi02NmMxMTgxZDExOTQifQ.6fmRays8Ba3XWCZV-2sT-G5nbQOLCDP9OnoqKruI9WA"
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "get": {
+        "summary": "/login",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "/logout",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/users/list": {
+      "post": {
+        "summary": "/users/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "delete": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "/users",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/getUser": {
+      "get": {
+        "summary": "/getUser",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "null",
+                  "example": null
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Forbidden"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/ldap_host/list": {
+      "post": {
+        "summary": "/ldap_host/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host/{id}": {
+      "get": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "put": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "delete": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host": {
+      "post": {
+        "summary": "/ldap_host",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "path is not defined"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/translation": {
+      "get": {
+        "summary": "/translation",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "/config",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/memory": {
+      "get": {
+        "summary": "/memory",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/log/{log}": {
+      "get": {
+        "summary": "/log/{log}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "log",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    }
+  },
+  "swagger": "2.0",
+  "tags": [
+    {
+      "name": "users"
+    },
+    {
+      "name": "ldap"
+    }
+  ]
+}

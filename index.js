@@ -2,6 +2,9 @@ import { App, AuthController, JwtAuthHandler, KnexConnector, Utils } from 'lisco
 import { UserController, UserDao } from './app/server/api/user';
 import { MainController } from './app/server/api/main';
 import Settings from './app/server/common/Settings';
+import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
+import { LdapHostController } from './app/server/api/ldaphost';
+
 
 module.exports = async () => {
 
@@ -30,8 +33,17 @@ module.exports = async () => {
 
     //Configurar la gestion de cookies
     App.customizeExpress = (app) => {
-        //TODO 
+        handleResponses(app, {
+            specOutputPath: __dirname + '/openapi.json',
+            ignoredNodeEnvironments: ['production'],
+            tags: ['users', 'ldap'],
+            specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE
+        });
+
     };
+    App.beforeListen = () => {
+        handleRequests();
+    }
 
     App.statics = {
         "/statics": "app/statics"
@@ -44,7 +56,11 @@ module.exports = async () => {
         "/translation",
         "/settings/load",
         "/menu",
-        "/external"
+        "/external",
+        "/api-docs/(.*)",
+        "/api-docs/(.*)/(.*)",
+        "/api-spec/(.*)",
+        "/api-spec/(.*)/(.*)"
     ]
 
     //Cargar las configuraciones
@@ -55,6 +71,7 @@ module.exports = async () => {
     App.routes = [
         new AuthController(publicPaths, new JwtAuthHandler(new UserDao())),
         new UserController(),
+        new LdapHostController(),
         new MainController()
     ]
 

@@ -1,0 +1,312 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "angie",
+    "version": "1.0.0",
+    "license": {
+      "name": "SEE LICENSE IN LICENSE"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nAngie's "
+  },
+  "paths": {
+    "*": {
+      "options": {
+        "summary": "*",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "/login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFjdGl2ZSI6MSwiZGFzaGJvYXJkIjpudWxsLCJuYW1lIjpudWxsLCJ2aXNpYmxlX2ZpbHRlcnMiOm51bGwsImZpbHRlcl92YWx1ZXMiOm51bGwsInN0b3JlZF9maWx0ZXJzIjpudWxsLCJ0YWJsZV9jb25maWciOm51bGwsImFjdGlvbnNfY29uZmlnIjpudWxsLCJsYXN0X2xvZ2luX2RhdGUiOm51bGwsImlhdCI6MTYzMjE0ODM0MSwiZXhwIjoxNjMyMzIxMTQxLCJhdWQiOiJHYXRla2VlcGVyIiwiaXNzIjoiUG9sbG9Tb2Z0Iiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJqdGkiOiJmMWZhNjUyNS02MTUwLTRlNDYtYTNkZi02NmMxMTgxZDExOTQifQ.6fmRays8Ba3XWCZV-2sT-G5nbQOLCDP9OnoqKruI9WA"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      },
+      "get": {
+        "summary": "/login",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "/logout",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/users/list": {
+      "post": {
+        "summary": "/users/list",
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "delete": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "/users",
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/getUser": {
+      "get": {
+        "summary": "/getUser",
+        "responses": {
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": null,
+                      "nullable": true
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/ldap_host/list": {
+      "post": {
+        "summary": "/ldap_host/list",
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host/{id}": {
+      "get": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "put": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "delete": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host": {
+      "post": {
+        "summary": "/ldap_host",
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "path is not defined"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/translation": {
+      "get": {
+        "summary": "/translation",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "/config",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/memory": {
+      "get": {
+        "summary": "/memory",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/log/{log}": {
+      "get": {
+        "summary": "/log/{log}",
+        "parameters": [
+          {
+            "name": "log",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "users"
+    },
+    {
+      "name": "ldap"
+    }
+  ]
+}
