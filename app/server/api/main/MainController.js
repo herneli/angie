@@ -1,4 +1,6 @@
 import { App, BaseController, JsonResponse } from 'lisco';
+import { Utils } from '../../common'
+import path from 'path'
 
 const asyncHandler = require('express-async-handler')
 
@@ -17,7 +19,8 @@ export class MainController extends BaseController {
     }
 
     /**
-     *
+     * Render para el index del frontend
+     * 
      * @param request
      * @param response
      */
@@ -32,10 +35,9 @@ export class MainController extends BaseController {
      */
     translation(request, response) {
 
-
         var jsRes = new JsonResponse();
         jsRes.success = true;
-        jsRes.data = App.i18n.currentData[process.env.DEFAULT_LANG];;
+        jsRes.data = App.i18n.currentData[request.query.lang || process.env.DEFAULT_LANG];;
         response.json(jsRes);
     }
 
@@ -44,7 +46,7 @@ export class MainController extends BaseController {
      *
      */
     config(request, response) {
-        response.json(global.settings.getAllConfigValues());
+        response.json(Utils.flattenObject(App.settings.getAllConfigValues()));
     }
 
     memory(request, response) {
@@ -57,6 +59,12 @@ export class MainController extends BaseController {
         response.json(data);
     }
 
+    /**
+     * Muestra los logs de la aplicacion
+     * 
+     * @param {*} request 
+     * @param {*} response 
+     */
     loadLog(request, response) {
         var shell = require('shelljs');
 

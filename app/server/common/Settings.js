@@ -1,6 +1,6 @@
-var fs = require('fs');
-var path = require('path');
-var nconf = require('nconf');
+import fs from 'fs';
+import path from 'path';
+import nconf from 'nconf';
 
 export default class Settings {
 
@@ -25,17 +25,6 @@ export default class Settings {
         nconf.defaults(this.baseSettings);
 
         return this;
-    }
-
-    loadDB(callback) {
-        global.con.query('SELECT * FROM settings', function (err, data) {
-            if (err) return callback(err);
-            // nconf.use('cfg');
-            for (var i = 0; i < data.rows.length; i++) {
-                nconf.set(data.rows[i].cfg_key, data.rows[i].cfg_value);
-            }
-            if (callback) return callback();
-        });
     }
 
     /**
@@ -99,24 +88,6 @@ export default class Settings {
         });
     }
 
-    updateUserConfig(configs, callback) {
-        this.load();
-        this.loadDB(function () {
-            if (configs.length !== 0) {
-                //     nconf.set('user', {});
-                // } else {
-                // var userConf = nconf.get('user') ? nconf.get('user') : {};
-                for (var idx in configs) {
-                    // userConf[configs[idx].cfg_key] = configs[idx].cfg_value;
-                    nconf.set(configs[idx].cfg_key, configs[idx].cfg_value)
-                }
-                // nconf.add('user', { type: 'literal', store: userConf });
-            }
-            if (callback) return callback();
-        });
-
-
-    }
 
 }
 

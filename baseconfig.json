@@ -1,3 +1,15 @@
 {
-    "example": true
+    "core": {
+        "application": {
+            "name": "Angie",
+            "lang": {
+                "current": "es",
+                "fallback": "es",
+                "available": [
+                    "es",
+                    "en"
+                ]
+            }
+        }
+    }
 }

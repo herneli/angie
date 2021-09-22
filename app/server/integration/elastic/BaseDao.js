@@ -2,6 +2,8 @@ var BodyBuilder = require('bodybuilder');
 var lodash = require('lodash');
 var moment = require('moment');
 
+
+//TODO Refactor!!
 var BaseDao = Class.extend({
 
     tableName: '',

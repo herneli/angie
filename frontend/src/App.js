@@ -1,25 +1,60 @@
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+import { withRouter } from 'react-router-dom';
+import AppMain from './layout/AppMain';
+import React, { Component } from 'react';
+import AxiosConfig from './common/AxiosConfig';
+import Config from './common/Config';
+import TranslationLoader from './common/TranslationLoader';
+import UserHandler from './common/UserHandler';
+
+class App extends Component {
+
+    state = {
+        loaded: false,
+        isAuthenticated: false
+    }
+
+    /**
+     * Inicializa los parametros de la aplicacion y la marca como 'cargada'
+     * @param {*} props 
+     */
+    constructor(props) {
+        super(props);
+
+        AxiosConfig.configureAxios(this);
+        (async () => {
+            await Config.loadConfigParams(true);
+            await TranslationLoader.loadTranslations();
+            this.setState({
+                loaded: true,
+                isAuthenticated: UserHandler.isAuthenticated()
+            });
+        })();
+    }
+
+    /**
+     * Desautoriza el usuario actual
+     */
+    unauthorized = () => {
+        this.setState({
+            isAuthenticated: false
+        })
+    }
+
+
+    render() {
+        const { loaded } = this.state;
+
+        return (
+            <div className="App">
+                <div style={{ height: '99vh' }}>
+                    {loaded && <AppMain app={this} />}
+                </div>
+            </div>
+        );
+    }
 }
 
-export default App;
+export default withRouter(App);

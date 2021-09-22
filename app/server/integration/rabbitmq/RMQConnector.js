@@ -1,6 +1,7 @@
 
-var amqp = require('amqplib/callback_api');
+import * as amqp from 'amqplib/callback_api'
 
+//TODO Refactor!!
 var RMQConnector = Class.extend({
     host: null,
 
@@ -57,7 +58,7 @@ var RMQConnector = Class.extend({
             if (err) {
                 return console.error(err);
             }
-            
+
             //Si no hay error se desencadena el reconnected
             setTimeout(function () {
                 global.eventHandler.speak({

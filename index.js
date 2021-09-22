@@ -1,7 +1,7 @@
 import { App, AuthController, JwtAuthHandler, KnexConnector, Utils } from 'lisco'
 import { UserController, UserDao } from './app/server/api/user';
 import { MainController } from './app/server/api/main';
-import Settings from './app/server/common/Settings';
+import { Settings } from './app/server/common';
 import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
 import { LdapHostController } from './app/server/api/ldaphost';
 
@@ -42,11 +42,13 @@ module.exports = async () => {
 
     };
     App.beforeListen = () => {
+        console.log('woo')
         handleRequests();
     }
 
     App.statics = {
-        "/statics": "app/statics"
+        "/statics": "app/statics",
+        "/plugins": "app/plugins" //Se desplegarán ahí los plugins activos y se servirán como statics
     }
 
     //Rutas que no necesitan haber iniciado sesion
@@ -54,7 +56,7 @@ module.exports = async () => {
         "/",
         "/login",
         "/translation",
-        "/settings/load",
+        "/config",
         "/menu",
         "/external",
         "/api-docs/(.*)",
@@ -82,12 +84,10 @@ module.exports = async () => {
     App.executeOnlyMain = async () => {
         //Acciones a ejecutar sobre el mainWorker
         console.log("MainThread")
-
-        //TODO Clear Historic
     }
 
 
-    //ARrancar la aplicacion
+    //Arrancar la aplicacion
     await App.start();
 
     App.server.on('listening', () => {

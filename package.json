@@ -32,7 +32,7 @@
     "jsreport-handlebars": "^2.1.0",
     "jsreport-phantom-pdf": "^2.6.1",
     "ldapjs": "^2.3.1",
-    "lisco": "^1.0.6",
+    "lisco": "^1.0.8",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "nconf": "^0.11.3",
