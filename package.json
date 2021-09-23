@@ -26,7 +26,7 @@
     "express-session": "^1.17.2",
     "folder-hash": "^4.0.1",
     "glob": "^7.1.7",
-    "http-rabbitmq-manager": "git+https://github.com/thorin8k/node-rabbitmq-manager.git",
+    "http-rabbitmq-manager": "0.0.5",
     "jsonpath": "^1.1.1",
     "jsreport-core": "^2.10.1",
     "jsreport-handlebars": "^2.1.0",
