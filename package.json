@@ -31,6 +31,7 @@
     "jsreport-core": "^2.10.1",
     "jsreport-handlebars": "^2.1.0",
     "jsreport-phantom-pdf": "^2.6.1",
+    "keycloak-connect": "^15.0.2",
     "ldapjs": "^2.3.1",
     "lisco": "^1.0.8",
     "lodash": "^4.17.21",

@@ -3,7 +3,7 @@
 # ANGIE &middot; Angie's Next Generation Integration Engine
 > middleware | integrations | hl7 | comunications | camel
 
-Proyecto utilizado para el control de la mensajería entre diferentes sistemas. Este proyecto tiene como objetivo servir como configurador y backend para el proyecto 'Old Joe' (camel based).
+Proyecto utilizado para el control de la mensajería entre diferentes sistemas. Este proyecto tiene como objetivo servir como configurador y backend para el proyecto 'JUM-Angie' (camel based).
 
 
 ## Pre-requisitos
@@ -24,7 +24,7 @@ Generar las claves para JWT:
 > node .\execute.js --generateKeys
 ```
 
-Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`.
+Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`. **Es importante no perder estas claves ya que se utilizan para la encriptación de ciertas cadenas en la aplicación y sin ellas no podrán ser desencriptadas.**
 
 
 ## Docker Environment
@@ -70,13 +70,13 @@ En el archivo `knexfile.js` se establecen las propiedades de acceso a la base de
 Up:
 
 ```
-> node knex-cli.js migrate:latest
+> node knex-cli.js migrate:latest  --env development  
 ```
 
 Down:
 
 ```
-> node knex-cli.js migrate:rollback
+> node knex-cli.js migrate:rollback  --env development  
 ```
 
 `knex-cli` es un acceso rápido a la librería knex para poderlo ejecutar aunque la dependencia no se encuentre instalada en el sistema. Se utiliza exactamente igual que Knex. Mas info: https://knexjs.org/#Migrations-CLI
@@ -109,8 +109,9 @@ mocha test
 
 ## Api Reference
 
-**TODO** Crear OpenAPI
+La api doc se genera automáticamente. Los datos de solicitudes y respuestas se rellenan de forma automática a medida que ocurren con lo que las pruebas que se vayan realizando irán enriqueciendo la documentación de la API.
 
+Se puede consultar en: http://localhost:3105/api-docs
 
 ## Licensing
 

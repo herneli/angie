@@ -37,3 +37,20 @@ services:
         ports: 
             - 3111:5672
             - 3112:15672
+
+
+    angie_keycloak:
+        image: quay.io/keycloak/keycloak:latest
+        ports:
+            - 3114:8080
+        environment:
+            DB_VENDOR: POSTGRES
+            DB_ADDR: angie_postgre
+            DB_DATABASE: keycloak
+            DB_USER: postgres
+            DB_SCHEMA: public
+            DB_PASSWORD: root
+            KEYCLOAK_USER: admin
+            KEYCLOAK_PASSWORD: Pa55w0rd
+        depends_on:
+            - angie_postgre
