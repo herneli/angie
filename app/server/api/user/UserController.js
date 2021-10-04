@@ -1,18 +1,25 @@
-import { BaseController, JsonResponse } from 'lisco';
+import { App, BaseController, JsonResponse } from 'lisco';
 import { UserService } from "./";
 import lodash from 'lodash';
 import { UserSettingsService } from '../user_settings';
 
 const asyncHandler = require('express-async-handler')
 
+
 export class UserController extends BaseController {
 
     configure() {
         super.configure('users', { service: UserService });
 
-        this.router.get('/login', ((res, req, next) => { this.login(res, req, next); }));
+        this.router.get('/login', App.keycloak.protect("realm:user") ,asyncHandler((res, req, next) => { this.login(res, req, next); }));
         this.router.get('/getUser', asyncHandler((res, req, next) => { this.getSession(res, req, next); }));
 
+        this.router.get('/anonymous', App.keycloak.protect("realm:protect") , function (req, res) {
+            var jsRes = new JsonResponse();
+            jsRes.success = false;
+            jsRes.message = "Hello admin";
+            response.json("Hello admin");
+        });
 
         return this.router;
     }
@@ -21,8 +28,7 @@ export class UserController extends BaseController {
     login(request, response) {
         var jsRes = new JsonResponse();
         jsRes.success = false;
-        jsRes.status = 403;
-        jsRes.message = "Unauthorized";
+        jsRes.message = "Hello admin";
         response.json(jsRes);
     }
 
@@ -39,20 +45,10 @@ export class UserController extends BaseController {
      * @ {Object[]} data  dataObject
      * @ {String} Username  Nombre de usuario
      */
-    async getSession(request, response) {
-        if (request.session.username) {
-            var service = new UserService();
-            let auth = await service.findByUsername(request.session.username);
-
-            let jsRes = new JsonResponse(true, lodash.omit(auth, 'password'), "", 1);
-            return response.json(jsRes.toJson());
-        }
-        return response.status(403).json(new JsonResponse(false, "No session", "", 1));
-    }
 
 
 
-    updateDashboard (request, response) {
+    updateDashboard(request, response) {
         var service = new UserService();
         var jsRes = new JsonResponse();
 
@@ -67,7 +63,7 @@ export class UserController extends BaseController {
             response.json(jsRes);
         });
     }
-    
+
 
 
 }
