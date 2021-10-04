@@ -1,0 +1,13 @@
+{
+  "realm": "Angie",
+  "auth-server-url": "http://localhost:3114/auth/",
+  "ssl-required": "external",
+  "resource": "nodejs",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "c215c724-3c67-4295-9a91-4c12c2ba9792"
+  },
+  "use-resource-role-mappings": true,
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}
