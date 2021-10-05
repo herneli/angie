@@ -12,8 +12,8 @@ import UserHandler from './common/UserHandler';
 class App extends Component {
 
     state = {
-        loaded: false,
-        isAuthenticated: false
+        loaded: true,
+        isAuthenticated: true
     }
 
     /**
@@ -24,14 +24,14 @@ class App extends Component {
         super(props);
 
         AxiosConfig.configureAxios(this);
-        (async () => {
-            await Config.loadConfigParams(true);
-            await TranslationLoader.loadTranslations();
-            this.setState({
-                loaded: true,
-                isAuthenticated: UserHandler.isAuthenticated()
-            });
-        })();
+        // (async () => {
+        //     await Config.loadConfigParams(true);
+        //     await TranslationLoader.loadTranslations();
+        //     this.setState({
+        //         loaded: true,
+        //         isAuthenticated: UserHandler.isAuthenticated()
+        //     });
+        // })();
     }
 
     /**

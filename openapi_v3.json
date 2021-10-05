@@ -16,50 +16,6 @@
         "tags": []
       }
     },
-    "/login": {
-      "post": {
-        "summary": "/login",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "string",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFjdGl2ZSI6MSwiZGFzaGJvYXJkIjpudWxsLCJuYW1lIjpudWxsLCJ2aXNpYmxlX2ZpbHRlcnMiOm51bGwsImZpbHRlcl92YWx1ZXMiOm51bGwsInN0b3JlZF9maWx0ZXJzIjpudWxsLCJ0YWJsZV9jb25maWciOm51bGwsImFjdGlvbnNfY29uZmlnIjpudWxsLCJsYXN0X2xvZ2luX2RhdGUiOm51bGwsImlhdCI6MTYzMjE0ODM0MSwiZXhwIjoxNjMyMzIxMTQxLCJhdWQiOiJHYXRla2VlcGVyIiwiaXNzIjoiUG9sbG9Tb2Z0Iiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJqdGkiOiJmMWZhNjUyNS02MTUwLTRlNDYtYTNkZi02NmMxMTgxZDExOTQifQ.6fmRays8Ba3XWCZV-2sT-G5nbQOLCDP9OnoqKruI9WA"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": []
-      },
-      "get": {
-        "summary": "/login",
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/logout": {
-      "post": {
-        "summary": "/logout",
-        "responses": {},
-        "tags": []
-      }
-    },
     "/users/list": {
       "post": {
         "summary": "/users/list",
@@ -131,6 +87,131 @@
         ]
       }
     },
+    "/login": {
+      "get": {
+        "summary": "/login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hello admin"
+                    }
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hello admin"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "302": {
+            "description": "Found",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "select \"sess\" from \"sessions_knex\" where \"sid\" = $1 and CAST($2 as timestamp with time zone) <= expired - relation \"sessions_knex\" does not exist"
+                    }
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "select \"sess\" from \"sessions_knex\" where \"sid\" = $1 and CAST($2 as timestamp with time zone) <= expired - relation \"sessions_knex\" does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      },
+      "post": {
+        "summary": "/login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFjdGl2ZSI6MSwiZGFzaGJvYXJkIjpudWxsLCJuYW1lIjpudWxsLCJ2aXNpYmxlX2ZpbHRlcnMiOm51bGwsImZpbHRlcl92YWx1ZXMiOm51bGwsInN0b3JlZF9maWx0ZXJzIjpudWxsLCJ0YWJsZV9jb25maWciOm51bGwsImFjdGlvbnNfY29uZmlnIjpudWxsLCJsYXN0X2xvZ2luX2RhdGUiOm51bGwsImlhdCI6MTYzMjE0ODM0MSwiZXhwIjoxNjMyMzIxMTQxLCJhdWQiOiJHYXRla2VlcGVyIiwiaXNzIjoiUG9sbG9Tb2Z0Iiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJqdGkiOiJmMWZhNjUyNS02MTUwLTRlNDYtYTNkZi02NmMxMTgxZDExOTQifQ.6fmRays8Ba3XWCZV-2sT-G5nbQOLCDP9OnoqKruI9WA"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
     "/getUser": {
       "get": {
         "summary": "/getUser",
@@ -158,6 +239,28 @@
                 }
               }
             }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/anonymous": {
+      "get": {
+        "summary": "/anonymous",
+        "responses": {
+          "302": {
+            "description": "Found",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": ""
           }
         },
         "tags": []
@@ -4310,6 +4413,13 @@
             }
           }
         ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "/logout",
         "responses": {},
         "tags": []
       }
