@@ -46,14 +46,16 @@ export default class AxiosConfig {
             // Do something before request is sent
             return response;
         }, function (error) {
-            switch (error.response.data.status) {
-                case 403:
-                    if (app) {
-                        app.unauthorized();
-                    }
-                    break;
-                default:
-                    break;
+            if (error.response && error.response.data) {
+                switch (error.response.data.status) {
+                    case 403:
+                        if (app) {
+                            app.unauthorized();
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
             return Promise.reject(error);
         });

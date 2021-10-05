@@ -191,5 +191,39 @@ const node_types = [
             "name": "debug"
         }
     },
+    {
+        "id": "50b890b5-a309-4b7c-9fa0-5c8b23b25c6f",
+        "name": "Groovy Code",
+        "description": "Replaces body by custom groovy code",
+        "node_type": "node",
+        "react_component_type": "default",
+        "camel_component_id": "fdfe4184-2879-4670-ad4c-33b939d1906f",
+        "plugin_id": null,
+        "handles": [
+            "in",
+            "out"
+        ],
+        "form_type": "jsonschema",
+        "form_type_plugin_id": null,
+        "json_data_schema": {
+            "title": "Groovy Code",
+            "description": "Replaces body by custom groovy code",
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                }
+            }
+        },
+        "json_ui_schema": {
+            "code": { "ui:widget": "textarea" }
+        },
+        "defaults": {
+            "code": ""
+        }
+    },
 ]
 export default node_types;

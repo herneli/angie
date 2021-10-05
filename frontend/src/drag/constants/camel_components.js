@@ -2,7 +2,7 @@ const camel_components = [
     {
         "id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
         "name": "TCP Input",
-        "xml_template": "<route> <from uri=\"mllp://{{hostname}}:{{port}}{{querystring query_params}}\"/> {{#each target}} <to uri=\"direct:{{this.node_id}}\"/> {{/each}}</route>",
+        "xml_template": "<route> <from uri=\"mllp://{{hostname}}:{{port}}{{querystring query_params}}\"/> {{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}}</route>",
         "options": {
             "target": "string",
             "hostname": "string",
@@ -25,7 +25,7 @@ const camel_components = [
     {
         "id": "67d93206-b818-44d2-a82c-5da0a305a94c",
         "name": "Terser Body Replacer",
-        "xml_template": "<route> <from uri=\"direct:{{source}}\"/> <setBody>  <hl7terser>{{terser_path}}</hl7terser>    </setBody>{{#each target}} <to uri=\"direct:{{this.node_id}}\"/> {{/each}} </route>",
+        "xml_template": "<route> <from uri=\"direct:{{source}}\"/> <setBody>  <hl7terser>{{terser_path}}</hl7terser>    </setBody>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}} </route>",
         "options": {
             "source": "string",
             "target": "string",
@@ -35,7 +35,7 @@ const camel_components = [
     {
         "id": "67d93216-b818-44d2-a82c-5da0a305a94c",
         "name": "SwitchNode",
-        "xml_template": "<route> <from uri=\"direct:{{source}}\"/><choice>  {{#each handles}}    <when><simple>{{safe this.condition}}</simple>    {{#each this.to}} <to uri=\"direct:{{this.node_id}}\"/> {{/each}} </when>  {{/each}}\n</choice></route>",
+        "xml_template": "<route> <from uri=\"direct:{{source}}\"/><choice>  {{#each handles}}    <when><simple>{{safe this.condition}}</simple>    {{#each this.to}} <to uri=\"direct:{{this}}\"/> {{/each}} </when>  {{/each}}\n</choice></route>",
         "options": {
             "handles": "array"
         }
@@ -46,6 +46,16 @@ const camel_components = [
         "xml_template": "<route> <from uri=\"direct:{{source}}\"/> <to uri=\"log:{{name}}\"/> </route>",
         "options": {
             "name": "string"
+        }
+    },
+    {
+        "id": "fdfe4184-2879-4670-ad4c-33b939d1906f",
+        "name": "Terser Body Replacer",
+        "xml_template": "<route> <from uri=\"direct:{{source}}\"/> <setBody>  <groovy>{{safe code}}</groovy>    </setBody>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}} </route>",
+        "options": {
+            "source": "string",
+            "target": "string",
+            "code": "string"
         }
     },
 

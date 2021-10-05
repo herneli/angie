@@ -54,5 +54,6 @@ services:
             DB_PASSWORD: root
             KEYCLOAK_USER: admin
             KEYCLOAK_PASSWORD: admin
+            JAVA_OPTS_APPEND: "-Dkeycloak.profile.feature.upload_scripts=enabled"
         depends_on:
             - angie_postgre

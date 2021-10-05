@@ -15,7 +15,7 @@ import { fromBDToCamel, transformFromBd, transformToBD } from './Transformer';
 import Form from "@rjsf/core";
 
 import { v4 as uuid_v4 } from "uuid";
-import lodash from 'lodash';
+import axios from 'axios';
 
 import CodeMirrorExt from '../components/CodeMirrorExt'
 
@@ -36,6 +36,7 @@ const DnDFlow = () => {
     const [elements, setElements] = useState([]);
     const [bdModel, setBdModel] = useState({});
     const [selectedTypeId, changeSelection] = useState(null);
+    const [deployed, setDeployed] = useState(false);
 
     useEffect(() => {
         // Actualiza el título del documento usando la API del navegador
@@ -43,6 +44,17 @@ const DnDFlow = () => {
     }, [elements]);
 
 
+    useEffect(() => {
+        (async () => {
+            const response = await axios({
+                method: 'get',
+                url: "http://localhost:6100/list"
+            });
+            if (response && response.data && response.data.length !== 0) {
+                setDeployed(true);
+            }
+        })();
+    }, []);
 
     const onConnect = (params) => {
         setElements((els) => addEdge({ ...params, label: 'Conexión' }, els))
@@ -107,6 +119,30 @@ const DnDFlow = () => {
         setElements((es) => es.concat(newNode));
     };
 
+
+    const sendCamelCommand = async (deploy) => {
+        const camelRoutes = fromBDToCamel(transformToBD(elements));
+
+        if (deploy) {
+            await axios({
+                method: 'post',
+                url: "http://localhost:6100/create",
+                data: {
+                    "routeId": "R0001",
+                    "routeConfiguration": camelRoutes
+                }
+            });
+            setDeployed(true)
+        } else {
+            await axios({
+                method: 'post',
+                url: "http://localhost:6100/stop?routeId=R0001"
+            });
+            setDeployed(false)
+        }
+
+    }
+
     return (
         <div>
             <div className="dndflow">
@@ -130,7 +166,7 @@ const DnDFlow = () => {
                         </ReactFlow>
                     </div>
 
-                    <Sidebar selectedType={elements.find((e) => e.id === selectedTypeId) || {}} />
+                    <Sidebar selectedType={elements.find((e) => e.id === selectedTypeId) || {}} onNodeUpdate={onNodeUpdate} />
                 </ReactFlowProvider>
             </div>
             <br />
@@ -156,7 +192,7 @@ const DnDFlow = () => {
                     margin: 10,
                 }}>
                     Database &nbsp;&nbsp;&nbsp;
-                    <button onClick={() => { setElements(transformFromBd(bdModel, onNodeUpdate)); }}>LoadBD</button>
+                    <button onClick={() => { setElements(transformFromBd(bdModel, onNodeUpdate)); }}>LoadFromBD</button>
                     <CodeMirrorExt
                         value={JSON.stringify(bdModel, null, 2)}
                         onChange={(val) => setBdModel(JSON.parse(val))}
@@ -172,7 +208,10 @@ const DnDFlow = () => {
                     width: "31vw",
                     margin: 10,
                 }}>
-                    Camel
+                    Camel &nbsp;&nbsp;&nbsp;
+                    {deployed === false && <button onClick={() => { sendCamelCommand(!deployed) }}>deploy</button>}
+                    {deployed === true && <button onClick={() => { sendCamelCommand(!deployed) }}>undeploy</button>}
+                    {deployed === true ? <span style={{ float: 'right' }}>🟢</span> : <span style={{ float: 'right' }}>🔴</span>}
                     <CodeMirrorExt
                         value={fromBDToCamel(transformToBD(elements))}
                         name='camel.code'

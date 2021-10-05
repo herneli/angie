@@ -4,29 +4,28 @@ import Handlebars from 'handlebars';
 import node_types from './constants/node_types';
 import camel_components from './constants/camel_components';
 import * as queryString from 'query-string';
+import * as xmlformat from 'xml-formatter'
 
 Handlebars.registerHelper('safe', function (inputData) {
     return new Handlebars.SafeString(inputData);
 });
 Handlebars.registerHelper('querystring', function (inputData) {
-    return new Handlebars.SafeString(inputData ? ("?" + queryString.stringify(inputData)) : "");
+    return new Handlebars.SafeString(!lodash.isEmpty(inputData) ? "?" + (queryString.stringify(inputData)) : "");
 });
 
 function formatXml(xml) {
-    var format = require('xml-formatter');
-    return format(xml);//.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&nbsp;');
+    return xmlformat(xml);
 }
 
-
-// Vincula los diferentes handles de un elemento con sus 
+// Vincula los diferentes handles de un elemento con los identificadores de los destinos
 const linkHandles = (conditions, links) => {
     for (const condition of conditions) {
         const link = lodash.filter(links, { handle: condition.id });
-        condition.to = link || "empty";
+        condition.to = lodash.map(link, 'node_id') || "empty";
     }
     return conditions;
 }
-
+//Convierte un objeto BD a un objeto RFlow
 const transformFromBd = (bdModel, onNodeUpdate) => {
     if (!bdModel.nodes) {
         return { "error": "Invalid Model" }
@@ -58,6 +57,7 @@ const transformFromBd = (bdModel, onNodeUpdate) => {
                         "target": link.node_id,
                         "targetHandle": null,
                         "label": "Conexión",
+                        // "type": 'smoothstep',
                         "id": `reactflow__edge-${node.id}${link.handle}-${link.node_id}null`
                     })
                 }
@@ -71,6 +71,7 @@ const transformFromBd = (bdModel, onNodeUpdate) => {
         return { "error": "Invalid Model" }
     }
 }
+
 //Convierte una ruta Rflow a objetos BD
 const transformToBD = (elements) => {
     const route = {
@@ -135,7 +136,7 @@ const fromBDToCamel = (route) => {
 
             camelStr += template({
                 source: element.id,
-                target: (element.links && element.links.length !== 0) ? element.links : ["empty"],
+                target: (element.links && element.links.length !== 0) ? lodash.map(element.links, 'node_id') : ["empty"],
                 ...element.data
             });
         }
