@@ -43,7 +43,6 @@ const Sidebar = ({ selectedType, onNodeUpdate }) => {
         <aside>
             <div className="description">Paleta Nodos</div>
 
-
             {node_types.map((type) => (
                 <div key={type.id} className={"dndnode " + type.react_component_type} onDragStart={(event) => onDragStart(event, type.react_component_type, { label: type.name, type_id: type.id, ...type.defaults })} draggable>
                     {type.name}

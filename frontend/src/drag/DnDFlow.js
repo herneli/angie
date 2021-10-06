@@ -1,4 +1,4 @@
-import React, { useState, useRef, useReducer, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -8,16 +8,14 @@ import ReactFlow, {
     Background
 } from 'react-flow-renderer';
 
+import CodeMirrorExt from '../components/CodeMirrorExt'
 import Sidebar from './Sidebar';
-
 import SwitchNode from './SwitchNode';
 import { fromBDToCamel, transformFromBd, transformToBD } from './Transformer';
-import Form from "@rjsf/core";
 
 import { v4 as uuid_v4 } from "uuid";
 import axios from 'axios';
 
-import CodeMirrorExt from '../components/CodeMirrorExt'
 
 import './dnd.css';
 
@@ -27,7 +25,7 @@ const nodeTypes = {
 };
 
 const getId = () => uuid_v4();
-
+const jum_angie_url = "http://localhost:6100";
 
 
 const DnDFlow = () => {
@@ -38,26 +36,9 @@ const DnDFlow = () => {
     const [selectedTypeId, changeSelection] = useState(null);
     const [deployed, setDeployed] = useState(false);
 
-    useEffect(() => {
-        // Actualiza el título del documento usando la API del navegador
-        setBdModel(transformToBD(elements));
-    }, [elements]);
-
-
-    useEffect(() => {
-        (async () => {
-            const response = await axios({
-                method: 'get',
-                url: "http://localhost:6100/list"
-            });
-            if (response && response.data && response.data.length !== 0) {
-                setDeployed(true);
-            }
-        })();
-    }, []);
 
     const onConnect = (params) => {
-        setElements((els) => addEdge({ ...params, label: 'Conexión' }, els))
+        setElements((els) => addEdge({ ...params, label: 'Conexión' /*TODO Parametrizar*/ }, els))
     }
     const onElementsRemove = (elementsToRemove) =>
         setElements((els) => removeElements(elementsToRemove, els));
@@ -65,11 +46,13 @@ const DnDFlow = () => {
     const onLoad = (_reactFlowInstance) =>
         setReactFlowInstance(_reactFlowInstance);
 
+    // Evento al finalizar el drag de los nodos
     const onDragOver = (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     };
 
+    //Genera los identificadores de los handles de un nodo
     const generateHandleIds = (data) => {
         if (data.handles && data.handles.length !== 0) {
             data.handles = data.handles.map((handle, idx) => {
@@ -80,6 +63,8 @@ const DnDFlow = () => {
             });
         }
     }
+
+    //Evento desencadenado al actualizar un nodo
     const onNodeUpdate = (event, node) => {
         setElements((els) => els.map((e) => {
             if (e.id === node.id) {
@@ -94,6 +79,7 @@ const DnDFlow = () => {
     };
 
 
+    //Evento desencadenado al desplegar un nodo sobre el panel
     const onDrop = (event) => {
         event.preventDefault();
 
@@ -120,13 +106,14 @@ const DnDFlow = () => {
     };
 
 
+    //Testing: Esto es provisional, se realizara desde el backend
     const sendCamelCommand = async (deploy) => {
         const camelRoutes = fromBDToCamel(transformToBD(elements));
 
         if (deploy) {
             await axios({
                 method: 'post',
-                url: "http://localhost:6100/create",
+                url: `${jum_angie_url}/create`,
                 data: {
                     "routeId": "R0001",
                     "routeConfiguration": camelRoutes
@@ -136,12 +123,34 @@ const DnDFlow = () => {
         } else {
             await axios({
                 method: 'post',
-                url: "http://localhost:6100/stop?routeId=R0001"
+                url: `${jum_angie_url}/stop?routeId=R0001`
             });
             setDeployed(false)
         }
-
     }
+
+    //Testing: Esto es provisional, se realizara desde el backend
+    const checkDeployed = async () => {
+        const response = await axios({
+            method: 'get',
+            url: `${jum_angie_url}/list`
+        });
+        if (response && response.data && response.data.length !== 0) {
+            setDeployed(true);
+        }
+    };
+
+
+
+    useEffect(() => {
+        // Actualiza el título del documento usando la API del navegador
+        setBdModel(transformToBD(elements));
+    }, [elements]);
+
+
+    useEffect(() => {
+        checkDeployed()
+    }, []);
 
     return (
         <div>

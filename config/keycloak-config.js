@@ -9,12 +9,12 @@ var keycloakConfig = {
     "resource": "nodejs",
     "verify-token-audience": true,
     "credentials": {
-      "secret": "c215c724-3c67-4295-9a91-4c12c2ba9792"
+        "secret": "82e78b54-1e22-4c04-8167-4605c8ca2a6e"
     },
     "use-resource-role-mappings": true,
     "confidential-port": 0,
     "policy-enforcer": {}
-  };
+};
 
 
 function initKeycloak(memoryStore) {
