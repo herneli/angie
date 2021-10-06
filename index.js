@@ -1,17 +1,33 @@
-import { App, AuthController, JwtAuthHandler, KnexConnector, Utils } from 'lisco'
-import { UserController, UserDao } from './app/server/api/user';
+import { App, KnexConnector } from 'lisco'
+import { UserController } from './app/server/api/user';
 import { MainController } from './app/server/api/main';
 import { Settings } from './app/server/common';
 import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
-import { LdapHostController } from './app/server/api/ldaphost';
 import { initKeycloak, getKeycloak } from './config/keycloak-config';
-import  knexStore  from 'connect-session-knex';
+import knexStore from 'connect-session-knex';
 import session from 'express-session'
 
 module.exports = async () => {
 
 
     const optimist = require('optimist').usage("Como usar: \n node execute.js [--generateKeys , --encrypt xxx] \n\n Opciones:\n --generateKeys: Genera unas claves para JWT\n --encrypt String: Codifica el String proporcionado en base a la contraseña de .env \n\n ---> Si no se especifican parámetros el servidor arrancará normalmente.");
+    const argv = optimist.argv;
+    //Parámetro para no arrancar el servidor y generar las claves JWT
+    if (argv.generateKeys) {
+        console.log("Generando claves para encriptación:");
+        return console.log(Utils.generateKeys());
+    }
+
+    if (argv.encrypt) {
+        console.log("Resultado encryptación:");
+        return console.log(Utils.encrypt(argv.encrypt));
+    }
+
+    if (argv.h) {
+        return console.log(optimist.help());
+    }
+
+
     KnexConnector.init(require('./knexfile')[process.env.NODE_ENV]);
 
     await KnexConnector.test();
@@ -26,7 +42,6 @@ module.exports = async () => {
         });
 
         const KnexSessionStore = knexStore(session);
-//var memoryStore = new session.MemoryStore();
         app.use(session({
             store: new KnexSessionStore({
                 knex: KnexConnector.connection,
@@ -45,8 +60,6 @@ module.exports = async () => {
         App.keycloak = getKeycloak();
 
         app.use(App.keycloak.middleware({ logout: '/logout' }))
-
-
     };
 
     App.beforeListen = () => {
@@ -58,20 +71,6 @@ module.exports = async () => {
         "/plugins": "app/plugins" //Se desplegarán ahí los plugins activos y se servirán como statics
     }
 
-    //Rutas que no necesitan haber iniciado sesion
-    const publicPaths = [
-        "/",
-        "/login",
-        "/translation",
-        "/config",
-        "/menu",
-        "/external",
-        "/api-docs/(.*)",
-        "/api-docs/(.*)/(.*)",
-        "/api-spec/(.*)",
-        "/api-spec/(.*)/(.*)"
-    ]
-
     //Cargar las configuraciones
     App.settings = new Settings();
     App.settings.load();
@@ -79,7 +78,6 @@ module.exports = async () => {
     //Establecer los controladores activos
     App.routes = [
         new UserController(),
-        new LdapHostController(),
         new MainController()
     ]
 

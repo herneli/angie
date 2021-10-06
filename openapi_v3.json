@@ -16,77 +16,6 @@
         "tags": []
       }
     },
-    "/users/list": {
-      "post": {
-        "summary": "/users/list",
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "summary": "/users/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      },
-      "put": {
-        "summary": "/users/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      },
-      "delete": {
-        "summary": "/users/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
-    "/users": {
-      "post": {
-        "summary": "/users",
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
     "/login": {
       "get": {
         "summary": "/login",
@@ -212,35 +141,15 @@
         "tags": []
       }
     },
-    "/getUser": {
+    "/logout": {
       "get": {
-        "summary": "/getUser",
-        "responses": {
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "example": null,
-                      "nullable": true
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Forbidden"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "summary": "/logout",
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/logout",
+        "responses": {},
         "tags": []
       }
     },
@@ -264,77 +173,6 @@
           }
         },
         "tags": []
-      }
-    },
-    "/ldap_host/list": {
-      "post": {
-        "summary": "/ldap_host/list",
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host/{id}": {
-      "get": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "put": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "delete": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host": {
-      "post": {
-        "summary": "/ldap_host",
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
       }
     },
     "/": {
@@ -4417,11 +4255,178 @@
         "tags": []
       }
     },
-    "/logout": {
+    "/users/list": {
       "post": {
-        "summary": "/logout",
+        "summary": "/users/list",
         "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "delete": {
+        "summary": "/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "/users",
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/getUser": {
+      "get": {
+        "summary": "/getUser",
+        "responses": {
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": null,
+                      "nullable": true
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
+      }
+    },
+    "/ldap_host/list": {
+      "post": {
+        "summary": "/ldap_host/list",
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host/{id}": {
+      "get": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "put": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "delete": {
+        "summary": "/ldap_host/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host": {
+      "post": {
+        "summary": "/ldap_host",
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
       }
     }
   },

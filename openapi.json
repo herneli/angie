@@ -20,85 +20,6 @@
         "tags": []
       }
     },
-    "/users/list": {
-      "post": {
-        "summary": "/users/list",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "summary": "/users/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      },
-      "put": {
-        "summary": "/users/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      },
-      "delete": {
-        "summary": "/users/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
-    "/users": {
-      "post": {
-        "summary": "/users",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "users"
-        ]
-      }
-    },
     "/login": {
       "get": {
         "summary": "/login",
@@ -187,39 +108,24 @@
         ]
       }
     },
-    "/getUser": {
+    "/logout": {
       "get": {
-        "summary": "/getUser",
+        "summary": "/logout",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "null",
-                  "example": null
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Forbidden"
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/logout",
+        "consumes": [
           "application/json"
-        ]
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
       }
     },
     "/anonymous": {
@@ -242,85 +148,6 @@
         "tags": [],
         "produces": [
           "text/html"
-        ]
-      }
-    },
-    "/ldap_host/list": {
-      "post": {
-        "summary": "/ldap_host/list",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host/{id}": {
-      "get": {
-        "summary": "/ldap_host/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "put": {
-        "summary": "/ldap_host/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "delete": {
-        "summary": "/ldap_host/{id}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host": {
-      "post": {
-        "summary": "/ldap_host",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "ldap"
         ]
       }
     },
@@ -4404,15 +4231,197 @@
         "tags": []
       }
     },
-    "/logout": {
+    "/users/list": {
       "post": {
-        "summary": "/logout",
+        "summary": "/users/list",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
         "responses": {},
-        "tags": []
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      },
+      "delete": {
+        "summary": "/users/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "/users",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/getUser": {
+      "get": {
+        "summary": "/getUser",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "null",
+                  "example": null
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Forbidden"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/ldap_host/list": {
+      "post": {
+        "summary": "/ldap_host/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host/{id}": {
+      "get": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "put": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      },
+      "delete": {
+        "summary": "/ldap_host/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
+      }
+    },
+    "/ldap_host": {
+      "post": {
+        "summary": "/ldap_host",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "ldap"
+        ]
       }
     }
   },
