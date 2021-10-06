@@ -6,24 +6,19 @@ var keycloakConfig = {
     "realm": "Angie",
     "auth-server-url": "http://localhost:3114/auth/",
     "ssl-required": "external",
-    "resource": "nodejs",
-    "verify-token-audience": true,
-    "credentials": {
-        "secret": "82e78b54-1e22-4c04-8167-4605c8ca2a6e"
-    },
-    "use-resource-role-mappings": true,
-    "confidential-port": 0,
-    "policy-enforcer": {}
+    "resource": "angie-back",
+    "public-client": true,
+    "confidential-port": 0
 };
 
 
-function initKeycloak(memoryStore) {
+function initKeycloak() {
     if (_keycloak) {
         console.warn("Trying to init Keycloak again!");
     }
     else {
         console.log("Initializing Keycloak...");
-        _keycloak = new Keycloak({ store: memoryStore }, keycloakConfig);
+        _keycloak = new Keycloak({}, keycloakConfig);
     }
 }
 

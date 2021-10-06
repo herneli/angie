@@ -4,8 +4,6 @@ import { MainController } from './app/server/api/main';
 import { Settings } from './app/server/common';
 import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
 import { initKeycloak, getKeycloak } from './config/keycloak-config';
-import knexStore from 'connect-session-knex';
-import session from 'express-session'
 
 module.exports = async () => {
 
@@ -41,21 +39,8 @@ module.exports = async () => {
             specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE
         });
 
-        const KnexSessionStore = knexStore(session);
-        app.use(session({
-            store: new KnexSessionStore({
-                knex: KnexConnector.connection,
-                tablename: 'sessions_knex'
-            }),
-            secret: "afb66a52-b904-490e-881c-ddab111ad7e4",
-            resave: true,
-            rolling: true,
-            httpOnly: true,
-            saveUninitialized: true,
-            cookie: { maxAge: (process.env.COOKIE_TIMEOUT || 3 * 60 * 60) * 1000 } // 1 Hour [30 days -> (30 * 24 * 60 * 60 * 1000)]
-        }));
 
-        initKeycloak(KnexSessionStore);
+        initKeycloak();
 
         App.keycloak = getKeycloak();
 

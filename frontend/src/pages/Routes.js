@@ -9,15 +9,15 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 
 import CodeMirrorExt from '../components/CodeMirrorExt'
-import Sidebar from './Sidebar';
-import SwitchNode from './SwitchNode';
-import { fromBDToCamel, transformFromBd, transformToBD } from './Transformer';
+import Sidebar from './drag/Sidebar';
+import SwitchNode from './drag/SwitchNode';
+import { fromBDToCamel, transformFromBd, transformToBD } from './drag/Transformer';
 
 import { v4 as uuid_v4 } from "uuid";
 import axios from 'axios';
 
 
-import './dnd.css';
+import './drag/dnd.css';
 
 
 const nodeTypes = {
@@ -25,10 +25,10 @@ const nodeTypes = {
 };
 
 const getId = () => uuid_v4();
-const jum_angie_url = "http://localhost:6100";
+const JUM_ANGIE_URL = "http://localhost:6100";
 
 
-const DnDFlow = () => {
+const Routes = () => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState([]);
@@ -113,7 +113,7 @@ const DnDFlow = () => {
         if (deploy) {
             await axios({
                 method: 'post',
-                url: `${jum_angie_url}/create`,
+                url: `${JUM_ANGIE_URL}/create`,
                 data: {
                     "routeId": "R0001",
                     "routeConfiguration": camelRoutes
@@ -123,7 +123,7 @@ const DnDFlow = () => {
         } else {
             await axios({
                 method: 'post',
-                url: `${jum_angie_url}/stop?routeId=R0001`
+                url: `${JUM_ANGIE_URL}/stop?routeId=R0001`
             });
             setDeployed(false)
         }
@@ -133,7 +133,7 @@ const DnDFlow = () => {
     const checkDeployed = async () => {
         const response = await axios({
             method: 'get',
-            url: `${jum_angie_url}/list`
+            url: `${JUM_ANGIE_URL}/list`
         });
         if (response && response.data && response.data.length !== 0) {
             setDeployed(true);
@@ -235,4 +235,4 @@ const DnDFlow = () => {
     );
 };
 
-export default DnDFlow;
+export default Routes;

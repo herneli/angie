@@ -1,4 +1,5 @@
 import { App, BaseController, JsonResponse } from 'lisco';
+import jsonwebtoken from 'jsonwebtoken';
 
 const asyncHandler = require('express-async-handler')
 
@@ -7,9 +8,9 @@ export class UserController extends BaseController {
 
     configure() {
 
-        this.router.get('/login', App.keycloak.protect("realm:user") ,asyncHandler((res, req, next) => { this.login(res, req, next); }));
+        this.router.get('/login', App.keycloak.protect("realm:default-roles-angie"), asyncHandler((res, req, next) => { this.login(res, req, next); }));
         this.router.get('/logout', asyncHandler((res, req, next) => { this.logout(res, req, next); }));
-        this.router.get('/anonymous', App.keycloak.protect("realm:protect") , function (req, res) {
+        this.router.get('/anonymous', App.keycloak.protect("realm:default-roles-angie"), function (req, res) {
             var jsRes = new JsonResponse();
             jsRes.success = false;
             jsRes.message = "Hello admin";
@@ -20,10 +21,20 @@ export class UserController extends BaseController {
     }
 
 
-    login(request, response) {
+    async login(request, response) {
+        let username = "";
+        if (request.headers.authorization) {
+            let token = request.headers.authorization.replace('bearer ', '').replace('Bearer ', '');
+            const parts = token.split('.');
+            const header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
+            const content = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+            // console.log(decoded);
+            username = content.preferred_username;
+        }
+
         var jsRes = new JsonResponse();
         jsRes.success = false;
-        jsRes.message = "Hello admin";
+        jsRes.message = `Hello '${username}' `;
         response.json(jsRes);
     }
 

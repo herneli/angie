@@ -51,6 +51,8 @@
               "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
             }
           },
+          "304": {},
+          "403": {},
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -71,7 +73,8 @@
         "tags": [],
         "produces": [
           "text/html",
-          "application/json"
+          "application/json",
+          "text/plain"
         ]
       },
       "post": {
@@ -147,39 +150,20 @@
         },
         "tags": [],
         "produces": [
-          "text/html"
+          "text/html",
+          "text/plain"
         ]
       }
     },
-    "/": {
+    "/front*": {
       "get": {
-        "summary": "/",
+        "summary": "/front*",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "path is not defined"
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/translation": {
@@ -4229,6 +4213,37 @@
         ],
         "responses": {},
         "tags": []
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "path is not defined"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/users/list": {

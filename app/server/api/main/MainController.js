@@ -8,7 +8,7 @@ export class MainController extends BaseController {
 
     configure() {
 
-        this.router.get('/', (res, req, next) => { this.index(res, req, next); });
+        this.router.get('/front*', (res, req, next) => { this.index(res, req, next); });
         this.router.get('/translation', (res, req, next) => { this.translation(res, req, next); });
         this.router.get('/config', (res, req, next) => { this.config(res, req, next); });
         this.router.get('/memory', (res, req, next) => { this.memory(res, req, next); });

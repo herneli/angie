@@ -52,6 +52,21 @@
                     }
                   }
                 }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hello admin"
+                    }
+                  }
+                }
               }
             }
           },
@@ -69,8 +84,20 @@
                   "type": "string",
                   "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
                 }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=df6b7a42-e2ff-4508-85de-56bc72ce09f2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
               }
             }
+          },
+          "304": {
+            "description": ""
+          },
+          "403": {
+            "description": ""
           },
           "500": {
             "description": "Internal Server Error",
@@ -91,6 +118,21 @@
                 }
               },
               "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "select \"sess\" from \"sessions_knex\" where \"sid\" = $1 and CAST($2 as timestamp with time zone) <= expired - relation \"sessions_knex\" does not exist"
+                    }
+                  }
+                }
+              },
+              "text/plain": {
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -165,6 +207,12 @@
                   "type": "string",
                   "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
                 }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
               }
             }
           },
@@ -175,31 +223,10 @@
         "tags": []
       }
     },
-    "/": {
+    "/front*": {
       "get": {
-        "summary": "/",
-        "responses": {
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "path is not defined"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "summary": "/front*",
+        "responses": {},
         "tags": []
       }
     },
@@ -4252,6 +4279,34 @@
           }
         ],
         "responses": {},
+        "tags": []
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "path is not defined"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },

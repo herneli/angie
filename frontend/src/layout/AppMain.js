@@ -1,48 +1,34 @@
-import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { withRouter } from "react-router-dom";
-import UserHandler from '../common/UserHandler';
+import React, { useEffect } from 'react';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { useKeycloak } from '@react-keycloak/web';
+import { PrivateRoute } from './PrivateRoute';
 
-import DnDFlow from '../drag/DnDFlow';
-import Menu from '../menu/Menu';
+import Routes from '../pages/Routes';
+import Home from '../pages/Home';
 
-/**
- * Contenido principal.
- *
- * Aqui es necesario agregar todas las vistas principales posibles!
- */
-class AppMain extends Component {
-    checkAuth(path) {
-        if (UserHandler.getUser() && UserHandler.getUser().login === 'admin') {//Force admin user
-            return true;
-        }
-        //TODO filtrar los accesos en base a las secciones del usuario.
-        return false;
+
+
+const AppMain = ({ app, location }) => {
+    const { initialized } = useKeycloak();
+
+
+    const defaultProps = {
+        app: app
     }
 
-
-    render() {
-        const defaultProps = {
-            app: this.props.app
-        };
-
-
-
-        return (
-            <Switch>
-                <Route exact path='/' render={({ match }) => <Menu match={match} {...defaultProps} />} />
-                <Route exact path='/drag' render={({ match }) => <DnDFlow match={match} {...defaultProps} />} />
-                
-
-                {/* Rutas publicas */}
-                {/* <Route exact path='/403' render={({ match }) => <Unauthorized match={match} {...defaultProps} />} /> */}
-
-                {/* Rutas privadas */}
-                {/* <PrivateRoute exact path='/users' authed={this.checkAuth('/users')} redirectTo='/403' {...defaultProps} component={UsersList} /> */}
-                
-            </Switch>
-        );
+    if (!initialized) {
+        return <h3>Cargando ... !!!</h3>;
     }
+
+    return (
+        <Switch>
+
+            <Route exact path="/" render={({ match }) => <Home match={match} {...defaultProps} />} />
+            <PrivateRoute roles={["default-roles-angie"]} path="/drag" component={Routes} {...defaultProps} />
+
+        </Switch>
+    )
 }
+
 
 export default withRouter(AppMain);

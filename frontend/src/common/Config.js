@@ -1,7 +1,6 @@
 import T from "i18n-react";
 import axios from 'axios';
 import lodash from 'lodash';
-import UserHandler from "./UserHandler";
 
 const serverURLDevelopment = 'http://localhost:3105/';
 
@@ -38,10 +37,10 @@ export default class Config {
     static getCurrentLang() {
         let current = Config.getAppDefaultLang();
 
-        let user = UserHandler.getUser();
-        if (user && user.currentLang) {
-            current = user.currentLang;
-        }
+        // let user = UserHandler.getUser();
+        // if (user && user.currentLang) {
+        //     current = user.currentLang;
+        // }
         return current;
     }
 
