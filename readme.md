@@ -18,7 +18,7 @@ NodeJS 12.XX o superior
 > npm install
 ```
 
-Generar las claves para JWT:
+Generar las claves de privadas:
 
 ```
 > node .\execute.js --generateKeys
