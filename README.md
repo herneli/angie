@@ -45,7 +45,10 @@ Los puertos en los que se encuentra, por defecto, cada componente son:
 - RabbitMQ: 3111 y 3112(management)
 - ElasticSearch: 3103
 - Kibana: 3108
+- Keycloak: 3114
 
+
+*__Nota:__ en determinados entornos el script de `dbinit/01-init.sh` de postgre no funciona correctamente. En entornos Linux/Mac es necesario dar permisos (chmod 777) y en windows cambiar el tipo de salto de línea a LF.*
 ## Ejecutando la aplicación
 
 Ejecutar el servidor
@@ -97,6 +100,20 @@ Se proporcionarán los siguientes entregables:
 - angie-vx.x.x.zip
 
 
+## Configuración Keycloak
+
+El sistema utiliza keycloak como servidor de autenticación y autorización. Esto implica que será necesario configurar ciertos aspectos dentro de keycloak para poder ejecutar la aplicación de forma correcta.
+
+Configuraciones necesarias:
+
+1. Crear realm **Angie**
+2. Crear usuario para la aplicación
+3. Crear cliente **angie-front**
+4. Crear cliente **angie-back**
+5. *Opcional:* Crear roles asociados a los clientes y usuarios.
+
+
+**TODO**  Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
 
 ## Tests
 

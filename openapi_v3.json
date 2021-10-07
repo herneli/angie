@@ -4359,6 +4359,361 @@
         "tags": []
       }
     },
+    "/integration/list": {
+      "post": {
+        "summary": "/integration/list",
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}": {
+      "get": {
+        "summary": "/integration/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "put": {
+        "summary": "/integration/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "delete": {
+        "summary": "/integration/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration": {
+      "post": {
+        "summary": "/integration",
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_route/list": {
+      "post": {
+        "summary": "/integration_route/list",
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_route/{id}": {
+      "get": {
+        "summary": "/integration_route/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "put": {
+        "summary": "/integration_route/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "delete": {
+        "summary": "/integration_route/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_route": {
+      "post": {
+        "summary": "/integration_route",
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/node_type/list": {
+      "post": {
+        "summary": "/node_type/list",
+        "responses": {},
+        "tags": [
+          "node_type"
+        ]
+      }
+    },
+    "/node_type/{id}": {
+      "get": {
+        "summary": "/node_type/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "node_type"
+        ]
+      },
+      "put": {
+        "summary": "/node_type/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "node_type"
+        ]
+      },
+      "delete": {
+        "summary": "/node_type/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "node_type"
+        ]
+      }
+    },
+    "/node_type": {
+      "post": {
+        "summary": "/node_type",
+        "responses": {},
+        "tags": [
+          "node_type"
+        ]
+      }
+    },
+    "/organization/list": {
+      "post": {
+        "summary": "/organization/list",
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization/{id}": {
+      "get": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "put": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "delete": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization": {
+      "post": {
+        "summary": "/organization",
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/camel_component/list": {
+      "post": {
+        "summary": "/camel_component/list",
+        "responses": {},
+        "tags": [
+          "camel_component"
+        ]
+      }
+    },
+    "/camel_component/{id}": {
+      "get": {
+        "summary": "/camel_component/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "camel_component"
+        ]
+      },
+      "put": {
+        "summary": "/camel_component/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "camel_component"
+        ]
+      },
+      "delete": {
+        "summary": "/camel_component/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "camel_component"
+        ]
+      }
+    },
+    "/camel_component": {
+      "post": {
+        "summary": "/camel_component",
+        "responses": {},
+        "tags": [
+          "camel_component"
+        ]
+      }
+    },
     "/front*": {
       "get": {
         "summary": "/front*",
@@ -4547,6 +4902,18 @@
     },
     {
       "name": "ldap"
+    },
+    {
+      "name": "integration"
+    },
+    {
+      "name": "camel_component"
+    },
+    {
+      "name": "organization"
+    },
+    {
+      "name": "node_type"
     }
   ],
   "servers": [

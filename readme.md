@@ -47,6 +47,8 @@ Los puertos en los que se encuentra, por defecto, cada componente son:
 - Kibana: 3108
 - Keycloak: 3114
 
+
+*__Nota:__ en determinados entornos el script de `dbinit/01-init.sh` de postgre no funciona correctamente. En entornos Linux/Mac es necesario dar permisos (chmod 777) y en windows cambiar el tipo de salto de línea a LF.*
 ## Ejecutando la aplicación
 
 Ejecutar el servidor
