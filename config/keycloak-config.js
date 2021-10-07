@@ -1,18 +1,21 @@
-var Keycloak = require('keycloak-connect');
+import Keycloak from 'keycloak-connect';
+import { App } from 'lisco';
 
 let _keycloak;
 
-var keycloakConfig = {
-    "realm": "Angie",
-    "auth-server-url": "http://localhost:3114/auth/",
-    "ssl-required": "external",
-    "resource": "angie-back",
-    "public-client": true,
-    "confidential-port": 0
-};
 
 
 function initKeycloak() {
+
+    var keycloakConfig = {
+        "realm": App.settings.getConfigValue("core:keycloak:realm"),
+        "auth-server-url": App.settings.getConfigValue("core:keycloak:url"),
+        "ssl-required": "external",
+        "resource": App.settings.getConfigValue("core:keycloak:back-client"),
+        "public-client": true,
+        "confidential-port": 0
+    };
+
     if (_keycloak) {
         console.warn("Trying to init Keycloak again!");
     }

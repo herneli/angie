@@ -17,7 +17,7 @@ import { v4 as uuid_v4 } from "uuid";
 import axios from 'axios';
 
 
-import './drag/dnd.css';
+import './drag/Routes.css';
 
 
 const nodeTypes = {

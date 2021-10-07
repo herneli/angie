@@ -7,7 +7,7 @@ const asyncHandler = require('express-async-handler')
 export class IntegrationRouteController extends BaseController {
 
     configure() {
-        super.configure('integration_route', { service: IntegrationService });
+        super.configure('integration_route', { service: IntegrationRouteService });
         return this.router;
     }
 

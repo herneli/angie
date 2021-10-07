@@ -15,12 +15,12 @@ export default class AxiosConfig {
     }
 
     static getContextPath() {
-        return window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2));
+        return "";
     }
     /**
      * Se encarga de configurar el interceptor para los errores en las llamadas AJAX realizadas
      */
-    static configureAxios(app) {
+    static configureAxios() {
         let myUrl = new URL(window.location.href);
         axios.defaults.baseURL = myUrl.protocol + "//" + myUrl.hostname + ':' + myUrl.port + AxiosConfig.getContextPath() + "/";
         axios.defaults.headers = {
@@ -34,11 +34,8 @@ export default class AxiosConfig {
         // Add a request interceptor
         axios.interceptors.response.use(function (response) {
             switch (response.data.status) {
-
-                case 403:
-                    if (app) {
-                        app.unauthorized();
-                    }
+                case 500:
+                    console.error(response?.data?.message);
                     break;
                 default:
                     break;
@@ -48,10 +45,8 @@ export default class AxiosConfig {
         }, function (error) {
             if (error.response && error.response.data) {
                 switch (error.response.data.status) {
-                    case 403:
-                        if (app) {
-                            app.unauthorized();
-                        }
+                    case 500:
+                        console.error(error);
                         break;
                     default:
                         break;

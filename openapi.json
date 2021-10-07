@@ -1,5 +1,6 @@
 {
   "definitions": {},
+  "host": "localhost:3105",
   "info": {
     "title": "angie",
     "version": "1.0.0",
@@ -155,9 +156,55 @@
         ]
       }
     },
-    "/front*": {
+    "/": {
       "get": {
-        "summary": "/front*",
+        "summary": "/",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Found",
+            "schema": {
+              "type": "string",
+              "example": "<p>Found. Redirecting to <a href=\"/front\">/front</a></p>"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /</pre>\n</body>\n</html>\n"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "path is not defined"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json",
+          "text/html"
+        ]
+      }
+    },
+    "/front(/*)?": {
+      "get": {
+        "summary": "/front(/*)?",
         "consumes": [
           "application/json"
         ],
@@ -4215,35 +4262,15 @@
         "tags": []
       }
     },
-    "/": {
+    "/front*": {
       "get": {
-        "summary": "/",
+        "summary": "/front*",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "path is not defined"
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/users/list": {
@@ -4440,6 +4467,9 @@
       }
     }
   },
+  "schemes": [
+    "http"
+  ],
   "swagger": "2.0",
   "tags": [
     {

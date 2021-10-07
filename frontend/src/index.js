@@ -6,11 +6,12 @@ import reportWebVitals from './reportWebVitals';
 
 
 import { BrowserRouter } from 'react-router-dom';
+import Config from './common/Config';
 
 
 ReactDOM.render(
     <React.StrictMode>
-        <BrowserRouter basename="/front">
+        <BrowserRouter basename={Config.getViewContextPath()}>
             <App />
         </BrowserRouter>
     </React.StrictMode>,

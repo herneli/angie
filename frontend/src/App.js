@@ -12,9 +12,8 @@ import TranslationLoader from './common/TranslationLoader';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import Menu from './pages/Menu';
 
-import keycloak from './keycloak';
+import configureKeycloak from './configureKeycloak';
 
-import axios from 'axios';
 class App extends Component {
 
     state = {
@@ -28,12 +27,10 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        AxiosConfig.configureAxios(this);
+        AxiosConfig.configureAxios();
         (async () => {
-
-            let req = await axios.get('/login');
-            console.log(req);
             await Config.loadConfigParams(true);
+            this.keycloak = await configureKeycloak();
             await TranslationLoader.loadTranslations();
             this.setState({
                 loaded: true
@@ -42,15 +39,6 @@ class App extends Component {
     }
 
 
-
-    /**
-     * Desautoriza el usuario actual
-     */
-    unauthorized = () => {
-        this.setState({
-            isAuthenticated: false
-        })
-    }
     eventLogger = (event, error) => {
         if (event === 'onReady') {
             this.setState({
@@ -68,15 +56,17 @@ class App extends Component {
     render() {
         const { loaded } = this.state;
         return (
-            <ReactKeycloakProvider authClient={keycloak} onEvent={this.eventLogger} onTokens={this.tokenLogger} >
-                {/* initOptions={{ onLoad: 'login-required' }} */}
-                {loaded && <div className="App">
-                    <div style={{ height: '99vh' }}>
-                        <Menu />
-                        <AppMain app={this} />
+            <div>
+                { loaded && <ReactKeycloakProvider authClient={this.keycloak} onEvent={this.eventLogger} onTokens={this.tokenLogger} initOptions={{ checkLoginIframe: false }}>
+                    {/* initOptions={{ onLoad: 'login-required' }} */}
+                    <div className="App">
+                        <div style={{ height: '99vh' }}>
+                            <Menu />
+                            <AppMain app={this} />
+                        </div>
                     </div>
-                </div>}
-            </ReactKeycloakProvider >
+                </ReactKeycloakProvider >}
+            </div>
         );
     }
 }

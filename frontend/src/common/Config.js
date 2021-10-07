@@ -1,4 +1,3 @@
-import T from "i18n-react";
 import axios from 'axios';
 import lodash from 'lodash';
 
@@ -34,13 +33,13 @@ export default class Config {
         return this.configParams['core.application.name'];
     }
 
+    static getViewContextPath() {
+        return "/front";
+    }
+
     static getCurrentLang() {
         let current = Config.getAppDefaultLang();
 
-        // let user = UserHandler.getUser();
-        // if (user && user.currentLang) {
-        //     current = user.currentLang;
-        // }
         return current;
     }
 
@@ -70,18 +69,15 @@ export default class Config {
     }
 
 
-    static millisToTime(ms) {
-
-        let x = ms / 1000;
-        let seconds = Math.round(x % 60);
-        x /= 60;
-        let minutes = Math.round(x % 60);
-        x /= 60;
-        let hours = Math.round(x % 24);
-        x /= 24;
-        let days = Math.round(x);
-
-        return { "d": days, "h": hours, "m": minutes, "s": seconds };
+    static getKeycloakConfig() {
+        if (!this.configParams || this.configParams.length <= 0) {
+            this.loadConfigParams();
+        }
+        return {
+            url: this.configParams['core.keycloak.url'],
+            realm: this.configParams['core.keycloak.realm'],
+            clientId: this.configParams['core.keycloak.front-client']
+        }
     }
 
 

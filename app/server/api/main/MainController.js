@@ -8,7 +8,8 @@ export class MainController extends BaseController {
 
     configure() {
 
-        this.router.get('/front*', (res, req, next) => { this.index(res, req, next); });
+        this.router.get('/', (res, req, next) => { this.index(res, req, next); });
+        this.router.get('/front(/*)?', (res, req, next) => { this.front(res, req, next); });
         this.router.get('/translation', (res, req, next) => { this.translation(res, req, next); });
         this.router.get('/config', (res, req, next) => { this.config(res, req, next); });
         this.router.get('/memory', (res, req, next) => { this.memory(res, req, next); });
@@ -18,14 +19,17 @@ export class MainController extends BaseController {
         return this.router;
     }
 
+    index(request, response) {
+        response.redirect("/front")
+    }
     /**
      * Render para el index del frontend
      * 
      * @param request
      * @param response
      */
-    index(request, response) {
-        var filePath = path.resolve("app/statics/html/index.html");
+    front(request, response) {
+        var filePath = path.resolve("app/statics/index.html");
         response.sendFile(filePath);
     }
 

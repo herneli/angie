@@ -16,8 +16,8 @@ var appVersion = versions && versions[0] ? versions[0].title.replace(/Versi[oó]
 
 var viewpath = './frontend';
 var outputdir = './out/output/';
-var ilpout = outputdir + '/ilp';
-var installpkg = 'ILP-' + appVersion + "b" + comp.number + '.install.zip';
+var angieout = outputdir + '/angie';
+var installpkg = 'ANGIE-' + appVersion + "b" + comp.number + '.install.zip';
 
 /**
  * Elimina completamente
@@ -25,17 +25,6 @@ var installpkg = 'ILP-' + appVersion + "b" + comp.number + '.install.zip';
 function fullclean() {
     return del([
         outputdir + '/**/**'
-    ]);
-}
-
-
-/**
- * Elimina solo ILP
- */
-function cleanSrc() {
-    return del([
-        ilpout + '/**/**',
-        outputdir + '/*.zip'
     ]);
 }
 
@@ -57,10 +46,13 @@ function buildView(done) {
 function copyServer(done) {
     return gulp.src([
         'app/**',
+        'config/**',
         'i18n/**',
         'migrations/**',
         'lib/**',
+        '.env.sample',
         'package.json',
+        'log4js.json',
         'version.json',
         'compilation.json',
         'package-lock.json',
@@ -75,7 +67,7 @@ function copyServer(done) {
         'hash.js',
         'index.js'
     ], { base: '.', dot: true, allowEmpty: true })
-        .pipe(gulp.dest(ilpout))
+        .pipe(gulp.dest(angieout))
         .on('end', done);
 }
 
@@ -83,7 +75,7 @@ function copyServer(done) {
  * 
  */
 function installServerDeps(done) {
-    return exec('npm install --production', { cwd: ilpout }, function (err, stdout, stderr) {
+    return exec('npm install --production', { cwd: angieout }, function (err, stdout, stderr) {
         console.log(stderr);
         done();
     });
@@ -93,7 +85,7 @@ function installServerDeps(done) {
  * Eliminar duplicados en el node modules
  */
 function dedupe(cb) {
-    exec('npm dedupe', { cwd: ilpout }, function (err, stdout, stderr) {
+    exec('npm dedupe', { cwd: angieout }, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
 
@@ -108,7 +100,7 @@ function cleanNode(cb) {
     if (process.platform === "win32") {
         command = __dirname + '/compile/node-prune.win.exe';
     }
-    exec(command, { cwd: ilpout }, function (err, stdout, stderr) {
+    exec(command, { cwd: angieout }, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
 
@@ -123,7 +115,7 @@ function copyView() {
     return gulp.src([
         viewpath + '/build/**'
     ], {})
-        .pipe(gulp.dest(ilpout + '/app/statics'));
+        .pipe(gulp.dest(angieout + '/app/statics'));
 }
 
 /**
@@ -135,9 +127,9 @@ function hashVersion(done) {
 
     // pass options (example: exclude dotFolders)
     var options = { folders: { exclude: ['node_modules', 'bin', 'logs'] } };
-    hashElement(ilpout + "/app", options)
+    hashElement(angieout + "/app", options)
         .then(function (hash) {
-            fs.writeFileSync(ilpout + '/hash.txt', hash.hash);
+            fs.writeFileSync(angieout + '/hash.txt', hash.hash);
             done(null);
         })
         .catch(function (error) {
@@ -153,8 +145,8 @@ function hashVersion(done) {
  */
 function createInstaller(done) {
     return gulp.src([
-        outputdir + '/NOTES.txt',
-        ilpout + '/**/**'
+        // outputdir + '/NOTES.txt',
+        angieout + '/**/**'
     ], { base: outputdir, dot: true })
         .pipe(zip(installpkg))
         .pipe(gulp.dest(outputdir))
@@ -165,11 +157,7 @@ function createInstaller(done) {
 /**
  * Realiza el proceso de build completo 
  */
-module.exports.compile = gulp.series(cleanSrc, buildView, copyServer, installServerDeps, dedupe, cleanNode, copyView, hashVersion, createInstaller);
+module.exports.compile = gulp.series(fullclean, buildView, copyServer, installServerDeps, dedupe, cleanNode, copyView, hashVersion, createInstaller);
 
-/**
- * Realiza el proceso de build completo 
- */
-module.exports.clean = gulp.series(fullclean);
 
 

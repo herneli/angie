@@ -34,8 +34,7 @@ export default class Settings {
      */
     getConfigValue(key) {
         var record = "";
-        // nconf.use('cfg');
-        var userConfig = nconf.get('user');
+        var userConfig = nconf.get('user'); //TODO cargar el perfil de user de la BD
         record = userConfig ? userConfig[key] : null;
         if (record === null || record === undefined) {
             record = nconf.get(key);
@@ -88,6 +87,8 @@ export default class Settings {
         });
     }
 
+
+    //TODO cargar las settings de la base de datos
 
 }
 

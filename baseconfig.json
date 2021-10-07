@@ -10,6 +10,12 @@
                     "en"
                 ]
             }
+        },
+        "keycloak": {
+            "url": "http://localhost:3114/auth/",
+            "realm": "Angie",
+            "back-client": "angie-back",
+            "front-client": "angie-front"
         }
     }
 }
