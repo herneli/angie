@@ -1,7 +1,8 @@
-import './App.css';
+import './App.less';
 
 
 import { withRouter } from 'react-router-dom';
+import { Button } from 'antd';
 import AppMain from './layout/AppMain';
 import React, { Component } from 'react';
 import AxiosConfig from './common/AxiosConfig';
@@ -10,10 +11,9 @@ import TranslationLoader from './common/TranslationLoader';
 
 
 import { ReactKeycloakProvider } from '@react-keycloak/web';
-import Menu from './pages/Menu';
+import AppMenu from './pages/AppMenu';
 
 import configureKeycloak from './configureKeycloak';
-
 class App extends Component {
 
     state = {
@@ -61,7 +61,7 @@ class App extends Component {
                     {/* initOptions={{ onLoad: 'login-required' }} */}
                     <div className="App">
                         <div style={{ height: '99vh' }}>
-                            <Menu />
+                            <AppMenu />
                             <AppMain app={this} />
                         </div>
                     </div>
