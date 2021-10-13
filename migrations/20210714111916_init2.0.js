@@ -12,8 +12,8 @@ exports.up = async function (knex) {
             table.foreign('organization_id').references('organization.id')
         });
     }
-    if (!await knex.schema.hasTable('integration_route')) {
-        await knex.schema.createTable('integration_route', function (table) {
+    if (!await knex.schema.hasTable('integration_channel')) {
+        await knex.schema.createTable('integration_channel', function (table) {
             table.uuid('id').primary();
             table.string('created_on', 30).notNullable();
             table.string('last_updated', 30).notNullable();
@@ -92,8 +92,8 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable('integration')) {
         await knex.schema.dropTable('integration');
     }
-    if (await knex.schema.hasTable('integration_route')) {
-        await knex.schema.dropTable('integration_route');
+    if (await knex.schema.hasTable('integration_channel')) {
+        await knex.schema.dropTable('integration_channel');
     }
     if (await knex.schema.hasTable('camel_component')) {
         await knex.schema.dropTable('camel_component');

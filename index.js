@@ -7,7 +7,7 @@ import { initKeycloak, getKeycloak } from './config/keycloak-config';
 import { Runtime } from './app/server/common/';
 import { IntegrationController } from './app/server/api/integration';
 import { NodeTypeController } from './app/server/api/node_type';
-import { IntegrationRouteController } from './app/server/api/integration_route';
+import { IntegrationChannelController } from './app/server/api/integration_channel';
 import { OrganizationController } from './app/server/api/organization';
 import { CamelComponentController } from './app/server/api/camel_component';
 
@@ -52,7 +52,7 @@ module.exports = async () => {
         new UserController(),
         new MainController(),
         new IntegrationController(),
-        new IntegrationRouteController(),
+        new IntegrationChannelController(),
         new NodeTypeController(),
         new OrganizationController(),
         new CamelComponentController()

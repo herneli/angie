@@ -74,9 +74,9 @@ const transformFromBd = (bdModel, onNodeUpdate) => {
 
 //Convierte una ruta Rflow a objetos BD
 const transformToBD = (elements) => {
-    const route = {
+    const channel = {
         "id": "1",
-        "name": "Ruta Pruebas",
+        "name": "Canal Pruebas",
         "description": "Transformación Genérica",
         "integration_id": "1",
         "created_on": "YYYY-MM-DDT00:00:00.000Z",
@@ -114,14 +114,14 @@ const transformToBD = (elements) => {
     }
 
 
-    route.nodes = nodes;
-    return route;
+    channel.nodes = nodes;
+    return channel;
 }
 
 
 //Convierte un objeto DB a un conjunto de rutas camel
-const fromBDToCamel = (route) => {
-    let nodes = lodash.cloneDeep(route.nodes);
+const fromBDToCamel = (channel) => {
+    let nodes = lodash.cloneDeep(channel.nodes);
 
     let camelStr = "";
     for (const idx in nodes) {

@@ -2,8 +2,8 @@ import { BaseKnexDao, KnexConnector } from "lisco";
 
 import { v4 as uuid_v4 } from "uuid";
 
-export class IntegrationRouteDao extends BaseKnexDao {
-    tableName = "integration_route"
+export class IntegrationChannelDao extends BaseKnexDao {
+    tableName = "integration_channel"
 
 
     //Overwrite
