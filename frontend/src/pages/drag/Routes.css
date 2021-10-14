@@ -1,3 +1,8 @@
+.CodeMirror {
+    height: 260px;
+}
+
+
 .dndflow {
     flex-direction: column;
     display: flex;
@@ -30,6 +35,7 @@
     .dndflow {
         flex-direction: row;
     }
+
     .dndflow aside {
         width: 30%;
         max-width: 300px;
@@ -71,7 +77,7 @@
     border-radius: 0px 3px 3px 0px;
 }
 
-.react-flow__node-switchNode{
+.react-flow__node-switchNode {
     border-radius: 3px;
     border-style: solid;
     border-width: 1px;
@@ -82,7 +88,6 @@
     width: 150px;
 }
 
-.dndflow .CodeMirror{
+.dndflow .CodeMirror {
     height: 300px;
 }
-

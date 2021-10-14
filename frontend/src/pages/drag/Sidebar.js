@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Form from "@rjsf/core";
+import Form from '@rjsf/antd';
 import lodash from 'lodash';
 
 import node_types from './constants/node_types'

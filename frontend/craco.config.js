@@ -10,7 +10,9 @@ module.exports = {
                     lessOptions: {
                         modifyVars: {
                             '@primary-color': '#1976D2',
-                            '@menu-bg': '#1976D2'
+                            '@menu-bg': '#1976D2',
+                            '@menu-item-color': '#FFFFFF',
+                            '@menu-highlight-color': '#FFFFFF'
                         },
                         javascriptEnabled: true,
                     },
