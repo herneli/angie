@@ -1,0 +1,427 @@
+{
+    "code": "method",
+    "name": "Método",
+    "listFields": [
+        {
+            "title": "Código",
+            "field": "code"
+        },
+        {
+            "title": "Nombre",
+            "field": "name"
+        },
+        {
+            "title": "Tipo",
+            "field": "applies_to_primitive_type"
+        },
+        {
+            "title": "Tipo de objeto",
+            "field": "applies_to_object_code"
+        },
+        {
+            "title": "Habilitado",
+            "field": "is_active"
+        },
+        {
+            "title": "Nivel",
+            "field": "complexity_level"
+        },
+        {
+            "title": "Modificado en",
+            "field": "modified_at"
+        }
+    ],
+    "schema": {
+        "type": "object",
+        "required": [
+            "code",
+            "name",
+            "complexity_level",
+            "applies_to_primitive_type",
+            "return_primitive_type"
+        ],
+        "properties": {
+            "code": {
+                "title": "Código",
+                "type": "string"
+            },
+            "name": {
+                "title": "Nombre",
+                "type": "string"
+            },
+            "complexity_level": {
+                "title": "Nivel",
+                "type": "number",
+                "enum": [1, 4, 7, 10],
+                "enumNames": ["Básico", "Estándar", "Avanzado", "Experto"]
+            },
+            "description": {
+                "title": "Descripción",
+                "type": "string",
+                "default": ""
+            },
+            "is_active": {
+                "title": "Habilitado",
+                "type": "boolean",
+                "default": false
+            },
+            "applies_to_primitive_type": {
+                "title": "Aplica a tipo",
+                "type": "string",
+                "enum": [
+                    "array",
+                    "boolean",
+                    "date",
+                    "number",
+                    "integer",
+                    "object",
+                    "string",
+                    "$all"
+                ],
+                "enumNames": [
+                    "Lista",
+                    "Boleano",
+                    "Fecha",
+                    "Decimal",
+                    "Entero",
+                    "Objeto",
+                    "String",
+                    "Cualquier tipo"
+                ],
+                "default": ""
+            },
+            "applies_to_object_code": {
+                "title": "Tipo de objeto (si Tipo = 'Objeto')",
+                "type": ["string", "null"]
+            },
+            "applies_to_item_primitive_type": {
+                "title": "Tipo de elemento de lista",
+                "type": ["string", "null"],
+                "enum": [
+                    null,
+                    "array",
+                    "boolean",
+                    "date",
+                    "number",
+                    "integer",
+                    "object",
+                    "string"
+                ],
+                "enumNames": [
+                    "Nulo",
+                    "Lista",
+                    "Boleano",
+                    "Fecha",
+                    "Decimal",
+                    "Entero",
+                    "Objeto",
+                    "String"
+                ]
+            },
+            "applies_to_item_object_code": {
+                "title": "Tipo de objeto para elemento de lista (si Tipo = 'Objeto')",
+                "type": ["string", "null"]
+            },
+            "return_primitive_type": {
+                "title": "Tipo devuelto",
+                "type": "string",
+                "enum": [
+                    "$self",
+                    "$item",
+                    "action",
+                    "array",
+                    "boolean",
+                    "date",
+                    "number",
+                    "integer",
+                    "object",
+                    "string"
+                ],
+                "enumNames": [
+                    "$self",
+                    "$item",
+                    "Acción",
+                    "Lista",
+                    "Boleano",
+                    "Fecha",
+                    "Decimal",
+                    "Entero",
+                    "Objeto",
+                    "String"
+                ]
+            },
+            "return_object_code": {
+                "title": "Tipo de objeto devuelto (si Tipo devuelto = 'Objeto')",
+                "type": ["string", "null"]
+            },
+            "return_item_primitive_type": {
+                "title": "Tipo de elemento de la lista devuelto (si Tipo devuelto = 'Lista')",
+                "type": ["string", "null"],
+                "enum": [
+                    null,
+                    "boolean",
+                    "date",
+                    "number",
+                    "integer",
+                    "object",
+                    "string"
+                ],
+                "enumNames": [
+                    "Nulo",
+                    "Boleano",
+                    "Fecha",
+                    "Decimal",
+                    "Entero",
+                    "Objeto",
+                    "String"
+                ]
+            },
+            "return_item_object_code": {
+                "title": "Tipo de objeto de la lista devuelto (si Tipo de elemento de la lista devuelto = 'Lista')",
+                "type": ["string", "null"]
+            },
+            "return_remote_values": {
+                "title": "remote_values",
+                "type": ["string", "null"]
+            },
+            "return_widget": {
+                "title": "Return input editor",
+                "type": ["string", "null"]
+            },
+            "params": {
+                "title": "Parámetros",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["pos", "code", "name", "param_primitive_type"],
+                    "properties": {
+                        "pos": {
+                            "title": "Posición",
+                            "type": "integer"
+                        },
+                        "code": {
+                            "title": "Código",
+                            "type": "string"
+                        },
+                        "name": {
+                            "title": "Nombre",
+                            "type": "string"
+                        },
+                        "param_primitive_type": {
+                            "title": "Tipo",
+                            "type": "string",
+                            "enum": [
+                                "$self",
+                                "$item",
+                                "array",
+                                "boolean",
+                                "date",
+                                "number",
+                                "integer",
+                                "object",
+                                "string"
+                            ],
+                            "enumNames": [
+                                "$self",
+                                "$item",
+                                "Lista",
+                                "Boleano",
+                                "Fecha",
+                                "Decimal",
+                                "Entero",
+                                "Objeto",
+                                "String"
+                            ]
+                        },
+                        "param_object_code": {
+                            "title": "Tipo de objeto (si Tipo = 'Objeto')",
+                            "type": ["string", "null"]
+                        },
+                        "param_item_primitive_type": {
+                            "title": "Tipo de elemento de la lista (si Tipo = 'Lista')",
+                            "type": ["string", "null"],
+                            "enum": [
+                                null,
+                                "$self",
+                                "$item",
+                                "boolean",
+                                "date",
+                                "number",
+                                "integer",
+                                "object",
+                                "string"
+                            ],
+                            "enumNames": [
+                                "Nulo",
+                                "$self",
+                                "$item",
+                                "Boleano",
+                                "Fecha",
+                                "Decimal",
+                                "Entero",
+                                "Objeto",
+                                "String"
+                            ]
+                        },
+                        "param_item_object_code": {
+                            "title": "Tipo de objeto de la lista (si Tipo de elemento de la lista = 'Objeto')",
+                            "type": ["string", "null"]
+                        },
+                        "remote_values": {
+                            "title": "remote_values",
+                            "type": ["string", "null"]
+                        },
+                        "widget": {
+                            "title": "Input editor",
+                            "type": ["string", "null"]
+                        },
+                        "is_optional": {
+                            "title": "Opcional",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                }
+            },
+            "source_code": {
+                "title": "Código fuente",
+                "type": "string"
+            },
+            "source_code_for_binary_operator": {
+                "title": "Código fuente si es un operador binario ('=', '<', '>', etc.) ",
+                "type": "string",
+                "default": ""
+            },
+            "render_template_prefix": {
+                "title": "Prefijo de plantilla de texto a mostrar",
+                "type": ["string", "null"]
+            },
+            "render_template": {
+                "title": "Plantilla de texto a mostrar",
+                "type": ["string", "null"]
+            },
+            "color": {
+                "title": "Color de método",
+                "type": ["string", "null"],
+                "enum": [null, "white", "green", "yellow", "red"]
+            }
+        }
+    },
+    "uiSchema": {
+        "ui:ObjectFieldTemplate": "ArrayObjectGrid",
+        "code": {
+            "columnSize": "4"
+        },
+
+        "name": {
+            "columnSize": "4"
+        },
+
+        "complexity_level": {
+            "columnSize": "4"
+        },
+        "description": {
+            "columnSize": "12",
+            "ui:widget": "textarea",
+            "ui:options": {
+                "rows": 8
+            }
+        },
+        "is_active": {
+            "columnSize": "12"
+        },
+        "applies_to_primitive_type": {
+            "columnSize": "6"
+        },
+        "applies_to_object_code": {
+            "ui:widget": "SelectAsyncWidget",
+            "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+            "columnSize": "6"
+        },
+        "applies_to_item_primitive_type": {
+            "columnSize": "6"
+        },
+        "applies_to_item_object_code": {
+            "ui:widget": "SelectAsyncWidget",
+            "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+            "columnSize": "6"
+        },
+        "return_primitive_type": {
+            "columnSize": "6"
+        },
+        "return_object_code": {
+            "ui:widget": "SelectAsyncWidget",
+            "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+            "columnSize": "6"
+        },
+        "return_item_primitive_type": {
+            "columnSize": "6"
+        },
+        "return_item_object_code": {
+            "ui:widget": "SelectAsyncWidget",
+            "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+            "columnSize": "6"
+        },
+        "return_remote_values": {
+            "columnSize": "6"
+        },
+        "return_widget": {
+            "columnSize": "6"
+        },
+        "source_code": {
+            "ui:widget": "python",
+            "columnSize": "12"
+        },
+        "source_code_for_binary_operator": {
+            "columnSize": "12"
+        },
+        "render_template_prefix": {
+            "columnSize": "4"
+        },
+        "render_template": {
+            "columnSize": "4"
+        },
+        "color": {
+            "columnSize": "4"
+        },
+        "params": {
+            "items": {
+                "ui:ObjectFieldTemplate": "ArrayObjectGrid",
+                "pos": {
+                    "columnSize": "4"
+                },
+                "code": {
+                    "columnSize": "4"
+                },
+                "name": {
+                    "columnSize": "4"
+                },
+                "param_primitive_type": {
+                    "columnSize": "6"
+                },
+                "param_object_code": {
+                    "ui:widget": "SelectAsyncWidget",
+                    "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+                    "columnSize": "6"
+                },
+                "param_item_primitive_type": {
+                    "columnSize": "6"
+                },
+                "param_item_object_code": {
+                    "ui:widget": "SelectAsyncWidget",
+                    "ui:remoteValues": "/api/admin/model_select_values?model=object_definition",
+                    "columnSize": "6"
+                },
+                "remote_values": {
+                    "columnSize": "6"
+                },
+                "widget": {
+                    "columnSize": "6"
+                },
+                "is_optional": {
+                    "columnSize": "12"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,453 @@
+import React, { useState, useEffect } from "react";
+import T from "i18n-react";
+
+// import MaterialTable from "material-table";
+import BaseTable from "react-base-table";
+import "react-base-table/styles.css";
+
+import { makeStyles } from "@material-ui/styles";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import GetAppIcon from "@material-ui/icons/GetApp";
+
+import toaster from "../../../../services/toaster";
+import ModelOverwriteDialog from "./ModelOverwriteDialog";
+import Loading from "../../../../components/common/Loading";
+
+const useStyles = makeStyles((theme) => ({
+  tableWrapper: {
+    padding: 15,
+  },
+  paper: {
+    padding: 20,
+    //     margin: 20
+  },
+}));
+
+const columnLayoutVersion = 1;
+const initializeColumnLayoutInfo = (modelInfo, columnLayout) => {
+  const filterAndSearch = (searchText, value, valueIsArray = false) => {
+    const ignoreAccents = (str) => {
+      return (str || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    };
+    const findText = (searchText, value, valueIsArray) => {
+      let find = false;
+      const _searchText = ignoreAccents(searchText);
+      if (valueIsArray) {
+        value.forEach((val) => {
+          const _val = ignoreAccents(val);
+          if (_val.indexOf(_searchText) >= 0) {
+            find = true;
+            return;
+          }
+        });
+      } else {
+        const _value = ignoreAccents(value);
+        find = _value.indexOf(_searchText) >= 0;
+      }
+      return find;
+    };
+
+    let find = true;
+    if (searchText) {
+      if (typeof searchText === "string") {
+        find = findText(searchText, value, valueIsArray);
+      } else if (searchText.length > 0) {
+        searchText.forEach((text) => {
+          find = findText(searchText, value, valueIsArray);
+          if (find) {
+            return;
+          }
+        });
+      }
+    }
+    return find;
+  };
+
+  const entries = Object.entries(columnLayout[modelInfo.code]);
+  const newEntries = entries.map(([field, props]) => {
+    let lookupEnumNames = undefined;
+    let isBoolean = false;
+    let isString = false;
+    const prop = modelInfo.schema.properties[field];
+    if (prop) {
+      if (prop.enum && prop.enumNames) {
+        lookupEnumNames = {};
+        prop.enum.forEach(
+          (value, i) => (lookupEnumNames[value] = prop.enumNames[i])
+        );
+      }
+      isBoolean = prop.type === "boolean";
+      isString = prop.type === "string";
+    }
+    return [
+      field,
+      {
+        ...props,
+        disableClick: false,
+        ...(lookupEnumNames && { lookup: lookupEnumNames }),
+        ...(isBoolean && { type: "boolean" }),
+        ...(isString && {
+          customFilterAndSearch: (searchText, rowData) =>
+            filterAndSearch(searchText, rowData[field]),
+        }),
+      },
+    ];
+  });
+
+  const result = {
+    ...columnLayout,
+    [modelInfo.code]: Object.fromEntries(newEntries),
+  };
+  return result;
+};
+
+export default function ModelTable({
+  initialColumnLayout,
+  modelInfo,
+  modelData,
+  onAddData,
+  onChangeColumn,
+  onClose,
+  onDeleteData,
+  onEditData,
+  onSaveData,
+}) {
+  const classes = useStyles();
+
+  const calculateColumnLayout = (_initialColumnLayout, _modelInfo) => {
+    let columnLayout;
+    if (
+      _initialColumnLayout &&
+      _initialColumnLayout.version === columnLayoutVersion &&
+      _initialColumnLayout[_modelInfo.code]
+    ) {
+      columnLayout = _initialColumnLayout;
+    } else {
+      const modelColumnLayout = _modelInfo.listFields.reduce(
+        (result, f) => ({ ...result, [f.field]: f }),
+        {}
+      );
+
+      columnLayout = {
+        ..._initialColumnLayout,
+        version: columnLayoutVersion,
+        [_modelInfo.code]: modelColumnLayout,
+      };
+    }
+
+    columnLayout = initializeColumnLayoutInfo(_modelInfo, columnLayout);
+    return columnLayout;
+  };
+
+  const [importItems, setImportItems] = useState();
+  const [columnLayout, setColumnLayout] = useState(
+    calculateColumnLayout(initialColumnLayout, modelInfo)
+  );
+
+  useEffect(() => {
+    setColumnLayout(calculateColumnLayout(null, modelInfo));
+  }, [modelInfo]);
+
+  const handleOnChangeColumn = (columnLayout) => {
+    const { version, [modelInfo.code]: modelColumns, ...rest } = columnLayout;
+    const entries = Object.entries(modelColumns);
+    const newEntries = entries.map(([key, props]) => {
+      const {
+        field,
+        title,
+        defaultFilter,
+        grouping,
+        hidden,
+        removable,
+        width,
+      } = props;
+
+      return [
+        key,
+        {
+          field,
+          title,
+          defaultFilter,
+          grouping,
+          hidden,
+          removable,
+          width,
+        },
+      ];
+    });
+
+    const result = {
+      version,
+      ...rest,
+      [modelInfo.code]: Object.fromEntries(newEntries),
+    };
+    onChangeColumn(result);
+  };
+
+  const handleOnChangeColumnHidden = (column, hidden) => {
+    const columns = {
+      ...columnLayout,
+      [modelInfo.code]: {
+        ...columnLayout[modelInfo.code],
+        [column.field]: {
+          ...columnLayout[modelInfo.code][column.field],
+          hidden,
+        },
+      },
+    };
+
+    setColumnLayout(columns);
+    handleOnChangeColumn(columns);
+  };
+
+  const handleOnColumnDragged = (sourceIndex, destinationIndex) => {
+    const findIndexReal = (list, index) => {
+      let indexReal = -1;
+      for (let i = 0; i < list.length; i++) {
+        const [, item] = list[i];
+        if (item.hidden) {
+        } else {
+          indexReal = indexReal + 1;
+        }
+        if (indexReal === index) {
+          return i;
+        }
+      }
+      return -1;
+    };
+
+    let entries = Object.entries(columnLayout[modelInfo.code]);
+    const srcIdxReal = findIndexReal(entries, sourceIndex);
+    const dstIdxReal = findIndexReal(entries, destinationIndex);
+    const source = entries.splice(srcIdxReal, 1)[0];
+    entries.splice(dstIdxReal, 0, source);
+
+    const columns = {
+      ...columnLayout,
+      [modelInfo.code]: Object.fromEntries(entries),
+    };
+
+    setColumnLayout(columns);
+    handleOnChangeColumn(columns);
+  };
+
+  const handleOnFilterChange = (filters) => {
+    const entries = Object.entries(columnLayout[modelInfo.code]);
+    const newEntries = entries.map(([key, props]) => {
+      const { defaultFilter, ...rest } = props;
+      const filter = filters.find((f) => f.column.field === key);
+      return [
+        key,
+        {
+          ...rest,
+          ...(filter && {
+            defaultFilter: filter.value,
+          }),
+        },
+      ];
+    });
+
+    const columns = {
+      ...columnLayout,
+      [modelInfo.code]: Object.fromEntries(newEntries),
+    };
+
+    setColumnLayout(columns);
+    handleOnChangeColumn(columns);
+  };
+
+  const handleOnRowClick = (event, rowData) => {
+    onEditData(rowData);
+  };
+
+  const handleOnDeleteModel = (row) => {
+    const msg = T.translate("configuration.do_you_want_to_delete_the_item");
+    if (window.confirm(`${msg} [${row.code}]`)) {
+      onDeleteData(row);
+    }
+  };
+
+  const handleOnDuplicateModel = (row) => {
+    const msg = T.translate("configuration.do_you_want_to_duplicate_the_item");
+    if (window.confirm(`${msg} [${row.code}]`)) {
+      const newItem = {
+        ...row,
+        id: null,
+        code: `${row.code}_CLONED`,
+        name_: `${row.name} CLONED`,
+      };
+      onSaveData(newItem);
+    }
+  };
+
+  const downloadJsonFile = (data, filename) => {
+    let filedata = JSON.stringify(data, null, 2);
+    const blob = new Blob([filedata], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = url;
+    link.click();
+  };
+
+  const uploadJsonFile = () => {
+    return new Promise((resolve, reject) => {
+      const uploadFile = (file) => {
+        try {
+          var reader = new FileReader();
+          reader.onload = (readerEvent) => {
+            var content = readerEvent.target.result; // this is the content!
+            var data = JSON.parse(content);
+            resolve(data);
+          };
+          reader.readAsText(file, "UTF-8");
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = (e) => uploadFile(e.target.files[0]);
+      input.click();
+    });
+  };
+
+  const handleOnDownloadModel = (row) => {
+    const data = [row];
+    downloadJsonFile(data, `${modelInfo.name}-${row.code}.json`);
+  };
+
+  const handleDownloadTable = (data) => {
+    downloadJsonFile(data, `${modelInfo.name}.json`);
+  };
+
+  const handleUploadTable = () => {
+    uploadJsonFile()
+      .then((json) => setImportItems(json))
+      .catch((error) =>
+        toaster.error(T.translate("ModelTable.error_loading_json_file"))
+      );
+  };
+
+  const handleOnCheckAction = (checked) => {
+    const items = importItems;
+    setImportItems(null);
+    const promises = items.map((item) =>
+      onSaveData({ ...item, id: null }, checked)
+    );
+    Promise.all(promises).then((values) => {
+      toaster.info(T.translate("ModelTable.end_of_loading_json_file"));
+    });
+  };
+
+  let sortedModelData = modelData.sort((a, b) => {
+    const value = a.code === b.code ? 0 : a.code < b.code ? -1 : 1;
+    return value;
+  });
+  if (!(modelInfo.code in columnLayout)) {
+    return <Loading />;
+  }
+  const columns = Object.values(columnLayout[modelInfo.code]);
+  return (
+    <div className={classes.tableWrapper}>
+      {importItems && (
+        <ModelOverwriteDialog
+          open={!!importItems}
+          onCheckAction={handleOnCheckAction}
+          onClose={() => setImportItems(null)}
+        />
+      )}
+      <IconButton
+        aria-label="close"
+        className={classes.close}
+        onClick={onClose}
+      >
+        <ArrowBackIcon />
+      </IconButton>
+      <MaterialTable
+        title={modelInfo.name}
+        columns={columns}
+        data={sortedModelData}
+        onChangeColumnHidden={handleOnChangeColumnHidden}
+        onColumnDragged={handleOnColumnDragged}
+        onFilterChange={handleOnFilterChange}
+        onRowClick={handleOnRowClick}
+        // onSearchChange={(searchText) =>
+        // }
+        options={{
+          actionsColumnIndex: -1,
+          columnsButton: true,
+          filtering: true,
+          grouping: true,
+          padding: "dense",
+          pageSize: 15,
+          pageSizeOptions: [10, 15, 20, 100],
+          exportAllData: true,
+          exportButton: true,
+          exportCsv: (columns, data) => handleDownloadTable(data),
+        }}
+        actions={[
+          {
+            icon: "publish",
+            tooltip: T.translate("ModelTable.upload_json_file"),
+            isFreeAction: true,
+            onClick: (e) => handleUploadTable(),
+          },
+          {
+            icon: "add",
+            tooltip: T.translate("ModelTable.add_item"),
+            isFreeAction: true,
+            onClick: (e) => onAddData(e),
+          },
+          {
+            icon: "library_add",
+            tooltip: T.translate("ModelTable.duplicate_item"),
+            iconProps: {
+              color: "action",
+            },
+            onClick: (e, rowData) => handleOnDuplicateModel(rowData),
+          },
+          {
+            icon: "get_app",
+            tooltip: T.translate("ModelTable.download_json_item"),
+            iconProps: {
+              color: "action",
+            },
+            onClick: (e, rowData) => handleOnDownloadModel(rowData),
+          },
+          {
+            icon: "delete",
+            tooltip: T.translate("ModelTable.delete_item"),
+            iconProps: {
+              color: "action",
+            },
+            onClick: (e, rowData) => handleOnDeleteModel(rowData),
+          },
+        ]}
+        icons={{
+          Export: () => <GetAppIcon />,
+        }}
+        localization={{
+          grouping: {
+            placeholder: T.translate("ModelTable.grouping_placeholder"),
+            groupedBy: T.translate("ModelTable.grouping_groupedBy"),
+          },
+          header: {
+            actions: T.translate("ModelTable.actions"),
+          },
+          toolbar: {
+            exportName: T.translate("ModelTable.export_as_json"),
+          },
+        }}
+      />
+    </div>
+  );
+}

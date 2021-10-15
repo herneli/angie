@@ -1,0 +1,31 @@
+{
+    "code": "method",
+    "name": "Método",
+    "table": "script_config",
+    "documentType": "method",
+    "listFields": [
+        {
+            "title": "Código",
+            "field": "code"
+        },
+        {
+            "title": "Nombre",
+            "field": "name"
+        }
+    ],
+    "schema": {
+        "type": "object",
+        "required": ["code", "name"],
+        "properties": {
+            "code": {
+                "title": "Código",
+                "type": "string"
+            },
+            "name": {
+                "title": "Nombre",
+                "type": "string"
+            }
+        }
+    },
+    "uiSchema": {}
+}

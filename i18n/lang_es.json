@@ -65,5 +65,28 @@
     "login_ldap_user": "Usuario LDAP",
     "login_logoutTitle": "Cierre de Sesión",
     "login_logoutMessage": "¿Esta seguro de que desea salir?",
-    "login_change_center": "Cambiar centro"
+    "login_change_center": "Cambiar centro",
+    "configuration": {
+        "actions": "Acciones",
+        "add_item": "Añadir elemento",
+        "cancel": "Cancelar",
+        "close": "Cerrar",
+        "delete_item": "Eliminar elemento",
+        "do_you_want_to_delete_the_item": "¿Quiere eliminar el elemento?",
+        "do_you_want_to_duplicate_the_item": "¿Quiere duplicar el elemento?",
+        "download_json_item": "Exporta elemento como JSON",
+        "duplicate_item": "Duplicar elemento",
+        "edit_item": "Editar elemento",
+        "end_of_loading_json_file": "El fichero Json ha sido cargado",
+        "error_loading_json_file": "Error cargando el fichero JSON",
+        "export_as_json": "Exportar como JSON",
+        "grouping_placeholder": "Arrastre las cabeceras para agrupar",
+        "grouping_groupedBy": "Agrupado por",
+        "no_overwrite": "No sobreescribir",
+        "overwrite": "Sobreescribir",
+        "save": "Guardar",
+        "text": "Si desea sobreescribir los datos, introduzca el siguiente texto y pulse Sobreescribir",
+        "confirm": "Confirmación",
+        "upload_json_file": "Cargar fichero JSON"
+    }
 }
