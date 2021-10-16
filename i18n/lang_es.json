@@ -88,5 +88,9 @@
         "text": "Si desea sobreescribir los datos, introduzca el siguiente texto y pulse Sobreescribir",
         "confirm": "Confirmación",
         "upload_json_file": "Cargar fichero JSON"
+    },
+    "visual_script": {
+        "add_expression": "Añadir expresión",
+        "execute_following_expressions": "Ejecutar las siguientes expresiones"
     }
 }

@@ -34,7 +34,6 @@ export default function ModelTable({
     modelInfo,
     modelData,
     onAddData,
-    onClose,
     onDeleteData,
     onEditData,
     onSaveData,
@@ -186,16 +185,16 @@ export default function ModelTable({
             );
     };
 
-    const handleOnCheckAction = (checked) => {
-        const items = importItems;
-        setImportItems(null);
-        const promises = items.map((item) =>
-            onSaveData({ ...item, id: null }, checked)
-        );
-        Promise.all(promises).then((values) => {
-            message.info(T.translate("configuration.end_of_loading_json_file"));
-        });
-    };
+    // const handleOnCheckAction = (checked) => {
+    //     const items = importItems;
+    //     setImportItems(null);
+    //     const promises = items.map((item) =>
+    //         onSaveData({ ...item, id: null }, checked)
+    //     );
+    //     Promise.all(promises).then((values) => {
+    //         message.info(T.translate("configuration.end_of_loading_json_file"));
+    //     });
+    // };
 
     const filterData = () => {
         return modelData.filter((item) => {

@@ -87,7 +87,7 @@ exports.up = async function (knex) {
             table.increments();
             table.string("code").notNullable().unique();
             table.string("name").notNullable();
-            table.jsonb("data");
+            table.json("data");
         });
     }
 

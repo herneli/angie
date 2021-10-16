@@ -1,0 +1,200 @@
+{
+    "code": "script_object",
+    "name": "Definición de objetos",
+    "table": "script_config",
+    "documentType": "object",
+    "listFields": [
+        {
+            "title": "Código",
+            "field": "code"
+        },
+        {
+            "title": "Nombre",
+            "field": "name"
+        },
+        {
+            "title": "Modificado en",
+            "field": "modified_at"
+        }
+    ],
+    "schema": {
+        "type": "object",
+        "required": ["code", "name"],
+        "properties": {
+            "code": { "title": "Código", "type": "string" },
+            "name": { "title": "Nombre", "type": "string" },
+            "fields": {
+                "title": "Campos",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "code",
+                        "name",
+                        "complexity_level",
+                        "primitive_type"
+                    ],
+                    "properties": {
+                        "code": {
+                            "title": "Código",
+                            "type": "string"
+                        },
+                        "name": { "title": "Nombre", "type": "string" },
+                        "complexity_level": {
+                            "title": "Nivel",
+                            "type": "number",
+                            "enum": [1, 4, 7, 10],
+                            "enumNames": [
+                                "Básico",
+                                "Estándar",
+                                "Avanzado",
+                                "Experto"
+                            ]
+                        },
+                        "required": {
+                            "title": "Obligatorio",
+                            "type": "boolean"
+                        },
+                        "type": {
+                            "$ref": "#/definitions/type",
+                            "title": "Tipo"
+                        },
+
+                        "widget": {
+                            "title": "Input editor",
+                            "type": ["string", "null"]
+                        }
+                    }
+                }
+            }
+        },
+        "definitions": {
+            "type": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Tipo",
+                        "enum": [
+                            "array",
+                            "boolean",
+                            "date",
+                            "number",
+                            "integer",
+                            "object",
+                            "string"
+                        ],
+                        "enumNames": [
+                            "Lista",
+                            "Boleano",
+                            "Fecha",
+                            "Decimal",
+                            "Entero",
+                            "Objeto",
+                            "String"
+                        ],
+                        "default": ""
+                    }
+                },
+                "dependencies": {
+                    "type": {
+                        "oneOf": [
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": [
+                                            "boolean",
+                                            "date",
+                                            "number",
+                                            "integer",
+                                            "string"
+                                        ]
+                                    },
+                                    "remote_values": {
+                                        "title": "Valores remotos",
+                                        "type": ["string", "null"]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["object"]
+                                    },
+                                    "objectCode": {
+                                        "type": "string",
+                                        "title": "Código de objeto"
+                                    }
+                                },
+                                "remote_values": {
+                                    "title": "Valores remotos",
+                                    "type": ["string", "null"]
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["array"]
+                                    },
+                                    "items": {
+                                        "$ref": "#/definitions/type"
+                                    }
+                                },
+                                "remote_values": {
+                                    "title": "Valores remotos",
+                                    "type": ["string", "null"]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "uiSchema": {
+        "code": {
+            "columnSize": "6"
+        },
+        "name": {
+            "columnSize": "6"
+        },
+        "fields": {
+            "items": {
+                "code": {
+                    "columnSize": "3"
+                },
+                "name": {
+                    "columnSize": "3"
+                },
+                "complexity_level": {
+                    "columnSize": "3"
+                },
+                "required": {
+                    "columnSize": "3"
+                },
+                "primitive_type": {
+                    "columnSize": "6"
+                },
+                "primitive_object_code": {
+                    "ui:widget": "SelectRemoteWidget",
+                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                    "columnSize": "6"
+                },
+                "item_primitive_type": {
+                    "columnSize": "6"
+                },
+                "item_object_code": {
+                    "ui:widget": "SelectRemoteWidget",
+                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                    "columnSize": "6"
+                },
+                "remote_values": {
+                    "columnSize": "6"
+                },
+                "widget": {
+                    "columnSize": "6"
+                }
+            }
+        }
+    }
+}

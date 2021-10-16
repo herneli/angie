@@ -39,14 +39,18 @@ const AntdArrayFieldTemplate = ({
             onReorderClick: items[i].onReorderClick,
             onDropIndexClick: items[i].onDropIndexClick,
         }));
-        columns = Object.entries(schema.items.properties).map(
-            ([key, value], i) => ({
-                title: value.title || key,
-                dataIndex: key,
-                key,
-                // fixed: i === 0 && "left",
-            })
-        );
+        if (!uiSchema["ui:columns"]) {
+            columns = Object.entries(schema.items.properties).map(
+                ([key, value], i) => ({
+                    title: value.title || key,
+                    dataIndex: key,
+                    key,
+                    // fixed: i === 0 && "left",
+                })
+            );
+        } else {
+            columns = uiSchema["ui:columns"];
+        }
     } else {
         expanded = false;
         dataSource = formData.map((element, i) => ({
@@ -106,7 +110,7 @@ const AntdArrayFieldTemplate = ({
     const dragProps = {
         onDragEnd(fromIndex, toIndex) {
             if (fromIndex !== toIndex) {
-                dataSource[fromIndex - 1].onReorderClick(fromIndex, toIndex)();
+                dataSource[fromIndex].onReorderClick(fromIndex, toIndex)();
             }
         },
         handleSelector: "svg",

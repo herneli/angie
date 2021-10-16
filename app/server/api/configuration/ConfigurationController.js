@@ -1,6 +1,5 @@
 import { BaseController, JsonResponse } from "lisco";
 import { ConfigurationService } from "./ConfigurationService";
-
 export class ConfigurationController extends BaseController {
     configure() {
         this.router.get("/configuration/model/:code", (req, res, next) => {
@@ -82,7 +81,7 @@ export class ConfigurationController extends BaseController {
     deleteModelData(request, response) {
         let service = new ConfigurationService();
         service
-            .getModelData(request.params.code, request.params.id)
+            .deleteModelData(request.params.code, request.params.id)
             .then((model) => response.json(new JsonResponse(true, "done")));
     }
 }

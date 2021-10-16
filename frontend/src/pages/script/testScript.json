@@ -1,0 +1,111 @@
+{
+    "mainStatement": {
+        "id": "1",
+        "type": "block",
+        "statements": [
+            {
+                "id": 2,
+                "type": "expressionGroup",
+                "name": "Inicialización",
+                "expressions": [
+                    [
+                        {
+                            "memberType": "property",
+                            "code": "var1",
+                            "name": "Variable 1"
+                        },
+                        {
+                            "memberType": "method",
+                            "code": "substring",
+                            "name": "Substring",
+                            "renderTemplate": "Subcadena de {{from}} a {{to}}",
+                            "params": {
+                                "from": 1,
+                                "to": {
+                                    "$exp": [
+                                        {
+                                            "memberType": "property",
+                                            "code": "var2",
+                                            "name": "Variable 2"
+                                        }
+                                    ]
+                                }
+                            },
+                            "paramDefinitions": [
+                                {
+                                    "position": 1,
+                                    "code": "from",
+                                    "name": "Valor desde",
+                                    "type": "integer"
+                                },
+                                {
+                                    "position": 2,
+                                    "code": "to",
+                                    "name": "Valor hasta",
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        {
+                            "memberType": "method",
+                            "code": "is_equal",
+                            "name": "=",
+                            "params": {
+                                "value": "TEST"
+                            },
+                            "paramDefinitions": [
+                                {
+                                    "position": 1,
+                                    "code": "value",
+                                    "name": "Valor",
+                                    "type": "string"
+                                }
+                            ],
+                            "renderOperator": "=",
+                            "renderTemplate": "{{value}}"
+                        }
+                    ],
+                    [
+                        {
+                            "memberType": "property",
+                            "code": "var1",
+                            "name": "Variable 1"
+                        },
+                        {
+                            "memberType": "method",
+                            "code": "is_equal",
+                            "name": "=",
+                            "params": {
+                                "value": {
+                                    "$exp": [
+                                        {
+                                            "memberType": "property",
+                                            "code": "var2",
+                                            "name": "Variable 2"
+                                        }
+                                    ]
+                                }
+                            },
+                            "paramDefinitions": [
+                                {
+                                    "position": 1,
+                                    "code": "value",
+                                    "name": "Valor",
+                                    "type": "string"
+                                }
+                            ],
+                            "renderOperator": "=",
+                            "renderTemplate": "{{value}}"
+                        }
+                    ]
+                ]
+            },
+            {
+                "id": "3",
+                "type": "expressionGroup",
+                "name": "Mapeos",
+                "expressions": []
+            }
+        ]
+    }
+}

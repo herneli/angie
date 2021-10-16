@@ -124,7 +124,6 @@ class ModelAdmin extends Component {
                 modelData={Object.values(this.state.modelData)}
                 onAddData={this.addCreateData}
                 onChangeColumn={this.onChangeColumn}
-                onClose={this.handleOnClose}
                 onDeleteData={this.handleOnDelete}
                 onEditData={this.setEditData}
                 onSaveData={this.handleOnSave}

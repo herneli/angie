@@ -1,0 +1,435 @@
+{
+    "code": "method",
+    "name": "Método",
+    "table": "script_config",
+    "documentType": "method",
+    "listFields": [
+        {
+            "title": "Código",
+            "field": "code"
+        },
+        {
+            "title": "Nombre",
+            "field": "name"
+        },
+        {
+            "title": "Parent type",
+            "field": ["parent_type", "type"]
+        },
+        {
+            "title": "Habilitado",
+            "field": "is_active"
+        },
+        {
+            "title": "Nivel",
+            "field": "complexity_level"
+        },
+        {
+            "title": "Modificado en",
+            "field": "modified_at"
+        }
+    ],
+    "schema": {
+        "type": "object",
+        "required": [
+            "code",
+            "name",
+            "complexity_level",
+            "parent_type",
+            "return_type"
+        ],
+        "properties": {
+            "code": {
+                "title": "Código",
+                "type": "string"
+            },
+            "name": {
+                "title": "Nombre",
+                "type": "string"
+            },
+            "complexity_level": {
+                "title": "Nivel",
+                "type": "number",
+                "enum": [1, 4, 7, 10],
+                "enumNames": ["Básico", "Estándar", "Avanzado", "Experto"]
+            },
+            "language": {
+                "title": "Lenguaje",
+                "type": "string",
+                "enum": ["js", "python", "groovy"],
+                "enumNames": ["Javascript", "Python", "Groovy"]
+            },
+            "description": {
+                "title": "Descripción",
+                "type": "string",
+                "default": ""
+            },
+            "is_active": {
+                "title": "Habilitado",
+                "type": "boolean",
+                "default": true
+            },
+            "parent_type": {
+                "$ref": "#/definitions/typeParent",
+                "title": "Tipo base"
+            },
+
+            "return_type": {
+                "$ref": "#/definitions/typeExtended",
+                "title": "Tipo devuelto"
+            },
+
+            "return_remote_values": {
+                "title": "Valores remotos",
+                "type": ["string", "null"]
+            },
+            "return_widget": {
+                "title": "Return input editor",
+                "type": ["string", "null"]
+            },
+            "params": {
+                "title": "Parámetros",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["pos", "code", "name", "type"],
+                    "properties": {
+                        "code": {
+                            "title": "Código",
+                            "type": "string"
+                        },
+                        "name": {
+                            "title": "Nombre",
+                            "type": "string"
+                        },
+                        "type": {
+                            "$ref": "#/definitions/typeExtended",
+                            "title": "Tipo"
+                        },
+                        "remote_values": {
+                            "title": "remote_values",
+                            "type": ["string", "null"]
+                        },
+                        "widget": {
+                            "title": "Input editor",
+                            "type": ["string", "null"]
+                        },
+                        "is_optional": {
+                            "title": "Opcional",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                }
+            },
+            "source_code": {
+                "title": "Código fuente",
+                "type": "string"
+            },
+            "source_code_for_binary_operator": {
+                "title": "Código fuente si es un operador binario ('=', '<', '>', etc.) ",
+                "type": "string",
+                "default": ""
+            },
+            "render_operator": {
+                "title": "Texto a mostrar como operador antes de la plantilla",
+                "type": ["string", "null"]
+            },
+            "render_template": {
+                "title": "Plantilla de texto a mostrar",
+                "type": ["string", "null"]
+            },
+            "color": {
+                "title": "Color de método",
+                "type": ["string", "null"],
+                "enum": [null, "white", "green", "yellow", "red"]
+            }
+        },
+        "definitions": {
+            "typeParent": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Tipo",
+                        "enum": [
+                            "$all",
+                            "array",
+                            "boolean",
+                            "date",
+                            "number",
+                            "integer",
+                            "object",
+                            "string"
+                        ],
+                        "enumNames": [
+                            "Cualquier tipo",
+                            "Lista",
+                            "Boleano",
+                            "Fecha",
+                            "Decimal",
+                            "Entero",
+                            "Objeto",
+                            "String"
+                        ],
+                        "default": ""
+                    }
+                },
+                "dependencies": {
+                    "type": {
+                        "oneOf": [
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": [
+                                            "$all",
+                                            "boolean",
+                                            "date",
+                                            "number",
+                                            "integer",
+                                            "string"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["object"]
+                                    },
+                                    "objectCode": {
+                                        "type": "string",
+                                        "title": "Código de objeto"
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["array"]
+                                    },
+                                    "items": {
+                                        "$ref": "#/definitions/typeParent"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "typeExtended": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Tipo",
+                        "enum": [
+                            "$self",
+                            "$item",
+                            "$all",
+                            "array",
+                            "boolean",
+                            "date",
+                            "number",
+                            "integer",
+                            "object",
+                            "string"
+                        ],
+                        "enumNames": [
+                            "$self",
+                            "$item",
+                            "Cualquier tipo",
+                            "Lista",
+                            "Boleano",
+                            "Fecha",
+                            "Decimal",
+                            "Entero",
+                            "Objeto",
+                            "String"
+                        ],
+                        "default": ""
+                    }
+                },
+                "dependencies": {
+                    "type": {
+                        "oneOf": [
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["$self", "$item"]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": [
+                                            "$all",
+                                            "boolean",
+                                            "date",
+                                            "number",
+                                            "integer",
+                                            "string"
+                                        ]
+                                    },
+                                    "remote_values": {
+                                        "title": "Valores remotos",
+                                        "type": ["string", "null"]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["object"]
+                                    },
+                                    "objectCode": {
+                                        "type": "string",
+                                        "title": "Código de objeto"
+                                    },
+                                    "remote_values": {
+                                        "title": "Valores remotos",
+                                        "type": ["string", "null"]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "enum": ["array"]
+                                    },
+                                    "items": {
+                                        "$ref": "#/definitions/typeExtended"
+                                    },
+                                    "remote_values": {
+                                        "title": "Valores remotos",
+                                        "type": ["string", "null"]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "uiSchema": {
+        "code": {
+            "ui:columnSize": "3"
+        },
+
+        "name": {
+            "ui:columnSize": "3"
+        },
+
+        "complexity_level": {
+            "ui:columnSize": "3"
+        },
+        "language": {
+            "ui:columnSize": "3"
+        },
+        "description": {
+            "ui:columnSize": "12",
+            "ui:widget": "textarea",
+            "ui:options": {
+                "rows": 8
+            }
+        },
+        "is_active": {
+            "ui:columnSize": "12"
+        },
+        "parent_type": {
+            "ui:columnSize": "6",
+            "ui:withBorder": true,
+            "objectCode": {
+                "ui:widget": "SelectRemoteWidget",
+                "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+            },
+            "items": {
+                "ui:withBorder": true,
+                "objectCode": {
+                    "ui:widget": "SelectRemoteWidget",
+                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                }
+            }
+        },
+        "return_type": {
+            "ui:columnSize": "6",
+            "ui:withBorder": true,
+            "objectCode": {
+                "ui:widget": "SelectRemoteWidget",
+                "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+            },
+            "items": {
+                "ui:withBorder": true,
+                "objectCode": {
+                    "ui:widget": "SelectRemoteWidget",
+                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                }
+            }
+        },
+
+        "return_widget": {
+            "ui:columnSize": "6"
+        },
+        "source_code": {
+            "ui:widget": "textarea",
+            "ui:options": {
+                "rows": 8
+            },
+            "ui:columnSize": "12"
+        },
+        "source_code_for_binary_operator": {
+            "ui:columnSize": "12"
+        },
+        "render_operator": {
+            "ui:columnSize": "4"
+        },
+        "render_template": {
+            "ui:columnSize": "4"
+        },
+        "color": {
+            "ui:columnSize": "4"
+        },
+        "params": {
+            "ui:columns": [
+                { "title": "Código", "dataIndex": "code" },
+                { "title": "Nombre", "dataIndex": "name" },
+                { "title": "Tipo", "dataIndex": ["type", "type"] },
+                { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
+            ],
+            "items": {
+                "code": {
+                    "ui:columnSize": "4"
+                },
+                "name": {
+                    "ui:columnSize": "4"
+                },
+                "type": {
+                    "ui:columnSize": "12",
+                    "ui:withBorder": true,
+                    "objectCode": {
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    },
+                    "items": {
+                        "ui:withBorder": true,
+                        "objectCode": {
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                        }
+                    }
+                },
+                "remote_values": {
+                    "ui:columnSize": "6"
+                },
+                "widget": {
+                    "ui:columnSize": "6"
+                },
+                "is_optional": {
+                    "ui:columnSize": "12"
+                }
+            }
+        }
+    }
+}

@@ -4,9 +4,9 @@ import Form from "@rjsf/antd";
 import { Button, Card, Row, Space } from "antd";
 import T from "i18n-react";
 import { useEffect } from "react";
-import AntdArrayFieldTemplate from "../../../common/rjsf/AntdArrayFieldTemplate";
-import SchemaField from "@rjsf/core/lib/components/fields/SchemaField";
-import AntdObjectFieldTemplate from "../../../common/rjsf/AntdObjectFieldTemplate";
+import AntdArrayFieldTemplate from "../../../components/rjsf/AntdArrayFieldTemplate";
+import AntdObjectFieldTemplate from "../../../components/rjsf/AntdObjectFieldTemplate";
+import SelectRemoteWidget from "../../../components/rjsf/SelectRemoteWidget";
 
 const useStyles = createUseStyles({
     tableWrapper: {
@@ -28,7 +28,6 @@ export default function ModelEditor({
     schema,
     uiSchema,
     onCancel,
-    onClose,
     onSave,
 }) {
     const classes = useStyles();
@@ -42,17 +41,11 @@ export default function ModelEditor({
 
     return (
         <div className={classes.tableWrapper}>
-            <Button
-                aria-label="close"
-                className={classes.close}
-                onClick={onClose}
-            >
-                Back
-            </Button>
             <Card className={classes.paper}>
                 <Form
                     ObjectFieldTemplate={AntdObjectFieldTemplate}
                     ArrayFieldTemplate={AntdArrayFieldTemplate}
+                    widgets={{ SelectRemoteWidget: SelectRemoteWidget }}
                     schema={schema}
                     uiSchema={uiSchema}
                     formData={data}

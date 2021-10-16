@@ -1,6 +1,6 @@
 import { message } from "antd";
 
-export default (reason) => {
+const errorHandler = (reason) => {
     if (
         reason.response &&
         reason.response.data &&
@@ -11,3 +11,5 @@ export default (reason) => {
         message.error("Internal Server Error");
     }
 };
+
+export default errorHandler;

@@ -1,6 +1,6 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useState } from "react";
-import { Menu } from "antd";
+import { Button, Menu } from "antd";
 import { Link } from "react-router-dom";
 import AuthorizedFunction from "../layout/AuthorizedFunction";
 
@@ -28,8 +28,14 @@ const AppMenu = () => {
                     <Menu.Item key="drag" icon={<BranchesOutlined />}>
                         <Link to="./drag">Drag </Link>
                     </Menu.Item>
-                    <Menu.Item key="config">
-                        <Link to="./config">Configuration </Link>
+                    <Menu.Item key="config_method">
+                        <Link to="./config_method">Métodos </Link>
+                    </Menu.Item>
+                    <Menu.Item key="config_object">
+                        <Link to="./config_object">Objetos</Link>
+                    </Menu.Item>
+                    <Menu.Item key="script">
+                        <Link to="./script">Script</Link>
                     </Menu.Item>
                 </>
             )}
@@ -39,10 +45,9 @@ const AppMenu = () => {
                     key="login"
                     className="rightFloated"
                     icon={<UserOutlined />}
+                    onClick={() => keycloak.login()}
                 >
-                    <a className="btn-link" onClick={() => keycloak.login()}>
-                        Login
-                    </a>
+                    Login
                 </Menu.Item>
             )}
 
@@ -51,10 +56,9 @@ const AppMenu = () => {
                     key="logout"
                     className="rightFloated"
                     icon={<UserOutlined />}
+                    onClick={() => keycloak.logout()}
                 >
-                    <a className="btn-link" onClick={() => keycloak.logout()}>
-                        Logout ({keycloak.tokenParsed.preferred_username})
-                    </a>
+                    Logout ({keycloak.tokenParsed.preferred_username})
                 </Menu.Item>
             )}
         </Menu>
