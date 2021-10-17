@@ -10,26 +10,33 @@
                 "expressions": [
                     [
                         {
+                            "memberType": "context",
+                            "code": "context",
+                            "name": "context",
+                            "type": {
+                                "type": "object",
+                                "objectCode": "context_test"
+                            }
+                        },
+                        {
                             "memberType": "property",
                             "code": "var1",
-                            "name": "Variable 1"
+                            "name": "Variable 1",
+                            "type": {
+                                "type": "string"
+                            }
                         },
                         {
                             "memberType": "method",
                             "code": "substring",
                             "name": "Substring",
                             "renderTemplate": "Subcadena de {{from}} a {{to}}",
+                            "type": {
+                                "type": "string"
+                            },
                             "params": {
                                 "from": 1,
-                                "to": {
-                                    "$exp": [
-                                        {
-                                            "memberType": "property",
-                                            "code": "var2",
-                                            "name": "Variable 2"
-                                        }
-                                    ]
-                                }
+                                "to": 2
                             },
                             "paramDefinitions": [
                                 {
@@ -64,47 +71,8 @@
                             "renderOperator": "=",
                             "renderTemplate": "{{value}}"
                         }
-                    ],
-                    [
-                        {
-                            "memberType": "property",
-                            "code": "var1",
-                            "name": "Variable 1"
-                        },
-                        {
-                            "memberType": "method",
-                            "code": "is_equal",
-                            "name": "=",
-                            "params": {
-                                "value": {
-                                    "$exp": [
-                                        {
-                                            "memberType": "property",
-                                            "code": "var2",
-                                            "name": "Variable 2"
-                                        }
-                                    ]
-                                }
-                            },
-                            "paramDefinitions": [
-                                {
-                                    "position": 1,
-                                    "code": "value",
-                                    "name": "Valor",
-                                    "type": "string"
-                                }
-                            ],
-                            "renderOperator": "=",
-                            "renderTemplate": "{{value}}"
-                        }
                     ]
                 ]
-            },
-            {
-                "id": "3",
-                "type": "expressionGroup",
-                "name": "Mapeos",
-                "expressions": []
             }
         ]
     }

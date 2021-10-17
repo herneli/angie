@@ -2,10 +2,32 @@ import { BaseKnexDao, KnexConnector } from "lisco";
 
 export class ScriptDao extends BaseKnexDao {
     tableName = "script_config";
-    getObjectMembers({ type, language }) {
+
+    getObjectData(type) {
         let knex = KnexConnector.connection;
 
-        let res = knex("script_config")
+        // Select properties
+        if (type.type === "object") {
+            let objectData = knex("script_config")
+                .where({
+                    document_type: "object",
+                    code: type.objectCode,
+                })
+                .first();
+            return objectData;
+        } else {
+            return Promise.resolve(null);
+        }
+    }
+
+    getMethods(type, language) {
+        let knex = KnexConnector.connection;
+
+        // Select properties
+        let objectData;
+
+        // Select methods
+        let methods = knex("script_config")
             .where({
                 document_type: "method",
             })
@@ -18,15 +40,13 @@ export class ScriptDao extends BaseKnexDao {
             ]);
 
         if (type.type === "object") {
-            res = res.whereRaw("data -> ? ->> ? = ?", [
+            methods = methods.whereRaw("data -> ? ->> ? = ?", [
                 "parent_type",
                 "objectCode",
                 type.objectCode,
             ]);
         }
 
-        console.log(res.toSQL().toNative());
-
-        return res;
+        return methods;
     }
 }

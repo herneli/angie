@@ -65,6 +65,14 @@ const styles = {
     editIcon: {
         color: "gray",
     },
+    memberSelectorWrapper: {
+        minWidth: "300px",
+        maxHeight: "300px",
+        overflow: "auto",
+    },
+    memberSelectorListItem: {
+        cursor: "pointer",
+    },
 };
 
 export default styles;

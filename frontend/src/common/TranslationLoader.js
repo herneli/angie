@@ -32,16 +32,16 @@ const TranslationLoader = {
             }
 
             T.setTexts(result.data.data, {
-                notFound: (key) => {
-                    if (
-                        key &&
-                        fallbackObj &&
-                        fallbackObj.data &&
-                        fallbackObj.data.data[0]
-                    ) {
-                        return fallbackObj.data.data[0].items[key];
-                    }
-                },
+                // notFound: (key) => {
+                //     if (
+                //         key &&
+                //         fallbackObj &&
+                //         fallbackObj.data &&
+                //         fallbackObj.data.data[0]
+                //     ) {
+                //         return fallbackObj.data.data[0].items[key];
+                //     }
+                // },
             });
             if (callback) callback();
         } catch (error) {

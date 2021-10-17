@@ -30,6 +30,6 @@ export class ScriptController extends BaseController {
         let service = new ScriptService();
         service
             .getObjectMembers(request.body)
-            .then((value) => response.json(new JsonResponse(true, value)));
+            .then((members) => response.json(new JsonResponse(true, members)));
     }
 }

@@ -6,7 +6,17 @@ export class ScriptService extends BaseService {
         super(ScriptDao);
     }
 
-    getObjectMembers(params) {
-        return this.dao.getObjectMembers(params);
+    getObjectMembers({ type, language }) {
+        const objectData = this.dao.getObjectData(type);
+        const methods = this.dao.getMethods(type, language);
+
+        return Promise.all([objectData, methods]).then((values) => {
+            let properties = values[0].data.properties;
+
+            let methods = values[1].map((method) => {
+                return method.data;
+            });
+            return { properties, methods };
+        });
     }
 }

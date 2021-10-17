@@ -74,7 +74,7 @@
                 "title": "Tipo base"
             },
 
-            "return_type": {
+            "type": {
                 "$ref": "#/definitions/typeExtended",
                 "title": "Tipo devuelto"
             },
@@ -353,7 +353,7 @@
                 }
             }
         },
-        "return_type": {
+        "type": {
             "ui:columnSize": "6",
             "ui:withBorder": true,
             "objectCode": {

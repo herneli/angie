@@ -91,6 +91,8 @@
     },
     "visual_script": {
         "add_expression": "Añadir expresión",
-        "execute_following_expressions": "Ejecutar las siguientes expresiones"
+        "execute_following_expressions": "Ejecutar las siguientes expresiones",
+        "new_expression": "Seleccione...",
+        "select_component": "Seleccione componente"
     }
 }

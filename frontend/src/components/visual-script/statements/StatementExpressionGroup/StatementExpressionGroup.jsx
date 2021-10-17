@@ -5,6 +5,7 @@ import { mdiAnimationPlay } from "@mdi/js";
 import ExpressionWrapper from "./ExpressionWrapper";
 import StatementIcon from "../StatementIcon";
 import { Button } from "antd";
+import { useScriptContext } from "../../ScriptContext";
 
 let useStyles = createUseStyles({
     root: {
@@ -60,8 +61,13 @@ export default function StatementExpressionGroup({
     onDelete,
 }) {
     const classes = useStyles();
+    const { manager } = useScriptContext();
+
     const handleAddExpression = () => {
-        onChange({ ...statement, expressions: [...statement.expressions, []] });
+        onChange({
+            ...statement,
+            expressions: [...statement.expressions, manager.newExpression()],
+        });
     };
 
     const handleExpressionChange = (index) => (value) => {
@@ -118,7 +124,9 @@ export default function StatementExpressionGroup({
                     className={classes.addExpressionButton}
                     onClick={handleAddExpression}
                 >
-                    {T.translate("visual_script.add_expression")}
+                    {(
+                        T.translate("visual_script.add_expression") || ""
+                    ).toUpperCase()}
                 </Button>
             </div>
         </div>

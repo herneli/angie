@@ -4,6 +4,7 @@ import ExpressionPart from "./ExpressionPart";
 import ExpressionPartSelector from "./ExpressionPartSelector";
 import styles from "./expressionStyle";
 import MethodEditor from "./MethodEditor";
+import T from "i18n-react";
 const useStyles = createUseStyles(styles);
 
 export default function Expression({ expression, onChange, displayOnly }) {
@@ -38,6 +39,18 @@ export default function Expression({ expression, onChange, displayOnly }) {
     let expressionGroups = [];
     expressionGroups.push([]);
     expression.forEach((expressionPart, index) => {
+        if (index === 0) {
+            if (expression.length === 1) {
+                expressionGroups[expressionGroups.length - 1].push(
+                    <div key={index} className={classes.part}>
+                        {T.translate("visual_script.new_expression")}
+                    </div>
+                );
+                return;
+            } else {
+                return;
+            }
+        }
         if (expressionPart.renderOperator) {
             expressionGroups.push([]);
             expressionGroups[expressionGroups.length - 1].push(

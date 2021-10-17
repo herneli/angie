@@ -23,17 +23,12 @@
         "properties": {
             "code": { "title": "Código", "type": "string" },
             "name": { "title": "Nombre", "type": "string" },
-            "fields": {
+            "properties": {
                 "title": "Campos",
                 "type": "array",
                 "items": {
                     "type": "object",
-                    "required": [
-                        "code",
-                        "name",
-                        "complexity_level",
-                        "primitive_type"
-                    ],
+                    "required": ["code", "name", "complexity_level", "type"],
                     "properties": {
                         "code": {
                             "title": "Código",
@@ -54,6 +49,10 @@
                         "required": {
                             "title": "Obligatorio",
                             "type": "boolean"
+                        },
+                        "description": {
+                            "title": "Descripción",
+                            "type": "string"
                         },
                         "type": {
                             "$ref": "#/definitions/type",
@@ -153,46 +152,57 @@
     },
     "uiSchema": {
         "code": {
-            "columnSize": "6"
+            "ui:columnSize": "6"
         },
         "name": {
-            "columnSize": "6"
+            "ui:columnSize": "6"
         },
-        "fields": {
+        "properties": {
+            "ui:columns": [
+                { "title": "Código", "dataIndex": "code" },
+                { "title": "Nombre", "dataIndex": "name" },
+                { "title": "Tipo", "dataIndex": ["type", "type"] },
+                { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
+            ],
             "items": {
                 "code": {
-                    "columnSize": "3"
+                    "ui:columnSize": "3"
                 },
                 "name": {
-                    "columnSize": "3"
+                    "ui:columnSize": "3"
                 },
                 "complexity_level": {
-                    "columnSize": "3"
+                    "ui:columnSize": "3"
                 },
                 "required": {
-                    "columnSize": "3"
+                    "ui:columnSize": "3"
+                },
+                "description": {
+                    "ui:columnSize": "12",
+                    "ui:widget": "textarea"
                 },
                 "primitive_type": {
-                    "columnSize": "6"
+                    "ui:columnSize": "6"
                 },
                 "primitive_object_code": {
                     "ui:widget": "SelectRemoteWidget",
                     "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
-                    "columnSize": "6"
+                    "ui:columnSize": "6"
                 },
-                "item_primitive_type": {
-                    "columnSize": "6"
+                "type": {
+                    "ui:withBorder": true,
+                    "ui:columnSize": "12"
                 },
                 "item_object_code": {
                     "ui:widget": "SelectRemoteWidget",
                     "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
-                    "columnSize": "6"
+                    "ui:columnSize": "6"
                 },
                 "remote_values": {
-                    "columnSize": "6"
+                    "ui:columnSize": "6"
                 },
                 "widget": {
-                    "columnSize": "6"
+                    "ui:columnSize": "6"
                 }
             }
         }
