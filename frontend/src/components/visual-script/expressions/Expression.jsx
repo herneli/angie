@@ -23,6 +23,10 @@ export default function Expression({ expression, onChange, displayOnly }) {
         setEditExpressionPart(null);
     };
 
+    const handleOnSelect = (member) => {
+        return onChange([...expression, member]);
+    };
+
     const renderMethodEditor = () => {
         return (
             <MethodEditor
@@ -38,6 +42,7 @@ export default function Expression({ expression, onChange, displayOnly }) {
 
     let expressionGroups = [];
     expressionGroups.push([]);
+    let renderOperator = false;
     expression.forEach((expressionPart, index) => {
         if (index === 0) {
             if (expression.length === 1) {
@@ -87,7 +92,7 @@ export default function Expression({ expression, onChange, displayOnly }) {
                             <ExpressionPartSelector
                                 expression={expression}
                                 classes={classes}
-                                onChange={onChange}
+                                onSelect={handleOnSelect}
                             />
                         ) : null}
                     </div>

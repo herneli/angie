@@ -14,7 +14,7 @@
         },
         {
             "title": "Modificado en",
-            "field": "modified_at"
+            "field": "modifiedAt"
         }
     ],
     "schema": {
@@ -28,14 +28,14 @@
                 "type": "array",
                 "items": {
                     "type": "object",
-                    "required": ["code", "name", "complexity_level", "type"],
+                    "required": ["code", "name", "complexityLevel", "type"],
                     "properties": {
                         "code": {
                             "title": "Código",
                             "type": "string"
                         },
                         "name": { "title": "Nombre", "type": "string" },
-                        "complexity_level": {
+                        "complexityLevel": {
                             "title": "Nivel",
                             "type": "number",
                             "enum": [1, 4, 7, 10],
@@ -50,6 +50,7 @@
                             "title": "Obligatorio",
                             "type": "boolean"
                         },
+
                         "description": {
                             "title": "Descripción",
                             "type": "string"
@@ -57,11 +58,6 @@
                         "type": {
                             "$ref": "#/definitions/type",
                             "title": "Tipo"
-                        },
-
-                        "widget": {
-                            "title": "Input editor",
-                            "type": ["string", "null"]
                         }
                     }
                 }
@@ -109,8 +105,12 @@
                                             "string"
                                         ]
                                     },
-                                    "remote_values": {
+                                    "remoteValues": {
                                         "title": "Valores remotos",
+                                        "type": ["string", "null"]
+                                    },
+                                    "widget": {
+                                        "title": "Editor",
                                         "type": ["string", "null"]
                                     }
                                 }
@@ -125,8 +125,12 @@
                                         "title": "Código de objeto"
                                     }
                                 },
-                                "remote_values": {
+                                "remoteValues": {
                                     "title": "Valores remotos",
+                                    "type": ["string", "null"]
+                                },
+                                "widget": {
+                                    "title": "Editor",
                                     "type": ["string", "null"]
                                 }
                             },
@@ -139,8 +143,8 @@
                                         "$ref": "#/definitions/type"
                                     }
                                 },
-                                "remote_values": {
-                                    "title": "Valores remotos",
+                                "widget": {
+                                    "title": "Editor",
                                     "type": ["string", "null"]
                                 }
                             }
@@ -171,7 +175,7 @@
                 "name": {
                     "ui:columnSize": "3"
                 },
-                "complexity_level": {
+                "complexityLevel": {
                     "ui:columnSize": "3"
                 },
                 "required": {
@@ -181,28 +185,9 @@
                     "ui:columnSize": "12",
                     "ui:widget": "textarea"
                 },
-                "primitive_type": {
-                    "ui:columnSize": "6"
-                },
-                "primitive_object_code": {
-                    "ui:widget": "SelectRemoteWidget",
-                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
-                    "ui:columnSize": "6"
-                },
                 "type": {
                     "ui:withBorder": true,
                     "ui:columnSize": "12"
-                },
-                "item_object_code": {
-                    "ui:widget": "SelectRemoteWidget",
-                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name",
-                    "ui:columnSize": "6"
-                },
-                "remote_values": {
-                    "ui:columnSize": "6"
-                },
-                "widget": {
-                    "ui:columnSize": "6"
                 }
             }
         }

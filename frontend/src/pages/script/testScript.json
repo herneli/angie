@@ -71,6 +71,87 @@
                             "renderOperator": "=",
                             "renderTemplate": "{{value}}"
                         }
+                    ],
+                    [
+                        {
+                            "memberType": "context",
+                            "code": "context",
+                            "name": "context",
+                            "type": {
+                                "type": "object",
+                                "objectCode": "context_test"
+                            }
+                        },
+                        {
+                            "memberType": "property",
+                            "code": "var1",
+                            "name": "Variable 1",
+                            "type": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "memberType": "method",
+                            "code": "substring",
+                            "name": "Substring",
+                            "renderTemplate": "Subcadena de {{from}} a {{to}}",
+                            "type": {
+                                "type": "string"
+                            },
+                            "params": {
+                                "from": 1,
+                                "to": 2
+                            },
+                            "paramDefinitions": [
+                                {
+                                    "position": 1,
+                                    "code": "from",
+                                    "name": "Valor desde",
+                                    "type": "integer"
+                                },
+                                {
+                                    "position": 2,
+                                    "code": "to",
+                                    "name": "Valor hasta",
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        {
+                            "memberType": "method",
+                            "code": "is_equal",
+                            "name": "=",
+                            "params": {
+                                "value": {
+                                    "$exp": [
+                                        {
+                                            "memberType": "context",
+                                            "code": "context",
+                                            "name": "context",
+                                            "type": {
+                                                "type": "object",
+                                                "objectCode": "context_test"
+                                            }
+                                        },
+                                        {
+                                            "memberType": "property",
+                                            "code": "field1",
+                                            "name": "Campo 1"
+                                        }
+                                    ]
+                                }
+                            },
+                            "paramDefinitions": [
+                                {
+                                    "position": 1,
+                                    "code": "value",
+                                    "name": "Valor",
+                                    "type": "string"
+                                }
+                            ],
+                            "renderOperator": "=",
+                            "renderTemplate": "{{value}}"
+                        }
                     ]
                 ]
             }

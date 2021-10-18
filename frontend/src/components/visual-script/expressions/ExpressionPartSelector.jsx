@@ -5,14 +5,17 @@ import { List, Select, Button, Popover, Input } from "antd";
 import T from "i18n-react";
 import { useScriptContext } from "../ScriptContext";
 import getTypeIcon from "../getTypeIcon";
+import MethodEditor from "./MethodEditor";
+import { method } from "lodash";
 
 const { Option } = Select;
 export default function ExpressionPartSelector({
     expression,
     classes,
-    onChange,
+    onSelect,
 }) {
     const [members, setMembers] = useState();
+    const [methodMember, setMethodMember] = useState();
     const [filter, setFilter] = useState();
     const { manager } = useScriptContext();
 
@@ -65,7 +68,22 @@ export default function ExpressionPartSelector({
     };
 
     const handleOnSelect = (member) => () => {
+        if (member.memberType === "method") {
+            setMethodMember(member);
+        } else {
+            setMembers(null);
+            onSelect(member);
+        }
+    };
+
+    const handleOnParametersEntered = (member) => {
         setMembers(null);
+        setMethodMember(null);
+        onSelect(member);
+    };
+
+    const handleOnCancelMethodEditor = () => {
+        setMethodMember(null);
     };
 
     const renderMenu = () => {
@@ -116,8 +134,18 @@ export default function ExpressionPartSelector({
                 <Button
                     type="text"
                     icon={<Icon size="14px" path={mdiChevronDown} />}
+                    className={classes.selectorButton}
+                    size="small"
                 />
             </Popover>
+            {methodMember ? (
+                <MethodEditor
+                    member={methodMember}
+                    parentType={expression[expression.length - 1].type}
+                    onParametersEntered={handleOnParametersEntered}
+                    onCancel={handleOnCancelMethodEditor}
+                />
+            ) : null}
         </div>
     );
 }

@@ -11,7 +11,8 @@ export class ScriptService extends BaseService {
         const methods = this.dao.getMethods(type, language);
 
         return Promise.all([objectData, methods]).then((values) => {
-            let properties = values[0].data.properties;
+            let properties =
+                values[0] && values[0].data && values[0].data.properties;
 
             let methods = values[1].map((method) => {
                 return method.data;

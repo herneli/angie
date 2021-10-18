@@ -47,7 +47,7 @@ export default function ExpressionPart({
 
     const renderMethod = () => {
         const templateParts = getRenderPatternParts(
-            expressionPart.renderTemplate || T.translage("visual_script.edit")
+            expressionPart.renderTemplate || T.translate("visual_script.edit")
         );
         const methodComponents = [];
         let key = 0;
@@ -69,7 +69,7 @@ export default function ExpressionPart({
                                     $stm: expression,
                                 });
                             }}
-                            hideControls
+                            displayOnly
                         />
                     );
                 } else {

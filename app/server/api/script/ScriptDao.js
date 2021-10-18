@@ -34,19 +34,19 @@ export class ScriptDao extends BaseKnexDao {
             .whereRaw("data ->> ? = ? and data -> ? ->> ? = ?", [
                 "language",
                 language,
-                "parent_type",
+                "parentType",
                 "type",
                 type.type,
             ]);
 
         if (type.type === "object") {
             methods = methods.whereRaw("data -> ? ->> ? = ?", [
-                "parent_type",
+                "parentType",
                 "objectCode",
                 type.objectCode,
             ]);
         }
-
+        console.log(methods.toSQL().toNative());
         return methods;
     }
 }

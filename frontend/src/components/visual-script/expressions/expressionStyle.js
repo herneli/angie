@@ -73,6 +73,10 @@ const styles = {
     memberSelectorListItem: {
         cursor: "pointer",
     },
+    selectorButton: {
+        height: "16px",
+        width: "16px",
+    },
 };
 
 export default styles;
