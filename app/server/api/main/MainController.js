@@ -1,5 +1,4 @@
-import { App, BaseController, JsonResponse } from 'lisco';
-import { Utils } from '../../common'
+import { App, BaseController, JsonResponse, Utils } from 'lisco';
 import path from 'path'
 
 const asyncHandler = require('express-async-handler')
@@ -41,7 +40,7 @@ export class MainController extends BaseController {
 
         var jsRes = new JsonResponse();
         jsRes.success = true;
-        jsRes.data = App.i18n.currentData[request.query.lang || process.env.DEFAULT_LANG];;
+        jsRes.data = App.i18n.currentDataRaw[request.query.lang || process.env.DEFAULT_LANG];;
         response.json(jsRes);
     }
 

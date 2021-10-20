@@ -22,11 +22,7 @@ const Administration = ({ app }) => {
             <Layout>
                 <Content>
                     <Switch>
-                        <Route
-                            exact
-                            path="/admin/integrations"
-                            render={({ match }) => <Routes match={match} {...defaultProps} />}
-                        />
+                        <Route exact path="/admin/integrations" render={({ match }) => <Routes match={match} {...defaultProps} />} />
 
                         <PrivateRoute
                             roles={["default-roles-angie"]}

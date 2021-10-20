@@ -9,18 +9,12 @@ export default class Config {
     static foodGroups = [];
     static configParams = [];
 
-    static async loadConfigParams(first) {
+    static async loadConfigParams() {
         let params = {
             method: 'GET',
             url: '/config',
         };
-        if (first) {
-            params.headers = {
-                Authorization: undefined,
-                'Content-Type': 'application/json',
-            }
-        }
-
+       
         let result = await axios(params);
         this.configParams = result.data;
     }

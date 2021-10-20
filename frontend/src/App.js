@@ -11,7 +11,7 @@ import AppMenu from "./layout/AppMenu";
 
 import configureKeycloak from "./configureKeycloak";
 import { Layout } from "antd";
-import { Content } from "antd/lib/layout/layout";
+
 class App extends Component {
     state = {
         loaded: false,
@@ -28,7 +28,7 @@ class App extends Component {
     }
 
     async componentDidMount() {
-        await Config.loadConfigParams(true);
+        await Config.loadConfigParams();
         this.keycloak = await configureKeycloak();
         await TranslationLoader.loadTranslations();
         this.setState({
@@ -48,6 +48,7 @@ class App extends Component {
     tokenLogger = (tokens) => {
         console.log("onKeycloakTokens", tokens);
         localStorage.setItem("tokenJWT", tokens.token);
+        AxiosConfig.reloadToken()
     };
 
     render() {

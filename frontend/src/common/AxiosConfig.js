@@ -14,19 +14,34 @@ export default class AxiosConfig {
         return '_self' in React.createElement('div');
     }
 
+    /**
+     * Permite establecer el context path de una api a nivel global
+     * @returns 
+     */
     static getContextPath() {
         return "";
     }
+
+
+    /**
+     * Recarga la cabecera de autorización con el token guardado.
+     */
+    static reloadToken(){
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('tokenJWT') ? 'Bearer ' + localStorage.getItem('tokenJWT') : ''
+        }
+    }
+    
     /**
      * Se encarga de configurar el interceptor para los errores en las llamadas AJAX realizadas
      */
     static configureAxios() {
         let myUrl = new URL(window.location.href);
         axios.defaults.baseURL = myUrl.protocol + "//" + myUrl.hostname + ':' + myUrl.port + AxiosConfig.getContextPath() + "/";
-        axios.defaults.headers = {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('tokenJWT') ? 'Bearer ' + localStorage.getItem('tokenJWT') : ''
-        }
+
+        //Establece el token como header
+        AxiosConfig.reloadToken();
 
         if (AxiosConfig.reactIsInDevelomentMode()) {
             axios.defaults.baseURL = Config.getServerURLDevelopment();
