@@ -197,6 +197,7 @@ export default function MethodEditor({
                     schema={formOptions.schema}
                     uiSchema={formOptions.uiSchema}
                     onSubmit={handleOnSubmit}
+                    formData={member.params}
                 >
                     <div className={classes.formFooter}>
                         <Space>

@@ -34,15 +34,18 @@ export default function ParamEditor({
     const classes = useStyles();
     const handleOnChange = (e) => {
         let value = e.target.value;
-        if (paramMember.type === "integer") {
+        if (paramMember.type.type === "integer") {
             value = parseInt(value);
-        } else if (paramMember.type === "number") {
+        } else if (paramMember.type.type === "number") {
         }
         onChange && onChange(value);
     };
 
     const getValue = () => {
-        if (paramMember.type === "integer" || paramMember.type === "number") {
+        if (
+            paramMember.type.type === "integer" ||
+            paramMember.type.type === "number"
+        ) {
             if (value === 0) {
                 return 0;
             } else {
@@ -55,7 +58,7 @@ export default function ParamEditor({
 
     const renderArray = () => {
         value = value || [];
-        switch (paramMember.itemsType) {
+        switch (paramMember.items.type) {
             case "integer":
             case "number":
             case "date":
@@ -116,22 +119,22 @@ export default function ParamEditor({
     try {
         let type = "text";
         let minWidth = 10;
-        if (paramMember.type === "date") {
+        if (paramMember.type.type === "date") {
             type = "date";
             minWidth = 130;
         }
-        if (paramMember.type === "number") {
+        if (paramMember.type.type === "number") {
             type = "number";
             minWidth = 10;
         }
         let value = getValue();
 
-        switch (paramMember.type) {
+        switch (paramMember.type.type) {
             case "string":
             case "date":
             case "integer":
             case "number":
-                if (!paramMember.valueList) {
+                if (!paramMember.type.selectOptions) {
                     return (
                         <AutosizeInput
                             className={classes.editor}

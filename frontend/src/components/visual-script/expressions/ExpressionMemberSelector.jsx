@@ -9,7 +9,7 @@ import T from "i18n-react";
 
 const { Option } = Select;
 
-export default function ExpressionPartSelector({
+export default function ExpressionMemberSelector({
     expression,
     classes,
     onSelect,
@@ -111,7 +111,7 @@ export default function ExpressionPartSelector({
             setMethodMember({
                 ...member,
                 type: replaceType(member.type),
-                paramMembers: replaceParamMembers(member.paramMembers),
+                paramMembers: replaceParamMembers(member.paramMembers || []),
             });
         } else {
             setMembers(null);
@@ -188,7 +188,7 @@ export default function ExpressionPartSelector({
         );
     };
     return (
-        <div className={classes.part}>
+        <div className={classes.member}>
             <Popover
                 content={renderMenu()}
                 trigger={"click"}

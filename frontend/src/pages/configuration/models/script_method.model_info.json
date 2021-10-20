@@ -309,7 +309,7 @@
             "ui:columnSize": "12",
             "ui:widget": "textarea",
             "ui:options": {
-                "rows": 8
+                "rows": 2
             }
         },
         "isActive": {

@@ -9,7 +9,7 @@ const styles = {
         fontSize: "14px",
         margin: "2px 10px 2px 0",
     },
-    part: {
+    member: {
         display: "flex",
         position: "relative",
         border: "none",
@@ -64,6 +64,7 @@ const styles = {
     },
     editIcon: {
         color: "gray",
+        marginLeft: 8,
     },
     memberSelectorWrapper: {
         minWidth: "300px",
