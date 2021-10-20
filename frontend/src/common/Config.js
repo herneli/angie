@@ -10,7 +10,6 @@ export default class Config {
     static configParams = [];
 
     static async loadConfigParams(first) {
-
         let params = {
             method: 'GET',
             url: '/config',
@@ -51,12 +50,6 @@ export default class Config {
     }
 
 
-    static getAppFallbackLang() {
-        if (!this.configParams || this.configParams.length <= 0) {
-            this.loadConfigParams();
-        }
-        return this.configParams['core.application.lang.fallback'];
-    }
     static getLanguages() {
         if (!this.configParams || this.configParams.length <= 0) {
             this.loadConfigParams();

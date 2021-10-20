@@ -4,7 +4,7 @@ import Form from '@rjsf/antd';
 import lodash from 'lodash';
 
 import node_types from './constants/node_types'
-import CodeMirrorExt from '../../components/CodeMirrorExt';
+import CodeMirrorExt from '../../../components/CodeMirrorExt';
 
 const Sidebar = ({ selectedType, onNodeUpdate }) => {
     const [formData, setFormData] = useState(null);

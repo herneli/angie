@@ -1,4 +1,12 @@
 exports.up = async function (knex) {
+    
+    if (!(await knex.schema.hasTable("organization"))) {
+        await knex.schema.createTable("organization", function (table) {
+            table.increments();
+            table.string("name");
+            table.string("description");
+        });
+    }
     if (!(await knex.schema.hasTable("integration"))) {
         await knex.schema.createTable("integration", function (table) {
             table.uuid("id").primary();
@@ -6,8 +14,8 @@ exports.up = async function (knex) {
             table.string("last_updated", 30).notNullable();
             table.string("name").notNullable();
             table.string("description");
-            table.uuid("organization_id");
-            // table.foreign('organization_id').references('organization.id')
+            table.integer("organization_id");
+            table.foreign('organization_id').references('organization.id')
         });
     }
     if (!(await knex.schema.hasTable("integration_channel"))) {
@@ -55,13 +63,6 @@ exports.up = async function (knex) {
         });
     }
 
-    if (!(await knex.schema.hasTable("organization"))) {
-        await knex.schema.createTable("organization", function (table) {
-            table.increments();
-            table.string("name");
-            table.string("description");
-        });
-    }
 
     if (!(await knex.schema.hasTable("historic"))) {
         await knex.schema.createTable("historic", function (table) {
@@ -106,6 +107,9 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("integration")) {
         await knex.schema.dropTable("integration");
     }
+    if (await knex.schema.hasTable("organization")) {
+        await knex.schema.dropTable("organization");
+    }
     if (await knex.schema.hasTable("integration_channel")) {
         await knex.schema.dropTable("integration_channel");
     }
@@ -118,9 +122,6 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("node_type_subflow")) {
         await knex.schema.dropTable("node_type_subflow");
     }
-    if (await knex.schema.hasTable("organization")) {
-        await knex.schema.dropTable("organization");
-    }
     if (await knex.schema.hasTable("historic")) {
         await knex.schema.dropTable("historic");
     }
@@ -130,7 +131,6 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("ldap_host")) {
         await knex.schema.dropTable("ldap_host");
     }
-
     if (await knex.schema.hasTable("config_model")) {
         await knex.schema.dropTable("config_model");
     }

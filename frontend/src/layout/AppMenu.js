@@ -2,7 +2,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import React, { useState } from "react";
 import { Button, Menu } from "antd";
 import { Link } from "react-router-dom";
-import AuthorizedFunction from "../layout/AuthorizedFunction";
+import AuthorizedFunction from "../components/security/AuthorizedFunction";
 
 import {
     HomeOutlined,
@@ -21,22 +21,14 @@ const AppMenu = () => {
             mode="horizontal"
         >
             <Menu.Item key="home" icon={<HomeOutlined />}>
-                <Link to="./">Home Page </Link>
+                <Link to="/">Home Page </Link>
             </Menu.Item>
             {AuthorizedFunction(["default-roles-angie"]) && (
                 <>
-                    <Menu.Item key="drag" icon={<BranchesOutlined />}>
-                        <Link to="./drag">Drag </Link>
+                    <Menu.Item key="admin" icon={<BranchesOutlined />}>
+                        <Link to="/admin">Administration </Link>
                     </Menu.Item>
-                    <Menu.Item key="config_method">
-                        <Link to="./config_method">Métodos </Link>
-                    </Menu.Item>
-                    <Menu.Item key="config_object">
-                        <Link to="./config_object">Objetos</Link>
-                    </Menu.Item>
-                    <Menu.Item key="script">
-                        <Link to="./script">Script</Link>
-                    </Menu.Item>
+                    
                 </>
             )}
 

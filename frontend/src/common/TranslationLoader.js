@@ -16,33 +16,8 @@ const TranslationLoader = {
                 },
             });
 
-            let fallback = Config.getAppFallbackLang();
-            let fallbackObj;
-            if (lang !== fallback) {
-                //Si son la misma, no se obtiene y listo, ahorramos una llamada
-                fallbackObj = await axios({
-                    method: "get",
-                    url: "/translation",
-                    params: { lang: fallback },
-                    headers: {
-                        Authorization: undefined,
-                        "Content-Type": "application/json",
-                    },
-                });
-            }
+            T.setTexts(result.data.data);
 
-            T.setTexts(result.data.data, {
-                // notFound: (key) => {
-                //     if (
-                //         key &&
-                //         fallbackObj &&
-                //         fallbackObj.data &&
-                //         fallbackObj.data.data[0]
-                //     ) {
-                //         return fallbackObj.data.data[0].items[key];
-                //     }
-                // },
-            });
             if (callback) callback();
         } catch (error) {
             console.log("error cargando traducciones");
