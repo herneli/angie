@@ -8,20 +8,22 @@ import ReactFlow, {
     Background,
 } from "react-flow-renderer";
 
-import CodeMirrorExt from "../components/CodeMirrorExt";
-import Sidebar from "./drag/Sidebar";
-import SwitchNode from "./drag/SwitchNode";
+import CodeMirrorExt from "../../../components/CodeMirrorExt";
+import Sidebar from "./Sidebar";
+import SwitchNode from "./SwitchNode";
 import {
     fromBDToCamel,
     transformFromBd,
     transformToBD,
-} from "./drag/Transformer";
+} from "./Transformer";
 
 import { v4 as uuid_v4 } from "uuid";
 import axios from "axios";
 
-import "./drag/Routes.css";
+import "./Routes.css";
+import { Layout } from "antd";
 
+const { Content } = Layout;
 const nodeTypes = {
     switchNode: SwitchNode,
 };

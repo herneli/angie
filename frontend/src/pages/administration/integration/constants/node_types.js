@@ -105,7 +105,7 @@ const node_types = [
             "description": "Replaces route Body with HL7 property via terser Path",
             "type": "object",
             "required": [
-                "teser_path"
+                "terser_path"
             ],
             "properties": {
                 "terser_path": {

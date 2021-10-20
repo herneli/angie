@@ -7,9 +7,11 @@ import Config from "./common/Config";
 import TranslationLoader from "./common/TranslationLoader";
 
 import { ReactKeycloakProvider } from "@react-keycloak/web";
-import AppMenu from "./pages/AppMenu";
+import AppMenu from "./layout/AppMenu";
 
 import configureKeycloak from "./configureKeycloak";
+import { Layout } from "antd";
+import { Content } from "antd/lib/layout/layout";
 class App extends Component {
     state = {
         loaded: false,
@@ -23,14 +25,15 @@ class App extends Component {
         super(props);
 
         AxiosConfig.configureAxios();
-        (async () => {
-            await Config.loadConfigParams(true);
-            this.keycloak = await configureKeycloak();
-            await TranslationLoader.loadTranslations();
-            this.setState({
-                loaded: true,
-            });
-        })();
+    }
+
+    async componentDidMount() {
+        await Config.loadConfigParams(true);
+        this.keycloak = await configureKeycloak();
+        await TranslationLoader.loadTranslations();
+        this.setState({
+            loaded: true,
+        });
     }
 
     eventLogger = (event, error) => {
@@ -58,13 +61,10 @@ class App extends Component {
                         onTokens={this.tokenLogger}
                         initOptions={{ checkLoginIframe: false }}
                     >
-                        {/* initOptions={{ onLoad: 'login-required' }} */}
-                        <div className="App">
-                            <div style={{ height: "99vh" }}>
-                                <AppMenu />
-                                <AppMain app={this} />
-                            </div>
-                        </div>
+                        <Layout className="App">
+                            <AppMenu />
+                            <AppMain app={this} />
+                        </Layout>
                     </ReactKeycloakProvider>
                 )}
             </div>
