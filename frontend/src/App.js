@@ -61,7 +61,6 @@ class App extends Component {
                         onTokens={this.tokenLogger}
                         initOptions={{ checkLoginIframe: false }}
                     >
-                        {/* initOptions={{ onLoad: 'login-required' }} */}
                         <Layout className="App">
                             <AppMenu />
                             <AppMain app={this} />

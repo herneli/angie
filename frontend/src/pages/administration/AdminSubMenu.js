@@ -1,4 +1,5 @@
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { mdiAccountGroup, mdiConnection, mdiPalette } from '@mdi/js';
+import Icon from '@mdi/react';
 import { Layout, Menu } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -14,7 +15,7 @@ const AdminSubMenu = () => {
                 defaultOpenKeys={["gest", "comm", "custom"]}
                 style={{ height: '100%', borderRight: 0 }}
             >
-                <SubMenu key="gest" icon={<UserOutlined />} title="Gestión">
+                <SubMenu key="gest" icon={<Icon path={mdiAccountGroup} size={1}/>} title="Gestión">
                     <Menu.Item key="1">
                         <Link to="/admin/users">Usuarios </Link>
                     </Menu.Item>
@@ -25,12 +26,12 @@ const AdminSubMenu = () => {
                         <Link to="/admin/organization">Organizaciones </Link>
                     </Menu.Item>
                 </SubMenu>
-                <SubMenu key="comm" icon={<LaptopOutlined />} title="Comunicaciones">
+                <SubMenu key="comm" icon={<Icon path={mdiConnection} size={1}/>} title="Comunicaciones">
                     <Menu.Item key="5">
                         <Link to="/admin/integrations">Integraciones </Link>
                     </Menu.Item>
                 </SubMenu>
-                <SubMenu key="custom" icon={<NotificationOutlined />} title="Personalización">
+                <SubMenu key="custom" icon={<Icon path={mdiPalette} size={1}/>} title="Personalización">
                     <Menu.Item key="config_method">
                         <Link to="/admin/config_method">Métodos </Link>
                     </Menu.Item>

@@ -1,14 +1,11 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useState } from "react";
-import { Button, Menu } from "antd";
+import { Menu } from "antd";
 import { Link } from "react-router-dom";
 import AuthorizedFunction from "../components/security/AuthorizedFunction";
 
-import {
-    HomeOutlined,
-    BranchesOutlined,
-    UserOutlined,
-} from "@ant-design/icons";
+import { mdiAccount, mdiHome, mdiSourceBranch } from "@mdi/js";
+import Icon from "@mdi/react";
 
 const AppMenu = () => {
     const { keycloak } = useKeycloak();
@@ -20,15 +17,15 @@ const AppMenu = () => {
             selectedKeys={[selected]}
             mode="horizontal"
         >
-            <Menu.Item key="home" icon={<HomeOutlined />}>
+            <Menu.Item key="home" icon={<Icon path={mdiHome} size={0.6} />}>
                 <Link to="/">Home Page </Link>
             </Menu.Item>
             {AuthorizedFunction(["default-roles-angie"]) && (
                 <>
-                    <Menu.Item key="admin" icon={<BranchesOutlined />}>
+                    <Menu.Item key="admin" icon={<Icon path={mdiSourceBranch} size={0.6} />}>
                         <Link to="/admin">Administration </Link>
                     </Menu.Item>
-                    
+
                 </>
             )}
 
@@ -36,7 +33,7 @@ const AppMenu = () => {
                 <Menu.Item
                     key="login"
                     className="rightFloated"
-                    icon={<UserOutlined />}
+                    icon={<Icon path={mdiAccount} size={0.6} />}
                     onClick={() => keycloak.login()}
                 >
                     Login
@@ -47,7 +44,7 @@ const AppMenu = () => {
                 <Menu.Item
                     key="logout"
                     className="rightFloated"
-                    icon={<UserOutlined />}
+                    icon={<Icon path={mdiAccount} size={0.6} />}
                     onClick={() => keycloak.logout()}
                 >
                     Logout ({keycloak.tokenParsed.preferred_username})
