@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { mdiChevronDown } from "@mdi/js";
+import React, { useState } from "react";
+import { mdiChevronDown, mdiBackspaceOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { List, Select, Button, Popover, Input } from "antd";
-import T from "i18n-react";
 import { useScriptContext } from "../ScriptContext";
 import getTypeIcon from "../getTypeIcon";
 import MethodEditor from "./MethodEditor";
-import { method } from "lodash";
+import T from "i18n-react";
 
 const { Option } = Select;
+
 export default function ExpressionPartSelector({
     expression,
     classes,
     onSelect,
+    onDeleteLast,
 }) {
     const [members, setMembers] = useState();
     const [methodMember, setMethodMember] = useState();
@@ -24,27 +25,29 @@ export default function ExpressionPartSelector({
     };
     const handleOnVisibleChange = (visible) => {
         if (visible) {
-            manager.getMembers(expression).then((m) => {
-                let membersLocal = [];
-                if (m.properties) {
-                    m.properties.forEach((property) => {
-                        membersLocal.push({
-                            memberType: "property",
-                            ...property,
+            manager
+                .getMembers(expression[expression.length - 1].type)
+                .then((m) => {
+                    let membersLocal = [];
+                    if (m.properties) {
+                        m.properties.forEach((property) => {
+                            membersLocal.push({
+                                memberType: "property",
+                                ...property,
+                            });
                         });
-                    });
-                }
+                    }
 
-                if (m.methods) {
-                    m.methods.forEach((method) => {
-                        membersLocal.push({
-                            memberType: "method",
-                            ...method,
+                    if (m.methods) {
+                        m.methods.forEach((method) => {
+                            membersLocal.push({
+                                memberType: "method",
+                                ...method,
+                            });
                         });
-                    });
-                }
-                setMembers(membersLocal);
-            });
+                    }
+                    setMembers(membersLocal);
+                });
         } else {
             setMembers(null);
         }
@@ -66,10 +69,50 @@ export default function ExpressionPartSelector({
             }
         });
     };
-
+    const replaceType = (type) => {
+        const parentType = expression[expression.length - 1].type;
+        if (type.type === "$self") {
+            return parentType;
+        } else if (type.type === "$item") {
+            return parentType.items;
+        } else if (type.type === "array") {
+            if (type.items.type === "$self") {
+                return {
+                    ...type,
+                    items: parentType,
+                };
+            } else if (type.items.type === "$item") {
+                return {
+                    ...type,
+                    items: parentType.items,
+                };
+            } else {
+                return type;
+            }
+        } else {
+            return type;
+        }
+    };
+    const replaceParamMembers = (paramMembers) => {
+        return paramMembers.map((paramMember) => {
+            let type = replaceType(paramMember.type);
+            return {
+                ...paramMember,
+                type,
+            };
+        });
+    };
     const handleOnSelect = (member) => () => {
-        if (member.memberType === "method") {
-            setMethodMember(member);
+        if (member.memberType === "delete") {
+            setMembers(null);
+            onDeleteLast();
+        } else if (member.memberType === "method") {
+            setMembers(null);
+            setMethodMember({
+                ...member,
+                type: replaceType(member.type),
+                paramMembers: replaceParamMembers(member.paramMembers),
+            });
         } else {
             setMembers(null);
             onSelect(member);
@@ -86,18 +129,41 @@ export default function ExpressionPartSelector({
         setMethodMember(null);
     };
 
+    const AvatarIcon = ({ path }) => {
+        return <Icon path={path} size={1} color={"gray"} />;
+    };
+
     const renderMenu = () => {
         if (!members) {
             return null;
         }
+
         return (
             <div className={classes.memberSelectorWrapper}>
-                <Input
-                    value={filter}
-                    onChange={handleOnChangeFilter}
-                    autoFocus
-                />
+                {members.length > 1 ? (
+                    <Input
+                        value={filter}
+                        onChange={handleOnChangeFilter}
+                        autoFocus
+                    />
+                ) : null}
                 <List size="small">
+                    {expression.length > 1 ? (
+                        <List.Item
+                            key={"delete"}
+                            onClick={handleOnSelect({ memberType: "delete" })}
+                            className={classes.memberSelectorListItem}
+                        >
+                            <List.Item.Meta
+                                avatar={
+                                    <AvatarIcon path={mdiBackspaceOutline} />
+                                }
+                                title={T.translate(
+                                    "visual_script.delete_previous"
+                                )}
+                            />
+                        </List.Item>
+                    ) : null}
                     {getFilteredMembers().map((member, index) => {
                         return (
                             <List.Item
@@ -107,9 +173,8 @@ export default function ExpressionPartSelector({
                             >
                                 <List.Item.Meta
                                     avatar={
-                                        <Icon
+                                        <AvatarIcon
                                             path={getTypeIcon(member.type.type)}
-                                            size={1}
                                         />
                                     }
                                     title={member.name}
@@ -141,7 +206,7 @@ export default function ExpressionPartSelector({
             {methodMember ? (
                 <MethodEditor
                     member={methodMember}
-                    parentType={expression[expression.length - 1].type}
+                    // parentType={expression[expression.length - 1].type}
                     onParametersEntered={handleOnParametersEntered}
                     onCancel={handleOnCancelMethodEditor}
                 />

@@ -58,6 +58,9 @@ export default function ExpressionPart({
                     <span key={key}>{templatePart.value}</span>
                 );
             } else {
+                if (!(templatePart.value in (expressionPart.params || {}))) {
+                    return "{{" + templatePart.value + "}}";
+                }
                 let value = expressionPart.params[templatePart.value];
                 if (isObject(value) && value.$exp) {
                     methodComponents.push(
@@ -77,7 +80,7 @@ export default function ExpressionPart({
                         <ParamEditor
                             key={key + "-editor"}
                             value={expressionPart.params[templatePart.value]}
-                            definition={expressionPart.paramDefinitions.find(
+                            paramMember={expressionPart.paramMembers.find(
                                 (item) => {
                                     return item.code === templatePart.value;
                                 }

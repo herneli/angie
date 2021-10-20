@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "context": {
+            "type": "object",
+            "title": "Contexto",
+            "properties": {
+                "field1": {
+                    "type": "string",
+                    "title": "Campo 1"
+                },
+                "field2": {
+                    "type": "string",
+                    "title": "Campo 2"
+                }
+            },
+            "required": []
+        }
+    }
+}

@@ -26,10 +26,9 @@ export class ScriptController extends BaseController {
         res.then((val) => response.json({ data: val }));
     }
 
-    getObjectMembers(request, response) {
+    async getObjectMembers(request, response) {
         let service = new ScriptService();
-        service
-            .getObjectMembers(request.body)
-            .then((members) => response.json(new JsonResponse(true, members)));
+        let members = await service.getObjectMembers(request.body);
+        response.json(new JsonResponse(true, members));
     }
 }

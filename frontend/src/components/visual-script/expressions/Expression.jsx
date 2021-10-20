@@ -26,18 +26,18 @@ export default function Expression({ expression, onChange, displayOnly }) {
     const handleOnSelect = (member) => {
         return onChange([...expression, member]);
     };
-
-    const renderMethodEditor = () => {
-        return (
-            <MethodEditor
-                expressionPart={editExpressionPart.expressionPart}
-                onCancel={handleCancelEdit}
-            />
-        );
+    const handleOnDeleteLast = () => {
+        return onChange(expression.slice(0, -1));
     };
 
     const handleOnEdit = (index) => (expressionPart) => {
         setEditExpressionPart({ index, expressionPart });
+    };
+
+    const renderMethodEditor = ({ index, expressionPart }) => {
+        return (
+            <MethodEditor member={expressionPart} onCancel={handleCancelEdit} />
+        );
     };
 
     let expressionGroups = [];
@@ -82,7 +82,7 @@ export default function Expression({ expression, onChange, displayOnly }) {
     });
     return (
         <>
-            {editExpressionPart ? renderMethodEditor() : null}
+            {editExpressionPart ? renderMethodEditor(editExpressionPart) : null}
             {expressionGroups.map((groupComponent, index) => {
                 return (
                     <div key={index} className={classes.group}>
@@ -93,6 +93,7 @@ export default function Expression({ expression, onChange, displayOnly }) {
                                 expression={expression}
                                 classes={classes}
                                 onSelect={handleOnSelect}
+                                onDeleteLast={handleOnDeleteLast}
                             />
                         ) : null}
                     </div>

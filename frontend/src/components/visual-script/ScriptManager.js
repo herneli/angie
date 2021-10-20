@@ -37,11 +37,12 @@ export default class ScriptManager {
         return this.language;
     }
 
-    getMembers(expression) {
+    getMembers(type, options) {
         return axios
             .post("/script/object/members", {
                 language: this.getLanguage(),
-                type: expression[expression.length - 1].type,
+                type: type,
+                ...options,
             })
             .then((response) => response.data.data);
     }

@@ -2,98 +2,95 @@
 import SelectAsyncWidget from "../components/jsonSchemaForm/SelectAsyncWidget";
 import memberTypes from "../constants/memberTypes";
 
-const getUiSchema = (paramDefinition) => {
+const getUiSchema = (paramMember) => {
     let uiSchema = {};
-    if (paramDefinition.remoteValues) {
+    if (paramMember.selectOptions) {
         uiSchema = {
             "ui:widget": SelectAsyncWidget,
-            "ui:remoteValues": paramDefinition.remoteValues,
+            "ui:selectOptions": paramMember.selectOptions,
         };
 
-        if (paramDefinition.type === "array") {
+        if (paramMember.type === "array") {
             uiSchema.items = {
                 "ui:widget": SelectAsyncWidget,
-                "ui:remoteValues": paramDefinition.remoteValues,
+                "ui:selectOptions": paramMember.selectOptions,
             };
         }
     }
-    if (
-        paramDefinition.type === "integer" ||
-        paramDefinition.type === "number"
-    ) {
+    if (paramMember.type === "integer" || paramMember.type === "number") {
         uiSchema["ui:emptyValue"] = 0;
     }
-    if (paramDefinition.widget) {
-        uiSchema["ui:widget"] = paramDefinition.widget;
+    if (paramMember.widget) {
+        uiSchema["ui:widget"] = paramMember.widget;
     }
     return uiSchema;
 };
-const getSchemaFromType = async (manager, paramDefinition) => {
-    switch (paramDefinition.type) {
+const getSchemaFromType = async (manager, paramMember) => {
+    switch (paramMember.type) {
         case "string":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "string",
                     // default: "",
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "date":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "string",
                     format: "date",
                     default: "",
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "integer":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "integer",
                     default: 0,
                     // required: true
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "number":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "number",
                     default: 0,
                     // required: true
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "boolean":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "boolean",
                     default: false,
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "array":
             return Promise.resolve({
-                paramDefinition,
+                paramMember,
                 paramSchema: {
                     type: "array",
                     default: [],
                     items: {
-                        type: paramDefinition.itemsType,
+                        type: paramMember.itemsType,
                     },
                 },
-                paramUiSchema: getUiSchema(paramDefinition),
+                paramUiSchema: getUiSchema(paramMember),
             });
         case "object":
             return manager
                 .getObjectMembers({
-                    baseObject: paramDefinition,
+                    baseObject: paramMember,
                     context: manager.context,
                     sorted: false,
                 })
@@ -102,10 +99,10 @@ const getSchemaFromType = async (manager, paramDefinition) => {
                     filtered_members = filtered_members.filter((memberItem) => {
                         return memberItem.memberType !== memberTypes.METHOD;
                     });
-                    return getSchemaFromDefinitions(filtered_members).then(
+                    return getSchemaFromMembers(filtered_members).then(
                         ({ schema, uiSchema }) => {
                             return Promise.resolve({
-                                paramDefinition,
+                                paramMember,
                                 paramSchema: schema,
                                 paramUiSchema: uiSchema,
                             });
@@ -113,12 +110,12 @@ const getSchemaFromType = async (manager, paramDefinition) => {
                     );
                 });
         default:
-            console.error("Type definition not supported: ", paramDefinition);
+            console.error("Type definition not supported: ", paramMember);
             return Promise.reject("Type definition not supported");
     }
 };
 
-const getSchemaFromDefinitions = (manager, definitions) => {
+const getSchemaFromMembers = (manager, definitions) => {
     let schema = {
         type: "object",
         properties: {},
@@ -126,26 +123,26 @@ const getSchemaFromDefinitions = (manager, definitions) => {
     };
 
     let uiSchema = {};
-    let paramDefinitions = definitions || [];
+    let paramMembers = definitions || [];
     let promises = [];
-    paramDefinitions.forEach((paramDefinition) => {
-        promises.push(getSchemaFromType(manager, paramDefinition));
+    paramMembers.forEach((paramMember) => {
+        promises.push(getSchemaFromType(manager, paramMember));
     });
     return Promise.all(promises).then((values) => {
-        values.forEach(({ paramDefinition, paramSchema, paramUiSchema }) => {
-            if (paramDefinition.memberType !== memberTypes.METHOD) {
-                schema.properties[paramDefinition.code] = {
+        values.forEach(({ paramMember, paramSchema, paramUiSchema }) => {
+            if (paramMember.memberType !== memberTypes.METHOD) {
+                schema.properties[paramMember.code] = {
                     ...paramSchema,
-                    title: paramDefinition.name,
+                    title: paramMember.name,
                 };
-                if (paramDefinition.required) {
-                    schema.required.push(paramDefinition.code);
+                if (paramMember.required) {
+                    schema.required.push(paramMember.code);
                 }
-                uiSchema[paramDefinition.code] = paramUiSchema;
+                uiSchema[paramMember.code] = paramUiSchema;
             }
         });
         return Promise.resolve({ schema, uiSchema });
     });
 };
 
-export default getSchemaFromDefinitions;
+export default getSchemaFromMembers;

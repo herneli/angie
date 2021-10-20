@@ -91,9 +91,13 @@
     },
     "visual_script": {
         "add_expression": "Añadir expresión",
+        "accept": "Aceptar",
+        "cancel": "Cancelar",
         "edit": "Editar",
+        "edit_method_parameters": "Parámetros para \"{method}\"",
         "execute_following_expressions": "Ejecutar las siguientes expresiones",
         "new_expression": "Seleccione...",
+        "delete_previous": "Anterior",
         "select_component": "Seleccione componente"
     }
 }

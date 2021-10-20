@@ -69,7 +69,7 @@
                 "title": "Tipo devuelto"
             },
 
-            "paramDefinitions": {
+            "paramMembers": {
                 "title": "Parámetros",
                 "type": "array",
                 "items": {
@@ -245,7 +245,7 @@
                                             "string"
                                         ]
                                     },
-                                    "remoteValues": {
+                                    "selectOptions": {
                                         "title": "Valores remotos",
                                         "type": ["string", "null"]
                                     },
@@ -320,13 +320,13 @@
             "ui:withBorder": true,
             "objectCode": {
                 "ui:widget": "SelectRemoteWidget",
-                "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
                     "ui:widget": "SelectRemoteWidget",
-                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
                 }
             }
         },
@@ -335,13 +335,13 @@
             "ui:withBorder": true,
             "objectCode": {
                 "ui:widget": "SelectRemoteWidget",
-                "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
                     "ui:widget": "SelectRemoteWidget",
-                    "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
                 }
             }
         },
@@ -365,7 +365,7 @@
         "color": {
             "ui:columnSize": "4"
         },
-        "paramDefinitions": {
+        "paramMembers": {
             "ui:columns": [
                 { "title": "Código", "dataIndex": "code" },
                 { "title": "Nombre", "dataIndex": "name" },
@@ -384,13 +384,13 @@
                     "ui:withBorder": true,
                     "objectCode": {
                         "ui:widget": "SelectRemoteWidget",
-                        "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                        "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
                     },
                     "items": {
                         "ui:withBorder": true,
                         "objectCode": {
                             "ui:widget": "SelectRemoteWidget",
-                            "ui:remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                            "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
                         }
                     }
                 },
