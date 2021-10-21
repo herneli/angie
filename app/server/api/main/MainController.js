@@ -40,7 +40,7 @@ export class MainController extends BaseController {
 
         var jsRes = new JsonResponse();
         jsRes.success = true;
-        jsRes.data = App.i18n.currentDataRaw[request.query.lang || process.env.DEFAULT_LANG];;
+        jsRes.data = App.i18n.currentData[request.query.lang || process.env.DEFAULT_LANG];;
         response.json(jsRes);
     }
 
