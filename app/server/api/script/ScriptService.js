@@ -6,18 +6,29 @@ export class ScriptService extends BaseService {
         super(ScriptDao);
     }
 
-    getObjectMembers({ type, language }) {
-        const objectData = this.dao.getObjectData(type);
-        const methods = this.dao.getMethods(type, language);
+    async getObjectMembers({
+        type,
+        language,
+        excludeProperties,
+        excludeMethods,
+    }) {
+        let properties = [];
+        let methods = [];
 
-        return Promise.all([objectData, methods]).then((values) => {
-            let properties =
-                values[0] && values[0].data && values[0].data.properties;
+        if (!excludeProperties) {
+            let objectData = await this.dao.getObjectData(type);
+            if (objectData && objectData.data && objectData.data.properties) {
+                properties = objectData.data.properties;
+            }
+        }
 
-            let methods = values[1].map((method) => {
+        if (!excludeMethods) {
+            const methodsDb = await this.dao.getMethods(type, language);
+
+            methods = methodsDb.map((method) => {
                 return method.data;
             });
-            return { properties, methods };
-        });
+        }
+        return { properties, methods };
     }
 }

@@ -28,26 +28,26 @@ function isObject(value) {
     return value !== null && typeof value === "object";
 }
 
-export default function ExpressionPart({
+export default function ExpressionMember({
     classes,
-    expressionPart,
+    expressionMember,
     onChange,
     onEdit,
 }) {
     const handleOnChange = (param) => (value) => {
         onChange({
-            ...expressionPart,
-            params: { ...expressionPart.params, [param]: value },
+            ...expressionMember,
+            params: { ...expressionMember.params, [param]: value },
         });
     };
 
     const handleOnClickEdit = () => {
-        onEdit && onEdit(expressionPart);
+        onEdit && onEdit(expressionMember);
     };
 
     const renderMethod = () => {
         const templateParts = getRenderPatternParts(
-            expressionPart.renderTemplate || T.translate("visual_script.edit")
+            expressionMember.renderTemplate || T.translate("visual_script.edit")
         );
         const methodComponents = [];
         let key = 0;
@@ -58,7 +58,10 @@ export default function ExpressionPart({
                     <span key={key}>{templatePart.value}</span>
                 );
             } else {
-                let value = expressionPart.params[templatePart.value];
+                if (!(templatePart.value in (expressionMember.params || {}))) {
+                    return "{{" + templatePart.value + "}}";
+                }
+                let value = expressionMember.params[templatePart.value];
                 if (isObject(value) && value.$exp) {
                     methodComponents.push(
                         <Expression
@@ -76,8 +79,8 @@ export default function ExpressionPart({
                     methodComponents.push(
                         <ParamEditor
                             key={key + "-editor"}
-                            value={expressionPart.params[templatePart.value]}
-                            definition={expressionPart.paramDefinitions.find(
+                            value={expressionMember.params[templatePart.value]}
+                            paramMember={expressionMember.paramMembers.find(
                                 (item) => {
                                     return item.code === templatePart.value;
                                 }
@@ -102,15 +105,15 @@ export default function ExpressionPart({
         return methodComponents;
     };
 
-    if (expressionPart.memberType === "method") {
+    if (expressionMember.memberType === "method") {
         return (
             <div
                 className={
-                    classes.part +
+                    classes.member +
                     " " +
-                    (expressionPart.renderOperator
+                    (expressionMember.renderOperator
                         ? "opearator-value"
-                        : expressionPart.memberType)
+                        : expressionMember.memberType)
                 }
             >
                 {renderMethod()}
@@ -118,8 +121,8 @@ export default function ExpressionPart({
         );
     } else {
         return (
-            <div className={classes.part + " " + expressionPart.memberType}>
-                <div className={classes.content}>{expressionPart.name}</div>
+            <div className={classes.member + " " + expressionMember.memberType}>
+                <div className={classes.content}>{expressionMember.name}</div>
             </div>
         );
     }

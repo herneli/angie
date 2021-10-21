@@ -105,7 +105,7 @@
                                             "string"
                                         ]
                                     },
-                                    "remoteValues": {
+                                    "selectOptions": {
                                         "title": "Valores remotos",
                                         "type": ["string", "null"]
                                     },
@@ -125,7 +125,7 @@
                                         "title": "Código de objeto"
                                     }
                                 },
-                                "remoteValues": {
+                                "selectOptions": {
                                     "title": "Valores remotos",
                                     "type": ["string", "null"]
                                 },

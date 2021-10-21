@@ -39,7 +39,7 @@ const processValue = (schema, value) => {
     return value;
 };
 
-function getRemoteValues(url, returnPath) {
+function getselectOptions(url, returnPath) {
     return axios.get(url).then((response) => {
         if (!response || !response.data) {
             return [];
@@ -54,14 +54,14 @@ function getRemoteValues(url, returnPath) {
 export default class SelectRemoteWidget extends Component {
     state = { options: [] };
     componentDidMount() {
-        let { remoteValues } = this.props.options;
+        let { selectOptions } = this.props.options;
         let valueField = "code";
         let labelField = "name";
         let path = null;
 
-        // Parse remoteValues field for config
+        // Parse selectOptions field for config
 
-        let [url, config] = remoteValues.split("#");
+        let [url, config] = selectOptions.split("#");
         if (config) {
             config = querystring.parse(config);
             path = config.path;
@@ -72,7 +72,7 @@ export default class SelectRemoteWidget extends Component {
                 labelField = config.label;
             }
         }
-        getRemoteValues(url, path).then((entries) => {
+        getselectOptions(url, path).then((entries) => {
             let options = entries.map((entry) => ({
                 value: get(entry, valueField),
                 label: get(entry, labelField),
