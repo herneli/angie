@@ -84,6 +84,26 @@ Down:
 
 `knex-cli` es un acceso rápido a la librería knex para poderlo ejecutar aunque la dependencia no se encuentre instalada en el sistema. Se utiliza exactamente igual que Knex. Mas info: https://knexjs.org/#Migrations-CLI
 
+
+Para crear nuevas migraciones:
+
+```
+> node knex-cli.js  migrate:make migration_name 
+```
+
+#### Database Seeds
+
+Los ficheros de seed para rellenar tablas de la base de datos se ejecutan mediante:
+
+```
+> node knex-cli.js seed:run [--specific=file.js] //El archivo es opcional
+```
+
+Para crear nuevos archivos: 
+```
+> node knex-cli.js seed:make seed_name
+```
+
 ### Compilación
 
 Para la generación de los distribuibles, es necesario ejecutar
@@ -111,6 +131,7 @@ Configuraciones necesarias:
 3. Crear cliente **angie-front**
 4. Crear cliente **angie-back**
 5. *Opcional:* Crear roles asociados a los clientes y usuarios.
+6. *Opcional:* Establecer el tema **angie** en el realm.
 
 
 **TODO**  Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
