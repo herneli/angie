@@ -5,10 +5,17 @@ import ExpressionMemberSelector from "./ExpressionMemberSelector";
 import styles from "./expressionStyle";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
+import areSameTypes from "../utils/areSameTypes";
 const useStyles = createUseStyles(styles);
 
-export default function Expression({ expression, onChange, displayOnly }) {
+export default function Expression({
+    expression,
+    expectedType,
+    onChange,
+    displayOnly,
+}) {
     const [editExpressionMember, setEditExpressionMember] = useState(null);
+    const [openSelector, setOpenSelector] = useState(false);
     const classes = useStyles();
 
     const handleOnChange = (index) => (expressionMember) => {
@@ -33,6 +40,9 @@ export default function Expression({ expression, onChange, displayOnly }) {
         onChange && onChange(newExpression);
     };
     const handleOnSelect = (member) => {
+        if (areSameTypes(expectedType, member.type)) {
+            setOpenSelector(false);
+        }
         return onChange([...expression, member]);
     };
     const handleOnDeleteLast = () => {
@@ -41,6 +51,10 @@ export default function Expression({ expression, onChange, displayOnly }) {
 
     const handleOnEdit = (index) => (expressionMember) => {
         setEditExpressionMember({ index, expressionMember });
+    };
+
+    const handleOnOpenSelectorChange = (open) => {
+        setOpenSelector(open);
     };
 
     const renderMethodEditor = ({ index, expressionMember }) => {
@@ -106,6 +120,8 @@ export default function Expression({ expression, onChange, displayOnly }) {
                         index === expressionGroups.length - 1 ? (
                             <ExpressionMemberSelector
                                 expression={expression}
+                                open={openSelector}
+                                onOpenChange={handleOnOpenSelectorChange}
                                 classes={classes}
                                 onSelect={handleOnSelect}
                                 onDeleteLast={handleOnDeleteLast}

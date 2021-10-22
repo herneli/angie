@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { mdiChevronDown, mdiBackspaceOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { List, Select, Button, Popover, Input } from "antd";
@@ -6,55 +6,72 @@ import { useScriptContext } from "../ScriptContext";
 import getTypeIcon from "../getTypeIcon";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
+import areSameTypes from "../utils/areSameTypes";
 
 const { Option } = Select;
 
 export default function ExpressionMemberSelector({
     expression,
+    open,
+    onOpenChange,
     classes,
     onSelect,
     onDeleteLast,
 }) {
-    const [members, setMembers] = useState();
+    const [membersForType, setMembersForType] = useState();
     const [methodMember, setMethodMember] = useState();
     const [filter, setFilter] = useState();
     const { manager } = useScriptContext();
 
+    useEffect(() => {
+        if (
+            open &&
+            (!membersForType ||
+                !areSameTypes(
+                    membersForType.type,
+                    getLastExpressionMemberType()
+                ))
+        ) {
+            getMembers();
+        }
+    }, [expression, open]);
+
+    const getLastExpressionMemberType = () => {
+        return expression[expression.length - 1].type;
+    };
+
+    const getMembers = () => {
+        manager.getMembers(getLastExpressionMemberType()).then((m) => {
+            let membersLocal = [];
+            if (m.properties) {
+                m.properties.forEach((property) => {
+                    membersLocal.push({
+                        memberType: "property",
+                        ...property,
+                    });
+                });
+            }
+
+            if (m.methods) {
+                m.methods.forEach((method) => {
+                    membersLocal.push({
+                        memberType: "method",
+                        ...method,
+                    });
+                });
+            }
+            setMembersForType({
+                type: getLastExpressionMemberType(),
+                members: membersLocal,
+            });
+        });
+    };
     const handleOnChangeFilter = (e) => {
         setFilter(e.target.value);
     };
-    const handleOnVisibleChange = (visible) => {
-        if (visible) {
-            manager
-                .getMembers(expression[expression.length - 1].type)
-                .then((m) => {
-                    let membersLocal = [];
-                    if (m.properties) {
-                        m.properties.forEach((property) => {
-                            membersLocal.push({
-                                memberType: "property",
-                                ...property,
-                            });
-                        });
-                    }
-
-                    if (m.methods) {
-                        m.methods.forEach((method) => {
-                            membersLocal.push({
-                                memberType: "method",
-                                ...method,
-                            });
-                        });
-                    }
-                    setMembers(membersLocal);
-                });
-        } else {
-            setMembers(null);
-        }
-    };
 
     const getFilteredMembers = () => {
-        return members.filter((member) => {
+        return membersForType.members.filter((member) => {
             let code = (member.code || "").toLowerCase();
             let name = (member.name || "").toLowerCase();
 
@@ -104,29 +121,26 @@ export default function ExpressionMemberSelector({
     };
     const handleOnSelect = (member) => () => {
         if (member.memberType === "delete") {
-            setMembers(null);
             onDeleteLast();
         } else if (member.memberType === "method") {
-            setMembers(null);
             setMethodMember({
                 ...member,
                 type: replaceType(member.type),
                 paramMembers: replaceParamMembers(member.paramMembers || []),
             });
         } else {
-            setMembers(null);
             onSelect(member);
         }
     };
 
     const handleOnParametersEntered = (member) => {
-        setMembers(null);
         setMethodMember(null);
         onSelect(member);
     };
 
     const handleOnCancelMethodEditor = () => {
         setMethodMember(null);
+        onOpenChange(false);
     };
 
     const AvatarIcon = ({ path }) => {
@@ -134,13 +148,13 @@ export default function ExpressionMemberSelector({
     };
 
     const renderMenu = () => {
-        if (!members) {
+        if (!membersForType) {
             return null;
         }
 
         return (
             <div className={classes.memberSelectorWrapper}>
-                {members.length > 1 ? (
+                {membersForType.members.length > 1 ? (
                     <Input
                         value={filter}
                         onChange={handleOnChangeFilter}
@@ -192,8 +206,8 @@ export default function ExpressionMemberSelector({
             <Popover
                 content={renderMenu()}
                 trigger={"click"}
-                visible={!!members}
-                onVisibleChange={handleOnVisibleChange}
+                visible={open && !methodMember}
+                onVisibleChange={onOpenChange}
                 overlayClassName={classes.propertyPopover}
             >
                 <Button

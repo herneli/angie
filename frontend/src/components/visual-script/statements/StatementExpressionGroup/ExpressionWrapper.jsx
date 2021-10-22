@@ -10,11 +10,20 @@ const useStyles = createUseStyles({
     actions: { marginLeft: "20px" },
     icon: { color: "rgba(0, 0, 0, 0.54);" },
 });
-export default function ExpressionWrapper({ expression, onChange, onDelete }) {
+export default function ExpressionWrapper({
+    expression,
+    expectedType,
+    onChange,
+    onDelete,
+}) {
     const classes = useStyles();
     return (
         <div className={classes.root}>
-            <Expression expression={expression} onChange={onChange} />
+            <Expression
+                expression={expression}
+                expectedType={expectedType}
+                onChange={onChange}
+            />
             <span className={classes.actions}>
                 <Button
                     type="text"

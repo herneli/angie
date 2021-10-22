@@ -93,6 +93,7 @@ export default function StatementExpressionGroup({
                 <ExpressionWrapper
                     key={index}
                     expression={expression}
+                    expectedType={{ type: "void" }}
                     variables={variables}
                     onChange={handleExpressionChange(index)}
                     onDelete={handleExpressionDelete(index)}

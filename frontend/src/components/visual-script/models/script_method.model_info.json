@@ -198,6 +198,7 @@
                         "type": "string",
                         "title": "Tipo",
                         "enum": [
+                            "void",
                             "$self",
                             "$item",
                             "$any",
@@ -210,6 +211,7 @@
                             "string"
                         ],
                         "enumNames": [
+                            "Vacío",
                             "$self",
                             "$item",
                             "Cualquier tipo",
@@ -230,7 +232,12 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": ["$self", "$item", "$any"]
+                                        "enum": [
+                                            "void",
+                                            "$self",
+                                            "$item",
+                                            "$any"
+                                        ]
                                     }
                                 }
                             },
