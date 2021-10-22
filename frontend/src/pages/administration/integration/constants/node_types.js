@@ -87,7 +87,7 @@ const node_types = [
         }
     },
     {
-        "id": "35f0048c-2805-4e36-95cb-1369a109e845",
+        "id": "5031a614-6f8c-4419-99d1-fcc5d6786ffe",
         "name": "Terser Extractor",
         "description": "Replaces route Body with HL7 property via terser Path",
         "node_type": "node",
@@ -119,7 +119,7 @@ const node_types = [
         }
     },
     {
-        "id": "35f0043438c-2805-4e36-95cb-1369a109e845",
+        "id": "648bbb89-aa93-4392-8377-bca3b2c19548",
         "name": "Switch",
         "description": "Create dynamic condition",
         "node_type": "node",

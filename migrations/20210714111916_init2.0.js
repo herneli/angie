@@ -26,7 +26,7 @@ exports.up = async function (knex) {
             table.string("name").notNullable();
             table.string("description");
             table.integer("version");
-            table.integer("integration_id");
+            table.uuid("integration_id");
             table.json("nodes");
         });
     }
@@ -44,14 +44,15 @@ exports.up = async function (knex) {
             table.string("name").notNullable();
             table.string("description");
             table.string("node_type", 30);
-            table.string("react_component", 30);
-            table.uuid("camel_component");
+            table.string("react_component_type", 30);
+            table.uuid("camel_component_id");
             table.uuid("plugin_id");
-            table.json("handles");
+            table.string("handles");
             table.string("form_type", 30);
             table.uuid("form_type_plugin_id");
             table.json("json_data_schema");
             table.json("json_ui_schema");
+            table.json("defaults");
         });
     }
     if (!(await knex.schema.hasTable("node_type_subflow"))) {

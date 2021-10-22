@@ -17,5 +17,6 @@ before(async function () {
     await KnexConnector.connection.migrate.rollback({ env: 'test' }, true);
     //Actualizar la BD
     await KnexConnector.connection.migrate.latest({ env: 'test' });
+    await KnexConnector.connection.seed.run({ env: 'test' });
 
 })
