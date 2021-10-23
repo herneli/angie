@@ -1,13 +1,83 @@
 {
+    "context": {
+        "memberType": "context",
+        "code": "context",
+        "name": "context",
+        "type": { "type": "object", "objectCode": "context_test" }
+    },
+    "language": "js",
     "mainStatement": {
-        "id": "1",
+        "id": "block-1",
         "type": "block",
-        "statements": [
+        "main": true,
+        "nestedStatements": [
             {
-                "id": 2,
+                "id": "comment-1",
+                "type": "comment",
+                "comment": "Inicio del programa"
+            },
+            {
+                "id": "expression-group-1",
                 "type": "expressionGroup",
                 "name": "Inicialización",
                 "expressions": []
+            },
+            {
+                "id": "condition-1",
+                "type": "condition",
+                "name": "¿Se cumple la condición?",
+                "nestedStatements": [
+                    {
+                        "id": "condition-1-yes",
+                        "type": "block",
+                        "label": "Claro que sí guapi",
+                        "nestedStatements": [
+                            {
+                                "id": "expression-group-2",
+                                "type": "expressionGroup",
+                                "name": "Cosas para el sí",
+                                "expressions": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "condition-1-no",
+                        "type": "block",
+                        "label": "No",
+                        "nestedStatements": [
+                            {
+                                "id": "expression-group-3",
+                                "type": "expressionGroup",
+                                "name": "Cosas para el no",
+                                "expressions": []
+                            },
+                            {
+                                "id": "cond-31",
+                                "type": "condition",
+                                "name": "¿Noseuqe?",
+                                "nestedStatements": [
+                                    {
+                                        "id": "cond-31-yes",
+                                        "type": "block",
+                                        "label": "Sí",
+                                        "nestedStatements": []
+                                    },
+                                    {
+                                        "id": "cond-31-no",
+                                        "type": "block",
+                                        "label": "No",
+                                        "nestedStatements": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "comment-2",
+                "type": "comment",
+                "comment": "Fin del programa"
             }
         ]
     }

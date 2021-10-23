@@ -1,38 +1,13 @@
 import React from "react";
 import T from "i18n-react";
 import { createUseStyles } from "react-jss";
-import { mdiAnimationPlay } from "@mdi/js";
 import ExpressionWrapper from "./ExpressionWrapper";
-import StatementIcon from "../StatementIcon";
 import { Button } from "antd";
+import StatementBox from "../StatementBox";
 import { useScriptContext } from "../../ScriptContext";
+import registry from ".";
 
 let useStyles = createUseStyles({
-    root: {
-        margin: "10px 10px",
-        padding: "5px 15px",
-        minWidth: 450,
-        "&.all": {
-            borderLeft: "3px solid dodgerblue",
-        },
-        "&.any": {
-            borderLeft: "3px dashed dodgerblue",
-        },
-        borderRadius: 0,
-        background: "rgba(158, 158, 158, 0.15)",
-        textAlign: "left",
-        boxShadow: "0 0 2px rgba(0, 0, 0, 0), 0 2px 4px rgba(0, 0, 0, 0.33)",
-        display: "inline-block",
-    },
-    title: {
-        display: "inline-block",
-        lineHeight: "32px",
-        color: "gray",
-    },
-    icon: {
-        color: "gray",
-        marginRight: "10px",
-    },
     addExpressionButton: {
         marginRight: 5,
         float: "right",
@@ -41,10 +16,6 @@ let useStyles = createUseStyles({
         fontSize: 12,
     },
 
-    statementToolbar: {
-        fontSize: 14,
-        marginBottom: 10,
-    },
     statementFooter: {
         display: "table",
         fontSize: 14,
@@ -54,7 +25,6 @@ let useStyles = createUseStyles({
 });
 
 export default function StatementExpressionGroup({
-    id,
     statement,
     variables,
     onChange,
@@ -103,21 +73,7 @@ export default function StatementExpressionGroup({
     );
 
     return (
-        <div id={statement.id} className={classes.root}>
-            <div className={classes.statementToolbar}>
-                <div>
-                    <span className={classes.title}>
-                        <StatementIcon
-                            className={classes.icon}
-                            path={mdiAnimationPlay}
-                        />
-                        <span className={classes.titleText}>
-                            {statement.name}
-                        </span>
-                    </span>
-                    {onDelete ? <button>Del</button> : null}
-                </div>
-            </div>
+        <StatementBox statement={statement} iconPath={registry.iconPath}>
             {expressionComponents}
             <div className={classes.statementFooter}>
                 <Button
@@ -130,6 +86,6 @@ export default function StatementExpressionGroup({
                     ).toUpperCase()}
                 </Button>
             </div>
-        </div>
+        </StatementBox>
     );
 }

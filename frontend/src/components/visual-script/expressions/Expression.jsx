@@ -6,6 +6,7 @@ import styles from "./expressionStyle";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
+import { memberExpression } from "@babel/types";
 const useStyles = createUseStyles(styles);
 
 export default function Expression({
@@ -57,6 +58,17 @@ export default function Expression({
         setOpenSelector(open);
     };
 
+    const handleOnOperatorClick = (index) => () => {
+        if (expression[index].type.type === "boolean") {
+            let newExpression = [
+                ...expression.slice(0, index),
+                { ...expression[index], not: !expression[index].not },
+                ...expression.slice(index + 1),
+            ];
+            onChange(newExpression);
+        }
+    };
+
     const renderMethodEditor = ({ index, expressionMember }) => {
         return (
             <MethodEditor
@@ -88,9 +100,17 @@ export default function Expression({
             expressionGroups[expressionGroups.length - 1].push(
                 <div
                     key={index.toString() + "-operator"}
-                    className={classes.member + " operator"}
+                    className={
+                        classes.member +
+                        " operator " +
+                        expressionMember.type.type
+                    }
+                    onClick={handleOnOperatorClick(index)}
                 >
                     <div className={classes.content}>
+                        {expressionMember.not
+                            ? T.translate("visual_script.operator_not") + " "
+                            : ""}
                         {expressionMember.renderOperator}
                     </div>
                 </div>

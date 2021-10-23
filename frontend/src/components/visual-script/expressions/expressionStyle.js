@@ -61,6 +61,9 @@ const styles = {
             color: "white",
             padding: "0px 6px",
         },
+        "&.operator.boolean": {
+            cursor: "pointer",
+        },
     },
     editIcon: {
         color: "gray",

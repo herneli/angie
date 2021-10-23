@@ -10,6 +10,5 @@ export default function Script() {
         name: "context",
         type: { type: "object", objectCode: "context_test" },
     };
-    let manager = new ScriptManager({ context, language: "js" });
-    return <VisualScript manager={manager} script={testScript} />;
+    return <VisualScript script={testScript} />;
 }

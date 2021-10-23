@@ -93,11 +93,20 @@
         "add_expression": "Añadir expresión",
         "accept": "Aceptar",
         "cancel": "Cancelar",
+        "condition_yes": "Sí",
+        "condition_no": "No",
+        "delete_previous": "Anterior",
         "edit": "Editar",
         "edit_method_parameters": "Parámetros para \"{method}\"",
         "execute_following_expressions": "Ejecutar las siguientes expresiones",
         "new_expression": "Seleccione...",
-        "delete_previous": "Anterior",
-        "select_component": "Seleccione componente"
+        "new_comment": "Nuevo comentario",
+        "new_condition": "Nueva condición",
+        "new_expression_group": "Nuevo grupo de expresiones",
+        "operator_not": "no",
+        "select_component": "Seleccione componente",
+        "select_comment": "Comentario",
+        "select_condition": "Condición",
+        "select_expression_group": "Grupo de expresiones"
     }
 }

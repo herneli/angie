@@ -7,6 +7,8 @@
         "@ant-design/icons": "^4.7.0",
         "@atlasmap/atlasmap": "^2.3.0-M.5",
         "@craco/craco": "^6.3.0",
+        "@jsplumb/browser-ui": "^5.0.0-RC43",
+        "@jsplumb/connector-flowchart": "^5.0.0-RC43",
         "@leifandersen/react-codemirror2": "^7.2.1",
         "@mdi/js": "^6.2.95",
         "@mdi/react": "^1.5.0",
@@ -34,6 +36,7 @@
         "react-jss": "^10.8.0",
         "react-router-dom": "^5.3.0",
         "react-scripts": "4.0.3",
+        "uuid": "^8.3.2",
         "uuidv4": "^6.2.12",
         "web-vitals": "^1.1.2",
         "xml-formatter": "^2.4.1"
