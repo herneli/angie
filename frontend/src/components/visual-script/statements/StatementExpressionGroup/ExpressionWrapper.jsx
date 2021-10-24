@@ -12,6 +12,7 @@ const useStyles = createUseStyles({
 });
 export default function ExpressionWrapper({
     expression,
+    variables,
     expectedType,
     onChange,
     onDelete,
@@ -21,6 +22,7 @@ export default function ExpressionWrapper({
         <div className={classes.root}>
             <Expression
                 expression={expression}
+                variables={variables}
                 expectedType={expectedType}
                 onChange={onChange}
             />

@@ -13,6 +13,7 @@ const registry = {
             type: "block",
             name: T.translate("visual_script.new_block"),
             nestedStatements: [],
+            variables: {},
         };
     },
 };

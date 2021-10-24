@@ -18,7 +18,7 @@ let useStyles = createUseStyles({
         width: "18px",
     },
 });
-export default function StatementBlock({ statement, onChange }) {
+export default function StatementBlock({ statement, variables, onChange }) {
     const classes = useStyles();
     const { manager } = useScriptContext();
     const handleOnChange = (index) => (childStatement) => {
@@ -69,6 +69,10 @@ export default function StatementBlock({ statement, onChange }) {
                         <td>
                             <Statement
                                 statement={childStatement}
+                                variables={{
+                                    ...variables,
+                                    ...statement.variables,
+                                }}
                                 onChange={handleOnChange(index)}
                             />
                         </td>

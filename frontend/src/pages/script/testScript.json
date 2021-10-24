@@ -10,6 +10,16 @@
         "id": "block-1",
         "type": "block",
         "main": true,
+        "variables": {
+            "var1": {
+                "memberType": "variable",
+                "code": "var1",
+                "name": "Variable 1",
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "nestedStatements": [
             {
                 "id": "comment-1",
@@ -17,10 +27,28 @@
                 "comment": "Inicio del programa"
             },
             {
-                "id": "expression-group-1",
-                "type": "expressionGroup",
-                "name": "Inicialización",
-                "expressions": []
+                "id": "loop-1",
+                "type": "loop",
+                "name": "Loop",
+                "arrayExpression": [
+                    {
+                        "memberType": "context",
+                        "type": {
+                            "type": "object",
+                            "code": "context",
+                            "name": "context",
+                            "objectCode": "context_test"
+                        }
+                    }
+                ],
+                "itemVariable": "item",
+                "nestedStatements": [
+                    {
+                        "id": "loop-block-1",
+                        "type": "block",
+                        "nestedStatements": []
+                    }
+                ]
             },
             {
                 "id": "condition-1",

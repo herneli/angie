@@ -11,6 +11,7 @@ const useStyles = createUseStyles(styles);
 
 export default function Expression({
     expression,
+    variables,
     expectedType,
     onChange,
     displayOnly,
@@ -19,6 +20,9 @@ export default function Expression({
     const [openSelector, setOpenSelector] = useState(false);
     const classes = useStyles();
 
+    if (!variables) {
+        throw Error('Expression requires "variables" property ');
+    }
     const handleOnChange = (index) => (expressionMember) => {
         let newExpression = [
             ...expression.slice(0, index),
@@ -122,6 +126,7 @@ export default function Expression({
                 key={index.toString()}
                 classes={classes}
                 expressionMember={expressionMember}
+                variables={variables}
                 onChange={handleOnChange(index)}
                 onEdit={handleOnEdit(index)}
             />
@@ -140,6 +145,7 @@ export default function Expression({
                         index === expressionGroups.length - 1 ? (
                             <ExpressionMemberSelector
                                 expression={expression}
+                                variables={variables}
                                 open={openSelector}
                                 onOpenChange={handleOnOpenSelectorChange}
                                 classes={classes}

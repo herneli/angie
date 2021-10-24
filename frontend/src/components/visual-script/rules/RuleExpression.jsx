@@ -43,7 +43,12 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function RuleExpression({ rule, onChange, onDelete }) {
+export default function RuleExpression({
+    rule,
+    variables,
+    onChange,
+    onDelete,
+}) {
     const classes = useStyles();
     const handleOnChange = (expression) => {
         if (expression && expression.length > 0) {
@@ -58,6 +63,7 @@ export default function RuleExpression({ rule, onChange, onDelete }) {
         <div className={classes.rule}>
             <Expression
                 expression={rule.expression}
+                variables={variables}
                 expectedType={{ type: "boolean" }}
                 onChange={handleOnChange}
             />

@@ -80,7 +80,7 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function RuleGroup({ id, rule, onChange, onDelete }) {
+export default function RuleGroup({ id, rule, variables, onChange, onDelete }) {
     const classes = useStyles();
     const { manager } = useScriptContext();
     const handleChange = (name) => (value) => {
@@ -139,6 +139,7 @@ export default function RuleGroup({ id, rule, onChange, onDelete }) {
                 <Rule
                     key={index}
                     rule={rule}
+                    variables={variables}
                     onChange={handleRuleItemChange(index)}
                     onDelete={handleRuleItemDelete(index)}
                 />

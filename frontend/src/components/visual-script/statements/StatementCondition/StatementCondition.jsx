@@ -18,7 +18,7 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function StatementCondition({ statement, onChange }) {
+export default function StatementCondition({ statement, variables, onChange }) {
     const { manager } = useScriptContext();
     const classes = useStyles();
 
@@ -42,6 +42,7 @@ export default function StatementCondition({ statement, onChange }) {
                 <td key={childStatement.id}>
                     <Statement
                         statement={childStatement}
+                        variables={variables}
                         onChange={handleOnChange(index)}
                     />
                 </td>
@@ -56,6 +57,7 @@ export default function StatementCondition({ statement, onChange }) {
                         <Rule
                             id={statementId}
                             rule={statement.rule}
+                            variables={variables}
                             onChange={handleOnChangeRule}
                         />
                     </td>

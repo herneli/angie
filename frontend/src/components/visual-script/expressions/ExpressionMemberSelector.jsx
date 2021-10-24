@@ -12,6 +12,7 @@ const { Option } = Select;
 
 export default function ExpressionMemberSelector({
     expression,
+    variables,
     open,
     onOpenChange,
     classes,
@@ -29,19 +30,19 @@ export default function ExpressionMemberSelector({
             (!membersForType ||
                 !areSameTypes(
                     membersForType.type,
-                    getLastExpressionMemberType()
+                    getLastExpressionMember().type
                 ))
         ) {
             getMembers();
         }
     }, [expression, open]);
 
-    const getLastExpressionMemberType = () => {
-        return expression[expression.length - 1].type;
+    const getLastExpressionMember = () => {
+        return expression[expression.length - 1];
     };
 
     const getMembers = () => {
-        manager.getMembers(getLastExpressionMemberType()).then((m) => {
+        manager.getMembers(getLastExpressionMember().type).then((m) => {
             let membersLocal = [];
             if (m.properties) {
                 m.properties.forEach((property) => {
@@ -60,8 +61,26 @@ export default function ExpressionMemberSelector({
                     });
                 });
             }
+
+            if (getLastExpressionMember().memberType === "context") {
+                membersLocal.push({
+                    memberType: "variableContainer",
+                    code: "variableContainer",
+                    name: T.translate("visual_script.variables"),
+                    type: {
+                        type: "object",
+                        objectCode: "variables",
+                    },
+                });
+            }
+
+            if (getLastExpressionMember().memberType === "variableContainer") {
+                Object.keys(variables).forEach((variableKey) => {
+                    membersLocal.push(variables[variableKey]);
+                });
+            }
             setMembersForType({
-                type: getLastExpressionMemberType(),
+                type: getLastExpressionMember().type,
                 members: membersLocal,
             });
         });

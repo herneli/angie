@@ -98,6 +98,8 @@
         "edit_method_parameters": "Parámetros para \"{method}\"",
         "execute_following_expressions": "Ejecutar las siguientes expresiones",
         "following_rules_met": "Se deben cumplir las siguientes reglas",
+        "loop_repeat": "Repetir",
+        "loop_to_variable": "en variable",
         "new_expression": "Seleccione...",
         "new_comment": "Nuevo comentario",
         "new_condition": "Nueva condición",
@@ -110,6 +112,7 @@
         "select_comment": "Comentario",
         "select_condition": "Condición",
         "select_expression_group": "Grupo de expresiones",
-        "select_loop": "Bucle"
+        "select_loop": "Bucle",
+        "variables": "Variables"
     }
 }

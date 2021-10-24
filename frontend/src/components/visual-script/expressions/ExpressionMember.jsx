@@ -31,6 +31,7 @@ function isObject(value) {
 export default function ExpressionMember({
     classes,
     expressionMember,
+    variables,
     onChange,
     onEdit,
 }) {
@@ -67,6 +68,7 @@ export default function ExpressionMember({
                         <Expression
                             key={key}
                             expression={value.$exp}
+                            variables={variables}
                             onChange={(expression) => {
                                 handleOnChange(templatePart.value)({
                                     $stm: expression,
