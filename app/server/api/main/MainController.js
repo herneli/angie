@@ -1,5 +1,4 @@
-import { App, BaseController, JsonResponse } from 'lisco';
-import { Utils } from '../../common'
+import { App, BaseController, JsonResponse, Utils } from 'lisco';
 import path from 'path'
 
 const asyncHandler = require('express-async-handler')
@@ -8,11 +7,11 @@ export class MainController extends BaseController {
 
     configure() {
 
-        this.router.get('/', (res, req, next) => { this.index(res, req, next); });
-        this.router.get('/front(/*)?', (res, req, next) => { this.front(res, req, next); });
-        this.router.get('/translation', (res, req, next) => { this.translation(res, req, next); });
-        this.router.get('/config', (res, req, next) => { this.config(res, req, next); });
-        this.router.get('/memory', (res, req, next) => { this.memory(res, req, next); });
+        this.router.get('/', (request, response, next) => { this.index(request, response, next); });
+        this.router.get('/front(/*)?', (request, response, next) => { this.front(request, response, next); });
+        this.router.get('/translation', (request, response, next) => { this.translation(request, response, next); });
+        this.router.get('/config', (request, response, next) => { this.config(request, response, next); });
+        this.router.get('/memory', (request, response, next) => { this.memory(request, response, next); });
 
         this.router.get('/log/:log', this.loadLog.bind(this.loadLog));
 

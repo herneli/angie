@@ -4262,9 +4262,9 @@
         "tags": []
       }
     },
-    "/integration/list": {
-      "post": {
-        "summary": "/integration/list",
+    "/integration": {
+      "get": {
+        "summary": "/integration",
         "consumes": [
           "application/json"
         ],
@@ -4272,6 +4272,61 @@
         "responses": {},
         "tags": [
           "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/list": {
+      "post": {
+        "summary": "/integration/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {},
+                  "example": [
+                    null
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "0"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -4328,35 +4383,106 @@
         ]
       }
     },
-    "/integration": {
-      "post": {
-        "summary": "/integration",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_route/list": {
-      "post": {
-        "summary": "/integration_route/list",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_route/{id}": {
+    "/integration/list/full": {
       "get": {
-        "summary": "/integration_route/{id}",
+        "summary": "/integration/list/full",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {},
+                  "example": [
+                    null
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "0"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "lodash is not defined"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/integration_channel": {
+      "get": {
+        "summary": "/integration_channel",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration_channel",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/list": {
+      "post": {
+        "summary": "/integration_channel/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/{id}": {
+      "get": {
+        "summary": "/integration_channel/{id}",
         "consumes": [
           "application/json"
         ],
@@ -4373,7 +4499,7 @@
         ]
       },
       "put": {
-        "summary": "/integration_route/{id}",
+        "summary": "/integration_channel/{id}",
         "consumes": [
           "application/json"
         ],
@@ -4390,7 +4516,7 @@
         ]
       },
       "delete": {
-        "summary": "/integration_route/{id}",
+        "summary": "/integration_channel/{id}",
         "consumes": [
           "application/json"
         ],
@@ -4407,16 +4533,27 @@
         ]
       }
     },
-    "/integration_route": {
-      "post": {
-        "summary": "/integration_route",
+    "/node_type": {
+      "get": {
+        "summary": "/node_type",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
         "responses": {},
         "tags": [
-          "integration"
+          "node_type"
+        ]
+      },
+      "post": {
+        "summary": "/node_type",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "node_type"
         ]
       }
     },
@@ -4427,9 +4564,296 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "node_type": {
+                        "type": "string"
+                      },
+                      "react_component_type": {
+                        "type": "string"
+                      },
+                      "camel_component_id": {
+                        "type": "string"
+                      },
+                      "plugin_id": {
+                        "type": "null"
+                      },
+                      "handles": {
+                        "type": "string"
+                      },
+                      "form_type": {
+                        "type": "string"
+                      },
+                      "form_type_plugin_id": {
+                        "type": "null"
+                      },
+                      "json_data_schema": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "properties": {
+                            "type": "object",
+                            "properties": {
+                              "hostname": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "port": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "query_params": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "path": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "terser_path": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "handles": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "properties": {
+                                        "type": "object",
+                                        "properties": {
+                                          "condition": {
+                                            "type": "object",
+                                            "properties": {
+                                              "type": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "code": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "json_ui_schema": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "object",
+                            "properties": {
+                              "ui:widget": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "defaults": {
+                        "type": "object",
+                        "properties": {
+                          "hostname": {
+                            "type": "string"
+                          },
+                          "port": {
+                            "type": "number"
+                          },
+                          "terser_path": {
+                            "type": "string"
+                          },
+                          "handles": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "condition": {
+                                  "type": "string"
+                                },
+                                "to": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "description",
+                      "node_type",
+                      "react_component_type",
+                      "camel_component_id",
+                      "plugin_id",
+                      "handles",
+                      "form_type",
+                      "form_type_plugin_id",
+                      "json_data_schema",
+                      "json_ui_schema",
+                      "defaults"
+                    ]
+                  },
+                  "example": [
+                    {
+                      "id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
+                      "name": "TCP-MLLP Input",
+                      "description": "Message Input via TCP-MLLP Connection",
+                      "node_type": "node",
+                      "react_component_type": "input",
+                      "camel_component_id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
+                      "plugin_id": null,
+                      "handles": "{\"out\"}",
+                      "form_type": "jsonschema",
+                      "form_type_plugin_id": null,
+                      "json_data_schema": {
+                        "title": "TCP-MLLP Input",
+                        "description": "MLLP tcp input node.",
+                        "type": "object",
+                        "required": [
+                          "hostname",
+                          "port"
+                        ],
+                        "properties": {
+                          "hostname": {
+                            "type": "string"
+                          },
+                          "port": {
+                            "type": "number"
+                          },
+                          "query_params": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "json_ui_schema": {},
+                      "defaults": {
+                        "hostname": "0.0.0.0",
+                        "port": 8888
+                      }
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "6"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "node_type"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -4486,16 +4910,27 @@
         ]
       }
     },
-    "/node_type": {
-      "post": {
-        "summary": "/node_type",
+    "/organization": {
+      "get": {
+        "summary": "/organization",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
         "responses": {},
         "tags": [
-          "node_type"
+          "organization"
+        ]
+      },
+      "post": {
+        "summary": "/organization",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "organization"
         ]
       }
     },
@@ -4565,16 +5000,27 @@
         ]
       }
     },
-    "/organization": {
-      "post": {
-        "summary": "/organization",
+    "/camel_component": {
+      "get": {
+        "summary": "/camel_component",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
         "responses": {},
         "tags": [
-          "organization"
+          "camel_component"
+        ]
+      },
+      "post": {
+        "summary": "/camel_component",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "camel_component"
         ]
       }
     },
@@ -4585,9 +5031,29 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "camel_component"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -4638,19 +5104,6 @@
             "required": true
           }
         ],
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      }
-    },
-    "/camel_component": {
-      "post": {
-        "summary": "/camel_component",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [],
         "responses": {},
         "tags": [
           "camel_component"
@@ -4786,8 +5239,137 @@
           "application/json"
         ],
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "properties": {
+                      "type": "array",
+                      "items": {},
+                      "example": [
+                        null
+                      ]
+                    },
+                    "methods": {
+                      "type": "array",
+                      "items": {},
+                      "example": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/integration_route": {
+      "get": {
+        "summary": "/integration_route",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
         "responses": {},
-        "tags": []
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration_route",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_route/list": {
+      "post": {
+        "summary": "/integration_route/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_route/{id}": {
+      "get": {
+        "summary": "/integration_route/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "put": {
+        "summary": "/integration_route/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "delete": {
+        "summary": "/integration_route/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
       }
     },
     "/front*": {

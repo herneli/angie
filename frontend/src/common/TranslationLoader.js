@@ -9,11 +9,7 @@ const TranslationLoader = {
             let result = await axios({
                 method: "get",
                 url: "/translation",
-                params: { lang: lang },
-                headers: {
-                    Authorization: undefined,
-                    "Content-Type": "application/json",
-                },
+                params: { lang: lang }
             });
 
             T.setTexts(result.data.data);

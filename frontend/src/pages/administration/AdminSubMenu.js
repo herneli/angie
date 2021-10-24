@@ -27,8 +27,14 @@ const AdminSubMenu = () => {
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu key="comm" icon={<Icon path={mdiConnection} size={1}/>} title="Comunicaciones">
-                    <Menu.Item key="5">
-                        <Link to="/admin/integrations">Integraciones </Link>
+                    <Menu.Item key="integ">
+                        <Link to="/admin/integration">Integraciones </Link>
+                    </Menu.Item>
+                    <Menu.Item key="ntypes">
+                        <Link to="/admin/node_type">Tipos Nodos </Link>
+                    </Menu.Item>
+                    <Menu.Item key="ccompo">
+                        <Link to="/admin/camel_component">Componentes Camel </Link>
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu key="custom" icon={<Icon path={mdiPalette} size={1}/>} title="Personalización">

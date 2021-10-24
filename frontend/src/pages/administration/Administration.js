@@ -4,10 +4,12 @@ import { Route, Switch } from 'react-router';
 import { PrivateRoute } from '../../components/security/PrivateRoute';
 import SubMenu from './AdminSubMenu';
 
-import Routes from './integration/Routes'
 
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import Script from "../../pages/script/Script";
+import CamelComponent from './camel_component/CamelComponent';
+import NodeType from './node_type/NodeType';
+import Integration from './integration/Integration';
 
 const Administration = ({ app }) => {
 
@@ -22,11 +24,9 @@ const Administration = ({ app }) => {
             <Layout>
                 <Content>
                     <Switch>
-                        <Route
-                            exact
-                            path="/admin/integrations"
-                            render={({ match }) => <Routes match={match} {...defaultProps} />}
-                        />
+                        <Route exact path="/admin/integration" render={({ match }) => <Integration match={match} {...defaultProps} />} />
+                        <Route exact path="/admin/node_type" render={({ match }) => <NodeType match={match} {...defaultProps} />} />
+                        <Route exact path="/admin/camel_component" render={({ match }) => <CamelComponent match={match} {...defaultProps} />} />
 
                         <PrivateRoute
                             roles={["default-roles-angie"]}

@@ -1,17 +1,34 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useState } from "react";
-import { Menu, Layout } from "antd";
+import { Menu, Button, Popover } from "antd";
 import { Link } from "react-router-dom";
 import AuthorizedFunction from "../components/security/AuthorizedFunction";
 
-import { mdiAccount, mdiHome, mdiSourceBranch } from "@mdi/js";
+import T from 'i18n-react'
+
+import { mdiAccount, mdiHome, mdiLogout, mdiSourceBranch } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const { Header } = Layout;
 const AppMenu = () => {
     const { keycloak } = useKeycloak();
     const [selected, changeSelection] = useState(null);
 
+
+    //TODO get current center (#4)
+    const userPopup = keycloak && keycloak.authenticated && (
+        <span>
+            {T.translate("application.user_info.user_label")} {keycloak.tokenParsed.preferred_username}<br />
+            {T.translate("application.user_info.organization_label")} XXX <Button type='link'>{T.translate("application.user_info.organization_change_label")}</Button><br />
+            <br />
+            <div>
+                <Button type="primary" size='small' block icon={<Icon path={mdiLogout} size={0.5} onClick={() => keycloak.logout()} title={T.translate('application.user_info.logout_title')} />} >
+                    {T.translate('application.user_info.logout')}
+                </Button>
+            </div>
+        </span>
+    );
+
+    //TODO translate main links
     return (
         <div>
             <div className="logo" >
@@ -41,19 +58,24 @@ const AppMenu = () => {
                         icon={<Icon path={mdiAccount} size={0.6} />}
                         onClick={() => keycloak.login()}
                     >
-                        Login
+                        {T.translate('application.user_info.login')}
                     </Menu.Item>
                 )}
 
                 {keycloak && keycloak.authenticated && (
-                    <Menu.Item
-                        key="logout"
-                        className="rightFloated"
-                        icon={<Icon path={mdiAccount} size={0.6} />}
-                        onClick={() => keycloak.logout()}
-                    >
-                        Logout ({keycloak.tokenParsed.preferred_username})
-                    </Menu.Item>
+                    <>
+                        <Popover content={userPopup} title={T.translate('application.user_info.title')} trigger="click">
+                            <Menu.Item
+                                key="logout"
+                                className="userInfoButton rightFloated"
+                                icon={<Icon path={mdiAccount} size={0.5} />}
+
+                            >
+                                {keycloak.tokenParsed.preferred_username}
+                            </Menu.Item>
+                        </Popover>
+                        <Button className="logoutBtn" type="primary" size='middle' shape='circle' icon={<Icon path={mdiLogout} size={0.6} onClick={() => keycloak.logout()} title={T.translate('application.user_info.logout_title')} />} />
+                    </>
                 )}
             </Menu>
         </div>

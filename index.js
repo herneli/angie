@@ -80,6 +80,7 @@ module.exports = async () => {
             contentSecurityPolicy: {
                 useDefaults: true,
                 directives: {
+                    defaultSrc: "dangerouslyDisableDefaultSrc",//FIXME necesario revisarlo
                     "connect-src": [
                         "'self'",
                         "http://localhost:3114",
