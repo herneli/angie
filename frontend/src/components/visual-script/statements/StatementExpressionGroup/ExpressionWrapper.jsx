@@ -6,9 +6,9 @@ import { Button } from "antd";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
-    root: { margin: "15px 0px" },
+    root: { margin: "5px 0px" },
     actions: { marginLeft: "20px" },
-    icon: { color: "rgba(0, 0, 0, 0.54);" },
+    icon: { color: "gray" },
 });
 export default function ExpressionWrapper({
     expression,

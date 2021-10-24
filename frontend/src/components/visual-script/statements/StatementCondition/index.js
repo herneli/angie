@@ -14,6 +14,11 @@ const registry = {
             id: manager.newId(),
             type: "condition",
             name: T.translate("visual_script.new_condition"),
+            rule: {
+                type: "group",
+                combinator: "all",
+                rules: [],
+            },
             nestedStatements: [
                 {
                     id: manager.newId(),

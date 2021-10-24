@@ -25,7 +25,13 @@
             {
                 "id": "condition-1",
                 "type": "condition",
+
                 "name": "¿Se cumple la condición?",
+                "rule": {
+                    "type": "group",
+                    "combinator": "all",
+                    "rules": []
+                },
                 "nestedStatements": [
                     {
                         "id": "condition-1-yes",
@@ -50,25 +56,6 @@
                                 "type": "expressionGroup",
                                 "name": "Cosas para el no",
                                 "expressions": []
-                            },
-                            {
-                                "id": "cond-31",
-                                "type": "condition",
-                                "name": "¿Noseuqe?",
-                                "nestedStatements": [
-                                    {
-                                        "id": "cond-31-yes",
-                                        "type": "block",
-                                        "label": "Sí",
-                                        "nestedStatements": []
-                                    },
-                                    {
-                                        "id": "cond-31-no",
-                                        "type": "block",
-                                        "label": "No",
-                                        "nestedStatements": []
-                                    }
-                                ]
                             }
                         ]
                     }

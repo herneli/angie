@@ -14,8 +14,8 @@ let useStyles = createUseStyles({
     icon: {
         position: "relative",
         zIndex: 1,
-        height: "22px",
-        width: "22px",
+        height: "18px",
+        width: "18px",
     },
 });
 export default function StatementBlock({ statement, onChange }) {

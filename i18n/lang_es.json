@@ -91,7 +91,11 @@
     },
     "visual_script": {
         "add_expression": "Añadir expresión",
+        "add_rule": "Añadir regla",
+        "add_rule_group": "Añadir grupo",
         "accept": "Aceptar",
+        "all_following_rules_met": "las reglas se han de cumplir",
+        "any_following_rules_met": "de las reglas se ha de cumplir",
         "cancel": "Cancelar",
         "condition_yes": "Sí",
         "condition_no": "No",
@@ -99,14 +103,19 @@
         "edit": "Editar",
         "edit_method_parameters": "Parámetros para \"{method}\"",
         "execute_following_expressions": "Ejecutar las siguientes expresiones",
+        "following_rules_met": "Se deben cumplir las siguientes reglas",
         "new_expression": "Seleccione...",
         "new_comment": "Nuevo comentario",
         "new_condition": "Nueva condición",
         "new_expression_group": "Nuevo grupo de expresiones",
+        "new_loop": "Nuevo blucle",
         "operator_not": "no",
+        "rule_all": "Todas",
+        "rule_any": "Alguna",
         "select_component": "Seleccione componente",
         "select_comment": "Comentario",
         "select_condition": "Condición",
-        "select_expression_group": "Grupo de expresiones"
+        "select_expression_group": "Grupo de expresiones",
+        "select_loop": "Bucle"
     }
 }

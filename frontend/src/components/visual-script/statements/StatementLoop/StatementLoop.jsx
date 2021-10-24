@@ -1,12 +1,9 @@
-import React from "react";
-import { useScriptContext } from "../../ScriptContext";
+import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
+import { useScriptContext } from "../../ScriptContext";
 import Statement from "../Statement";
-import StatementBox from "../StatementBox";
 import StatementFinalPoint from "../StatementFinalPoint";
-import registry from ".";
-import Rule from "../../rules/Rule";
-
+import LoopOptions from "./LoopOptions";
 const useStyles = createUseStyles({
     table: {
         borderCollapse: "separate",
@@ -17,9 +14,9 @@ const useStyles = createUseStyles({
         },
     },
 });
-
-export default function StatementCondition({ statement, onChange }) {
+export default function StatementLoop({ statement, onChange }) {
     const { manager } = useScriptContext();
+    const statementId = manager.getStatementDOMId(statement);
     const classes = useStyles();
 
     const handleOnChange = (index) => (childStatement) => {
@@ -32,10 +29,6 @@ export default function StatementCondition({ statement, onChange }) {
             onChange({ ...statement, nestedStatements: newNestedStatements });
     };
 
-    const handleOnChangeRule = (rule) => {
-        onChange && onChange({ ...statement, rule: rule });
-    };
-    const statementId = manager.getStatementDOMId(statement);
     const renderNestedStatements = () => {
         return statement.nestedStatements.map((childStatement, index) => {
             return (
@@ -48,16 +41,13 @@ export default function StatementCondition({ statement, onChange }) {
             );
         });
     };
+
     return (
         <table className={classes.table}>
             <tbody>
                 <tr>
                     <td id={statementId + "-loop-back"}>
-                        <Rule
-                            id={statementId}
-                            rule={statement.rule}
-                            onChange={handleOnChangeRule}
-                        />
+                        <LoopOptions id={statementId} />
                     </td>
                 </tr>
                 <tr>

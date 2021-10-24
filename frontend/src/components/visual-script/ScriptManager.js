@@ -88,10 +88,11 @@ export default class ScriptManager {
         return "statement-" + statement.id;
     }
 
-    connect(sourceId, targetId) {
+    connect(sourceId, targetId, options = {}) {
         this.jsplumb.connect({
             source: document.getElementById(sourceId),
             target: document.getElementById(targetId),
+            ...options,
         });
     }
 
@@ -149,9 +150,12 @@ export default class ScriptManager {
                         anchor: "Left",
                     });
                     this.connect(loopBackId, statementId, {
-                        anchor: [["Left"], ["Right"]],
-                        connector: ["Flowchart", { stub: 0 }],
-                        overlays: [["Arrow", arrowOverlay]],
+                        anchor: ["Left", "Right"],
+                        connector: {
+                            type: FlowchartConnector.type,
+                            options: { stub: 0 },
+                        },
+                        overlays: [{ type: "Arrow", options: arrowOverlay }],
                     });
                 }
             });
