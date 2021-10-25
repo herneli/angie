@@ -26,8 +26,6 @@ const AntdObjectFieldTemplate = ({
         props = { ...uiGridContainer.row };
     }
 
-    let style = null;
-
     return (
         <Row {...props}>
             {(uiSchema["ui:title"] || title) && (

@@ -373,12 +373,14 @@
             "ui:columnSize": "4"
         },
         "paramMembers": {
-            "ui:columns": [
-                { "title": "Código", "dataIndex": "code" },
-                { "title": "Nombre", "dataIndex": "name" },
-                { "title": "Tipo", "dataIndex": ["type", "type"] },
-                { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
-            ],
+            "ui:options": {
+                "columns": [
+                    { "title": "Código", "dataIndex": "code" },
+                    { "title": "Nombre", "dataIndex": "name" },
+                    { "title": "Tipo", "dataIndex": ["type", "type"] },
+                    { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
+                ]
+            },
             "items": {
                 "code": {
                     "ui:columnSize": "4"

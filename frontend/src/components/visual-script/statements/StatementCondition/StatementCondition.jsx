@@ -18,7 +18,12 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function StatementCondition({ statement, variables, onChange }) {
+export default function StatementCondition({
+    statement,
+    variables,
+    onChange,
+    onDelete,
+}) {
     const { manager } = useScriptContext();
     const classes = useStyles();
 
@@ -54,12 +59,20 @@ export default function StatementCondition({ statement, variables, onChange }) {
             <tbody>
                 <tr>
                     <td id={statementId + "-loop-back"}>
-                        <Rule
-                            id={statementId}
-                            rule={statement.rule}
+                        <StatementBox
+                            statement={statement}
                             variables={variables}
-                            onChange={handleOnChangeRule}
-                        />
+                            iconPath={registry.iconPath}
+                            onChange={onChange}
+                            onDelete={onDelete}
+                        >
+                            <Rule
+                                id={statementId}
+                                rule={statement.rule}
+                                variables={variables}
+                                onChange={handleOnChangeRule}
+                            />
+                        </StatementBox>
                     </td>
                 </tr>
                 <tr>

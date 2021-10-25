@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Expression from "../expressions/Expression";
 import { createUseStyles } from "react-jss";
 import { Button } from "antd";

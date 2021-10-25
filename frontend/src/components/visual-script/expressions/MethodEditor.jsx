@@ -66,30 +66,6 @@ export default function MethodEditor({
         };
     };
 
-    const replaceType = (type, parentType) => {
-        if (type.type === "$self") {
-            return parentType;
-        } else if (type.type === "$item") {
-            return parentType.items;
-        } else if (type.type === "array") {
-            if (type.items.type === "$self") {
-                return {
-                    ...type,
-                    items: parentType,
-                };
-            } else if (type.items.type === "$item") {
-                return {
-                    ...type,
-                    items: parentType.items,
-                };
-            } else {
-                return type;
-            }
-        } else {
-            return type;
-        }
-    };
-
     const memberToUiSchema = (member) => {
         let uiSchema = {};
         if (member.type.selectOptions) {

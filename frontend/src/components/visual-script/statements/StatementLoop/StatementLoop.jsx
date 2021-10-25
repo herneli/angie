@@ -3,11 +3,11 @@ import { createUseStyles } from "react-jss";
 import { useScriptContext } from "../../ScriptContext";
 import Statement from "../Statement";
 import StatementFinalPoint from "../StatementFinalPoint";
-import StatementIcon from "../StatementIcon";
 import registry from ".";
 import Expression from "../../expressions/Expression";
 import T from "i18n-react";
 import { Input, Space } from "antd";
+import StatementBox from "../StatementBox";
 const useStyles = createUseStyles({
     table: {
         borderCollapse: "separate",
@@ -73,7 +73,12 @@ const useStyles = createUseStyles({
         display: "flex",
     },
 });
-export default function StatementLoop({ statement, variables, onChange }) {
+export default function StatementLoop({
+    statement,
+    variables,
+    onChange,
+    onDelete,
+}) {
     const { manager } = useScriptContext();
     const statementId = manager.getStatementDOMId(statement);
     const classes = useStyles();
@@ -126,55 +131,48 @@ export default function StatementLoop({ statement, variables, onChange }) {
             <tbody>
                 <tr>
                     <td id={statementId + "-loop-back"}>
-                        <div id={statementId} className={classes.box}>
-                            <div className={classes.toolbar}>
-                                <div>
-                                    <span className={classes.title}>
-                                        <StatementIcon
-                                            className={classes.icon}
-                                            path={registry.iconPath}
-                                        />
-                                        <span>Repeat</span>
+                        <StatementBox
+                            statement={statement}
+                            variables={variables}
+                            iconPath={registry.iconPath}
+                            onChange={onChange}
+                            onDelete={onDelete}
+                        >
+                            <div className={classes.expressionAssignment}>
+                                <Space>
+                                    <span>
+                                        {T.translate(
+                                            "visual_script.loop_repeat"
+                                        )}
                                     </span>
-                                </div>
-                                <div className={classes.expressionAssignment}>
-                                    <Space>
-                                        <span>
-                                            {T.translate(
-                                                "visual_script.loop_repeat"
-                                            )}
-                                        </span>
-                                        <Expression
-                                            expression={
-                                                statement.arrayExpression
-                                            }
-                                            variables={variables}
-                                            expectedType={{
-                                                type: "array",
-                                                items: { type: "$any" },
-                                            }}
-                                            onChange={handleOnChange(
-                                                "arrayExpression"
-                                            )}
-                                        />
-                                        <span>
-                                            {T.translate(
-                                                "visual_script.loop_to_variable"
-                                            )}
-                                        </span>
+                                    <Expression
+                                        expression={statement.arrayExpression}
+                                        variables={variables}
+                                        expectedType={{
+                                            type: "array",
+                                            items: { type: "$any" },
+                                        }}
+                                        onChange={handleOnChange(
+                                            "arrayExpression"
+                                        )}
+                                    />
+                                    <span>
+                                        {T.translate(
+                                            "visual_script.loop_to_variable"
+                                        )}
+                                    </span>
 
-                                        <Input
-                                            value={statement.itemVariable}
-                                            onChange={(e) =>
-                                                handleOnChange("itemVariable")(
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                    </Space>
-                                </div>
+                                    <Input
+                                        value={statement.itemVariable}
+                                        onChange={(e) =>
+                                            handleOnChange("itemVariable")(
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </Space>
                             </div>
-                        </div>
+                        </StatementBox>
                     </td>
                 </tr>
                 <tr>

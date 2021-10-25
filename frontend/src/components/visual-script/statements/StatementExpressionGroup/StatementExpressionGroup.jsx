@@ -65,7 +65,6 @@ export default function StatementExpressionGroup({
                     expression={expression}
                     variables={variables}
                     expectedType={{ type: "void" }}
-                    variables={variables}
                     onChange={handleExpressionChange(index)}
                     onDelete={handleExpressionDelete(index)}
                 />
@@ -74,7 +73,13 @@ export default function StatementExpressionGroup({
     );
 
     return (
-        <StatementBox statement={statement} iconPath={registry.iconPath}>
+        <StatementBox
+            statement={statement}
+            variables={variables}
+            iconPath={registry.iconPath}
+            onChange={onChange}
+            onDelete={onDelete}
+        >
             {expressionComponents}
             <div className={classes.statementFooter}>
                 <Button

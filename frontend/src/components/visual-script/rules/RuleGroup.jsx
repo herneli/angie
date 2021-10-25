@@ -5,7 +5,7 @@ import Rule from "./Rule";
 import { createUseStyles } from "react-jss";
 import { Button } from "antd";
 import { useScriptContext } from "../ScriptContext";
-import { mdiHelpRhombus } from "@mdi/js";
+import { mdiDelete } from "@mdi/js";
 import StatementIcon from "../statements/StatementIcon";
 
 const useStyles = createUseStyles({
@@ -73,10 +73,10 @@ const useStyles = createUseStyles({
     },
     icon: {
         color: "gray",
-        marginRight: "10px",
         fontSize: 14,
         position: "relative",
         top: 4,
+        right: 0,
     },
 });
 
@@ -149,7 +149,6 @@ export default function RuleGroup({ id, rule, variables, onChange, onDelete }) {
 
     return (
         <div
-            id={id}
             className={
                 classes.ruleGroup +
                 " " +
@@ -158,10 +157,6 @@ export default function RuleGroup({ id, rule, variables, onChange, onDelete }) {
         >
             <div className={classes.ruleGroupToolbar}>
                 <div>
-                    <StatementIcon
-                        className={classes.icon}
-                        path={mdiHelpRhombus}
-                    />
                     {rule.rules.length > 1 ? (
                         <span>
                             <CombinatorSelect
@@ -187,9 +182,14 @@ export default function RuleGroup({ id, rule, variables, onChange, onDelete }) {
                         <Button
                             className={classes.removeGroupButton}
                             onClick={onDelete}
-                        >
-                            Delete
-                        </Button>
+                            type="text"
+                            icon={
+                                <StatementIcon
+                                    className={classes.icon}
+                                    path={mdiDelete}
+                                />
+                            }
+                        />
                     ) : null}
                 </div>
             </div>

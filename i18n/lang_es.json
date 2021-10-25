@@ -91,11 +91,14 @@
         "all_following_rules_met": "las reglas se han de cumplir",
         "any_following_rules_met": "de las reglas se ha de cumplir",
         "cancel": "Cancelar",
+        "clipoard": "Portapapeles",
         "condition_yes": "Sí",
         "condition_no": "No",
+        "cut": "Cortar",
         "delete_previous": "Anterior",
         "edit": "Editar",
         "edit_method_parameters": "Parámetros para \"{method}\"",
+        "end": "Fin",
         "execute_following_expressions": "Ejecutar las siguientes expresiones",
         "following_rules_met": "Se deben cumplir las siguientes reglas",
         "loop_repeat": "Repetir",
@@ -113,6 +116,9 @@
         "select_condition": "Condición",
         "select_expression_group": "Grupo de expresiones",
         "select_loop": "Bucle",
+        "select_start": "Inicio",
+        "select_end": "Fin",
+        "start": "Inico",
         "variables": "Variables"
     }
 }

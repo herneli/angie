@@ -3,7 +3,10 @@
         "memberType": "context",
         "code": "context",
         "name": "context",
-        "type": { "type": "object", "objectCode": "context_test" }
+        "type": {
+            "type": "object",
+            "objectCode": "context_test"
+        }
     },
     "language": "js",
     "mainStatement": {
@@ -23,76 +26,221 @@
         "nestedStatements": [
             {
                 "id": "comment-1",
-                "type": "comment",
-                "comment": "Inicio del programa"
+                "type": "start",
+                "name": "Inicio del programa"
             },
             {
-                "id": "loop-1",
-                "type": "loop",
-                "name": "Loop",
-                "arrayExpression": [
-                    {
-                        "memberType": "context",
-                        "type": {
-                            "type": "object",
+                "id": "8b904bff-c88d-4d10-9258-6ae36b9dcfe8",
+                "type": "comment",
+                "name": "Nuevo comentario",
+                "comment": "Nuevo comentario"
+            },
+            {
+                "id": "09918ee2-bf31-48d9-af5a-46e70600717f",
+                "type": "expressionGroup",
+                "name": "Nuevo grupo de expresiones",
+                "expressions": [
+                    [
+                        {
+                            "memberType": "context",
                             "code": "context",
                             "name": "context",
-                            "objectCode": "context_test"
+                            "type": {
+                                "type": "object",
+                                "objectCode": "context_test"
+                            }
+                        },
+                        {
+                            "memberType": "method",
+                            "id": 14,
+                            "code": "context_test_method_void",
+                            "name": "Metodo vacio",
+                            "type": {
+                                "type": "void"
+                            },
+                            "isActive": true,
+                            "language": "js",
+                            "parentType": {
+                                "type": "object",
+                                "objectCode": "context_test"
+                            },
+                            "description": "",
+                            "renderTemplate": "Metodo voud",
+                            "complexityLevel": 1,
+                            "sourceCodeForBinaryOperator": "",
+                            "paramMembers": []
                         }
-                    }
-                ],
-                "itemVariable": "item",
+                    ]
+                ]
+            },
+            {
+                "id": "5f85435e-12df-4902-9c45-1ebbed2af489",
+                "type": "condition",
+                "name": "Nueva condición",
+                "rule": {
+                    "type": "group",
+                    "combinator": "all",
+                    "rules": [
+                        {
+                            "type": "expression",
+                            "expression": [
+                                {
+                                    "memberType": "context",
+                                    "code": "context",
+                                    "name": "context",
+                                    "type": {
+                                        "type": "object",
+                                        "objectCode": "context_test"
+                                    }
+                                },
+                                {
+                                    "memberType": "property",
+                                    "code": "field1",
+                                    "name": "Campo 1",
+                                    "type": {
+                                        "type": "string",
+                                        "remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                                    },
+                                    "required": true,
+                                    "complexityLevel": 1,
+                                    "error": true
+                                },
+                                {
+                                    "memberType": "method",
+                                    "id": 9,
+                                    "code": "string_eq",
+                                    "name": "=",
+                                    "type": {
+                                        "type": "boolean"
+                                    },
+                                    "isActive": true,
+                                    "language": "js",
+                                    "parentType": {
+                                        "type": "string"
+                                    },
+                                    "sourceCode": "return self === params.value;",
+                                    "description": "",
+                                    "paramMembers": [
+                                        {
+                                            "code": "value",
+                                            "name": "Valor",
+                                            "type": {
+                                                "type": "string",
+                                                "remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                                            },
+                                            "required": false
+                                        }
+                                    ],
+                                    "renderOperator": "=",
+                                    "renderTemplate": "{{value}}",
+                                    "complexityLevel": 1,
+                                    "paramDefinitions": [
+                                        {
+                                            "code": "value",
+                                            "name": "Valor",
+                                            "type": {
+                                                "type": "$self"
+                                            },
+                                            "required": false
+                                        }
+                                    ],
+                                    "sourceCodeForBinaryOperator": "",
+                                    "params": {
+                                        "value": "xxx"
+                                    },
+                                    "error": true
+                                }
+                            ]
+                        }
+                    ]
+                },
                 "nestedStatements": [
                     {
-                        "id": "loop-block-1",
+                        "id": "cd88a408-85af-4543-bddb-3adeaa61eea9",
                         "type": "block",
+                        "label": "Sí",
+                        "code": "true",
+                        "nestedStatements": [
+                            {
+                                "id": "58df3334-11e8-4941-ac09-4ac0586216af",
+                                "type": "loop",
+                                "name": "Nuevo blucle",
+                                "arrayExpression": [
+                                    {
+                                        "memberType": "context",
+                                        "code": "context",
+                                        "name": "context",
+                                        "type": {
+                                            "type": "object",
+                                            "objectCode": "context_test"
+                                        }
+                                    },
+                                    {
+                                        "memberType": "property",
+                                        "code": "field1",
+                                        "name": "Campo 1",
+                                        "type": {
+                                            "type": "string",
+                                            "remoteValues": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                                        },
+                                        "required": true,
+                                        "complexityLevel": 1
+                                    },
+                                    {
+                                        "memberType": "method",
+                                        "id": 12,
+                                        "code": "string_to_array",
+                                        "name": "Obtener paciente",
+                                        "type": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "objectCode": "patient"
+                                            }
+                                        },
+                                        "isActive": true,
+                                        "language": "js",
+                                        "parentType": {
+                                            "type": "string"
+                                        },
+                                        "description": "",
+                                        "renderTemplate": "To array",
+                                        "complexityLevel": 1,
+                                        "sourceCodeForBinaryOperator": "",
+                                        "paramMembers": []
+                                    }
+                                ],
+                                "itemVariable": "item",
+                                "nestedStatements": [
+                                    {
+                                        "id": "89fdd35c-85d5-4a03-ae6c-0e12fa60c241",
+                                        "type": "block",
+                                        "nestedStatements": [
+                                            {
+                                                "id": "fa4635b9-fa42-4c17-b068-2821abf7033f",
+                                                "type": "comment",
+                                                "name": "Nuevo comentario",
+                                                "comment": "Nuevo comentario"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "d10120e7-1335-4cfb-b240-9d76c710da67",
+                        "type": "block",
+                        "label": "No",
+                        "code": "false",
                         "nestedStatements": []
                     }
                 ]
             },
             {
-                "id": "condition-1",
-                "type": "condition",
-
-                "name": "¿Se cumple la condición?",
-                "rule": {
-                    "type": "group",
-                    "combinator": "all",
-                    "rules": []
-                },
-                "nestedStatements": [
-                    {
-                        "id": "condition-1-yes",
-                        "type": "block",
-                        "label": "Claro que sí guapi",
-                        "nestedStatements": [
-                            {
-                                "id": "expression-group-2",
-                                "type": "expressionGroup",
-                                "name": "Cosas para el sí",
-                                "expressions": []
-                            }
-                        ]
-                    },
-                    {
-                        "id": "condition-1-no",
-                        "type": "block",
-                        "label": "No",
-                        "nestedStatements": [
-                            {
-                                "id": "expression-group-3",
-                                "type": "expressionGroup",
-                                "name": "Cosas para el no",
-                                "expressions": []
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 "id": "comment-2",
-                "type": "comment",
-                "comment": "Fin del programa"
+                "type": "end",
+                "name": "Fin del progrma"
             }
         ]
     }

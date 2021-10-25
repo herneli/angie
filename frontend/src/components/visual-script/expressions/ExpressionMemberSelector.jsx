@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { mdiChevronDown, mdiBackspaceOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { List, Select, Button, Popover, Input } from "antd";
+import { List, Button, Popover, Input } from "antd";
 import { useScriptContext } from "../ScriptContext";
 import getTypeIcon from "../getTypeIcon";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
-
-const { Option } = Select;
 
 export default function ExpressionMemberSelector({
     expression,

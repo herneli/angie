@@ -233,6 +233,7 @@ export default function ModelTable({
           onClose={() => setImportItems(null)}
         />
       )} */}
+            {importItems ? <h1>Imported items</h1> : null}
             <Card className={classes.card}>
                 <Row>
                     <Col flex={1}>

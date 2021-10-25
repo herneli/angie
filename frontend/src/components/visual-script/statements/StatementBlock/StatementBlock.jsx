@@ -20,6 +20,7 @@ let useStyles = createUseStyles({
 });
 export default function StatementBlock({ statement, variables, onChange }) {
     const classes = useStyles();
+
     const { manager } = useScriptContext();
     const handleOnChange = (index) => (childStatement) => {
         let newNestedStatements = [
@@ -31,6 +32,15 @@ export default function StatementBlock({ statement, variables, onChange }) {
             onChange({ ...statement, nestedStatements: newNestedStatements });
     };
 
+    const handleOnDelete = (index) => () => {
+        manager.setStatementClipboard(statement.nestedStatements[index]);
+        let newNestedStatements = [
+            ...statement.nestedStatements.slice(0, index),
+            ...statement.nestedStatements.slice(index + 1),
+        ];
+        onChange &&
+            onChange({ ...statement, nestedStatements: newNestedStatements });
+    };
     const handleOnInsert = (index) => (statementKey) => {
         let selectedStatement = manager.createStatement(statementKey);
         let newStatement = {
@@ -74,6 +84,7 @@ export default function StatementBlock({ statement, variables, onChange }) {
                                     ...statement.variables,
                                 }}
                                 onChange={handleOnChange(index)}
+                                onDelete={handleOnDelete(index)}
                             />
                         </td>
                     </tr>

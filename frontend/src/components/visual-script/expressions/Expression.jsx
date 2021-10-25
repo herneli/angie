@@ -6,7 +6,6 @@ import styles from "./expressionStyle";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
-import { memberExpression } from "@babel/types";
 const useStyles = createUseStyles(styles);
 
 export default function Expression({
@@ -85,7 +84,6 @@ export default function Expression({
 
     let expressionGroups = [];
     expressionGroups.push([]);
-    let renderOperator = false;
     expression.forEach((expressionMember, index) => {
         if (index === 0) {
             if (expression.length === 1) {

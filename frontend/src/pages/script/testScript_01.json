@@ -1,0 +1,99 @@
+{
+    "context": {
+        "memberType": "context",
+        "code": "context",
+        "name": "context",
+        "type": { "type": "object", "objectCode": "context_test" }
+    },
+    "language": "js",
+    "mainStatement": {
+        "id": "block-1",
+        "type": "block",
+        "main": true,
+        "variables": {
+            "var1": {
+                "memberType": "variable",
+                "code": "var1",
+                "name": "Variable 1",
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "nestedStatements": [
+            {
+                "id": "comment-1",
+                "type": "start",
+                "name": "Inicio del programa"
+            },
+            {
+                "id": "loop-1",
+                "type": "loop",
+                "name": "Loop",
+                "arrayExpression": [
+                    {
+                        "memberType": "context",
+                        "type": {
+                            "type": "object",
+                            "code": "context",
+                            "name": "context",
+                            "objectCode": "context_test"
+                        }
+                    }
+                ],
+                "itemVariable": "item",
+                "nestedStatements": [
+                    {
+                        "id": "loop-block-1",
+                        "type": "block",
+                        "nestedStatements": []
+                    }
+                ]
+            },
+            {
+                "id": "condition-1",
+                "type": "condition",
+
+                "name": "¿Se cumple la condición?",
+                "rule": {
+                    "type": "group",
+                    "combinator": "all",
+                    "rules": []
+                },
+                "nestedStatements": [
+                    {
+                        "id": "condition-1-yes",
+                        "type": "block",
+                        "label": "Claro que sí guapi",
+                        "nestedStatements": [
+                            {
+                                "id": "expression-group-2",
+                                "type": "expressionGroup",
+                                "name": "Cosas para el sí",
+                                "expressions": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "condition-1-no",
+                        "type": "block",
+                        "label": "No",
+                        "nestedStatements": [
+                            {
+                                "id": "expression-group-3",
+                                "type": "expressionGroup",
+                                "name": "Cosas para el no",
+                                "expressions": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "comment-2",
+                "type": "end",
+                "name": "Fin del progrma"
+            }
+        ]
+    }
+}

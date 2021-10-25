@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import T from "i18n-react";
 import { Select } from "antd";
 import { createUseStyles } from "react-jss";
