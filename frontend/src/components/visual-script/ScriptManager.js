@@ -153,15 +153,16 @@ export default class ScriptManager {
                     let loopBackId = statementId + "-loop-back";
                     this.connect(finalPointId, loopBackId, {
                         anchor: "Left",
-                    });
-                    this.connect(loopBackId, statementId, {
-                        anchor: ["Left", "Right"],
-                        connector: {
-                            type: FlowchartConnector.type,
-                            options: { stub: 0 },
-                        },
                         overlays: [{ type: "Arrow", options: arrowOverlay }],
                     });
+                    // this.connect(loopBackId, statementId, {
+                    //     anchor: ["Left", "Right"],
+                    //     connector: {
+                    //         type: FlowchartConnector.type,
+                    //         options: { stub: 0 },
+                    //     },
+                    //     overlays: [{ type: "Arrow", options: arrowOverlay }],
+                    // });
                 }
             });
 
@@ -199,11 +200,12 @@ export default class ScriptManager {
         });
     }
 
-    getFormSchemas(statement) {
+    getFormSchemas(statement, variables) {
         let registry = this.getStatementRegistry(statement.type);
         return {
             schema: (registry.schema && registry.schema(this)) || {},
-            uiSchema: (registry.uiSchema && registry.uiSchema(this)) || {},
+            uiSchema:
+                (registry.uiSchema && registry.uiSchema(this, variables)) || {},
         };
     }
 

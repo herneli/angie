@@ -3,6 +3,7 @@ import ScriptManager from "./ScriptManager";
 import withStyles from "react-jss";
 import ScriptContextProvider from "./ScriptContext";
 import Statement from "./statements/Statement";
+import { Button } from "antd";
 const styles = {
     canvas: {
         position: "relative",
@@ -60,17 +61,26 @@ class VisualScript extends Component {
         });
     };
 
+    handleOnSave = () => {
+        this.props.onSave && this.props.onSave(this.state.script);
+    };
+
     render() {
         return (
-            <div id="script-canvas" className={this.props.classes.canvas}>
-                {this.state.manager ? (
-                    <ScriptContextProvider manager={this.state.manager}>
-                        <Statement
-                            statement={this.state.script.mainStatement}
-                            onChange={this.handleOnChangeStatement}
-                        />
-                    </ScriptContextProvider>
-                ) : null}
+            <div>
+                <div>
+                    <Button onClick={this.handleOnSave}>Guardar</Button>
+                </div>
+                <div id="script-canvas" className={this.props.classes.canvas}>
+                    {this.state.manager ? (
+                        <ScriptContextProvider manager={this.state.manager}>
+                            <Statement
+                                statement={this.state.script.mainStatement}
+                                onChange={this.handleOnChangeStatement}
+                            />
+                        </ScriptContextProvider>
+                    ) : null}
+                </div>
             </div>
         );
     }

@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { mdiCog } from "@mdi/js";
+import { mdiCog, mdiContentCut, mdiPencil } from "@mdi/js";
 import { Button, Dropdown, Menu } from "antd";
 import { createUseStyles } from "react-jss";
 import { useScriptContext } from "../ScriptContext";
 import StatementIcon from "./StatementIcon";
 import T from "i18n-react";
 import StatementEditor from "./StatementEditor";
+import Icon from "@mdi/react";
 
 const useStyles = createUseStyles({
     root: {
         margin: "10px 10px",
-        padding: "5px 15px",
+        padding: "10px 15px",
         minWidth: 300,
         "&.all": {
             borderLeft: "3px solid dodgerblue",
@@ -39,7 +40,7 @@ const useStyles = createUseStyles({
     },
     toolbar: {
         fontSize: 14,
-        marginBottom: 10,
+        marginBottom: 2,
     },
     actions: {
         position: "absolute",
@@ -48,6 +49,10 @@ const useStyles = createUseStyles({
     },
     actionsIcon: {
         color: "gray",
+    },
+    menuIcon: {
+        color: "gray",
+        fontSize: "16px",
     },
 });
 export default function StatementBox({
@@ -76,15 +81,31 @@ export default function StatementBox({
     };
     const actions = (
         <Menu>
-            <Menu.Item key="0">
-                <Button type="link" onClick={onDelete}>
-                    {T.translate("visual_script.cut")}
-                </Button>
+            <Menu.Item
+                key="0"
+                icon={
+                    <Icon
+                        className={classes.menuIcon}
+                        path={mdiContentCut}
+                        size="16px"
+                    />
+                }
+                onClick={onDelete}
+            >
+                {T.translate("visual_script.cut")}
             </Menu.Item>
-            <Menu.Item key="1">
-                <Button type="link" onClick={handleOnEdit}>
-                    {T.translate("visual_script.edit")}
-                </Button>
+            <Menu.Item
+                key="1"
+                icon={
+                    <Icon
+                        className={classes.menuIcon}
+                        path={mdiPencil}
+                        size="16px"
+                    />
+                }
+                onClick={handleOnEdit}
+            >
+                {T.translate("visual_script.edit")}
             </Menu.Item>
         </Menu>
     );

@@ -18,7 +18,6 @@ const useStyles = createUseStyles({
         height: "2px",
         width: "2px",
         display: "inline-block",
-        marginTop: "20px",
     },
 });
 export default function StatementLabel({ statement }) {

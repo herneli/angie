@@ -111,6 +111,7 @@
         "operator_not": "no",
         "rule_all": "Todas",
         "rule_any": "Alguna",
+        "script_saved": "Código guardado",
         "select_component": "Seleccione componente",
         "select_comment": "Comentario",
         "select_condition": "Condición",

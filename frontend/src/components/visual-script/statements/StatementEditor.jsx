@@ -5,6 +5,7 @@ import Form from "@rjsf/antd";
 import formConfig from "../../rjsf";
 import { useScriptContext } from "../ScriptContext";
 import { createUseStyles } from "react-jss";
+import ScriptForm from "../rjsf/ScriptForm";
 
 const useStyles = createUseStyles({
     formFooter: {
@@ -14,11 +15,16 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function StatementEditor({ statement, onChange, onCancel }) {
+export default function StatementEditor({
+    statement,
+    variables,
+    onChange,
+    onCancel,
+}) {
     const classes = useStyles();
     const { manager } = useScriptContext();
 
-    const formSchemas = manager.getFormSchemas(statement);
+    const formSchemas = manager.getFormSchemas(statement, variables);
     const handleOnSubmit = (form) => {
         onChange(form.formData);
     };
@@ -28,27 +34,27 @@ export default function StatementEditor({ statement, onChange, onCancel }) {
             visible={true}
             onCancel={onCancel}
             footer={null}
+            width={1000}
         >
-            <Form
-                ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                widgets={formConfig.widgets}
-                schema={formSchemas.schema}
-                uiSchema={formSchemas.uiSchema}
-                onSubmit={handleOnSubmit}
-                formData={statement}
-            >
-                <div className={classes.formFooter}>
-                    <Space>
-                        <Button onClick={onCancel}>
-                            {T.translate("visual_script.cancel")}
-                        </Button>
-                        <Button type="primary" htmlType="submit">
-                            {T.translate("visual_script.accept")}
-                        </Button>
-                    </Space>
-                </div>
-            </Form>
+            <div className={classes.modalContainer}>
+                <ScriptForm
+                    schema={formSchemas.schema}
+                    uiSchema={formSchemas.uiSchema}
+                    onSubmit={handleOnSubmit}
+                    formData={statement}
+                >
+                    <div className={classes.formFooter}>
+                        <Space>
+                            <Button onClick={onCancel}>
+                                {T.translate("visual_script.cancel")}
+                            </Button>
+                            <Button type="primary" htmlType="submit">
+                                {T.translate("visual_script.accept")}
+                            </Button>
+                        </Space>
+                    </div>
+                </ScriptForm>
+            </div>
         </Modal>
     );
 }

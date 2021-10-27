@@ -7,7 +7,7 @@ import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
     root: { margin: "5px 0px" },
-    actions: { marginLeft: "20px" },
+    deleteButton: { marginLeft: "15px" },
     icon: { color: "gray" },
 });
 export default function ExpressionWrapper({
@@ -26,18 +26,14 @@ export default function ExpressionWrapper({
                 expectedType={expectedType}
                 onChange={onChange}
             />
-            <span className={classes.actions}>
-                <Button
-                    type="text"
-                    onClick={onDelete}
-                    icon={
-                        <StatementIcon
-                            className={classes.icon}
-                            path={mdiDelete}
-                        />
-                    }
-                />
-            </span>
+            <Button
+                className={classes.deleteButton}
+                type="text"
+                onClick={onDelete}
+                icon={
+                    <StatementIcon className={classes.icon} path={mdiDelete} />
+                }
+            />
         </div>
     );
 }

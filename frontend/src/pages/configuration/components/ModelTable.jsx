@@ -89,7 +89,6 @@ export default function ModelTable({
             return null;
         }
     };
-    const [importItems, setImportItems] = useState();
     const [searchString, setSearchString] = useState();
     const classes = useStyles();
 
@@ -177,24 +176,22 @@ export default function ModelTable({
 
     const handleUploadTable = () => {
         uploadJsonFile()
-            .then((json) => setImportItems(json))
+            .then((importItems) => {
+                const promises = importItems.map((item) =>
+                    onSaveData({ ...item, id: null }, false)
+                );
+                Promise.all(promises).then((values) => {
+                    message.info(
+                        T.translate("configuration.end_of_loading_json_file")
+                    );
+                });
+            })
             .catch((error) =>
                 message.error(
                     T.translate("configuration.error_loading_json_file")
                 )
             );
     };
-
-    // const handleOnCheckAction = (checked) => {
-    //     const items = importItems;
-    //     setImportItems(null);
-    //     const promises = items.map((item) =>
-    //         onSaveData({ ...item, id: null }, checked)
-    //     );
-    //     Promise.all(promises).then((values) => {
-    //         message.info(T.translate("configuration.end_of_loading_json_file"));
-    //     });
-    // };
 
     const filterData = () => {
         return modelData.filter((item) => {
@@ -226,14 +223,6 @@ export default function ModelTable({
 
     return (
         <div>
-            {/* {importItems && (
-        <ModelOverwriteDialog
-          open={!!importItems}
-          onCheckAction={handleOnCheckAction}
-          onClose={() => setImportItems(null)}
-        />
-      )} */}
-            {importItems ? <h1>Imported items</h1> : null}
             <Card className={classes.card}>
                 <Row>
                     <Col flex={1}>

@@ -35,6 +35,8 @@ export default function ExpressionMemberSelector({
         }
     }, [expression, open]);
 
+    const itemStyle = { padding: "4px 8px" };
+
     const getLastExpressionMember = () => {
         return expression[expression.length - 1];
     };
@@ -176,6 +178,7 @@ export default function ExpressionMemberSelector({
                         value={filter}
                         onChange={handleOnChangeFilter}
                         autoFocus
+                        style={{ marginBottom: "4px" }}
                     />
                 ) : null}
                 <List size="small">
@@ -184,6 +187,7 @@ export default function ExpressionMemberSelector({
                             key={"delete"}
                             onClick={handleOnSelect({ memberType: "delete" })}
                             className={classes.memberSelectorListItem}
+                            style={itemStyle}
                         >
                             <List.Item.Meta
                                 avatar={
@@ -201,6 +205,7 @@ export default function ExpressionMemberSelector({
                                 key={index}
                                 onClick={handleOnSelect(member)}
                                 className={classes.memberSelectorListItem}
+                                style={itemStyle}
                             >
                                 <List.Item.Meta
                                     avatar={
@@ -219,13 +224,14 @@ export default function ExpressionMemberSelector({
         );
     };
     return (
-        <div className={classes.member}>
+        <div className={classes.member + " selector"}>
             <Popover
                 content={renderMenu()}
                 trigger={"click"}
                 visible={open && !methodMember}
                 onVisibleChange={onOpenChange}
                 overlayClassName={classes.propertyPopover}
+                autoAdjustOverflow={true}
             >
                 <Button
                     type="text"
@@ -237,7 +243,7 @@ export default function ExpressionMemberSelector({
             {methodMember ? (
                 <MethodEditor
                     member={methodMember}
-                    // parentType={expression[expression.length - 1].type}
+                    variables={variables}
                     onParametersEntered={handleOnParametersEntered}
                     onCancel={handleOnCancelMethodEditor}
                 />

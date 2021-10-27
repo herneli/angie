@@ -14,10 +14,23 @@ export const registry = {
             comment: T.translate("visual_script.new_comment"),
         };
     },
-    schema: (manager) => ({
+    schema: (manager, variables) => ({
         type: "object",
         properties: {
             comment: { type: "string", title: "Comentario" },
+            expres: {
+                type: "object",
+                properties: {
+                    $exp: {},
+                },
+            },
+        },
+    }),
+
+    uiSchema: (manager, variables) => ({
+        expres: {
+            "ui:field": "ExpressionField",
+            "ui:variables": variables,
         },
     }),
 };

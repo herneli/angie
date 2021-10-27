@@ -1,9 +1,12 @@
 const styles = {
+    expression: {
+        display: "inline-block",
+    },
     group: {
         display: "inline-flex",
         flexDirection: "row",
         borderRadius: "3px",
-        boxShadow: "0 0 10px rgb(0 0 0 / 28%), 0 0 2px rgb(0 0 0 / 22%)",
+        boxShadow: "0 0 6px rgb(0 0 0 / 28%), 0 0 2px rgb(0 0 0 / 22%)",
         whiteSpace: "nowrap",
         minHeight: "28px",
         fontSize: "14px",
@@ -64,6 +67,15 @@ const styles = {
         "&.operator.boolean": {
             cursor: "pointer",
         },
+        "&.selector": {
+            padding: "2px 2px 2px 6px",
+        },
+    },
+    selector: {
+        position: "relative",
+        width: "50px",
+        marginRight: "-50px",
+        zIndex: 1,
     },
     editIcon: {
         color: "gray",

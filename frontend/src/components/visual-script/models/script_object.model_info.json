@@ -189,7 +189,11 @@
                 },
                 "type": {
                     "ui:withBorder": true,
-                    "ui:columnSize": "12"
+                    "ui:columnSize": "12",
+                    "objectCode": {
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    }
                 }
             }
         }

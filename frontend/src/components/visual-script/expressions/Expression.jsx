@@ -76,6 +76,7 @@ export default function Expression({
         return (
             <MethodEditor
                 member={expressionMember}
+                variables={variables}
                 onParametersEntered={handleOnParametersEntered(index)}
                 onCancel={handleCancelEdit}
             />
@@ -135,25 +136,27 @@ export default function Expression({
             {editExpressionMember
                 ? renderMethodEditor(editExpressionMember)
                 : null}
-            {expressionGroups.map((groupComponent, index) => {
-                return (
-                    <div key={index} className={classes.group}>
-                        {groupComponent}
-                        {!displayOnly &&
-                        index === expressionGroups.length - 1 ? (
-                            <ExpressionMemberSelector
-                                expression={expression}
-                                variables={variables}
-                                open={openSelector}
-                                onOpenChange={handleOnOpenSelectorChange}
-                                classes={classes}
-                                onSelect={handleOnSelect}
-                                onDeleteLast={handleOnDeleteLast}
-                            />
-                        ) : null}
-                    </div>
-                );
-            })}
+            <div className={classes.expression}>
+                {expressionGroups.map((groupComponent, index) => {
+                    return (
+                        <div key={index} className={classes.group}>
+                            {groupComponent}
+                            {!displayOnly &&
+                            index === expressionGroups.length - 1 ? (
+                                <ExpressionMemberSelector
+                                    expression={expression}
+                                    variables={variables}
+                                    open={openSelector}
+                                    onOpenChange={handleOnOpenSelectorChange}
+                                    classes={classes}
+                                    onSelect={handleOnSelect}
+                                    onDeleteLast={handleOnDeleteLast}
+                                />
+                            ) : null}
+                        </div>
+                    );
+                })}
+            </div>
         </>
     );
 }
