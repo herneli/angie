@@ -16,6 +16,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@elastic/elasticsearch": "^7.14.1",
+    "@keycloak/keycloak-admin-client": "^15.0.2",
     "dotenv": "^10.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",

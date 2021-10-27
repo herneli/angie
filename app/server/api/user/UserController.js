@@ -1,4 +1,5 @@
 import { App, BaseController, JsonResponse } from 'lisco';
+import { UserService } from './UserService';
 
 const asyncHandler = require('express-async-handler')
 
@@ -6,15 +7,13 @@ const asyncHandler = require('express-async-handler')
 export class UserController extends BaseController {
 
     configure() {
+        super.configure('user', { service: UserService });
 
         this.router.get('/login', App.keycloak.protect("realm:default-roles-angie"), asyncHandler((request, response, next) => { this.login(request, response, next); }));
         this.router.get('/logout', asyncHandler((request, response, next) => { this.logout(request, response, next); }));
-        this.router.get('/anonymous', App.keycloak.protect("realm:default-roles-angie"), function (request, response) {
-            var jsRes = new JsonResponse();
-            jsRes.success = false;
-            jsRes.message = "Hello admin";
-            response.json("Hello admin");
-        });
+        this.router.post('/importUsers', asyncHandler((res, req, next) => { this.importUsers(res, req, next); }));
+        this.router.post('/saveUser', asyncHandler((res, req, next) => { this.saveUsers(res, req, next); }));
+        this.router.post('/deleteUser', asyncHandler((res, req, next) => { this.deleteUser(res, req, next); }));
 
         return this.router;
     }
@@ -22,20 +21,115 @@ export class UserController extends BaseController {
 
     async login(request, response) {
         let username = "";
-        if (request.headers.authorization) {
-            let token = request.headers.authorization.replace('bearer ', '').replace('Bearer ', '');
-            const parts = token.split('.');
-            const header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
-            const content = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-            // console.log(decoded);
-            username = content.preferred_username;
+        let  header = []
+        let content =[]
+        if(request.headers.authorization){
+            header,content =  App.Utils.parseToken(request)
         }
+        username = content.preferred_username;
 
         var jsRes = new JsonResponse();
         jsRes.success = false;
         jsRes.message = `Hello '${username}' `;
         response.json(jsRes);
     }
+   /**
+     * Import Users desde Keycloak
+     *
+     *
+     * @ {get} /logout Request Session information
+     * @ Log out
+     * @ User
+     *
+     *
+     * @ {Boolean} success
+     * @ {Object[]} data  dataObject
+     * @ {String} Username  Nombre de usuario
+     */
+    async importUsers(request, response, next) {
+        try {
+            const bServ = new UserService();
+            var jsRes = new JsonResponse();
+            let usersTosave = []
+            let users =  App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : []
+            for await (let e of users) {
+                let roles = await App.keycloakAdmin.users.listRoleMappings({
+                    id: e.id,
+                });
+                roles.pop
+                let groups = await App.keycloakAdmin.users.listGroups({
+                    id: e.id,
+                });
+                delete e.totp
+                delete e.disableableCredentialTypes
+                delete e.requiredActions
+                delete e.notBefore
+                delete e.access
+                delete e.firstName
+                e.created_time_stamp = e.createdTimeStamp
+                delete e.createdTimestamp
+                e.email_verified = e.emailVerified
+                delete e.emailVerified
+                e.roles = JSON.stringify(roles)
+
+                let exists = await bServ.loadById(e.id)
+                if(exists.length > 0){
+                    let update = await bServ.update(e.id,e)
+                }else{
+                    usersTosave.push(e)
+                }
+            }
+            
+
+            let data  = usersTosave.length > 0 ? await bServ.save(usersTosave)   : []
+            jsRes.success = false;
+            jsRes.message = users;
+            response.json(jsRes);
+        } catch (e) {
+            next(e);
+        }
+
+    }
+
+    /*
+    */
+    async saveUsers(request, response, next) {
+        try {
+            const bServ = new UserService();
+            var jsRes = new JsonResponse();
+            delete request.body.organization_id
+            let data =  await App.keycloakAdmin.users.create(request.body);
+            
+            request.body.id = data.id
+            await bServ.save(request.body)
+            jsRes.success = false;
+            jsRes.message = data;
+            response.json(jsRes);
+        } catch (e) {
+            next(e);
+        }
+
+    }
+
+
+    /*
+    */
+     async deleteUser(request, response, next) {
+        try {
+            const bServ = new UserService();
+            var jsRes = new JsonResponse();
+            let data =  await App.keycloakAdmin.users.del({id: request.body.id});
+            
+            await bServ.delete(request.body.id)
+            jsRes.success = false;
+            jsRes.message = data;
+            response.json(jsRes);
+        } catch (e) {
+            next(e);
+        }
+
+    }
+
 
     /**
      * Cierre de sessión

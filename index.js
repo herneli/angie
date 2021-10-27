@@ -1,13 +1,14 @@
 import { App, KnexConnector } from "lisco";
 import { UserController } from "./app/server/api/user";
 import { MainController } from "./app/server/api/main";
-import { Settings } from "./app/server/common";
+import { Settings, Utils } from "./app/server/common";
 import {
     handleResponses,
     handleRequests,
     SPEC_OUTPUT_FILE_BEHAVIOR,
 } from "express-oas-generator";
 import { initKeycloak, getKeycloak } from "./config/keycloak-config";
+import { keycloakAdmin } from "./config/keycloak-admin-client-config";
 import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
 import { NodeTypeController } from "./app/server/api/node_type";
@@ -25,10 +26,11 @@ module.exports = async () => {
 
     //Cargar las configuraciones
     App.settings = new Settings();
+    App.Utils = new Utils();
     App.settings.load();
 
     //Configurar la gestion de cookies
-    App.customizeExpress = (app) => {
+    App.customizeExpress = async (app) => {
         handleResponses(app, {
             //Escucha las respuestas para ir generando la openapi
             specOutputPath: __dirname + "/openapi.json",
@@ -42,6 +44,11 @@ module.exports = async () => {
             ],
             specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE,
         });
+
+        //Esto es una api directa contra la administracion del keycloak desde el backend
+        //Enlace a la docu : https://github.com/keycloak/keycloak-nodejs-admin-client
+        App.keycloakAdmin = await keycloakAdmin()
+
 
         //Inicializa keycloak
         initKeycloak();
