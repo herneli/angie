@@ -6,11 +6,11 @@ import SubMenu from "./AdminSubMenu";
 
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import Script from "../../pages/script/Script";
-import CamelComponent from './camel_component/CamelComponent';
-import NodeType from './node_type/NodeType';
-import UsersConfig from './Users/UsersConfig';
-import Integration from './integration/Integration';
-import OrganizationConfig from './organization/OrganizationConfig';
+import CamelComponent from "./camel_component/CamelComponent";
+import NodeType from "./node_type/NodeType";
+import UsersConfig from "./Users/UsersConfig";
+import Integration from "./integration/Integration";
+import OrganizationConfig from "./organization/OrganizationConfig";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
@@ -24,7 +24,6 @@ const Administration = ({ app }) => {
             <Layout>
                 <Content>
                     <Switch>
-<<<<<<< HEAD
                         <Route
                             exact
                             path="/admin/integration"
@@ -32,6 +31,24 @@ const Administration = ({ app }) => {
                                 <Integration match={match} {...defaultProps} />
                             )}
                         />
+                        <Route
+                            exact
+                            path="/admin/users"
+                            render={({ match }) => (
+                                <UsersConfig match={match} {...defaultProps} />
+                            )}
+                        />
+                        <Route
+                            exact
+                            path="/admin/organization"
+                            render={({ match }) => (
+                                <OrganizationConfig
+                                    match={match}
+                                    {...defaultProps}
+                                />
+                            )}
+                        />
+
                         <Route
                             exact
                             path="/admin/node_type"
@@ -49,15 +66,6 @@ const Administration = ({ app }) => {
                                 />
                             )}
                         />
-=======
-                        <Route exact path="/admin/integration" render={({ match }) => <Integration match={match} {...defaultProps} />} />
-                        <Route exact path="/admin/users" render={({ match }) => <UsersConfig match={match} {...defaultProps} />} />
-                        <Route exact path="/admin/organization" render={({ match }) => <OrganizationConfig match={match} {...defaultProps} />} />
-                     
-
-                        <Route exact path="/admin/node_type" render={({ match }) => <NodeType match={match} {...defaultProps} />} />
-                        <Route exact path="/admin/camel_component" render={({ match }) => <CamelComponent match={match} {...defaultProps} />} />
->>>>>>> 83ef40a6d329208ef431f8d384a48cf0625d1a98
 
                         <PrivateRoute
                             roles={["default-roles-angie"]}
