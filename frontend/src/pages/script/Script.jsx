@@ -21,8 +21,22 @@ export default function Script({ match }) {
         });
     };
 
+    const handleOnGenerateCode = (script) => {
+        axios
+            .post("/script/code/" + code + "/generate", script)
+            .then((response) => {
+                message.info(T.translate("visual_script.code_generated"));
+            });
+    };
+
     if (script) {
-        return <VisualScript script={script} onSave={handleOnSave} />;
+        return (
+            <VisualScript
+                script={script}
+                onSave={handleOnSave}
+                onGenerateCode={handleOnGenerateCode}
+            />
+        );
     } else {
         return <h1>Loading...</h1>;
     }
