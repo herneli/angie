@@ -16,6 +16,7 @@ export default class ScriptManager {
         this.language = language;
         this.jsplumb = null;
         this.statementRegistry = statementRegistry;
+        this.statementClipboard = null;
         ready(() => {
             if (!this.jsplumb) {
                 this.jsplumb = newInstance({
@@ -62,12 +63,16 @@ export default class ScriptManager {
     }
 
     createStatement(type) {
-        const statementRegistry = this.getStatementRegistry(type);
-        return statementRegistry.create(this);
+        if (type === "$clipboard") {
+            return this.statementClipboard;
+        } else {
+            const statementRegistry = this.getStatementRegistry(type);
+            return statementRegistry.create(this);
+        }
     }
 
     newExpression() {
-        return [this.context];
+        return [{ ...this.context }];
     }
 
     getLanguage() {
@@ -148,15 +153,16 @@ export default class ScriptManager {
                     let loopBackId = statementId + "-loop-back";
                     this.connect(finalPointId, loopBackId, {
                         anchor: "Left",
-                    });
-                    this.connect(loopBackId, statementId, {
-                        anchor: ["Left", "Right"],
-                        connector: {
-                            type: FlowchartConnector.type,
-                            options: { stub: 0 },
-                        },
                         overlays: [{ type: "Arrow", options: arrowOverlay }],
                     });
+                    // this.connect(loopBackId, statementId, {
+                    //     anchor: ["Left", "Right"],
+                    //     connector: {
+                    //         type: FlowchartConnector.type,
+                    //         options: { stub: 0 },
+                    //     },
+                    //     overlays: [{ type: "Arrow", options: arrowOverlay }],
+                    // });
                 }
             });
 
@@ -192,5 +198,21 @@ export default class ScriptManager {
             }
             this.createConnections(statement);
         });
+    }
+
+    getFormSchemas(statement, variables) {
+        let registry = this.getStatementRegistry(statement.type);
+        return {
+            schema: (registry.schema && registry.schema(this)) || {},
+            uiSchema:
+                (registry.uiSchema && registry.uiSchema(this, variables)) || {},
+        };
+    }
+
+    setStatementClipboard(statement) {
+        this.statementClipboard = statement;
+    }
+    getStatementClipboard() {
+        return this.statementClipboard;
     }
 }

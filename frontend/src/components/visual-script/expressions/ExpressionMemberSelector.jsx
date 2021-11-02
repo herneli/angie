@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { mdiChevronDown, mdiBackspaceOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { List, Select, Button, Popover, Input } from "antd";
+import { List, Button, Popover, Input } from "antd";
 import { useScriptContext } from "../ScriptContext";
 import getTypeIcon from "../getTypeIcon";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
 
-const { Option } = Select;
-
 export default function ExpressionMemberSelector({
     expression,
+    variables,
     open,
     onOpenChange,
     classes,
@@ -29,19 +28,21 @@ export default function ExpressionMemberSelector({
             (!membersForType ||
                 !areSameTypes(
                     membersForType.type,
-                    getLastExpressionMemberType()
+                    getLastExpressionMember().type
                 ))
         ) {
             getMembers();
         }
     }, [expression, open]);
 
-    const getLastExpressionMemberType = () => {
-        return expression[expression.length - 1].type;
+    const itemStyle = { padding: "4px 8px" };
+
+    const getLastExpressionMember = () => {
+        return expression[expression.length - 1];
     };
 
     const getMembers = () => {
-        manager.getMembers(getLastExpressionMemberType()).then((m) => {
+        manager.getMembers(getLastExpressionMember().type).then((m) => {
             let membersLocal = [];
             if (m.properties) {
                 m.properties.forEach((property) => {
@@ -60,8 +61,26 @@ export default function ExpressionMemberSelector({
                     });
                 });
             }
+
+            if (getLastExpressionMember().memberType === "context") {
+                membersLocal.push({
+                    memberType: "variableContainer",
+                    code: "variableContainer",
+                    name: T.translate("visual_script.variables"),
+                    type: {
+                        type: "object",
+                        objectCode: "variables",
+                    },
+                });
+            }
+
+            if (getLastExpressionMember().memberType === "variableContainer") {
+                Object.keys(variables).forEach((variableKey) => {
+                    membersLocal.push(variables[variableKey]);
+                });
+            }
             setMembersForType({
-                type: getLastExpressionMemberType(),
+                type: getLastExpressionMember().type,
                 members: membersLocal,
             });
         });
@@ -159,6 +178,7 @@ export default function ExpressionMemberSelector({
                         value={filter}
                         onChange={handleOnChangeFilter}
                         autoFocus
+                        style={{ marginBottom: "4px" }}
                     />
                 ) : null}
                 <List size="small">
@@ -167,6 +187,7 @@ export default function ExpressionMemberSelector({
                             key={"delete"}
                             onClick={handleOnSelect({ memberType: "delete" })}
                             className={classes.memberSelectorListItem}
+                            style={itemStyle}
                         >
                             <List.Item.Meta
                                 avatar={
@@ -184,6 +205,7 @@ export default function ExpressionMemberSelector({
                                 key={index}
                                 onClick={handleOnSelect(member)}
                                 className={classes.memberSelectorListItem}
+                                style={itemStyle}
                             >
                                 <List.Item.Meta
                                     avatar={
@@ -202,13 +224,14 @@ export default function ExpressionMemberSelector({
         );
     };
     return (
-        <div className={classes.member}>
+        <div className={classes.member + " selector"}>
             <Popover
                 content={renderMenu()}
                 trigger={"click"}
                 visible={open && !methodMember}
                 onVisibleChange={onOpenChange}
                 overlayClassName={classes.propertyPopover}
+                autoAdjustOverflow={true}
             >
                 <Button
                     type="text"
@@ -220,7 +243,7 @@ export default function ExpressionMemberSelector({
             {methodMember ? (
                 <MethodEditor
                     member={methodMember}
-                    // parentType={expression[expression.length - 1].type}
+                    variables={variables}
                     onParametersEntered={handleOnParametersEntered}
                     onCancel={handleOnCancelMethodEditor}
                 />

@@ -6,11 +6,11 @@ import styles from "./expressionStyle";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
-import { memberExpression } from "@babel/types";
 const useStyles = createUseStyles(styles);
 
 export default function Expression({
     expression,
+    variables,
     expectedType,
     onChange,
     displayOnly,
@@ -19,6 +19,9 @@ export default function Expression({
     const [openSelector, setOpenSelector] = useState(false);
     const classes = useStyles();
 
+    if (!variables) {
+        throw Error('Expression requires "variables" property ');
+    }
     const handleOnChange = (index) => (expressionMember) => {
         let newExpression = [
             ...expression.slice(0, index),
@@ -73,6 +76,7 @@ export default function Expression({
         return (
             <MethodEditor
                 member={expressionMember}
+                variables={variables}
                 onParametersEntered={handleOnParametersEntered(index)}
                 onCancel={handleCancelEdit}
             />
@@ -81,7 +85,6 @@ export default function Expression({
 
     let expressionGroups = [];
     expressionGroups.push([]);
-    let renderOperator = false;
     expression.forEach((expressionMember, index) => {
         if (index === 0) {
             if (expression.length === 1) {
@@ -122,6 +125,7 @@ export default function Expression({
                 key={index.toString()}
                 classes={classes}
                 expressionMember={expressionMember}
+                variables={variables}
                 onChange={handleOnChange(index)}
                 onEdit={handleOnEdit(index)}
             />
@@ -132,24 +136,27 @@ export default function Expression({
             {editExpressionMember
                 ? renderMethodEditor(editExpressionMember)
                 : null}
-            {expressionGroups.map((groupComponent, index) => {
-                return (
-                    <div key={index} className={classes.group}>
-                        {groupComponent}
-                        {!displayOnly &&
-                        index === expressionGroups.length - 1 ? (
-                            <ExpressionMemberSelector
-                                expression={expression}
-                                open={openSelector}
-                                onOpenChange={handleOnOpenSelectorChange}
-                                classes={classes}
-                                onSelect={handleOnSelect}
-                                onDeleteLast={handleOnDeleteLast}
-                            />
-                        ) : null}
-                    </div>
-                );
-            })}
+            <div className={classes.expression}>
+                {expressionGroups.map((groupComponent, index) => {
+                    return (
+                        <div key={index} className={classes.group}>
+                            {groupComponent}
+                            {!displayOnly &&
+                            index === expressionGroups.length - 1 ? (
+                                <ExpressionMemberSelector
+                                    expression={expression}
+                                    variables={variables}
+                                    open={openSelector}
+                                    onOpenChange={handleOnOpenSelectorChange}
+                                    classes={classes}
+                                    onSelect={handleOnSelect}
+                                    onDeleteLast={handleOnDeleteLast}
+                                />
+                            ) : null}
+                        </div>
+                    );
+                })}
+            </div>
         </>
     );
 }

@@ -14,6 +14,12 @@ const registry = {
             expressions: [],
         };
     },
+    schema: (manager) => ({
+        type: "object",
+        properties: {
+            name: { type: "string", title: "Comentario" },
+        },
+    }),
 };
 
 export default registry;

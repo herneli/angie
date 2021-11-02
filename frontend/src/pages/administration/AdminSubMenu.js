@@ -1,11 +1,10 @@
-import { mdiAccountGroup, mdiConnection, mdiPalette } from '@mdi/js';
-import Icon from '@mdi/react';
-import { Layout, Menu } from 'antd';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { mdiAccountGroup, mdiConnection, mdiPalette } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Layout, Menu } from "antd";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const AdminSubMenu = () => {
-
     const { Sider } = Layout;
     const { SubMenu } = Menu;
     return (
@@ -13,9 +12,13 @@ const AdminSubMenu = () => {
             <Menu
                 mode="inline"
                 defaultOpenKeys={["gest", "comm", "custom"]}
-                style={{ height: '100%', borderRight: 0 }}
+                style={{ height: "100%", borderRight: 0 }}
             >
-                <SubMenu key="gest" icon={<Icon path={mdiAccountGroup} size={1}/>} title="Gestión">
+                <SubMenu
+                    key="gest"
+                    icon={<Icon path={mdiAccountGroup} size={1} />}
+                    title="Gestión"
+                >
                     <Menu.Item key="1">
                         <Link to="/admin/users">Usuarios </Link>
                     </Menu.Item>
@@ -26,7 +29,11 @@ const AdminSubMenu = () => {
                         <Link to="/admin/organization">Organizaciones </Link>
                     </Menu.Item>
                 </SubMenu>
-                <SubMenu key="comm" icon={<Icon path={mdiConnection} size={1}/>} title="Comunicaciones">
+                <SubMenu
+                    key="comm"
+                    icon={<Icon path={mdiConnection} size={1} />}
+                    title="Comunicaciones"
+                >
                     <Menu.Item key="integ">
                         <Link to="/admin/integrations">Integraciones </Link>
                     </Menu.Item>
@@ -34,10 +41,16 @@ const AdminSubMenu = () => {
                         <Link to="/admin/node_type">Tipos Nodos </Link>
                     </Menu.Item>
                     <Menu.Item key="ccompo">
-                        <Link to="/admin/camel_component">Componentes Camel </Link>
+                        <Link to="/admin/camel_component">
+                            Componentes Camel{" "}
+                        </Link>
                     </Menu.Item>
                 </SubMenu>
-                <SubMenu key="custom" icon={<Icon path={mdiPalette} size={1}/>} title="Personalización">
+                <SubMenu
+                    key="custom"
+                    icon={<Icon path={mdiPalette} size={1} />}
+                    title="Personalización"
+                >
                     <Menu.Item key="config_method">
                         <Link to="/admin/config_method">Métodos </Link>
                     </Menu.Item>
@@ -45,11 +58,11 @@ const AdminSubMenu = () => {
                         <Link to="/admin/config_object">Objetos</Link>
                     </Menu.Item>
                     <Menu.Item key="script">
-                        <Link to="/admin/script">Script</Link>
+                        <Link to="/admin/script/test01">Script</Link>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
         </Sider>
-    )
-}
-export default AdminSubMenu
+    );
+};
+export default AdminSubMenu;

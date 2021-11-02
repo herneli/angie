@@ -28,6 +28,12 @@ const AntdArrayFieldTemplate = ({
     let dataSource;
     let columns;
     let expanded;
+    let {
+        columns: optionsColumns,
+        canAdd: optionsCanAdd = true,
+        canDelete: optionsCanDelete = true,
+    } = uiSchema["ui:options"] || {};
+
     if (schema.items.type === "object") {
         expanded = true;
         dataSource = formData.map((element, i) => ({
@@ -39,7 +45,8 @@ const AntdArrayFieldTemplate = ({
             onReorderClick: items[i].onReorderClick,
             onDropIndexClick: items[i].onDropIndexClick,
         }));
-        if (!uiSchema["ui:columns"]) {
+
+        if (!optionsColumns) {
             columns = Object.entries(schema.items.properties).map(
                 ([key, value], i) => ({
                     title: value.title || key,
@@ -49,7 +56,7 @@ const AntdArrayFieldTemplate = ({
                 })
             );
         } else {
-            columns = uiSchema["ui:columns"];
+            columns = optionsColumns;
         }
     } else {
         expanded = false;
@@ -72,29 +79,34 @@ const AntdArrayFieldTemplate = ({
         ];
     }
 
+    if (optionsCanDelete) {
+        columns = [
+            ...columns,
+            {
+                title: T.translate("actions"),
+                dataIndex: "action",
+                fixed: "right",
+                width: 50,
+                render: (text, record) => (
+                    <Popconfirm
+                        title="Are you sure delete this item?"
+                        onConfirm={record.onDropIndexClick(record.index)}
+                        onCancel={() => {}}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<DeleteOutlined />}
+                        ></Button>
+                    </Popconfirm>
+                ),
+            },
+        ];
+    }
     columns = [
         ...columns,
-        {
-            title: T.translate("actions"),
-            dataIndex: "action",
-            fixed: "right",
-            width: 50,
-            render: (text, record) => (
-                <Popconfirm
-                    title="Are you sure delete this item?"
-                    onConfirm={record.onDropIndexClick(record.index)}
-                    onCancel={() => {}}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <Button
-                        type="primary"
-                        shape="circle"
-                        icon={<DeleteOutlined />}
-                    ></Button>
-                </Popconfirm>
-            ),
-        },
         {
             title: T.translate("sort"),
             dataIndex: "sort",
@@ -167,7 +179,7 @@ const AntdArrayFieldTemplate = ({
                         pagination={false}
                     />
 
-                    {canAdd && (
+                    {canAdd && optionsCanAdd && (
                         <Row gutter={24} justify="start">
                             <Col flex="192px">
                                 <Button

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import T from "i18n-react";
 import { Button, Modal, Space } from "antd";
-import Form from "@rjsf/antd";
-import formConfig from "../../rjsf";
+
 import { useScriptContext } from "../ScriptContext";
 import { createUseStyles } from "react-jss";
+import ScriptForm from "../rjsf/ScriptForm";
+import convertToExpressionSchema from "./convertToExpressionSchema";
 
 const useStyles = createUseStyles({
     formFooter: {
@@ -15,6 +16,7 @@ const useStyles = createUseStyles({
 });
 export default function MethodEditor({
     member,
+    variables,
     onParametersEntered,
     onCancel,
 }) {
@@ -64,30 +66,6 @@ export default function MethodEditor({
             schema: await memberToSchema(member),
             uiSchema: memberToUiSchema(member),
         };
-    };
-
-    const replaceType = (type, parentType) => {
-        if (type.type === "$self") {
-            return parentType;
-        } else if (type.type === "$item") {
-            return parentType.items;
-        } else if (type.type === "array") {
-            if (type.items.type === "$self") {
-                return {
-                    ...type,
-                    items: parentType,
-                };
-            } else if (type.items.type === "$item") {
-                return {
-                    ...type,
-                    items: parentType.items,
-                };
-            } else {
-                return type;
-            }
-        } else {
-            return type;
-        }
     };
 
     const memberToUiSchema = (member) => {
@@ -152,7 +130,7 @@ export default function MethodEditor({
                     type: "array",
                     title: member.name,
                     default: [],
-                    items: await memberToSchema({ type: member.items }),
+                    items: await memberToSchema({ type: member.type.items }),
                 };
             case "object":
                 let members = await manager.getMembers(member.type, {
@@ -162,7 +140,6 @@ export default function MethodEditor({
                     type: "object",
                     title: member.name,
                     properties: {},
-                    // required: [],
                 };
                 members.properties.forEach(async (childMember) => {
                     returnObject.properties[childMember.code] =
@@ -177,8 +154,12 @@ export default function MethodEditor({
     if (!formOptions) {
         return <></>;
     }
-
-    console.log(formOptions);
+    const { schema: expSchema, uiSchema: expUiSchema } =
+        convertToExpressionSchema(
+            formOptions.schema,
+            formOptions.uiSchema,
+            variables
+        );
 
     return (
         <Modal
@@ -188,14 +169,12 @@ export default function MethodEditor({
             footer={null}
             visible={true}
             onCancel={onCancel}
+            width={1000}
         >
             <div>
-                <Form
-                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                    widgets={formConfig.widgets}
-                    schema={formOptions.schema}
-                    uiSchema={formOptions.uiSchema}
+                <ScriptForm
+                    schema={expSchema}
+                    uiSchema={expUiSchema}
                     onSubmit={handleOnSubmit}
                     formData={member.params}
                 >
@@ -209,7 +188,7 @@ export default function MethodEditor({
                             </Button>
                         </Space>
                     </div>
-                </Form>
+                </ScriptForm>
             </div>
         </Modal>
     );

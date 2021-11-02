@@ -2,7 +2,11 @@ const areSameTypes = (type1, type2) => {
     if (!type1 || !type2) {
         return false;
     }
-    if (type1.type === type2.type) {
+    if (
+        type1.type === type2.type ||
+        type1.type === "$any" ||
+        type2.type === "$any"
+    ) {
         if (type1.type === "object") {
             return type1.objectCode === type2.objectCode;
         } else {

@@ -2,12 +2,13 @@ import React from "react";
 import RuleExpression from "./RuleExpression";
 import RuleGroup from "./RuleGroup";
 
-export default function Rule({ id, rule, onChange, onDelete }) {
+export default function Rule({ id, rule, variables, onChange, onDelete }) {
     if (rule.type === "group") {
         return (
             <RuleGroup
                 id={id}
                 rule={rule}
+                variables={variables}
                 onChange={onChange}
                 onDelete={onDelete}
             />
@@ -16,6 +17,7 @@ export default function Rule({ id, rule, onChange, onDelete }) {
         return (
             <RuleExpression
                 rule={rule}
+                variables={variables}
                 onChange={onChange}
                 onDelete={onDelete}
             />

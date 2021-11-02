@@ -162,12 +162,14 @@
             "ui:columnSize": "6"
         },
         "properties": {
-            "ui:columns": [
-                { "title": "Código", "dataIndex": "code" },
-                { "title": "Nombre", "dataIndex": "name" },
-                { "title": "Tipo", "dataIndex": ["type", "type"] },
-                { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
-            ],
+            "ui:options": {
+                "columns": [
+                    { "title": "Código", "dataIndex": "code" },
+                    { "title": "Nombre", "dataIndex": "name" },
+                    { "title": "Tipo", "dataIndex": ["type", "type"] },
+                    { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
+                ]
+            },
             "items": {
                 "code": {
                     "ui:columnSize": "3"
@@ -187,7 +189,11 @@
                 },
                 "type": {
                     "ui:withBorder": true,
-                    "ui:columnSize": "12"
+                    "ui:columnSize": "12",
+                    "objectCode": {
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    }
                 }
             }
         }

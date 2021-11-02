@@ -23,30 +23,51 @@ export class ScriptDao extends BaseKnexDao {
     getMethods(type, language) {
         let knex = KnexConnector.connection;
 
-        // Select properties
-        let objectData;
-
+        if (type.type === "void" || type.type === "boolean") {
+            return Promise.resolve([]);
+        }
         // Select methods
         let methods = knex("script_config")
             .where({
                 document_type: "method",
             })
-            .whereRaw("data ->> ? = ? and data -> ? ->> ? = ?", [
-                "language",
-                language,
-                "parentType",
-                "type",
-                type.type,
-            ]);
+
+            .whereRaw(
+                "data ->> 'language' = ? and " +
+                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any')",
+                [language, type.type]
+            );
 
         if (type.type === "object") {
-            methods = methods.whereRaw("data -> ? ->> ? = ?", [
-                "parentType",
-                "objectCode",
-                type.objectCode,
-            ]);
+            methods = methods.whereRaw(
+                "data -> 'parentType' ->> 'objectCode' = ?",
+                [type.objectCode]
+            );
         }
-        console.log(methods.toSQL().toNative());
+        // console.log(methods.toSQL().toNative());
         return methods;
+    }
+
+    getScriptConfig(documentType, code) {
+        let knex = KnexConnector.connection;
+        return knex("script_config")
+            .where({
+                document_type: documentType,
+                code: code,
+            })
+            .first();
+    }
+
+    saveScriptConfig(documentType, code, data) {
+        let knex = KnexConnector.connection;
+        return knex("script_config")
+            .insert({
+                document_type: documentType,
+                code: code,
+                data: data,
+            })
+            .onConflict(["document_type", "code"])
+            .merge()
+            .returning("*");
     }
 }

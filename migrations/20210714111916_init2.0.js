@@ -55,6 +55,18 @@ exports.up = async function (knex) {
             table.json("defaults");
         });
     }
+    if (!(await knex.schema.hasTable("users"))) {
+        await knex.schema.createTable("users", function (table) {
+            table.uuid("id").primary();
+            table.string("username").notNullable();
+            table.boolean("enabled");
+            table.string("email");
+            table.boolean("email_verified");
+            table.string("created_time_stamp");
+            table.string("organization_id");
+            table.json("roles").defaultTo("[]");
+        });
+    }
     if (!(await knex.schema.hasTable("node_type_subflow"))) {
         await knex.schema.createTable("node_type_subflow", function (table) {
             table.uuid("id").primary();
@@ -119,6 +131,9 @@ exports.down = async function (knex) {
     }
     if (await knex.schema.hasTable("node_type")) {
         await knex.schema.dropTable("node_type");
+    }
+    if (await knex.schema.hasTable("users")) {
+        await knex.schema.dropTable("users");
     }
     if (await knex.schema.hasTable("node_type_subflow")) {
         await knex.schema.dropTable("node_type_subflow");

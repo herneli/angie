@@ -6,6 +6,9 @@ import Icon from "@mdi/react";
 import { mdiPencil as editIcon } from "@mdi/js";
 
 function getRenderPatternParts(template) {
+    if (!template) {
+        return [];
+    }
     let pattern = /({{.+?}})/g;
     let patternIn = /{{(.+?)}}/;
     let templateParts = template.split(pattern);
@@ -31,6 +34,7 @@ function isObject(value) {
 export default function ExpressionMember({
     classes,
     expressionMember,
+    variables,
     onChange,
     onEdit,
 }) {
@@ -47,7 +51,7 @@ export default function ExpressionMember({
 
     const renderMethod = () => {
         const templateParts = getRenderPatternParts(
-            expressionMember.renderTemplate || T.translate("visual_script.edit")
+            expressionMember.renderTemplate
         );
         const methodComponents = [];
         let key = 0;
@@ -67,6 +71,7 @@ export default function ExpressionMember({
                         <Expression
                             key={key}
                             expression={value.$exp}
+                            variables={variables}
                             onChange={(expression) => {
                                 handleOnChange(templatePart.value)({
                                     $stm: expression,

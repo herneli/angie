@@ -1,10 +1,10 @@
 import StatementCondition from "./StatementCondition";
 import T from "i18n-react";
-import { mdiHelpRhombus } from "@mdi/js";
+import { mdiHelpRhombusOutline } from "@mdi/js";
 
 const registry = {
     name: "visual_script.select_condition",
-    iconPath: mdiHelpRhombus,
+    iconPath: mdiHelpRhombusOutline,
     Component: StatementCondition,
     createConnections: (manager, statement) => {
         return manager.createConnectionsParallel(statement);
@@ -24,17 +24,43 @@ const registry = {
                     id: manager.newId(),
                     type: "block",
                     label: T.translate("visual_script.condition_yes"),
+                    code: "true",
                     nestedStatements: [],
                 },
                 {
                     id: manager.newId(),
                     type: "block",
                     label: T.translate("visual_script.condition_no"),
+                    code: "false",
                     nestedStatements: [],
                 },
             ],
         };
     },
+    schema: () => ({
+        type: "object",
+        properties: {
+            name: { type: "string", title: "Comentario" },
+            nestedStatements: {
+                title: "Opciones",
+                type: "array",
+                items: {
+                    type: "object",
+                    properties: {
+                        label: { type: "string", title: "Etiqueta" },
+                    },
+                },
+            },
+        },
+    }),
+    uiSchema: () => ({
+        nestedStatements: {
+            "ui:options": {
+                canAdd: false,
+                canDelete: false,
+            },
+        },
+    }),
 };
 
 export default registry;

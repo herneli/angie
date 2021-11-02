@@ -36,7 +36,6 @@ export default function ModelEditor({
     const handleOnSave = (event) => {
         onSave(event.formData);
     };
-    console.log(formConfig);
     return (
         <div className={classes.tableWrapper}>
             <Card className={classes.paper}>
