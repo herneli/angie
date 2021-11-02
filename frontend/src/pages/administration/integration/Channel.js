@@ -10,7 +10,7 @@ import ReactFlow, {
 
 import CodeMirrorExt from "../../../components/CodeMirrorExt";
 import Sidebar from "./Sidebar";
-import SwitchNode from "./SwitchNode";
+import SwitchNode from "./custom_nodes/SwitchNode";
 import {
     fromBDToCamel,
     transformFromBd,
@@ -18,26 +18,20 @@ import {
 } from "./Transformer";
 
 import { v4 as uuid_v4 } from "uuid";
-import axios from "axios";
 
-import "./Routes.css";
-import { Layout } from "antd";
+import "./Channel.css";
 
-const { Content } = Layout;
 const nodeTypes = {
     switchNode: SwitchNode,
 };
 
-const getId = () => uuid_v4();
-const JUM_ANGIE_URL = "http://localhost:6100";
 
-const Routes = () => {
+const Channel = ({ channel }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState([]);
     const [bdModel, setBdModel] = useState({});
     const [selectedTypeId, changeSelection] = useState(null);
-    const [deployed, setDeployed] = useState(false);
 
     const onConnect = (params) => {
         setElements((els) =>
@@ -99,7 +93,7 @@ const Routes = () => {
             y: event.clientY - reactFlowBounds.top,
         });
         const newNode = {
-            id: getId(),
+            id: uuid_v4(),
             type,
             position,
             data: { ...extra, onNodeUpdate: onNodeUpdate },
@@ -110,48 +104,17 @@ const Routes = () => {
         setElements((es) => es.concat(newNode));
     };
 
-    //Testing: Esto es provisional, se realizara desde el backend
-    const sendCamelCommand = async (deploy) => {
-        const camelRoutes = fromBDToCamel(transformToBD(elements));
-
-        if (deploy) {
-            await axios({
-                method: "post",
-                url: `${JUM_ANGIE_URL}/create`,
-                data: {
-                    routeId: "R0001",
-                    routeConfiguration: camelRoutes,
-                },
-            });
-            setDeployed(true);
-        } else {
-            await axios({
-                method: "post",
-                url: `${JUM_ANGIE_URL}/stop?routeId=R0001`,
-            });
-            setDeployed(false);
-        }
-    };
-
-    //Testing: Esto es provisional, se realizara desde el backend
-    const checkDeployed = async () => {
-        const response = await axios({
-            method: "get",
-            url: `${JUM_ANGIE_URL}/list`,
-        });
-        if (response && response.data && response.data.length !== 0) {
-            setDeployed(true);
-        }
-    };
 
     useEffect(() => {
-        // Actualiza el título del documento usando la API del navegador
-        setBdModel(transformToBD(elements));
+        setBdModel(transformToBD(channel, elements));
     }, [elements]);
 
+
     useEffect(() => {
-        checkDeployed();
-    }, []);
+        if (channel) {
+            setElements(transformFromBd(channel, onNodeUpdate));
+        }
+    }, [channel]);
 
     return (
         <div>
@@ -179,9 +142,7 @@ const Routes = () => {
                     </div>
 
                     <Sidebar
-                        selectedType={
-                            elements.find((e) => e.id === selectedTypeId) || {}
-                        }
+                        selectedType={(elements.find && elements.find((e) => e.id === selectedTypeId)) || {}}
                         onNodeUpdate={onNodeUpdate}
                     />
                 </ReactFlowProvider>
@@ -195,32 +156,8 @@ const Routes = () => {
                         margin: 10,
                     }}
                 >
-                    ReactFlow
-                    <CodeMirrorExt
-                        value={JSON.stringify(elements, null, 2)}
-                        name="rflow.code"
-                        options={{
-                            lineNumbers: true,
-                            mode: "javascript",
-                            matchBrackets: true,
-                        }}
-                    />
-                </div>
-                <div
-                    style={{
-                        float: "left",
-                        width: "31vw",
-                        margin: 10,
-                    }}
-                >
                     Database &nbsp;&nbsp;&nbsp;
-                    <button
-                        onClick={() => {
-                            setElements(transformFromBd(bdModel, onNodeUpdate));
-                        }}
-                    >
-                        LoadFromBD
-                    </button>
+
                     <CodeMirrorExt
                         value={JSON.stringify(bdModel, null, 2)}
                         onChange={(val) => setBdModel(JSON.parse(val))}
@@ -240,31 +177,8 @@ const Routes = () => {
                     }}
                 >
                     Camel &nbsp;&nbsp;&nbsp;
-                    {deployed === false && (
-                        <button
-                            onClick={() => {
-                                sendCamelCommand(!deployed);
-                            }}
-                        >
-                            deploy
-                        </button>
-                    )}
-                    {deployed === true && (
-                        <button
-                            onClick={() => {
-                                sendCamelCommand(!deployed);
-                            }}
-                        >
-                            undeploy
-                        </button>
-                    )}
-                    {deployed === true ? (
-                        <span style={{ float: "right" }}>🟢</span>
-                    ) : (
-                        <span style={{ float: "right" }}>🔴</span>
-                    )}
                     <CodeMirrorExt
-                        value={fromBDToCamel(transformToBD(elements))}
+                        value={fromBDToCamel(transformToBD(channel, elements))}
                         name="camel.code"
                         options={{
                             lineNumbers: true,
@@ -277,4 +191,4 @@ const Routes = () => {
     );
 };
 
-export default Routes;
+export default Channel;

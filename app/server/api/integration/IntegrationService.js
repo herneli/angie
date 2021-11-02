@@ -11,6 +11,18 @@ export class IntegrationService extends BaseService {
         this.channelService = new IntegrationChannelService();
     }
 
+    /**
+     * Obtencion de un elemento mediante su identificador
+     */
+    //Overwrite
+    async loadById(id) {
+        const integration = await this.dao.loadById(id);
+        const { data: channels } = await this.channelService.getIntegrationChannels(integration[0].id)
+        integration[0].channels = channels;
+
+        return integration;
+    }
+
 
     async integrationsWithChannels(filters, start, limit) {
         //Pagination

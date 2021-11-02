@@ -4320,6 +4320,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ORG_table is not defined"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -4441,6 +4457,183 @@
         "produces": [
           "application/json"
         ]
+      },
+      "post": {
+        "summary": "/integration/list/full",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "created_on": {
+                        "type": "string"
+                      },
+                      "last_updated": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "null"
+                      },
+                      "organization_name": {
+                        "type": "null"
+                      },
+                      "channels": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "created_on": {
+                              "type": "string"
+                            },
+                            "last_updated": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "version": {
+                              "type": "null"
+                            },
+                            "integration_id": {
+                              "type": "string"
+                            },
+                            "nodes": {
+                              "type": "null"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "created_on",
+                            "last_updated",
+                            "name",
+                            "description",
+                            "version",
+                            "integration_id",
+                            "nodes"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": "6fdf72f4-e4cd-4b26-b618-e7517c2d2c03",
+                      "created_on": "2021-10-22T08:09:26.036Z",
+                      "last_updated": "2021-10-22T11:48:40.002Z",
+                      "name": "Test2",
+                      "description": "Integracion de test",
+                      "organization_id": null,
+                      "organization_name": null,
+                      "channels": [
+                        {
+                          "id": "2c15d5bb-353b-4f77-924b-123df34d5a94",
+                          "created_on": "2021-10-22T08:57:38.482Z",
+                          "last_updated": "2021-10-22T08:59:17.861Z",
+                          "name": "ChannTest",
+                          "description": "Canal de test",
+                          "version": null,
+                          "integration_id": "6fdf72f4-e4cd-4b26-b618-e7517c2d2c03",
+                          "nodes": null
+                        },
+                        {
+                          "id": "5c56c928-3d89-4ce6-8dad-c40208d0fac5",
+                          "created_on": "2021-10-22T09:00:02.108Z",
+                          "last_updated": "2021-10-22T09:00:02.109Z",
+                          "name": "Chann2",
+                          "description": "Chan de test",
+                          "version": null,
+                          "integration_id": "6fdf72f4-e4cd-4b26-b618-e7517c2d2c03",
+                          "nodes": null
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/integration/{id}/deploy": {
+      "post": {
+        "summary": "/integration/{id}/deploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/undeploy": {
+      "post": {
+        "summary": "/integration/{id}/undeploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
       }
     },
     "/integration_channel": {
@@ -4517,6 +4710,82 @@
       },
       "delete": {
         "summary": "/integration_channel/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/{id}/deploy": {
+      "post": {
+        "summary": "/integration_channel/{id}/deploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/{id}/undeploy": {
+      "post": {
+        "summary": "/integration_channel/{id}/undeploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/{id}/logs": {
+      "post": {
+        "summary": "/integration_channel/{id}/logs",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/{id}/statistics": {
+      "post": {
+        "summary": "/integration_channel/{id}/statistics",
         "consumes": [
           "application/json"
         ],

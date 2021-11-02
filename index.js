@@ -23,7 +23,12 @@ module.exports = async () => {
     KnexConnector.init(require("./knexfile")[process.env.NODE_ENV]);
     await KnexConnector.test(); //Comprueba la conexión con BD
 
-    //Cargar las configuraciones
+
+    /**
+     * Gestor de configuraciones
+     * @type {Settings}
+     * @public
+     */
     App.settings = new Settings();
     App.settings.load();
 
@@ -45,6 +50,12 @@ module.exports = async () => {
 
         //Inicializa keycloak
         initKeycloak();
+
+        /**
+         * Current keycloak
+         * @type {Keycloak}
+         * @public
+         */
         App.keycloak = getKeycloak();
         app.use(App.keycloak.middleware({ logout: "/logout" }));
     };

@@ -28,4 +28,30 @@ export class IntegrationDao extends BaseKnexDao {
     }
 
 
+    loadAllData(start, limit) {
+        const RELATION_TABLE = 'organization'
+        const columns = [
+            `${this.tableName}.*`,
+            {organization_name: `${RELATION_TABLE}.name`}
+        ]
+        return KnexConnector.connection.columns(columns).from(this.tableName).leftJoin(RELATION_TABLE, `${this.tableName}.organization_id`, `${RELATION_TABLE}.id`).limit(limit || 10000).offset(start)
+    }
+
+    async loadFilteredData(filters, start, limit) {
+        let sorts = [];
+        if (filters.sort) {
+            sorts = KnexFilterParser.parseSort(filters.sort);
+        }
+
+        const RELATION_TABLE = 'organization'
+        const columns = [
+            `${this.tableName}.*`,
+            {organization_name: `${RELATION_TABLE}.name`}
+        ]
+
+        return KnexConnector.connection.columns(columns).from(this.tableName).where((builder) => (
+            KnexFilterParser.parseFilters(builder, lodash.omit(filters, ['sort', 'start', 'limit']))
+        )).leftJoin(RELATION_TABLE, `${this.tableName}.organization_id`, `${RELATION_TABLE}.id`).orderBy(sorts).limit(limit).offset(start);
+
+    }
 }

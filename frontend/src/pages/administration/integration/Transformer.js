@@ -28,7 +28,8 @@ const linkHandles = (conditions, links) => {
 //Convierte un objeto BD a un objeto RFlow
 const transformFromBd = (bdModel, onNodeUpdate) => {
     if (!bdModel.nodes) {
-        return { "error": "Invalid Model" }
+        console.error("Invalid Model");
+        return [];
     }
     try {
         const elements = [];
@@ -73,16 +74,8 @@ const transformFromBd = (bdModel, onNodeUpdate) => {
 }
 
 //Convierte una ruta Rflow a objetos BD
-const transformToBD = (elements) => {
-    const channel = {
-        "id": "1",
-        "name": "Canal Pruebas",
-        "description": "Transformación Genérica",
-        "integration_id": "1",
-        "created_on": "YYYY-MM-DDT00:00:00.000Z",
-        "last_updated": "YYYY-MM-DDT00:00:00.000Z",
-        "version": 1,
-    }
+const transformToBD = (originalChannel, elements) => {
+    const channel = { ...originalChannel }
 
     const nodes = [];
     for (const idx in elements) {

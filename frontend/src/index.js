@@ -7,12 +7,16 @@ import reportWebVitals from './reportWebVitals';
 
 import { BrowserRouter } from 'react-router-dom';
 import Config from './common/Config';
+import { ConfigProvider } from 'antd';
 
+import esEs from 'antd/lib/locale/es_ES'
 
 ReactDOM.render(
     <React.StrictMode>
         <BrowserRouter basename={Config.getViewContextPath()}>
-            <App />
+            <ConfigProvider locale={esEs}>
+                <App />
+            </ConfigProvider>
         </BrowserRouter>
     </React.StrictMode>,
     document.getElementById('root')
