@@ -31,7 +31,7 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
             const type = lodash.find(nodeTypes, {
                 id: selectedType.data.type_id,
             });
-            setFormData(lodash.omit(selectedType.data, ["label", "type_id", "onNodeUpdate"]));
+            setFormData(lodash.omit(selectedType.data, ["label", "type_id"]));
             setFormSchema(type.json_data_schema);
             setUiSchema(type.json_ui_schema);
         }

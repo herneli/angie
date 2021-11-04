@@ -29,18 +29,21 @@ class ChannelActions {
             enabled: true,
             status: "UNDEPLOYED",
         });
-
+        if (newChannels.length === 1) {
+            this.setActiveTab(channelId);
+        }
         this.setChannels(newChannels);
     };
 
     remove = (targetKey, active) => {
         let prevIndex = this.channels.length !== 0 ? this.channels.length - 2 : 0;
-        let newActiveKey = this.channels[prevIndex].id;
+        if (this.channels && this.channels[prevIndex]) {
+            let newActiveKey = this.channels[prevIndex].id;
 
-        if (active === targetKey) {
-            this.setActiveTab(newActiveKey);
+            if (active === targetKey) {
+                this.setActiveTab(newActiveKey);
+            }
         }
-
         const newChannels = this.channels.filter((channel) => channel.id !== targetKey);
         this.setChannels(newChannels);
     };

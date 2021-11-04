@@ -21,7 +21,7 @@ class Transformer {
         this.nodeTypes = response?.data?.data;
     }
 
-    static transformFromBd(bdModel, onNodeUpdate) {
+    static transformFromBd(bdModel) {
         if (!bdModel.nodes) {
             console.error("Invalid Model");
             return [];
@@ -42,7 +42,6 @@ class Transformer {
                     position: node.position,
                     data: {
                         ...node.data,
-                        onNodeUpdate: onNodeUpdate,
                         label: node.custom_name,
                         type_id: node.type_id,
                     },

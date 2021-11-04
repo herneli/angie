@@ -4,6 +4,7 @@ import ReactFlow, { ReactFlowProvider, addEdge, removeElements, Controls, MiniMa
 import Sidebar from "./Sidebar";
 import SwitchNode from "./custom_nodes/SwitchNode";
 import Transformer from "./Transformer";
+import usePrevious from "../../../common/usePrevious";
 
 import { v4 as uuid_v4 } from "uuid";
 
@@ -16,10 +17,11 @@ const nodeTypes = {
 const Channel = ({ channel, onChannelUpdate }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
-    const [elements, setElements] = useState([]);
+    const [elements, setElements] = useState(undefined);
     const [selectedTypeId, changeSelection] = useState(null);
     const [editNodeVisible, setEditNodeVisible] = useState(false);
 
+    const prevElements = usePrevious(elements);
     /**
      * Almacena la instancia actual del RFlow
      * @param {*} _reactFlowInstance
@@ -32,7 +34,7 @@ const Channel = ({ channel, onChannelUpdate }) => {
      */
     useEffect(() => {
         if (channel) {
-            setElements(Transformer.transformFromBd(channel, onNodeUpdate));
+            setElements(Transformer.transformFromBd(channel));
         }
     }, []);
 
@@ -42,7 +44,11 @@ const Channel = ({ channel, onChannelUpdate }) => {
      * Realiza la transformacion desde RFlow -> BD
      */
     useEffect(() => {
-        onChannelUpdate(Transformer.transformToBD(channel, elements));
+        if (prevElements !== undefined) {
+            //Si es undefined y se esta ejecutando es porque se esta estableciendo por primera vez y no es necesario notificar arriba.
+            console.log("cambio!");
+            onChannelUpdate(Transformer.transformToBD(channel, elements));
+        }
     }, [elements]);
 
     /**
@@ -123,7 +129,7 @@ const Channel = ({ channel, onChannelUpdate }) => {
             id: uuid_v4(),
             type,
             position,
-            data: { ...extra, onNodeUpdate: onNodeUpdate },
+            data: { ...extra },
             sourcePosition: "right",
             targetPosition: "left",
         };
@@ -157,7 +163,7 @@ const Channel = ({ channel, onChannelUpdate }) => {
                     </div>
 
                     <Sidebar
-                        selectedType={(elements.find && elements.find((e) => e.id === selectedTypeId)) || {}}
+                        selectedType={(elements && elements.find && elements.find((e) => e.id === selectedTypeId)) || {}}
                         editNodeVisible={editNodeVisible}
                         onEditCancel={() => setEditNodeVisible(false)}
                         onNodeUpdate={onNodeUpdate}

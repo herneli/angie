@@ -76,6 +76,9 @@ const Integration = () => {
     const [editingTab, setEditingTab] = useState({});
     const [editTabVisible, setEditTabVisible] = useState(false);
 
+    const [editHistory, setEditHistory] = useState([]);
+    const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+
     /**
      * Interval para ir actualizando en tiempo real el estado de los canales
      */
@@ -110,13 +113,22 @@ const Integration = () => {
      * Metodo encargado de cargar la integración ya sea desde el state de la navegación o desde el servidor
      */
     const loadIntegration = async () => {
+        setCurrentRecord(null); //Resetear primero
+        setChannels([]);
+
         await Transformer.init();
         if (state && state.record) {
             setCurrentRecord(state.record);
             setActiveTab(state.record && state.record.channels[0] && state.record.channels[0].id);
+            setEditHistory([{ ...state.record }]);
+
+            if (state.new) {
+                setEditHeader(true);
+            }
         } else if (id) {
             await fetchIntegration(id);
         }
+        setPendingChanges(false);
     };
 
     /**
@@ -130,10 +142,10 @@ const Integration = () => {
             if (response?.data?.data) {
                 let integration = response.data.data[0];
                 setCurrentRecord(integration);
+                setEditHistory([{ ...integration }]);
                 setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
             }
         } catch (ex) {
-            
             return notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
@@ -188,7 +200,22 @@ const Integration = () => {
      */
     const confirmIntegrationChanges = (values) => {
         setEditHeader(false);
-        setCurrentRecord(values.formData);
+        const newIntegration = values.formData;
+        setCurrentRecord(newIntegration);
+
+        onIntegrationChange(newIntegration);
+    };
+
+    /**
+     * Evento desencadenado en cada modificación de una integración en el que controlar los cambios pendientes y el histórico
+     */
+    const onIntegrationChange = (newIntegration) => {
+        console.log("Notifying update");
+        setPendingChanges(true);
+
+        setCurrentHistoryIndex(currentHistoryIndex + 1);
+
+        setEditHistory([...editHistory.slice(0, currentHistoryIndex + 1), { ...newIntegration }]);
     };
 
     /**
@@ -199,6 +226,7 @@ const Integration = () => {
             const response = await axios.post("/integration/full/", currentRecord);
 
             if (response?.data?.success) {
+                setPendingChanges(false);
                 return notification.success({
                     message: T.translate("common.messages.saved.title"),
                     description: T.translate("common.messages.saved.description"),
@@ -230,16 +258,29 @@ const Integration = () => {
             }
             return chn;
         });
-        setCurrentRecord({
+        const newIntegration = {
             ...currentRecord,
             channels: newChannels,
-        });
-
-        setPendingChanges(true);
-
-        console.log(currentRecord); //TODO store updateList to allow undo/redo
+        };
+        setCurrentRecord(newIntegration);
+        onIntegrationChange(newIntegration);
 
         return newChannels;
+    };
+
+    const undo = () => {
+        if (editHistory[currentHistoryIndex - 1]) {
+            setChannels([]);
+            setCurrentRecord({ ...editHistory[currentHistoryIndex - 1] });
+            setCurrentHistoryIndex(currentHistoryIndex - 1);
+        }
+    };
+    const redo = () => {
+        if (editHistory[currentHistoryIndex + 1]) {
+            setChannels([]);
+            setCurrentRecord({ ...editHistory[currentHistoryIndex + 1] });
+            setCurrentHistoryIndex(currentHistoryIndex + 1);
+        }
     };
 
     /**
@@ -289,8 +330,18 @@ const Integration = () => {
         return [
             ...buttons,
             <Button key="edit" onClick={() => startEditingTab()} icon={<Icon path={mdiPencil} size={0.6} title={T.translate("common.button.edit")} />} />,
-            <Button key="undo" icon={<Icon path={mdiUndo} size={0.6} title={T.translate("common.button.undo")} />} />,
-            <Button key="redo" icon={<Icon path={mdiRedo} size={0.6} title={T.translate("common.button.redo")} />} />,
+            <Button
+                key="undo"
+                disabled={!editHistory[currentHistoryIndex - 1]}
+                onClick={() => undo()}
+                icon={<Icon path={mdiUndo} size={0.6} title={T.translate("common.button.undo")} />}
+            />,
+            <Button
+                key="redo"
+                disabled={!editHistory[currentHistoryIndex + 1]}
+                onClick={() => redo()}
+                icon={<Icon path={mdiRedo} size={0.6} title={T.translate("common.button.redo")} />}
+            />,
         ];
     };
 
@@ -355,7 +406,7 @@ const Integration = () => {
                 <div>
                     <PageHeader
                         ghost={false}
-                        title={`${T.translate("integrations.integration_form_title", { name: currentRecord?.name })} `}
+                        title={`${T.translate("integrations.integration_edit_title")} `}
                         tags={<Tag color="green">{T.translate("common.enabled")}</Tag>}
                         extra={[
                             <Button key="cancel" type="dashed" onClick={() => setEditHeader(false)}>
@@ -396,7 +447,7 @@ const Integration = () => {
             <Tabs
                 tabBarExtraContent={<Space size="small">{channels && activeTab && drawStatusButtons(channels, activeTab)}</Space>}
                 type="editable-card"
-                onChange={(activeKey) => setActiveTab(activeKey)}
+                onChange={(activeKey) => setActiveTab(activeKey) && console.log('wii')}
                 activeKey={activeTab}
                 destroyInactiveTabPane={true}
                 onEdit={onTabEdit}>

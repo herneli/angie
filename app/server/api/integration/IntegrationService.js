@@ -2,6 +2,7 @@ import { Utils, BaseService } from "lisco";
 import { IntegrationChannelDao, IntegrationChannelService } from "../integration_channel";
 import { IntegrationDao } from "./IntegrationDao";
 import lodash from "lodash";
+import moment from "moment";
 
 import { JumDao } from "../../integration/jum-angie";
 
@@ -90,14 +91,11 @@ export class IntegrationService extends BaseService {
     }
 
     async saveFullIntegration(integration) {
-        try {
-            await this.saveOrUpdate(lodash.omit(integration, ["channels", "organization_name"]));
+        integration.last_updated = moment().toISOString();
+        await this.saveOrUpdate(lodash.omit(integration, ["channels", "organization_name"]));
 
-            for (let channel of integration.channels) {
-                await this.channelService.saveOrUpdate({ ...channel });
-            }
-        } catch (ex) {
-            console.error(ex);
+        for (let channel of integration.channels) {
+            await this.channelService.saveOrUpdate({ ...channel });
         }
     }
 
