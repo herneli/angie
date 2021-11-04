@@ -6,7 +6,7 @@
 .dndflow {
     flex-direction: column;
     display: flex;
-    height: 60vh;
+    height: calc(100vh - 220px);
 }
 
 .dndflow aside {
@@ -38,7 +38,7 @@
 
     .dndflow aside {
         width: 30%;
-        max-width: 300px;
+        max-width: 250px;
     }
 }
 
@@ -90,4 +90,9 @@
 
 .dndflow .CodeMirror {
     height: 300px;
+}
+
+
+.avoid-selection{
+    user-select: none;
 }

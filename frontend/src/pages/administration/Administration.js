@@ -8,9 +8,10 @@ import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import Script from "../../pages/script/Script";
 import CamelComponent from "./camel_component/CamelComponent";
 import NodeType from "./node_type/NodeType";
-import UsersConfig from "./Users/UsersConfig";
+import UsersConfig from "../Users/UsersConfig";
 import Integration from "./integration/Integration";
-import OrganizationConfig from "./organization/OrganizationConfig";
+import Integrations from "./integration/Integrations";
+// import OrganizationConfig from "./organization/OrganizationConfig";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
@@ -28,7 +29,7 @@ const Administration = ({ app }) => {
                             exact
                             path="/admin/integration"
                             render={({ match }) => (
-                                <Integration match={match} {...defaultProps} />
+                                <Integrations match={match} {...defaultProps} />
                             )}
                         />
                         <Route
@@ -45,7 +46,7 @@ const Administration = ({ app }) => {
                                 <UsersConfig match={match} {...defaultProps} />
                             )}
                         />
-                        <Route
+                        {/* <Route
                             exact
                             path="/admin/organization"
                             render={({ match }) => (
@@ -54,7 +55,7 @@ const Administration = ({ app }) => {
                                     {...defaultProps}
                                 />
                             )}
-                        />
+                        /> */}
 
                         <Route
                             exact

@@ -24,7 +24,6 @@ module.exports = async () => {
     KnexConnector.init(require("./knexfile")[process.env.NODE_ENV]);
     await KnexConnector.test(); //Comprueba la conexión con BD
 
-
     /**
      * Gestor de configuraciones
      * @type {Settings}
@@ -50,10 +49,13 @@ module.exports = async () => {
             specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE,
         });
 
-        //Esto es una api directa contra la administracion del keycloak desde el backend
-        //Enlace a la docu : https://github.com/keycloak/keycloak-nodejs-admin-client
-        App.keycloakAdmin = await keycloakAdmin()
-
+        /**
+         * Esto es una api directa contra la administracion del keycloak desde el backend
+         * Enlace a la docu : https://github.com/keycloak/keycloak-nodejs-admin-client
+         * @type {KcAdminClient}
+         * @public
+         */
+        App.keycloakAdmin = await keycloakAdmin();
 
         //Inicializa keycloak
         initKeycloak();
@@ -98,7 +100,7 @@ module.exports = async () => {
             contentSecurityPolicy: {
                 useDefaults: true,
                 directives: {
-                    defaultSrc: "dangerouslyDisableDefaultSrc",//FIXME necesario revisarlo
+                    defaultSrc: "dangerouslyDisableDefaultSrc", //FIXME necesario revisarlo
                     "connect-src": [
                         "'self'",
                         "http://localhost:3114",

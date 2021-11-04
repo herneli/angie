@@ -22,6 +22,13 @@ export class IntegrationController extends BaseController {
         );
 
         this.router.post(
+            `/integration/full`,
+            asyncHandler((request, response, next) => {
+                this.saveFullIntegration(request, response, next);
+            })
+        );
+
+        this.router.post(
             `/integration/:id/deploy`,
             asyncHandler((request, response, next) => {
                 this.deployIntegration(request, response, next);
@@ -33,6 +40,12 @@ export class IntegrationController extends BaseController {
                 this.undeployIntegration(request, response, next);
             })
         );
+        this.router.get(
+            `/integration/:id/channels/status`,
+            asyncHandler((request, response, next) => {
+                this.integrationChannelStatuses(request, response, next);
+            })
+        );
 
         return this.router;
     }
@@ -40,15 +53,23 @@ export class IntegrationController extends BaseController {
     async integrationsWithChannels(request, response, next) {
         try {
             let service = new IntegrationService();
-            let filters =
-                request.method === "POST" ? request.body : request.query;
+            let filters = request.method === "POST" ? request.body : request.query;
 
-            let data = await service.integrationsWithChannels(
-                filters,
-                filters.start,
-                filters.limit
-            );
+            let data = await service.integrationsWithChannels(filters, filters.start, filters.limit);
             let jsRes = new JsonResponse(true, data.data, null, data.total);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async saveFullIntegration(request, response, next) {
+        try {
+            let service = new IntegrationService();
+
+            let data = await service.saveFullIntegration(request.body);
+            let jsRes = new JsonResponse(true, data, null, 1);
 
             response.json(jsRes.toJson());
         } catch (e) {
@@ -77,6 +98,20 @@ export class IntegrationController extends BaseController {
 
             let res = await service.undeployIntegration(identifier);
             let jsRes = new JsonResponse(true, res.data, null, res.total);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async integrationChannelStatuses(request, response, next) {
+        try {
+            let service = new IntegrationService();
+            let identifier = request.params.id;
+
+            let res = await service.integrationChannelStatuses(identifier);
+            let jsRes = new JsonResponse(true, res, null);
 
             response.json(jsRes.toJson());
         } catch (e) {

@@ -1,10 +1,10 @@
 import { BaseKnexDao, KnexConnector } from "lisco";
 
 import { v4 as uuid_v4 } from "uuid";
-import moment from 'moment';
+import moment from "moment";
+import lodash from "lodash";
 export class IntegrationChannelDao extends BaseKnexDao {
-    tableName = "integration_channel"
-
+    tableName = "integration_channel";
 
     //Overwrite
     save(object) {
@@ -26,13 +26,29 @@ export class IntegrationChannelDao extends BaseKnexDao {
         return super.update(id, object);
     }
 
-
     getIntegrationChannels(integration) {
-        return this.loadFilteredData({
-            integration_id: {
-                "type": "exact",
-                "value": integration
-            }
-        }, 0, 1000);
+        return this.loadFilteredData(
+            {
+                integration_id: {
+                    type: "exact",
+                    value: integration,
+                },
+            },
+            0,
+            1000
+        );
+    }
+
+    async saveOrUpdate(elm) {
+        const model = ["id", "created_on", "last_updated", "name", "description", "version", "integration_id", "nodes", "enabled"];
+        const existing = await super.loadById(elm.id);
+
+        elm.last_updated = moment().toISOString();
+        elm.version++;
+
+        if (existing.length === 0) {
+            return super.save(lodash.pick(elm, model));
+        }
+        return super.update(elm.id, lodash.pick(elm, model));
     }
 }

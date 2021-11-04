@@ -1,28 +1,36 @@
-import fs from 'fs';
-import path from 'path';
-import nconf from 'nconf';
+import fs from "fs";
+import path from "path";
+import nconf from "nconf";
 
 export default class Settings {
+    cfgFileName = "configuration.json";
+    baseCfgFileName = "baseconfig.json";
 
-    cfgFileName = 'configuration.json'
-    baseCfgFileName = 'baseconfig.json'
+    baseSettings = {};
 
-    baseSettings = {}
-
-    configure() {
-    }
+    configure() {}
 
     /**
      *
      * @returns {Settings}
      */
     load() {
-        var baseRaw = fs.readFileSync(path.resolve(process.cwd(), this.baseCfgFileName), 'utf8');
+        var baseRaw = fs.readFileSync(
+            path.resolve(process.cwd(), this.baseCfgFileName),
+            "utf8"
+        );
         this.baseSettings = JSON.parse(baseRaw);
 
         nconf.file(path.resolve(process.cwd(), this.cfgFileName));
 
-        nconf.defaults(this.baseSettings);
+        nconf.defaults({
+            "core.keycloak": { //Default from .env
+                url: process.env.KEYCLOAK_URL,
+                realm: process.env.KEYCLOAK_REALM,
+                "front-client": process.env.KEYCLOAK_FRONT_CLI,
+            },
+            ...this.baseSettings,
+        });
 
         return this;
     }
@@ -34,17 +42,16 @@ export default class Settings {
      */
     getConfigValue(key) {
         var record = "";
-        var userConfig = nconf.get('user'); //TODO cargar el perfil de user de la BD
+        var userConfig = nconf.get("user"); //TODO cargar el perfil de user de la BD
         record = userConfig ? userConfig[key] : null;
         if (record === null || record === undefined) {
             record = nconf.get(key);
             if (record === null || record === undefined) {
-                console.log('Value not configured: ' + key);
-
+                console.log("Value not configured: " + key);
             }
         }
 
-        return record !== null ? record : '';
+        return record !== null ? record : "";
     }
 
     /**
@@ -80,15 +87,16 @@ export default class Settings {
      * Comprueba que existe el archivo especial para activar el debug
      */
     checkDebug(callback) {
-        fs.readFile(path.resolve(path.dirname(require.main.filename), ".debug"), 'utf8', function (err, data) {
-            if (err) return callback(false);
+        fs.readFile(
+            path.resolve(path.dirname(require.main.filename), ".debug"),
+            "utf8",
+            function (err, data) {
+                if (err) return callback(false);
 
-            if (data && data === "true") return callback(true);
-        });
+                if (data && data === "true") return callback(true);
+            }
+        );
     }
 
-
     //TODO cargar las settings de la base de datos
-
 }
-

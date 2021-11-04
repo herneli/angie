@@ -16,6 +16,7 @@ exports.up = async function (knex) {
             table.string("description");
             table.integer("organization_id");
             table.foreign('organization_id').references('organization.id')
+            table.boolean("enabled").defaultTo(true);
         });
     }
     if (!(await knex.schema.hasTable("integration_channel"))) {
@@ -28,6 +29,7 @@ exports.up = async function (knex) {
             table.integer("version");
             table.uuid("integration_id");
             table.json("nodes");
+            table.boolean("enabled").defaultTo(true);
         });
     }
     if (!(await knex.schema.hasTable("camel_component"))) {

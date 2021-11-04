@@ -54,4 +54,15 @@ export class IntegrationDao extends BaseKnexDao {
         )).leftJoin(RELATION_TABLE, `${this.tableName}.organization_id`, `${RELATION_TABLE}.id`).orderBy(sorts).limit(limit).offset(start);
 
     }
+
+
+    
+    async saveOrUpdate(elm) {
+        const existing = await super.loadById(elm.id);
+
+        if (existing.length === 0) {
+            return super.save(elm);
+        }
+        return super.update(elm.id, elm);
+    }
 }

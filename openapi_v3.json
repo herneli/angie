@@ -16,6 +16,72 @@
         "tags": []
       }
     },
+    "/user": {
+      "get": {
+        "summary": "/user",
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/user",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/user/list": {
+      "post": {
+        "summary": "/user/list",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "summary": "/user/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/user/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/user/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/login": {
       "get": {
         "summary": "/login",
@@ -195,31 +261,26 @@
         "tags": []
       }
     },
-    "/anonymous": {
-      "get": {
-        "summary": "/anonymous",
-        "responses": {
-          "302": {
-            "description": "Found",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string",
-                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
-                }
-              },
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": ""
-          }
-        },
+    "/importUsers": {
+      "post": {
+        "summary": "/importUsers",
+        "responses": {},
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/saveUser": {
+      "post": {
+        "summary": "/saveUser",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/deleteUser": {
+      "post": {
+        "summary": "/deleteUser",
+        "responses": {},
         "tags": []
       }
     },
@@ -4686,6 +4747,40 @@
         ]
       }
     },
+    "/integration/full": {
+      "post": {
+        "summary": "/integration/full",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ]
+      }
+    },
     "/integration/{id}/deploy": {
       "post": {
         "summary": "/integration/{id}/deploy",
@@ -4708,6 +4803,42 @@
     "/integration/{id}/undeploy": {
       "post": {
         "summary": "/integration/{id}/undeploy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channels/status": {
+      "get": {
+        "summary": "/integration/{id}/channels/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration/{id}/channels/status",
         "parameters": [
           {
             "name": "id",
@@ -4840,6 +4971,25 @@
         ]
       }
     },
+    "/integration_channel/{id}/status": {
+      "post": {
+        "summary": "/integration_channel/{id}/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
     "/integration_channel/{id}/logs": {
       "post": {
         "summary": "/integration_channel/{id}/logs",
@@ -4878,10 +5028,339 @@
         ]
       }
     },
+    "/integration_channel/to_camel": {
+      "post": {
+        "summary": "/integration_channel/to_camel",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "<routes  xmlns=\"http://camel.apache.org/schema/spring\"></routes>"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ]
+      }
+    },
     "/node_type": {
       "get": {
         "summary": "/node_type",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "node_type": {
+                            "type": "string"
+                          },
+                          "react_component_type": {
+                            "type": "string"
+                          },
+                          "camel_component_id": {
+                            "type": "string"
+                          },
+                          "plugin_id": {
+                            "nullable": true
+                          },
+                          "handles": {
+                            "type": "string"
+                          },
+                          "form_type": {
+                            "type": "string"
+                          },
+                          "form_type_plugin_id": {
+                            "nullable": true
+                          },
+                          "json_data_schema": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "required": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "properties": {
+                                "type": "object",
+                                "properties": {
+                                  "hostname": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "port": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "query_params": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "additionalProperties": {
+                                        "type": "object",
+                                        "properties": {
+                                          "type": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "path": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "terser_path": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "handles": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "type": {
+                                            "type": "string"
+                                          },
+                                          "properties": {
+                                            "type": "object",
+                                            "properties": {
+                                              "condition": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "type": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "name": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "code": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "json_ui_schema": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "object",
+                                "properties": {
+                                  "ui:widget": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "defaults": {
+                            "type": "object",
+                            "properties": {
+                              "hostname": {
+                                "type": "string"
+                              },
+                              "port": {
+                                "type": "number"
+                              },
+                              "terser_path": {
+                                "type": "string"
+                              },
+                              "handles": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "condition": {
+                                      "type": "string"
+                                    },
+                                    "to": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "description",
+                          "node_type",
+                          "react_component_type",
+                          "camel_component_id",
+                          "plugin_id",
+                          "handles",
+                          "form_type",
+                          "form_type_plugin_id",
+                          "json_data_schema",
+                          "json_ui_schema",
+                          "defaults"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
+                          "name": "TCP-MLLP Input",
+                          "description": "Message Input via TCP-MLLP Connection",
+                          "node_type": "node",
+                          "react_component_type": "input",
+                          "camel_component_id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
+                          "plugin_id": null,
+                          "handles": "out",
+                          "form_type": "jsonschema",
+                          "form_type_plugin_id": null,
+                          "json_data_schema": {
+                            "title": "TCP-MLLP Input",
+                            "description": "MLLP tcp input node.",
+                            "type": "object",
+                            "required": [
+                              "hostname",
+                              "port"
+                            ],
+                            "properties": {
+                              "hostname": {
+                                "type": "string"
+                              },
+                              "port": {
+                                "type": "number"
+                              },
+                              "query_params": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "json_ui_schema": {},
+                          "defaults": {
+                            "hostname": "0.0.0.0",
+                            "port": 8888
+                          }
+                        }
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "string",
+                      "example": "6"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": [
           "node_type"
         ]
@@ -5590,6 +6069,83 @@
                 }
               }
             }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/script/code/{code}": {
+      "get": {
+        "summary": "/script/code/{code}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/script/code/{code}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/script/code/{code}/generate": {
+      "post": {
+        "summary": "/script/code/{code}/generate",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/anonymous": {
+      "get": {
+        "summary": "/anonymous",
+        "responses": {
+          "302": {
+            "description": "Found",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=nodejs&amp;state=dc38ce40-1cf1-4231-8613-dca05314165e&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Fanonymous%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": ""
           }
         },
         "tags": []

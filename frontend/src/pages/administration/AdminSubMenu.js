@@ -35,7 +35,7 @@ const AdminSubMenu = () => {
                     title="Comunicaciones"
                 >
                     <Menu.Item key="integ">
-                        <Link to="/admin/integrations">Integraciones </Link>
+                        <Link to="/admin/integration">Integraciones </Link>
                     </Menu.Item>
                     <Menu.Item key="ntypes">
                         <Link to="/admin/node_type">Tipos Nodos </Link>

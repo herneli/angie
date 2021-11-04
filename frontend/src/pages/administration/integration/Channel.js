@@ -1,21 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactFlow, {
-    ReactFlowProvider,
-    addEdge,
-    removeElements,
-    Controls,
-    MiniMap,
-    Background,
-} from "react-flow-renderer";
+import ReactFlow, { ReactFlowProvider, addEdge, removeElements, Controls, MiniMap, Background } from "react-flow-renderer";
 
-import CodeMirrorExt from "../../../components/CodeMirrorExt";
 import Sidebar from "./Sidebar";
 import SwitchNode from "./custom_nodes/SwitchNode";
-import {
-    fromBDToCamel,
-    transformFromBd,
-    transformToBD,
-} from "./Transformer";
+import Transformer from "./Transformer";
 
 import { v4 as uuid_v4 } from "uuid";
 
@@ -25,45 +13,82 @@ const nodeTypes = {
     switchNode: SwitchNode,
 };
 
-
-const Channel = ({ channel }) => {
+const Channel = ({ channel, onChannelUpdate }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState([]);
-    const [bdModel, setBdModel] = useState({});
     const [selectedTypeId, changeSelection] = useState(null);
+    const [editNodeVisible, setEditNodeVisible] = useState(false);
 
+    /**
+     * Almacena la instancia actual del RFlow
+     * @param {*} _reactFlowInstance
+     * @returns
+     */
+    const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
+
+    /**
+     * Carga inicial de los elements en base al canal recibido como prop
+     */
+    useEffect(() => {
+        if (channel) {
+            setElements(Transformer.transformFromBd(channel, onNodeUpdate));
+        }
+    }, []);
+
+    /**
+     * Evento que escucha las modificaciones en el flujo de RFlow y lo envia al componente superior para notificar la modificacion.
+     *
+     * Realiza la transformacion desde RFlow -> BD
+     */
+    useEffect(() => {
+        onChannelUpdate(Transformer.transformToBD(channel, elements));
+    }, [elements]);
+
+    /**
+     * Metodo para crear una conexión entre dos nodos
+     * @param {*} params
+     */
     const onConnect = (params) => {
-        setElements((els) =>
-            addEdge({ ...params, label: "Conexión" /*TODO Parametrizar*/ }, els)
-        );
+        setElements((els) => addEdge({ ...params, label: "Conexión" /*TODO Parametrizar*/ }, els));
     };
-    const onElementsRemove = (elementsToRemove) =>
-        setElements((els) => removeElements(elementsToRemove, els));
+    /**
+     * Metodo para eliminar un nodo del flujo
+     * @param {*} elementsToRemove
+     * @returns
+     */
+    const onElementsRemove = (elementsToRemove) => setElements((els) => removeElements(elementsToRemove, els));
 
-    const onLoad = (_reactFlowInstance) =>
-        setReactFlowInstance(_reactFlowInstance);
-
-    // Evento al finalizar el drag de los nodos
+    /**
+     * Evento al finalizar el drag de los nodos
+     */
     const onDragOver = (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
     };
 
-    //Genera los identificadores de los handles de un nodo
+    /**
+     * Genera los identificadores de los handles de un nodo
+     * @param {*} data
+     */
     const generateHandleIds = (data) => {
         if (data.handles && data.handles.length !== 0) {
             data.handles = data.handles.map((handle, idx) => {
                 if (!handle.id) {
-                    handle.id = "out" + idx; //TODO uuid?
+                    handle.id = "out" + idx;
                 }
                 return handle;
             });
         }
     };
 
-    //Evento desencadenado al actualizar un nodo
+    /**
+     * Evento desencadenado al actualizar un nodo
+     * @param {*} event
+     * @param {*} node
+     */
     const onNodeUpdate = (event, node) => {
+        setEditNodeVisible(false);
         setElements((els) =>
             els.map((e) => {
                 if (e.id === node.id) {
@@ -78,12 +103,14 @@ const Channel = ({ channel }) => {
         );
     };
 
-    //Evento desencadenado al desplegar un nodo sobre el panel
+    /**
+     * Evento desencadenado al desplegar un nodo sobre el panel
+     * @param {*} event
+     */
     const onDrop = (event) => {
         event.preventDefault();
 
-        const reactFlowBounds =
-            reactFlowWrapper.current.getBoundingClientRect();
+        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
         const type = event.dataTransfer.getData("application/reactflow");
         let extra = event.dataTransfer.getData("application/reactflow/extra");
         if (extra && extra !== "undefined") extra = JSON.parse(extra);
@@ -104,18 +131,6 @@ const Channel = ({ channel }) => {
         setElements((es) => es.concat(newNode));
     };
 
-
-    useEffect(() => {
-        setBdModel(transformToBD(channel, elements));
-    }, [elements]);
-
-
-    useEffect(() => {
-        if (channel) {
-            setElements(transformFromBd(channel, onNodeUpdate));
-        }
-    }, [channel]);
-
     return (
         <div>
             <div className="dndflow">
@@ -131,10 +146,10 @@ const Channel = ({ channel }) => {
                             deleteKeyCode={46}
                             onDragOver={onDragOver}
                             onNodeDragStop={onNodeUpdate}
-                            onNodeDoubleClick={(event, node) =>
-                                changeSelection(node.id)
-                            }
-                        >
+                            onNodeDoubleClick={(event, node) => {
+                                changeSelection(node.id);
+                                setEditNodeVisible(true);
+                            }}>
                             <Controls />
                             <MiniMap />
                             <Background />
@@ -143,49 +158,11 @@ const Channel = ({ channel }) => {
 
                     <Sidebar
                         selectedType={(elements.find && elements.find((e) => e.id === selectedTypeId)) || {}}
+                        editNodeVisible={editNodeVisible}
+                        onEditCancel={() => setEditNodeVisible(false)}
                         onNodeUpdate={onNodeUpdate}
                     />
                 </ReactFlowProvider>
-            </div>
-            <br />
-            <div>
-                <div
-                    style={{
-                        float: "left",
-                        width: "31vw",
-                        margin: 10,
-                    }}
-                >
-                    Database &nbsp;&nbsp;&nbsp;
-
-                    <CodeMirrorExt
-                        value={JSON.stringify(bdModel, null, 2)}
-                        onChange={(val) => setBdModel(JSON.parse(val))}
-                        name="database.code"
-                        options={{
-                            lineNumbers: true,
-                            mode: "javascript",
-                            matchBrackets: true,
-                        }}
-                    />
-                </div>
-                <div
-                    style={{
-                        float: "left",
-                        width: "31vw",
-                        margin: 10,
-                    }}
-                >
-                    Camel &nbsp;&nbsp;&nbsp;
-                    <CodeMirrorExt
-                        value={fromBDToCamel(transformToBD(channel, elements))}
-                        name="camel.code"
-                        options={{
-                            lineNumbers: true,
-                            mode: "xml",
-                        }}
-                    />
-                </div>
             </div>
         </div>
     );
