@@ -27,9 +27,10 @@ export class IntegrationChannelService extends BaseService {
         let channels = await super.list(filters, start, limit);
 
         for (let channel of channels.data) {
-            // let status = await this.jumDao.getRouteStatus(channel.id);
-
-            channel.status = "UNDEPLOYED"; //status
+            let channStatus = await this.jumDao.getRouteStatus(channel.id);
+            
+            channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
+            channel.message_count = (channStatus && channStatus.messages_count) || 0;
         }
         return channels;
     }
@@ -80,9 +81,10 @@ export class IntegrationChannelService extends BaseService {
         const channels = await this.dao.getIntegrationChannels(integration);
 
         for (let channel of channels) {
-            let response = await this.jumDao.getRouteStatus(channel.id);
+            let channStatus = await this.jumDao.getRouteStatus(channel.id);
 
-            channel.status = response.status || "UNDEPLOYED"; //status
+            channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
+            channel.message_count = (channStatus && channStatus.messages_count) || 0;
         }
 
         return { data: channels, total: channels.length };

@@ -14,6 +14,7 @@
     },
     "common": {
         "button": {
+            "search": "Buscar",
             "edit": "Editar",
             "cancel": "Cancelar",
             "clean": "Limpiar",
@@ -39,11 +40,19 @@
             "add_selection": "Seleccionar/Deseleccionar todas",
             "resend": "Reenviar"
         },
-        "action": {
-            "ok": "Accion realizada",
-            "ok_desc": "La acción ha sido realizada con éxito.",
-            "error": "Error",
-            "error_desc": "Se ha producido un error desconocido. Revise el log para mas información."
+        "messages": {
+            "saved": {
+                "title": "Guardado Correctamente",
+                "ok_desc": "El elemento ha sido guardado correctamente."
+            },
+            "deleted": {
+                "title": "Eliminado Correctamente",
+                "description": "El elemento ha sido eliminado con éxito."
+            },
+            "error": {
+                "title": "Error",
+                "description": "Se ha producido un error desconocido. Revise el log para mas información."
+            }
         },
         "help": "Ayuda",
         "warning": "Aviso",
@@ -60,8 +69,40 @@
         "disabled": "Desactivado",
         "required": "Obligatorio"
     },
+    "navigation": {
+        "changes_lost": {
+            "title": "Cambios sin guardar",
+            "message": "Existen cambios pendientes, si continúa sus cambios se perderán, ¿Esta Seguro?"
+        }
+    },
     "integrations": {
-        "integration_form_title": "Integración: {name}"
+        "integration_form_title": "Integración: {name}",
+        "integration_edit_title": "Editando elemento",
+        "columns": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "status": "Estado",
+            "message_count": "Mensajes",
+            "actions": "Acciones"
+        },
+        "channel": {
+            "edit_title": "Editar Canal",
+            "button": {
+                "deploy": "Desplegar",
+                "undeploy": "Replegar",
+                "stop": "Detener",
+                "start": "Arrancar"
+            },
+            "started": "En Ejecución",
+            "stoped": "Detenido",
+            "undeployed": "Sin Desplegar",
+            "sidebar": {
+                "title": "Paleta Nodos"
+            },
+            "node": {
+                "settings_title": "Opciónes Nodo: {label}"
+            }
+        }
     },
     "configuration": {
         "actions": "Acciones",

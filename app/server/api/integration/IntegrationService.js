@@ -50,10 +50,7 @@ export class IntegrationService extends BaseService {
         for (let channel of channels) {
             const channStatus = await this.jumDao.getRouteStatus(channel.id);
 
-            response[channel.id] = "UNDEPLOYED";
-            if (channStatus) {
-                response[channel.id] = channStatus.status;
-            }
+            response[channel.id] = (channStatus && channStatus.status) || "UNDEPLOYED";
         }
 
         return response;
@@ -92,7 +89,7 @@ export class IntegrationService extends BaseService {
 
     async saveFullIntegration(integration) {
         integration.last_updated = moment().toISOString();
-        await this.saveOrUpdate(lodash.omit(integration, ["channels", "organization_name"]));
+        await this.saveOrUpdate(lodash.pick(integration, ["id", "created_on", "last_updated", "name", "description", "organization_id"]));
 
         for (let channel of integration.channels) {
             await this.channelService.saveOrUpdate({ ...channel });

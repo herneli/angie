@@ -69,7 +69,7 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
     };
     return (
         <aside>
-            <div className="description">Paleta Nodos</div>
+            <div className="description">{T.translate("integrations.channel.sidebar.title")}</div>
 
             {nodeTypes.map((type) => (
                 <div
@@ -89,7 +89,7 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
 
             <Modal
                 width={800}
-                title="Editar Elemento"
+                title={(T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data))}
                 visible={editNodeVisible}
                 onOk={modalOk}
                 onCancel={modalCancel}

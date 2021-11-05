@@ -12,6 +12,7 @@ import { v4 as uuid_v4 } from "uuid";
 const Integrations = () => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
+    let [loading, setLoading] = useState(false);
     let history = useHistory();
 
     const startEdit = (record) => {
@@ -24,25 +25,28 @@ const Integrations = () => {
     };
 
     const onElementDelete = async (record) => {
+        setLoading(true);
         try {
             const response = await axios.delete(`/integration/${record.id}`);
 
             if (response?.data?.success) {
                 search();
-                return notification.success({
+                notification.success({
                     message: T.translate("common.messages.deleted.title"),
                     description: T.translate("common.messages.deleted.description"),
                 });
             }
         } catch (ex) {
-            return notification.error({
+            notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
             });
         }
+        setLoading(false);
     };
 
     const search = async (filters = {}) => {
+        setLoading(true);
         try {
             const response = await axios.post("/integration/list/full", filters);
 
@@ -53,11 +57,12 @@ const Integrations = () => {
                 setDataSource(integrations);
             }
         } catch (ex) {
-            return notification.error({
+            notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
             });
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -66,17 +71,17 @@ const Integrations = () => {
 
     const columns = [
         {
-            title: "Name",
+            title: T.translate("integrations.columns.name"),
             dataIndex: "name",
             key: "name",
         },
         {
-            title: "Description",
+            title: T.translate("integrations.columns.description"),
             dataIndex: "description",
             key: "description",
         },
         {
-            title: "Estado",
+            title: T.translate("integrations.columns.status"),
             dataIndex: "status",
             key: "status",
             render: (text, record) => {
@@ -90,7 +95,16 @@ const Integrations = () => {
             },
         },
         {
-            title: "Action",
+            title: T.translate("integrations.columns.message_count"),
+            dataIndex: "message_count",
+            key: "message_count",
+            render: (text, record) => {
+                if (record.channels) return;
+                return text;
+            },
+        },
+        {
+            title: T.translate("integrations.columns.actions"),
             key: "action",
             width: 120,
             render: (text, record) => {
@@ -131,7 +145,11 @@ const Integrations = () => {
             <Button type="primary" onClick={addIntegration}>
                 {T.translate("common.button.add")}
             </Button>
+            <Button style={{ float: "right" }} type="primary" onClick={() => search()}>
+                {T.translate("common.button.search")}
+            </Button>
             <Table
+                loading={loading}
                 key="integrations-table"
                 dataSource={dataSource}
                 columns={columns}

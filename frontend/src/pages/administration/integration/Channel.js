@@ -46,7 +46,6 @@ const Channel = ({ channel, onChannelUpdate }) => {
     useEffect(() => {
         if (prevElements !== undefined) {
             //Si es undefined y se esta ejecutando es porque se esta estableciendo por primera vez y no es necesario notificar arriba.
-            console.log("cambio!");
             onChannelUpdate(Transformer.transformToBD(channel, elements));
         }
     }, [elements]);

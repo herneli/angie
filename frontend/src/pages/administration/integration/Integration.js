@@ -297,7 +297,7 @@ const Integration = () => {
                 <Button
                     key="undeploy"
                     onClick={() => channelActions.undeployChannel(activeTab)}
-                    icon={<Icon path={mdiStopCircle} size={0.6} color="red" title={T.translate("common.button.undeploy")} />}
+                    icon={<Icon path={mdiStopCircle} size={0.6} color="red" title={T.translate("integrations.channel.button.undeploy")} />}
                 />
             );
         } else if (activeChannel.enabled) {
@@ -305,7 +305,7 @@ const Integration = () => {
                 <Button
                     key="deploy"
                     onClick={() => channelActions.deployChannel(activeTab)}
-                    icon={<Icon path={mdiPlayCircle} color="green" size={0.6} title={T.translate("common.button.deploy")} />}
+                    icon={<Icon path={mdiPlayCircle} color="green" size={0.6} title={T.translate("integrations.channel.button.deploy")} />}
                 />
             );
         }
@@ -350,9 +350,9 @@ const Integration = () => {
      */
     const renderChannelStatus = (channel) => {
         if (!channel.enabled) return <Icon path={mdiCancel} size={0.6} color="gray" title={T.translate("common.disabled")} />;
-        if (channel.status === "STARTED") return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integration.channel.started")} />;
-        if (channel.status === "STOPPED") return <Icon path={mdiStop} size={0.6} title={T.translate("integration.channel.stopped")} />;
-        if (channel.status === "UNDEPLOYED") return <Icon path={mdiMinusBox} size={0.6} color="red" title={T.translate("integration.channel.undeployed")} />;
+        if (channel.status === "STARTED") return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integrations.channel.started")} />;
+        if (channel.status === "STOPPED") return <Icon path={mdiStop} size={0.6} title={T.translate("integrations.channel.stopped")} />;
+        if (channel.status === "UNDEPLOYED") return <Icon path={mdiMinusBox} size={0.6} color="red" title={T.translate("integrations.channel.undeployed")} />;
     };
 
     const startEditingTab = () => {
@@ -406,7 +406,7 @@ const Integration = () => {
                 <div>
                     <PageHeader
                         ghost={false}
-                        title={`${T.translate("integrations.integration_edit_title")} `}
+                        title={T.translate("integrations.integration_edit_title")} 
                         tags={<Tag color="green">{T.translate("common.enabled")}</Tag>}
                         extra={[
                             <Button key="cancel" type="dashed" onClick={() => setEditHeader(false)}>
@@ -447,7 +447,7 @@ const Integration = () => {
             <Tabs
                 tabBarExtraContent={<Space size="small">{channels && activeTab && drawStatusButtons(channels, activeTab)}</Space>}
                 type="editable-card"
-                onChange={(activeKey) => setActiveTab(activeKey) && console.log('wii')}
+                onChange={(activeKey) => setActiveTab(activeKey) && console.log("wii")}
                 activeKey={activeTab}
                 destroyInactiveTabPane={true}
                 onEdit={onTabEdit}>
@@ -467,7 +467,7 @@ const Integration = () => {
 
             <Modal
                 width={800}
-                title="Editar Elemento"
+                title={T.translate("integrations.channel.edit_title")}
                 visible={editTabVisible}
                 onOk={editTabOk}
                 onCancel={editTabCancel}
