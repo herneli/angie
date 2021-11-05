@@ -1,7 +1,9 @@
 import { Utils, BaseService } from "lisco";
 import { ScriptDao } from "./ScriptDao";
-import newScript from "./newScript.json";
+import mainStatement from "./default_main_statement.json";
 import ScriptGeneratorJavascript from "./ScriptGeneratorJavascript";
+import { runCode } from "./javascriptVm";
+import ScriptGeneratorGroovy from "./ScriptGeneratorGroovy";
 
 export class ScriptService extends BaseService {
     constructor() {
@@ -34,13 +36,41 @@ export class ScriptService extends BaseService {
         return { properties, methods };
     }
 
+    async getContext(contextCode) {
+        return await this.dao.getScriptConfig("context", contextCode);
+    }
+
+    async newScript(contextCode) {
+        let context = await this.getContext(contextCode);
+        context = context && context.data;
+        return {
+            contextCode: contextCode,
+            contextMember: {
+                memberType: "context",
+                code: "context",
+                name: "context",
+                type: context.type,
+            },
+            language: context.language,
+            mainStatement: mainStatement,
+        };
+    }
+
     async getScript(code) {
         let script = await this.dao.getScriptConfig("script", code);
         if (!script) {
-            return { document_type: "script", code: code, data: newScript };
+            return {
+                document_type: "script",
+                code: code,
+                data: await this.newScript("context_test_groovy"),
+            };
         } else {
             return script;
         }
+    }
+
+    async getMethod(code) {
+        return await this.dao.getScriptConfig("method", code);
     }
 
     async saveScript(code, data) {
@@ -52,9 +82,29 @@ export class ScriptService extends BaseService {
         }
     }
 
-    async generateCode(script) {
-        let generator = new ScriptGeneratorJavascript(script);
+    getGenerator(script) {
+        switch (script.language) {
+            case "javascript":
+                return new ScriptGeneratorJavascript(script);
+            case "groovy":
+                return new ScriptGeneratorGroovy(script);
+            default:
+                throw Error("Language " + script.language + " not expected");
+        }
+    }
+    async generateCode(scriptCode) {
+        let script = await this.dao.getScriptConfig("script", scriptCode);
+        let generator = this.getGenerator(script.data);
         let code = generator.generateCode();
-        console.log(code.join("\n"));
+        return code;
+    }
+
+    async executeCode(scriptCode) {
+        let script = await this.dao.getScriptConfig("script", scriptCode);
+        let generator = this.getGenerator(script.data);
+
+        let code = await generator.generateCode();
+        runCode(code);
+        return code;
     }
 }

@@ -118,7 +118,8 @@ export default function ExpressionMember({
                     " " +
                     (expressionMember.renderOperator
                         ? "opearator-value"
-                        : expressionMember.memberType)
+                        : expressionMember.memberType) +
+                    (expressionMember.color ? " " + expressionMember.color : "")
                 }
             >
                 {renderMethod()}

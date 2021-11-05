@@ -1,10 +1,11 @@
 import ScriptGeneratorBase from "./ScriptGeneratorBase";
 import { ScriptService } from "./ScriptService";
-export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
+
+export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
     getStatementConditionCode = (statement) => {
         let code = [];
         code.push("");
-        code.push("// " + this.getCommentCode(statement.name));
+        code.push(this.getCommentCode(statement.name));
         let ruleCode = this.getRuleCode(statement.rule);
         code.push("if " + ruleCode + "{");
         let trueStatement;
@@ -28,11 +29,11 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
     getStatementLoopCode = (statement) => {
         let code = [];
         code.push("");
-        code.push("// " + this.getCommentCode(statement.name));
+        code.push(this.getCommentCode(statement.name));
 
         let arrayExpression = this.getExpressionCode(statement.arrayExpression);
         code.push(
-            arrayExpression + ".forEach(" + statement.itemVariable + " => {"
+            "for (" + statement.itemVariable + " in " + arrayExpression + ") {"
         );
         code.push(
             this.TAB_SPACES +
@@ -44,7 +45,7 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
         );
         let loopCode = this.getStatementCode(statement.nestedStatements[0]);
         code = code.concat(loopCode.map((code) => this.TAB_SPACES + code));
-        code.push("});");
+        code.push("}");
         return code;
     };
 
@@ -75,22 +76,22 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
         let variablePathString = "";
         if (variablePath) {
             variablePathString =
-                ", variablePath: {" +
+                ", variablePath: [" +
                 variablePath.map((path) => '"' + path + '"').join(", ") +
-                "}";
+                "]";
         }
         let options =
-            "{context: context, params: [" +
+            "[ context: context, params: [" +
             params.join(", ") +
-            "}" +
+            "]" +
             variablePathString +
-            "}";
+            "]";
         return options;
     }
 
     async getUsedMethodsCode() {
         let service = new ScriptService();
-        let methodDefinitions = "// Functions\n";
+        let methodDefinitions = this.getCommentCode("Functions") + "\n";
 
         for await (const method of Object.keys(this.usedMethods).map((code) =>
             service.getMethod(code)
@@ -105,9 +106,15 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
 
             // Wraps the source code with the function definition statement
             methodSourceCode =
-                "const " +
+                "def " +
                 this.usedMethods[method.code].functionName +
-                " = (self, {context, params, variablePath}) => {\n" +
+                "(self, options) {\n" +
+                this.TAB_SPACES +
+                "context = options.context;\n" +
+                this.TAB_SPACES +
+                "params = options.params;\n" +
+                this.TAB_SPACES +
+                "variablePath = options.variablePath;\n" +
                 methodSourceCode +
                 "\n}\n";
 

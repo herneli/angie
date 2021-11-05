@@ -56,6 +56,16 @@ const styles = {
         "&.method, &.method:after": {
             backgroundColor: "#ffce54",
         },
+        "&.method.red, &.method.red:after": {
+            backgroundColor: "#dd897b",
+        },
+        "&.method.white, &.method.red:after": {
+            backgroundColor: "white",
+        },
+        "&.method.green, &.method.green:after": {
+            backgroundColor: "#a0d468",
+        },
+
         "& $group": {
             marginLeft: "5px",
         },

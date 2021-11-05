@@ -41,31 +41,59 @@ export default function ExpressionMemberSelector({
         return expression[expression.length - 1];
     };
 
+    const memberSorter = (a, b) => {
+        const comparerA = a.name.toLowerCase();
+        const comparerB = b.name.toLowerCase();
+
+        if (comparerA < comparerB) {
+            return -1;
+        } else if (comparerA > comparerB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+
     const getMembers = () => {
-        manager.getMembers(getLastExpressionMember().type).then((m) => {
+        let lastExpressionMember = getLastExpressionMember();
+        manager.getMembers(lastExpressionMember.type).then((m) => {
             let membersLocal = [];
             if (m.properties) {
-                m.properties.forEach((property) => {
+                m.properties.sort(memberSorter).forEach((property) => {
                     membersLocal.push({
-                        memberType: "property",
+                        memberType:
+                            lastExpressionMember.memberType === "variable"
+                                ? "variable"
+                                : "property",
                         ...property,
                     });
                 });
             }
-
-            if (m.methods) {
-                m.methods.forEach((method) => {
-                    membersLocal.push({
-                        memberType: "method",
-                        ...method,
-                    });
+            if (getLastExpressionMember().memberType === "variableContainer") {
+                Object.keys(variables).forEach((variableKey) => {
+                    membersLocal.push(variables[variableKey]);
+                });
+            }
+            // Exclude methods for a context
+            if (lastExpressionMember.memberType !== "context" && m.methods) {
+                m.methods.sort(memberSorter).forEach((method) => {
+                    // Include methods with code ended with ".setter" only for variables
+                    if (
+                        !method.code.endsWith(".setter") ||
+                        lastExpressionMember.memberType === "variable"
+                    ) {
+                        membersLocal.push({
+                            memberType: "method",
+                            ...method,
+                        });
+                    }
                 });
             }
 
-            if (getLastExpressionMember().memberType === "context") {
+            if (lastExpressionMember.memberType === "context") {
                 membersLocal.push({
                     memberType: "variableContainer",
-                    code: "variableContainer",
+                    code: "variables",
                     name: T.translate("visual_script.variables"),
                     type: {
                         type: "object",
@@ -74,13 +102,8 @@ export default function ExpressionMemberSelector({
                 });
             }
 
-            if (getLastExpressionMember().memberType === "variableContainer") {
-                Object.keys(variables).forEach((variableKey) => {
-                    membersLocal.push(variables[variableKey]);
-                });
-            }
             setMembersForType({
-                type: getLastExpressionMember().type,
+                type: lastExpressionMember.type,
                 members: membersLocal,
             });
         });

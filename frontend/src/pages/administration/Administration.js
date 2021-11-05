@@ -25,27 +25,9 @@ const Administration = ({ app }) => {
             <Layout>
                 <Content>
                     <Switch>
-                        <Route
-                            exact
-                            path="/admin/integration"
-                            render={({ match }) => (
-                                <Integrations match={match} {...defaultProps} />
-                            )}
-                        />
-                        <Route
-                            exact
-                            path="/admin/integration/:id"
-                            render={({ match }) => (
-                                <Integration match={match} {...defaultProps} />
-                            )}
-                        />
-                        <Route
-                            exact
-                            path="/admin/users"
-                            render={({ match }) => (
-                                <UsersConfig match={match} {...defaultProps} />
-                            )}
-                        />
+                        <Route exact path="/admin/integration" render={({ match }) => <Integrations match={match} {...defaultProps} />} />
+                        <Route exact path="/admin/integration/:id" render={({ match }) => <Integration match={match} {...defaultProps} />} />
+                        <Route exact path="/admin/users" render={({ match }) => <UsersConfig match={match} {...defaultProps} />} />
                         {/* <Route
                             exact
                             path="/admin/organization"
@@ -57,46 +39,28 @@ const Administration = ({ app }) => {
                             )}
                         /> */}
 
-                        <Route
-                            exact
-                            path="/admin/node_type"
-                            render={({ match }) => (
-                                <NodeType match={match} {...defaultProps} />
-                            )}
-                        />
-                        <Route
-                            exact
-                            path="/admin/camel_component"
-                            render={({ match }) => (
-                                <CamelComponent
-                                    match={match}
-                                    {...defaultProps}
-                                />
-                            )}
-                        />
+                        <Route exact path="/admin/node_type" render={({ match }) => <NodeType match={match} {...defaultProps} />} />
+                        <Route exact path="/admin/camel_component" render={({ match }) => <CamelComponent match={match} {...defaultProps} />} />
 
                         <PrivateRoute
                             roles={["default-roles-angie"]}
                             path="/admin/config_method"
-                            component={() => (
-                                <ModelAdmin model="script_method" />
-                            )}
+                            component={() => <ModelAdmin model="script_method" />}
                             {...defaultProps}
                         />
                         <PrivateRoute
                             roles={["default-roles-angie"]}
                             path="/admin/config_object"
-                            component={() => (
-                                <ModelAdmin model="script_object" />
-                            )}
+                            component={() => <ModelAdmin model="script_object" />}
                             {...defaultProps}
                         />
                         <PrivateRoute
                             roles={["default-roles-angie"]}
-                            path="/admin/script/:code"
-                            component={Script}
+                            path="/admin/config_context"
+                            component={() => <ModelAdmin model="script_context" />}
                             {...defaultProps}
                         />
+                        <PrivateRoute roles={["default-roles-angie"]} path="/admin/script/:code" component={Script} {...defaultProps} />
                     </Switch>
                 </Content>
             </Layout>

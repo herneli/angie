@@ -61,7 +61,7 @@ export default function StatementBox({
     title,
     iconPath,
     children,
-    hideActions,
+    hideDelete,
     onChange,
     onDelete,
 }) {
@@ -81,19 +81,21 @@ export default function StatementBox({
     };
     const actions = (
         <Menu>
-            <Menu.Item
-                key="0"
-                icon={
-                    <Icon
-                        className={classes.menuIcon}
-                        path={mdiContentCut}
-                        size="16px"
-                    />
-                }
-                onClick={onDelete}
-            >
-                {T.translate("visual_script.cut")}
-            </Menu.Item>
+            {!hideDelete ? (
+                <Menu.Item
+                    key="0"
+                    icon={
+                        <Icon
+                            className={classes.menuIcon}
+                            path={mdiContentCut}
+                            size="16px"
+                        />
+                    }
+                    onClick={onDelete}
+                >
+                    {T.translate("visual_script.cut")}
+                </Menu.Item>
+            ) : null}
             <Menu.Item
                 key="1"
                 icon={
@@ -127,21 +129,19 @@ export default function StatementBox({
                         </span>
                     </div>
                 </div>
-                {!hideActions ? (
-                    <div className={classes.actions}>
-                        <Dropdown overlay={actions} trigger={["click"]}>
-                            <Button
-                                type="text"
-                                icon={
-                                    <StatementIcon
-                                        className={classes.actionsIcon}
-                                        path={mdiCog}
-                                    />
-                                }
-                            />
-                        </Dropdown>
-                    </div>
-                ) : null}
+                <div className={classes.actions}>
+                    <Dropdown overlay={actions} trigger={["click"]}>
+                        <Button
+                            type="text"
+                            icon={
+                                <StatementIcon
+                                    className={classes.actionsIcon}
+                                    path={mdiCog}
+                                />
+                            }
+                        />
+                    </Dropdown>
+                </div>
                 {children}
             </div>
             {editing ? (

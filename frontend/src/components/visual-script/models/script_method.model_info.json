@@ -13,8 +13,12 @@
             "field": "name"
         },
         {
-            "title": "Parent type",
+            "title": "Tipo padre",
             "field": ["parentType", "type"]
+        },
+        {
+            "title": "Objeto padre",
+            "field": ["parentType", "objectCode"]
         },
         {
             "title": "Habilitado",
@@ -92,6 +96,28 @@
                             "title": "Requerido",
                             "type": "boolean",
                             "default": false
+                        },
+                        "options": {
+                            "title": "Opciones",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "title": "Código"
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "title": "Valor"
+                                    },
+                                    "required": {
+                                        "type": "boolean",
+                                        "title": "Necesaria"
+                                    }
+                                },
+                                "required": ["code", "type"]
+                            }
                         }
                     }
                 }
@@ -405,6 +431,16 @@
                 },
                 "required": {
                     "ui:columnSize": "12"
+                },
+                "options": {
+                    "items": {
+                        "code": {
+                            "ui:columnSize": "4"
+                        },
+                        "value": {
+                            "ui:columnSize": "4"
+                        }
+                    }
                 }
             }
         }

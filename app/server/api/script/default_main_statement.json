@@ -1,0 +1,18 @@
+{
+    "id": "main-block",
+    "type": "block",
+    "main": true,
+    "variables": {},
+    "nestedStatements": [
+        {
+            "id": "start",
+            "type": "start",
+            "name": "Inicio"
+        },
+        {
+            "id": "end",
+            "type": "end",
+            "name": "Fin"
+        }
+    ]
+}

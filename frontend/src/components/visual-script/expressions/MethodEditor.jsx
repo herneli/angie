@@ -35,8 +35,14 @@ export default function MethodEditor({
                     "ui:withBorder": true,
                 },
             };
+            if (!member.params) {
+                member.params = {};
+            }
             let paramConfigPromises = member.paramMembers.map((paramMember) => {
-                return memberToFormSchemas(paramMember);
+                if (!(paramMember.code in member.params)) {
+                    member.params[paramMember.code] = null;
+                }
+                return memberToFormSchemas(paramMember, member);
             });
             Promise.all(paramConfigPromises).then((paramConfigs) => {
                 paramConfigs.forEach((paramConfig) => {
@@ -60,15 +66,15 @@ export default function MethodEditor({
         onCancel();
     };
 
-    const memberToFormSchemas = async (member) => {
+    const memberToFormSchemas = async (member, parentMember) => {
         return {
             member,
-            schema: await memberToSchema(member),
-            uiSchema: memberToUiSchema(member),
+            schema: await memberToSchema(member, parentMember),
+            uiSchema: memberToUiSchema(member, parentMember),
         };
     };
 
-    const memberToUiSchema = (member) => {
+    const memberToUiSchema = (member, parentMember) => {
         let uiSchema = {};
         if (member.type.selectOptions) {
             if (member.type.type === "array") {
@@ -88,6 +94,14 @@ export default function MethodEditor({
         }
         if (member.type.widget) {
             uiSchema["ui:widget"] = member.type.widget;
+        }
+        if (member.options) {
+            member.options.forEach((option) => {
+                if (!uiSchema["ui:paramOptions"]) {
+                    uiSchema["ui:paramOptions"] = {};
+                }
+                uiSchema["ui:paramOptions"][option.code] = option;
+            });
         }
         return uiSchema;
     };

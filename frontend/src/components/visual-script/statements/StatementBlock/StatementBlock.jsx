@@ -17,19 +17,39 @@ let useStyles = createUseStyles({
         height: "18px",
         width: "18px",
     },
+    finalPointCell: {
+        lineHeight: "1px",
+    },
 });
 export default function StatementBlock({ statement, variables, onChange }) {
     const classes = useStyles();
 
     const { manager } = useScriptContext();
     const handleOnChange = (index) => (childStatement) => {
+        let newStatement = statement;
+        if (childStatement.type === "start") {
+            // Manage variable modification
+            let newVariables = {};
+            childStatement.variables.forEach((variable) => {
+                newVariables[variable.code] = {
+                    memberType: "variable",
+                    code: variable.code,
+                    name: variable.name,
+                    type: variable.type,
+                };
+            });
+            newStatement = { ...statement, variables: newVariables };
+        }
         let newNestedStatements = [
             ...statement.nestedStatements.slice(0, index),
             childStatement,
             ...statement.nestedStatements.slice(index + 1),
         ];
         onChange &&
-            onChange({ ...statement, nestedStatements: newNestedStatements });
+            onChange({
+                ...newStatement,
+                nestedStatements: newNestedStatements,
+            });
     };
 
     const handleOnDelete = (index) => () => {
@@ -124,7 +144,7 @@ export default function StatementBlock({ statement, variables, onChange }) {
                 ) : null}
                 {renderStatements(statement.nestedStatements)}
                 <tr>
-                    <td>
+                    <td className={classes.finalPointCell}>
                         <StatementFinalPoint statement={statement} />{" "}
                     </td>
                 </tr>

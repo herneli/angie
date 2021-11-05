@@ -12,6 +12,7 @@ class ModelAdmin extends Component {
         modelData: null,
         edit: null,
         redirectTo: null,
+        searchTerm: "",
     };
 
     componentDidMount() {
@@ -54,6 +55,10 @@ class ModelAdmin extends Component {
 
     handleOnClose = () => {
         this.setState({ redirectTo: "/" });
+    };
+
+    handleSearchTermChange = (searchTerm) => {
+        this.setState({ ...this.state, searchTerm: searchTerm });
     };
 
     handleOnDelete = (data) => {
@@ -122,11 +127,13 @@ class ModelAdmin extends Component {
             <ModelTable
                 modelInfo={this.state.modelInfo}
                 modelData={Object.values(this.state.modelData)}
+                searchTerm={this.state.searchTerm}
                 onAddData={this.addCreateData}
                 onChangeColumn={this.onChangeColumn}
                 onDeleteData={this.handleOnDelete}
                 onEditData={this.setEditData}
                 onSaveData={this.handleOnSave}
+                onSearchTermChange={this.handleSearchTermChange}
             />
         );
     }

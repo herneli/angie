@@ -51,6 +51,9 @@ const AdminSubMenu = () => {
                     icon={<Icon path={mdiPalette} size={1} />}
                     title="Personalización"
                 >
+                    <Menu.Item key="config_context">
+                        <Link to="/admin/config_context">Contextos</Link>
+                    </Menu.Item>
                     <Menu.Item key="config_method">
                         <Link to="/admin/config_method">Métodos </Link>
                     </Menu.Item>
@@ -58,7 +61,7 @@ const AdminSubMenu = () => {
                         <Link to="/admin/config_object">Objetos</Link>
                     </Menu.Item>
                     <Menu.Item key="script">
-                        <Link to="/admin/script/test01">Script</Link>
+                        <Link to="/admin/script/test_groovy">Script</Link>
                     </Menu.Item>
                 </SubMenu>
             </Menu>

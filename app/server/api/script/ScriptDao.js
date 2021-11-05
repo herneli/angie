@@ -27,21 +27,21 @@ export class ScriptDao extends BaseKnexDao {
             return Promise.resolve([]);
         }
         // Select methods
-        let methods = knex("script_config")
-            .where({
-                document_type: "method",
-            })
-
-            .whereRaw(
-                "data ->> 'language' = ? and " +
-                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any')",
-                [language, type.type]
-            );
+        let methods = knex("script_config").where({
+            document_type: "method",
+        });
 
         if (type.type === "object") {
             methods = methods.whereRaw(
-                "data -> 'parentType' ->> 'objectCode' = ?",
-                [type.objectCode]
+                "data ->> 'language' = ? and " +
+                    "( (data -> 'parentType' ->> 'type' = ? and data -> 'parentType' ->> 'objectCode' = ? ) or data -> 'parentType' ->> 'type' = '$any')",
+                [language, type.type, type.objectCode]
+            );
+        } else {
+            methods = methods.whereRaw(
+                "data ->> 'language' = ? and " +
+                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any')",
+                [language, type.type]
             );
         }
         // console.log(methods.toSQL().toNative());

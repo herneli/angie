@@ -9,7 +9,7 @@ export default function StatementStart({ statement, variables, onChange }) {
             variables={variables}
             title={statement.name}
             iconPath={registry.iconPath}
-            hideActions={true}
+            hideDelete={true}
             onChange={onChange}
         ></StatementBox>
     );

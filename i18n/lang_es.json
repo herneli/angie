@@ -109,6 +109,7 @@
         "add_item": "Añadir elemento",
         "cancel": "Cancelar",
         "close": "Cerrar",
+        "confirm": "Confirmación",
         "delete_item": "Eliminar elemento",
         "do_you_want_to_delete_the_item": "¿Quiere eliminar el elemento?",
         "do_you_want_to_duplicate_the_item": "¿Quiere duplicar el elemento?",
@@ -122,9 +123,9 @@
         "grouping_groupedBy": "Agrupado por",
         "no_overwrite": "No sobreescribir",
         "overwrite": "Sobreescribir",
+        "return": "Volver",
         "save": "Guardar",
         "text": "Si desea sobreescribir los datos, introduzca el siguiente texto y pulse Sobreescribir",
-        "confirm": "Confirmación",
         "upload_json_file": "Cargar fichero JSON"
     },
     "visual_script": {

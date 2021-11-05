@@ -65,9 +65,8 @@ class VisualScript extends Component {
         this.props.onSave && this.props.onSave(this.state.script);
     };
 
-    handleOnGenerateCode = () => {
-        this.props.onGenerateCode &&
-            this.props.onGenerateCode(this.state.script);
+    handleOnExecuteCode = () => {
+        this.props.onExecuteCode && this.props.onExecuteCode(this.state.script);
     };
 
     render() {
@@ -75,8 +74,8 @@ class VisualScript extends Component {
             <div>
                 <div>
                     <Button onClick={this.handleOnSave}>Guardar</Button>
-                    <Button onClick={this.handleOnGenerateCode}>
-                        Generar código
+                    <Button onClick={this.handleOnExecuteCode}>
+                        Ejecutar código
                     </Button>
                 </div>
                 <div id="script-canvas" className={this.props.classes.canvas}>

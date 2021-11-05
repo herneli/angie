@@ -21,11 +21,23 @@ export default function Script({ match }) {
         });
     };
 
-    const handleOnGenerateCode = (script) => {
+    const handleOnExecuteCode = (script) => {
         axios
-            .post("/script/code/" + code + "/generate", script)
+            .post("/script/code/" + code, script)
             .then((response) => {
-                message.info(T.translate("visual_script.code_generated"));
+                setScript(response.data.data.data);
+                message.info(T.translate("visual_script.script_saved"));
+                return axios.get("/script/code/" + code + "/execute");
+            })
+            .then((response) => {
+                let sourceCode = response.data.data;
+                console.log("Code...");
+                console.log(sourceCode);
+                return axios.get("http://localhost:8080/groovy_json/" + code);
+            })
+            .then((response) => {
+                console.log("Execution...");
+                console.log(response.data);
             });
     };
 
@@ -34,7 +46,7 @@ export default function Script({ match }) {
             <VisualScript
                 script={script}
                 onSave={handleOnSave}
-                onGenerateCode={handleOnGenerateCode}
+                onExecuteCode={handleOnExecuteCode}
             />
         );
     } else {

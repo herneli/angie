@@ -18,9 +18,11 @@ const AntdObjectFieldTemplate = ({
     required,
     uiSchema,
     idSchema,
+    formData,
 }) => {
     const classes = useStyles();
     const uiGridContainer = uiSchema["ui:grid"];
+
     let props = { gutter: 24 };
     if (uiGridContainer && uiGridContainer.row) {
         props = { ...uiGridContainer.row };

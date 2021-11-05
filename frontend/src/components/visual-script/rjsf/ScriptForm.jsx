@@ -3,9 +3,12 @@ import Form from "@rjsf/antd";
 import formConfig from "../../rjsf";
 import OneOfExpressionField from "./OneOfExpressionField";
 import ExpressionField from "./ExpressionField";
+import LogWidget from "./LogWidget";
 
 export default function ScriptForm(props) {
-    let scriptWidgets = {};
+    let scriptWidgets = {
+        LogWidget: LogWidget,
+    };
     let scriptFields = {
         OneOfField: OneOfExpressionField,
         ExpressionField: ExpressionField,

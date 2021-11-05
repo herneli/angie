@@ -11,8 +11,8 @@ const arrowOverlay = {
     location: 1,
 };
 export default class ScriptManager {
-    constructor({ context, language }, containerId) {
-        this.context = context;
+    constructor({ contextMember, language }, containerId) {
+        this.contextMember = contextMember;
         this.language = language;
         this.jsplumb = null;
         this.statementRegistry = statementRegistry;
@@ -72,7 +72,7 @@ export default class ScriptManager {
     }
 
     newExpression() {
-        return [{ ...this.context }];
+        return [{ ...this.contextMember }];
     }
 
     getLanguage() {

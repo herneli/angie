@@ -18,21 +18,10 @@ export const registry = {
         type: "object",
         properties: {
             comment: { type: "string", title: "Comentario" },
-            expres: {
-                type: "object",
-                properties: {
-                    $exp: {},
-                },
-            },
         },
     }),
 
-    uiSchema: (manager, variables) => ({
-        expres: {
-            "ui:field": "ExpressionField",
-            "ui:variables": variables,
-        },
-    }),
+    uiSchema: (manager, variables) => ({}),
 };
 
 export default registry;

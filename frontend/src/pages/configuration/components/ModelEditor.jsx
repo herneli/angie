@@ -38,6 +38,9 @@ export default function ModelEditor({
     };
     return (
         <div className={classes.tableWrapper}>
+            <Button onClick={onCancel}>
+                {T.translate("configuration.return")}
+            </Button>
             <Card className={classes.paper}>
                 <Form
                     ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
@@ -51,7 +54,7 @@ export default function ModelEditor({
                     <Row justify="end">
                         <Space>
                             <Button onClick={onCancel}>
-                                {T.translate("configuration.cancel")}
+                                {T.translate("configuration.return")}
                             </Button>
                             <Button
                                 className={classes.rightActions}

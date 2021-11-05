@@ -21,8 +21,12 @@ export class ScriptController extends BaseController {
             this.saveScript(req, res, next);
         });
 
-        this.router.post("/script/code/:code/generate", (req, res, next) => {
+        this.router.get("/script/code/:code/generate", (req, res, next) => {
             this.generateCode(req, res, next);
+        });
+
+        this.router.get("/script/code/:code/execute", (req, res, next) => {
+            this.executeCode(req, res, next);
         });
 
         return this.router;
@@ -61,6 +65,13 @@ export class ScriptController extends BaseController {
 
     async generateCode(request, response) {
         let service = new ScriptService();
-        let code = await service.generateCode(request.body);
+        let code = await service.generateCode(request.params.code);
+        response.json(new JsonResponse(true, code));
+    }
+
+    async executeCode(request, response) {
+        let service = new ScriptService();
+        let executioResponse = await service.executeCode(request.params.code);
+        response.json(new JsonResponse(true, executioResponse));
     }
 }

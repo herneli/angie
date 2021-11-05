@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Card, Col, Row, Input, Table, message } from "antd";
 import { createUseStyles } from "react-jss";
 import T from "i18n-react";
@@ -33,10 +33,12 @@ const useStyles = createUseStyles({
 export default function ModelTable({
     modelInfo,
     modelData,
+    searchTerm,
     onAddData,
     onDeleteData,
     onEditData,
     onSaveData,
+    onSearchTermChange,
 }) {
     const calculateColumns = (info) => {
         if (info) {
@@ -89,7 +91,7 @@ export default function ModelTable({
             return null;
         }
     };
-    const [searchString, setSearchString] = useState();
+    // const [searchString, setSearchString] = useState();
     const classes = useStyles();
 
     const columns = calculateColumns(modelInfo);
@@ -99,7 +101,7 @@ export default function ModelTable({
     };
 
     const handleOnSearch = (e) => {
-        setSearchString(e.target.value);
+        onSearchTermChange(e.target.value);
     };
 
     const handleOnDeleteModel = (e, row) => {
@@ -202,7 +204,7 @@ export default function ModelTable({
                     item[field.field]
                         .toString()
                         .toLowerCase()
-                        .includes(searchString.toLowerCase())
+                        .includes(searchTerm.toLowerCase())
                 ) {
                     included = true;
                 }
@@ -211,7 +213,7 @@ export default function ModelTable({
         });
     };
 
-    let filteredData = !searchString ? modelData : filterData();
+    let filteredData = !searchTerm ? modelData : filterData();
     filteredData = filteredData.sort((a, b) => {
         const value = a.code === b.code ? 0 : a.code < b.code ? -1 : 1;
         return value;
@@ -228,6 +230,7 @@ export default function ModelTable({
                     <Col flex={1}>
                         <Search
                             className={classes.search}
+                            value={searchTerm}
                             onChange={handleOnSearch}
                             enterButton
                         />
