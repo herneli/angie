@@ -1,6 +1,7 @@
 const styles = {
     expression: {
         display: "inline-block",
+        whiteSpace: "nowrap",
     },
     group: {
         display: "inline-flex",

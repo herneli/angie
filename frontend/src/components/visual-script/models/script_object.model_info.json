@@ -11,10 +11,6 @@
         {
             "title": "Nombre",
             "field": "name"
-        },
-        {
-            "title": "Modificado en",
-            "field": "modifiedAt"
         }
     ],
     "schema": {
@@ -23,6 +19,7 @@
         "properties": {
             "code": { "title": "Código", "type": "string" },
             "name": { "title": "Nombre", "type": "string" },
+            "customGroup": { "title": "Grupo de personalización", "type": "string" },
             "properties": {
                 "title": "Campos",
                 "type": "array",
@@ -39,12 +36,7 @@
                             "title": "Nivel",
                             "type": "number",
                             "enum": [1, 4, 7, 10],
-                            "enumNames": [
-                                "Básico",
-                                "Estándar",
-                                "Avanzado",
-                                "Experto"
-                            ]
+                            "enumNames": ["Básico", "Estándar", "Avanzado", "Experto"]
                         },
                         "required": {
                             "title": "Obligatorio",
@@ -70,24 +62,8 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": [
-                            "array",
-                            "boolean",
-                            "date",
-                            "number",
-                            "integer",
-                            "object",
-                            "string"
-                        ],
-                        "enumNames": [
-                            "Lista",
-                            "Boleano",
-                            "Fecha",
-                            "Decimal",
-                            "Entero",
-                            "Objeto",
-                            "String"
-                        ],
+                        "enum": ["array", "boolean", "date", "number", "integer", "object", "string"],
+                        "enumNames": ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
                         "default": ""
                     }
                 },
@@ -97,13 +73,7 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": [
-                                            "boolean",
-                                            "date",
-                                            "number",
-                                            "integer",
-                                            "string"
-                                        ]
+                                        "enum": ["boolean", "date", "number", "integer", "string"]
                                     },
                                     "selectOptions": {
                                         "title": "Valores remotos",
@@ -156,10 +126,14 @@
     },
     "uiSchema": {
         "code": {
-            "ui:columnSize": "6"
+            "ui:columnSize": "4"
         },
         "name": {
-            "ui:columnSize": "6"
+            "ui:columnSize": "4"
+        },
+        "customGroup": {
+            "ui:columnSize": "4",
+            "ui:readonly": true
         },
         "properties": {
             "ui:options": {

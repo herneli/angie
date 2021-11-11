@@ -5,33 +5,18 @@ export class ConfigurationDao extends BaseKnexDao {
 
     getModel(code) {
         let knex = KnexConnector.connection;
-        let res = knex
-            .select("*")
-            .from("config_model")
-            .where({ code: code })
-            .first();
+        let res = knex.select("*").from("config_model").where({ code: code }).first();
         return res;
     }
 
     getModelDataList(code) {
         let knex = KnexConnector.connection;
-        return this.getModel(code).then((model) =>
-            knex
-                .select("*")
-                .from(model.data.table)
-                .where({ document_type: model.data.documentType })
-        );
+        return this.getModel(code).then((model) => knex.select("*").from(model.data.table).where({ document_type: model.data.documentType }));
     }
 
     getModelData(code, id) {
         let knex = KnexConnector.connection;
-        return this.getModel(code).then((model) =>
-            knex
-                .select("*")
-                .from(model.data.table)
-                .where({ document_type: model.data.documentType, id: id })
-                .first()
-        );
+        return this.getModel(code).then((model) => knex.select("*").from(model.data.table).where({ document_type: model.data.documentType, id: id }).first());
     }
 
     createModelData(code, data) {
@@ -69,10 +54,6 @@ export class ConfigurationDao extends BaseKnexDao {
 
     deleteModelData(code, id) {
         let knex = KnexConnector.connection;
-        return this.getModel(code).then((model) =>
-            knex(model.data.table)
-                .where({ document_type: model.data.documentType, id: id })
-                .delete()
-        );
+        return this.getModel(code).then((model) => knex(model.data.table).where({ document_type: model.data.documentType, id: id }).delete());
     }
 }

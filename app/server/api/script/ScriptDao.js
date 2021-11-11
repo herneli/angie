@@ -37,10 +37,15 @@ export class ScriptDao extends BaseKnexDao {
                     "( (data -> 'parentType' ->> 'type' = ? and data -> 'parentType' ->> 'objectCode' = ? ) or data -> 'parentType' ->> 'type' = '$any')",
                 [language, type.type, type.objectCode]
             );
+        } else if (type.type === "array") {
+            methods = methods.whereRaw("data ->> 'language' = ? and " + "( data -> 'parentType' ->> 'type' = ?  or data -> 'parentType' ->> 'type' = '$any')", [
+                language,
+                type.type,
+            ]);
         } else {
             methods = methods.whereRaw(
                 "data ->> 'language' = ? and " +
-                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any')",
+                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any'or data -> 'parentType' ->> 'type' = '$anyPrimitive')",
                 [language, type.type]
             );
         }

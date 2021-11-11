@@ -75,12 +75,9 @@ export default class SelectRemoteWidget extends Component {
         getselectOptions(url, path).then((entries) => {
             let options = entries.map((entry) => ({
                 value: get(entry, valueField),
-                label: get(entry, labelField),
+                label: get(entry, labelField) + " (" + get(entry, valueField) + ")",
             }));
-            options = [
-                { value: null, label: T.translate("Select...") },
-                ...options,
-            ];
+            options = [{ value: null, label: T.translate("Select...") }, ...options];
 
             this.setState({ ...this.state, options: options });
         });
@@ -90,41 +87,21 @@ export default class SelectRemoteWidget extends Component {
         this.props.onChange(processValue(this.props.schema, value));
     };
     handleOnBlur = (selectedValue) => {
-        this.props.onBlur(
-            this.props.id,
-            processValue(this.props.schema, selectedValue)
-        );
+        this.props.onBlur(this.props.id, processValue(this.props.schema, selectedValue));
     };
     handleOnFocus = (selectedValue) => {
-        this.props.onFocus(
-            this.props.id,
-            processValue(this.props.schema, selectedValue)
-        );
+        this.props.onFocus(this.props.id, processValue(this.props.schema, selectedValue));
     };
 
     render() {
-        let {
-            schema,
-            id,
-            label,
-            required,
-            disabled,
-            readonly,
-            value = "",
-            multiple,
-            autofocus,
-        } = this.props;
+        let { schema, id, label, required, disabled, readonly, value = "", multiple, autofocus } = this.props;
 
         const emptyValue = multiple ? [] : "";
         return (
             <Select
                 multiple={typeof multiple === "undefined" ? false : multiple}
                 options={this.state.options}
-                value={
-                    typeof value === "undefined" || value === null
-                        ? emptyValue
-                        : value
-                }
+                value={typeof value === "undefined" || value === null ? emptyValue : value}
                 required={required}
                 disabled={disabled || readonly}
                 autoFocus={autofocus}

@@ -11,6 +11,7 @@ const useStyles = createUseStyles({
         fontSize: 15,
         display: "block",
         paddingTop: 2,
+        whiteSpace: "nowrap",
     },
     addRuleButton: {
         marginLeft: 20,
@@ -43,17 +44,11 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function RuleExpression({
-    rule,
-    variables,
-    onChange,
-    onDelete,
-}) {
+export default function RuleExpression({ rule, variables, onChange, onDelete }) {
     const classes = useStyles();
     const handleOnChange = (expression) => {
         if (expression && expression.length > 0) {
-            expression[expression.length - 1].error =
-                expression[expression.length - 1].type !== "boolean";
+            expression[expression.length - 1].error = expression[expression.length - 1].type !== "boolean";
         }
 
         onChange && onChange({ ...rule, expression: expression });
@@ -61,25 +56,11 @@ export default function RuleExpression({
 
     return (
         <div className={classes.rule}>
-            <Expression
-                expression={rule.expression}
-                variables={variables}
-                expectedType={{ type: "boolean" }}
-                onChange={handleOnChange}
-            />
+            <Expression expression={rule.expression} variables={variables} expectedType={{ type: "boolean" }} onChange={handleOnChange} />
 
             {onDelete ? (
                 <div className={classes.removeGroupButtonContainer}>
-                    <Button
-                        type="text"
-                        onClick={onDelete}
-                        icon={
-                            <StatementIcon
-                                className={classes.icon}
-                                path={mdiDelete}
-                            />
-                        }
-                    />
+                    <Button type="text" onClick={onDelete} icon={<StatementIcon className={classes.icon} path={mdiDelete} />} />
                 </div>
             ) : null}
         </div>

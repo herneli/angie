@@ -1,4 +1,7 @@
 import axios from "axios";
+const { ConcurrencyManager } = require("axios-concurrency");
+const MAX_CONCURRENT_REQUESTS = 100;
+ConcurrencyManager(axios, MAX_CONCURRENT_REQUESTS);
 
 function frontendModelData(modelData) {
     const extendedData = {
@@ -22,29 +25,21 @@ export function getModelInfo(model) {
 }
 
 export function getModelDataList(model) {
-    return axios
-        .get("/configuration/model/" + model + "/data")
-        .then((response) => {
-            return response.data.data.map((modelData) =>
-                frontendModelData(modelData)
-            );
-        });
+    return axios.get("/configuration/model/" + model + "/data").then((response) => {
+        return response.data.data.map((modelData) => frontendModelData(modelData));
+    });
 }
 
 export function getModelData(model, id) {
-    return axios
-        .get("/configuration/model/" + model + "/data/" + id.toString())
-        .then((response) => {
-            return frontendModelData(response.data.data);
-        });
+    return axios.get("/configuration/model/" + model + "/data/" + id.toString()).then((response) => {
+        return frontendModelData(response.data.data);
+    });
 }
 
 export function deleteModelData(model, id) {
-    return axios
-        .delete("/configuration/model/" + model + "/data/" + id.toString())
-        .then((response) => {
-            return response.data.data;
-        });
+    return axios.delete("/configuration/model/" + model + "/data/" + id.toString()).then((response) => {
+        return response.data.data;
+    });
 }
 
 export function saveModelData(model, extendedData, overwrite = false) {
@@ -52,17 +47,9 @@ export function saveModelData(model, extendedData, overwrite = false) {
 
     if (extendedData.id) {
         return axios
-            .put(
-                "/configuration/model/" +
-                    model +
-                    "/data/" +
-                    extendedData.id.toString(),
-                data
-            )
+            .put("/configuration/model/" + model + "/data/" + extendedData.id.toString(), data)
             .then((response) => frontendModelData(response.data.data));
     } else {
-        return axios
-            .post("/configuration/model/" + model + "/data/", data)
-            .then((response) => frontendModelData(response.data.data));
+        return axios.post("/configuration/model/" + model + "/data/", data).then((response) => frontendModelData(response.data.data));
     }
 }

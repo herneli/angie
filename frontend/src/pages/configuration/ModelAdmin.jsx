@@ -62,15 +62,13 @@ class ModelAdmin extends Component {
     };
 
     handleOnDelete = (data) => {
-        return api
-            .deleteModelData(this.props.model, data.id)
-            .then((response) => {
-                const { [data.id]: _, ...rest } = this.state.modelData;
-                this.setState({
-                    modelData: { ...rest },
-                    edit: null,
-                });
+        return api.deleteModelData(this.props.model, data.id).then((response) => {
+            const { [data.id]: _, ...rest } = this.state.modelData;
+            this.setState({
+                modelData: { ...rest },
+                edit: null,
             });
+        });
     };
 
     setEditData = (data) => {
@@ -96,6 +94,15 @@ class ModelAdmin extends Component {
                     },
                     edit: null,
                 });
+            })
+            .catch(errorHandler);
+    };
+
+    handleOnSaveBatch = (formData, overwrite = false) => {
+        return api
+            .saveModelData(this.props.model, formData, overwrite)
+            .then((model) => {
+                return true;
             })
             .catch(errorHandler);
     };
@@ -133,6 +140,7 @@ class ModelAdmin extends Component {
                 onDeleteData={this.handleOnDelete}
                 onEditData={this.setEditData}
                 onSaveData={this.handleOnSave}
+                onSaveDataBatch={this.handleOnSaveBatch}
                 onSearchTermChange={this.handleSearchTermChange}
             />
         );

@@ -152,26 +152,8 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": [
-                            "$any",
-                            "array",
-                            "boolean",
-                            "date",
-                            "number",
-                            "integer",
-                            "object",
-                            "string"
-                        ],
-                        "enumNames": [
-                            "Cualquier tipo",
-                            "Lista",
-                            "Boleano",
-                            "Fecha",
-                            "Decimal",
-                            "Entero",
-                            "Objeto",
-                            "String"
-                        ],
+                        "enum": ["$any", "$anyPrimitive", "array", "boolean", "date", "number", "integer", "object", "string"],
+                        "enumNames": ["Cualquier tipo", "Cualquier tipo primitivo", "Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
                         "default": ""
                     }
                 },
@@ -181,14 +163,7 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": [
-                                            "$any",
-                                            "boolean",
-                                            "date",
-                                            "number",
-                                            "integer",
-                                            "string"
-                                        ]
+                                        "enum": ["$any", "$anyPrimitive", "boolean", "date", "number", "integer", "string"]
                                     }
                                 }
                             },
@@ -223,24 +198,13 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": [
-                            "void",
-                            "$self",
-                            "$item",
-                            "$any",
-                            "array",
-                            "boolean",
-                            "date",
-                            "number",
-                            "integer",
-                            "object",
-                            "string"
-                        ],
+                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive", "array", "boolean", "date", "number", "integer", "object", "string"],
                         "enumNames": [
                             "Vacío",
                             "$self",
                             "$item",
                             "Cualquier tipo",
+                            "Cualquier tipo primitivo",
                             "Lista",
                             "Boleano",
                             "Fecha",
@@ -258,25 +222,14 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": [
-                                            "void",
-                                            "$self",
-                                            "$item",
-                                            "$any"
-                                        ]
+                                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive"]
                                     }
                                 }
                             },
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": [
-                                            "boolean",
-                                            "date",
-                                            "number",
-                                            "integer",
-                                            "string"
-                                        ]
+                                        "enum": ["boolean", "date", "number", "integer", "string"]
                                     },
                                     "selectOptions": {
                                         "title": "Valores remotos",
