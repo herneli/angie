@@ -19,3 +19,4 @@ coverage/
 *docker/postgres/data
 *docker/elastic/data
 /test.sqlite3
+.DS_Store
