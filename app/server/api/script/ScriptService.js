@@ -2,7 +2,7 @@ import { Utils, BaseService } from "lisco";
 import { ScriptDao } from "./ScriptDao";
 import mainStatement from "./default_main_statement.json";
 import ScriptGeneratorJavascript from "./ScriptGeneratorJavascript";
-import { runCode } from "./javascriptVm";
+import { runCode } from "./javascriptVM";
 import ScriptGeneratorGroovy from "./ScriptGeneratorGroovy";
 
 export class ScriptService extends BaseService {
