@@ -44,7 +44,7 @@
     },
     "scripts": {
         "start": "craco start",
-        "build": "cross-env INLINE_RUNTIME_CHUNK=false craco  build",
+        "build": "cross-env GENERATE_SOURCEMAP=false INLINE_RUNTIME_CHUNK=false craco  build",
         "test": "craco test",
         "eject": "react-scripts eject"
     },
