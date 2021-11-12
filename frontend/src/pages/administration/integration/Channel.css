@@ -17,7 +17,7 @@
     overflow: auto;
 }
 
-.dndflow aside>* {
+.dndflow aside .dndnode {
     margin-bottom: 10px;
     cursor: grab;
 }
@@ -77,7 +77,7 @@
     border-radius: 0px 3px 3px 0px;
 }
 
-.react-flow__node-switchNode {
+.react-flow__node {
     border-radius: 3px;
     border-style: solid;
     border-width: 1px;

@@ -2,36 +2,25 @@ exports.up = async function (knex) {
     
     if (!(await knex.schema.hasTable("organization"))) {
         await knex.schema.createTable("organization", function (table) {
-            table.increments();
-            table.string("name");
-            table.string("description");
+            table.uuid("id").primary();
+            table.string("document_type").notNullable();
+            table.string("code");
+            table.jsonb("data");
+            table.unique(["document_type", "code"]);
         });
     }
+
     if (!(await knex.schema.hasTable("integration"))) {
         await knex.schema.createTable("integration", function (table) {
             table.uuid("id").primary();
-            table.string("created_on", 30).notNullable();
-            table.string("last_updated", 30).notNullable();
             table.string("name").notNullable();
-            table.string("description");
-            table.integer("organization_id");
+            table.json("data");
+            table.uuid("organization_id");
             table.foreign('organization_id').references('organization.id')
             table.boolean("enabled").defaultTo(true);
         });
     }
-    if (!(await knex.schema.hasTable("integration_channel"))) {
-        await knex.schema.createTable("integration_channel", function (table) {
-            table.uuid("id").primary();
-            table.string("created_on", 30).notNullable();
-            table.string("last_updated", 30).notNullable();
-            table.string("name").notNullable();
-            table.string("description");
-            table.integer("version");
-            table.uuid("integration_id");
-            table.json("nodes");
-            table.boolean("enabled").defaultTo(true);
-        });
-    }
+    
     if (!(await knex.schema.hasTable("camel_component"))) {
         await knex.schema.createTable("camel_component", function (table) {
             table.uuid("id").primary();
@@ -60,13 +49,10 @@ exports.up = async function (knex) {
     if (!(await knex.schema.hasTable("users"))) {
         await knex.schema.createTable("users", function (table) {
             table.uuid("id").primary();
-            table.string("username").notNullable();
-            table.boolean("enabled");
-            table.string("email");
-            table.boolean("email_verified");
-            table.string("created_time_stamp");
-            table.string("organization_id");
-            table.json("roles").defaultTo("[]");
+            table.string("document_type").notNullable();
+            table.string("code").notNullable();
+            table.jsonb("data");
+            table.unique(["document_type", "code"]);
         });
     }
     if (!(await knex.schema.hasTable("node_type_subflow"))) {
@@ -116,6 +102,16 @@ exports.up = async function (knex) {
             table.unique(["document_type", "code"]);
         });
     }
+
+    if (!(await knex.schema.hasTable("integration_config"))) {
+        await knex.schema.createTable("integration_config", function (table) {
+            table.uuid("id").primary();
+            table.string("document_type").notNullable();
+            table.string("code").notNullable();
+            table.jsonb("data");
+            table.unique(["document_type", "code"]);
+        });
+    }
 };
 
 exports.down = async function (knex) {
@@ -137,6 +133,7 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("users")) {
         await knex.schema.dropTable("users");
     }
+
     if (await knex.schema.hasTable("node_type_subflow")) {
         await knex.schema.dropTable("node_type_subflow");
     }
@@ -155,5 +152,8 @@ exports.down = async function (knex) {
 
     if (await knex.schema.hasTable("script_config")) {
         await knex.schema.dropTable("script_config");
+    }
+    if (await knex.schema.hasTable("integration_config")) {
+        await knex.schema.dropTable("integration_config");
     }
 };

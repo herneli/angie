@@ -1,87 +1,117 @@
 import { BaseController, JsonResponse } from "lisco";
 import { ConfigurationService } from "./ConfigurationService";
+
+import expressAsyncHandler from "express-async-handler";
+import { json } from "express";
 export class ConfigurationController extends BaseController {
     configure() {
-        this.router.get("/configuration/model/:code", (req, res, next) => {
-            this.getModel(req, res, next);
-        });
-        this.router.get("/configuration/model/:code/data", (req, res, next) => {
-            this.getModelDataList(req, res, next);
-        });
+        this.router.get(
+            "/configuration/model/:code",
+            expressAsyncHandler((req, res, next) => {
+                this.getModel(req, res, next);
+            })
+        );
+        this.router.get(
+            "/configuration/model/:code/data",
+            expressAsyncHandler((req, res, next) => {
+                this.getModelDataList(req, res, next);
+            })
+        );
 
         this.router.get(
             "/configuration/model/:code/data/:id",
-            (req, res, next) => {
+            expressAsyncHandler((req, res, next) => {
                 this.getModelData(req, res, next);
-            }
+            })
         );
 
         this.router.post(
             "/configuration/model/:code/data",
-            (req, res, next) => {
+            expressAsyncHandler((req, res, next) => {
                 this.postModel(req, res, next);
-            }
+            })
         );
 
         this.router.put(
             "/configuration/model/:code/data/:id",
-            (req, res, next) => {
+            expressAsyncHandler((req, res, next) => {
                 this.putModel(req, res, next);
-            }
+            })
         );
 
         this.router.delete(
             "/configuration/model/:code/data/:id",
-            (req, res, next) => {
+            expressAsyncHandler((req, res, next) => {
                 this.deleteModelData(req, res, next);
-            }
+            })
         );
 
         return this.router;
     }
 
-    getModel(request, response) {
-        let service = new ConfigurationService();
-        service
-            .getModel(request.params.code)
-            .then((model) => response.json(new JsonResponse(true, model)));
+    async getModel(request, response, next) {
+        try {
+            const service = new ConfigurationService();
+            const model = await service.getModel(request.params.code);
+
+            response.json(new JsonResponse(true, model));
+        } catch (ex) {
+            next(ex);
+        }
     }
-    getModelData(request, response) {
-        let service = new ConfigurationService();
-        service
-            .getModelData(request.params.code, request.params.id)
-            .then((model) => response.json(new JsonResponse(true, model)));
+    async getModelData(request, response, next) {
+        try {
+            const service = new ConfigurationService();
+            const model = await service.getModelData(request.params.code, request.params.id);
+
+            response.json(new JsonResponse(true, model));
+        } catch (ex) {
+            next(ex);
+        }
     }
-    getModelDataList(request, response) {
-        let service = new ConfigurationService();
-        service
-            .getModelDataList(request.params.code)
-            .then((modelList) =>
-                response.json(new JsonResponse(true, modelList))
-            );
+    async getModelDataList(request, response, next) {
+        try {
+            let service = new ConfigurationService();
+            let filters = request && request.query && request.query.filters ? JSON.parse(request.query.filters) : {};
+
+            const modelList = await service.list(request.params.code, filters, filters.start, filters.limit);
+
+            response.json(new JsonResponse(true, modelList.data, "", modelList.total));
+        } catch (ex) {
+            next(ex);
+        }
     }
 
-    postModel(request, response) {
-        let service = new ConfigurationService();
-        service
-            .createModelData(request.params.code, request.body)
-            .then((model) => response.json(new JsonResponse(true, model[0])));
+    async postModel(request, response, next) {
+        try {
+            const service = new ConfigurationService();
+            const data = await service.save(request.params.code, request.body);
+
+            response.json(new JsonResponse(true, data));
+        } catch (e) {
+            next(e);
+        }
     }
 
-    putModel(request, response) {
-        let service = new ConfigurationService();
-        service
-            .updateModelData(
-                request.params.code,
-                request.params.id,
-                request.body
-            )
-            .then((model) => response.json(new JsonResponse(true, model[0])));
+    async putModel(request, response, next) {
+        try {
+            const service = new ConfigurationService();
+            const data = await service.update(request.params.code, request.params.id, request.body);
+
+            response.json(new JsonResponse(true, data));
+        } catch (e) {
+            next(e);
+        }
     }
-    deleteModelData(request, response) {
-        let service = new ConfigurationService();
-        service
-            .deleteModelData(request.params.code, request.params.id)
-            .then((model) => response.json(new JsonResponse(true, "done")));
+
+    async deleteModelData(request, response, next) {
+        try {
+            const service = new ConfigurationService();
+            const data = await service.delete(request.params.code, request.params.id);
+
+            response.json(new JsonResponse(true, data));
+        } catch (e) {
+            next(e);
+        }
     }
 }

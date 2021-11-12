@@ -16,19 +16,22 @@ class ChannelActions {
         this.onChannelUpdate = onChannelUpdate;
     }
 
-    add = (integration_id) => {
+    add = () => {
         const channelId = uuid_v4();
-        const newChannels = [...this.channels];
-        newChannels.push({
-            name: "New Tab",
-            id: channelId,
-            integration_id: integration_id,
-            created_on: moment().toISOString(),
-            version: 0,
-            nodes: [],
-            enabled: true,
-            status: "UNDEPLOYED",
-        });
+
+        const newChannels = this.onChannelUpdate(
+            {
+                name: "Channel",
+                id: channelId,
+                created_on: moment().toISOString(),
+                version: 0,
+                nodes: [],
+                enabled: true,
+                status: "UNDEPLOYED",
+            },
+            "add"
+        );
+
         if (newChannels.length === 1) {
             this.setActiveTab(channelId);
         }
@@ -44,7 +47,7 @@ class ChannelActions {
                 this.setActiveTab(newActiveKey);
             }
         }
-        const newChannels = this.channels.filter((channel) => channel.id !== targetKey);
+        const newChannels = this.onChannelUpdate({ id: targetKey }, "remove");
         this.setChannels(newChannels);
     };
 
@@ -63,15 +66,31 @@ class ChannelActions {
         }, 200);
     };
 
-    deployChannel = async (identifier) => {
+    channelStatusChanged = (channel) => {
+        const newChannels = this.channels.map((chn) => {
+            if (chn.id === channel.id) {
+                chn = channel;
+            }
+            return chn;
+        });
+        this.setChannels(newChannels);
+    };
+
+    deployChannel = async (integration, identifier, reloadChannels) => {
+        if (this.pendingChanges) {
+            return notification.error({
+                message: "Cambios pendientes",
+                description: "Guarde sus cambios para antes de desplegar el canal.",
+            });
+        }
         try {
-            const response = await axios.post(`/integration_channel/${identifier}/deploy`);
-            if (response?.data?.success) {
-                let newChann = response?.data?.data[0];
-                const newChannels = this.onChannelUpdate(newChann);
-                return this.setChannels(newChannels);
+            const response = await axios.post(`/integration/${integration}/channel/${identifier}/deploy`);
+            if (response?.data?.success && reloadChannels !== false) {
+                let newChann = response?.data?.data;
+                return this.channelStatusChanged(newChann);
             }
         } catch (ex) {
+            console.log(ex);
             return notification.error({
                 message: "Se ha producido un error",
                 description: "No se ha podido desplegar el canal, revise el log para mas información.",
@@ -79,15 +98,15 @@ class ChannelActions {
         }
     };
 
-    undeployChannel = async (identifier) => {
+    undeployChannel = async (integration, identifier, reloadChannels) => {
         try {
-            const response = await axios.post(`/integration_channel/${identifier}/undeploy`);
-            if (response?.data?.success) {
-                let newChann = response?.data?.data[0];
-                const newChannels = this.onChannelUpdate(newChann);
-                return this.setChannels(newChannels);
+            const response = await axios.post(`/integration/${integration}/channel/${identifier}/undeploy`);
+            if (response?.data?.success && reloadChannels !== false) {
+                let newChann = response?.data?.data;
+                return this.channelStatusChanged(newChann);
             }
         } catch (ex) {
+            console.log(ex);
             return notification.error({
                 message: "Se ha producido un error",
                 description: "No se ha podido replegar el canal, revise el log para mas información.",

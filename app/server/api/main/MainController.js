@@ -1,29 +1,37 @@
-import { App, BaseController, JsonResponse, Utils } from 'lisco';
-import path from 'path'
+import { App, BaseController, JsonResponse, Utils } from "lisco";
+import path from "path";
 
-const asyncHandler = require('express-async-handler')
+const expressAsyncHandler = require("express-async-handler");
 
 export class MainController extends BaseController {
-
     configure() {
+        this.router.get("/", (request, response, next) => {
+            this.index(request, response, next);
+        });
+        this.router.get("/front(/*)?", (request, response, next) => {
+            this.front(request, response, next);
+        });
+        this.router.get("/translation", (request, response, next) => {
+            this.translation(request, response, next);
+        });
+        this.router.get("/config", (request, response, next) => {
+            this.config(request, response, next);
+        });
+        this.router.get("/memory", (request, response, next) => {
+            this.memory(request, response, next);
+        });
 
-        this.router.get('/', (request, response, next) => { this.index(request, response, next); });
-        this.router.get('/front(/*)?', (request, response, next) => { this.front(request, response, next); });
-        this.router.get('/translation', (request, response, next) => { this.translation(request, response, next); });
-        this.router.get('/config', (request, response, next) => { this.config(request, response, next); });
-        this.router.get('/memory', (request, response, next) => { this.memory(request, response, next); });
-
-        this.router.get('/log/:log', this.loadLog.bind(this.loadLog));
+        this.router.get("/log/:log", this.loadLog.bind(this.loadLog));
 
         return this.router;
     }
 
     index(request, response) {
-        response.redirect("/front")
+        response.redirect("/front");
     }
     /**
      * Render para el index del frontend
-     * 
+     *
      * @param request
      * @param response
      */
@@ -37,10 +45,9 @@ export class MainController extends BaseController {
      *
      */
     translation(request, response) {
-
         var jsRes = new JsonResponse();
         jsRes.success = true;
-        jsRes.data = App.i18n.currentData[request.query.lang || process.env.DEFAULT_LANG];;
+        jsRes.data = App.i18n.currentData[request.query.lang || process.env.DEFAULT_LANG];
         response.json(jsRes);
     }
 
@@ -56,7 +63,7 @@ export class MainController extends BaseController {
         var used = process.memoryUsage();
         var data = {};
         for (var key in used) {
-            data[key] = parseFloat(Math.round(used[key] / 1024 / 1024 * 100) / 100) + " Mb";
+            data[key] = parseFloat(Math.round((used[key] / 1024 / 1024) * 100) / 100) + " Mb";
         }
 
         response.json(data);
@@ -64,29 +71,28 @@ export class MainController extends BaseController {
 
     /**
      * Muestra los logs de la aplicacion
-     * 
-     * @param {*} request 
-     * @param {*} response 
+     *
+     * @param {*} request
+     * @param {*} response
      */
     loadLog(request, response) {
-        var shell = require('shelljs');
+        var shell = require("shelljs");
 
         var jsRes = new JsonResponse();
         try {
-            var suffix = '';
+            var suffix = "";
             if (request.query.suffix) {
-                suffix = '-' + request.query.suffix;
+                suffix = "-" + request.query.suffix;
             }
 
-            var filepattern = 'logs/' + request.params.log + suffix + '.log';
+            var filepattern = "logs/" + request.params.log + suffix + ".log";
 
             //TODO use grep to make a search field
             // var searchResult = shell.grep('-i', request.params.searchFilter || "", filepattern);
-            var result = shell.tail({ '-n': 300 }, filepattern);
+            var result = shell.tail({ "-n": 300 }, filepattern);
 
             jsRes.success = true;
             jsRes.data = result;
-
         } catch (ex) {
             jsRes.success = false;
             jsRes.message = ex.toString();
@@ -94,6 +100,5 @@ export class MainController extends BaseController {
         }
 
         response.json(jsRes);
-
     }
 }

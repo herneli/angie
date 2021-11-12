@@ -4,7 +4,7 @@ import Handlebars from "handlebars";
 import axios from "axios";
 
 import * as queryString from "query-string";
-import * as xmlformat from "xml-formatter";
+import beautify from "xml-beautifier";
 
 Handlebars.registerHelper("safe", function (inputData) {
     return new Handlebars.SafeString(inputData);
@@ -17,7 +17,7 @@ class Transformer {
     nodeTypes = [];
 
     static async init() {
-        const response = await axios.get("/node_type");
+        const response = await axios.get("/configuration/model/node_type/data");
         this.nodeTypes = response?.data?.data;
     }
 
@@ -45,7 +45,7 @@ class Transformer {
                         label: node.custom_name,
                         type_id: node.type_id,
                     },
-                    type: nodeType.react_component_type,
+                    type: nodeType.data.react_component_type,
                     sourcePosition: "right",
                     targetPosition: "left",
                 });
@@ -114,8 +114,7 @@ class Transformer {
         });
 
         const camelStr = response?.data?.data;
-        console.log(camelStr);
-        return xmlformat(`<routes  xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`);
+        return beautify(camelStr);
     }
 
     static linkHandles = (conditions, links) => {

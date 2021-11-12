@@ -11,10 +11,8 @@ import { initKeycloak, getKeycloak } from "./config/keycloak-config";
 import { keycloakAdmin } from "./config/keycloak-admin-client-config";
 import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
-import { NodeTypeController } from "./app/server/api/node_type";
 import { IntegrationChannelController } from "./app/server/api/integration_channel";
 import { OrganizationController } from "./app/server/api/organization";
-import { CamelComponentController } from "./app/server/api/camel_component";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
 
@@ -40,11 +38,12 @@ module.exports = async () => {
             specOutputPath: __dirname + "/openapi.json",
             ignoredNodeEnvironments: ["production"],
             tags: [
-                "users",
+                "user",
                 "integration",
-                "camel_component",
                 "organization",
-                "node_type",
+                "config_model",
+                "script",
+                "configuration"
             ],
             specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE,
         });
@@ -84,9 +83,7 @@ module.exports = async () => {
         new MainController(),
         new IntegrationController(),
         new IntegrationChannelController(),
-        new NodeTypeController(),
         new OrganizationController(),
-        new CamelComponentController(),
         new ConfigurationController(),
         new ScriptController(),
     ];

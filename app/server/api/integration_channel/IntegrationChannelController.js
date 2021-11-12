@@ -2,47 +2,45 @@ import { BaseController, JsonResponse } from "lisco";
 import lodash from "lodash";
 import { IntegrationChannelService } from "./IntegrationChannelService";
 
-const asyncHandler = require("express-async-handler");
+import expressAsyncHandler from "express-async-handler";
 
 export class IntegrationChannelController extends BaseController {
     configure() {
-        super.configure("integration_channel", { service: IntegrationChannelService });
-
         this.router.post(
-            `/integration_channel/:id/deploy`,
-            asyncHandler((request, response, next) => {
+            `/integration/:id/channel/:channel/deploy`,
+            expressAsyncHandler((request, response, next) => {
                 this.deployChannel(request, response, next);
             })
         );
         this.router.post(
-            `/integration_channel/:id/undeploy`,
-            asyncHandler((request, response, next) => {
+            `/integration/:id/channel/:channel/undeploy`,
+            expressAsyncHandler((request, response, next) => {
                 this.undeployChannel(request, response, next);
             })
         );
         this.router.post(
-            `/integration_channel/:id/status`,
-            asyncHandler((request, response, next) => {
+            `/integration/:id/channel/:channel/status`,
+            expressAsyncHandler((request, response, next) => {
                 this.channelStatus(request, response, next);
             })
         );
 
         this.router.post(
-            `/integration_channel/:id/logs`,
-            asyncHandler((request, response, next) => {
+            `/integration/:id/channel/:channel/logs`,
+            expressAsyncHandler((request, response, next) => {
                 this.channelLogs(request, response, next);
             })
         );
         this.router.post(
-            `/integration_channel/:id/statistics`,
-            asyncHandler((request, response, next) => {
+            `/integration/:id/channel/:channel/statistics`,
+            expressAsyncHandler((request, response, next) => {
                 this.channelStats(request, response, next);
             })
         );
 
         this.router.post(
             `/integration_channel/to_camel`,
-            asyncHandler((request, response, next) => {
+            expressAsyncHandler((request, response, next) => {
                 this.convertToCamel(request, response, next);
             })
         );
@@ -53,9 +51,10 @@ export class IntegrationChannelController extends BaseController {
     async deployChannel(request, response, next) {
         try {
             let service = new IntegrationChannelService();
-            let identifier = request.params.id;
+            let integration = request.params.id;
+            let channel = request.params.channel;
 
-            let res = await service.deployChannel(identifier);
+            let res = await service.deployChannel(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -67,9 +66,10 @@ export class IntegrationChannelController extends BaseController {
     async undeployChannel(request, response, next) {
         try {
             let service = new IntegrationChannelService();
-            let identifier = request.params.id;
+            let integration = request.params.id;
+            let channel = request.params.channel;
 
-            let res = await service.undeployChannel(identifier);
+            let res = await service.undeployChannel(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -81,9 +81,10 @@ export class IntegrationChannelController extends BaseController {
     async channelStatus(request, response, next) {
         try {
             let service = new IntegrationChannelService();
-            let identifier = request.params.id;
+            let integration = request.params.id;
+            let channel = request.params.channel;
 
-            let res = await service.channelStatus(identifier);
+            let res = await service.channelStatus(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -95,9 +96,10 @@ export class IntegrationChannelController extends BaseController {
     async channelLogs(request, response, next) {
         try {
             let service = new IntegrationChannelService();
-            let identifier = request.params.id;
+            let integration = request.params.id;
+            let channel = request.params.channel;
 
-            let res = await service.channelLogs(identifier);
+            let res = await service.channelLogs(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -109,9 +111,10 @@ export class IntegrationChannelController extends BaseController {
     async channelStats(request, response, next) {
         try {
             let service = new IntegrationChannelService();
-            let identifier = request.params.id;
+            let integration = request.params.id;
+            let channel = request.params.channel;
 
-            let res = await service.channelStats(identifier);
+            let res = await service.channelStats(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());

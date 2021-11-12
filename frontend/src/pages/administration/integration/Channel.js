@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactFlow, { ReactFlowProvider, addEdge, removeElements, Controls, MiniMap, Background } from "react-flow-renderer";
+import ReactFlow, {
+    ReactFlowProvider,
+    addEdge,
+    removeElements,
+    Controls,
+    MiniMap,
+    Background,
+} from "react-flow-renderer";
 
 import Sidebar from "./Sidebar";
-import SwitchNode from "./custom_nodes/SwitchNode";
+import MultiTargetNode from "./custom_nodes/MultiTargetNode";
 import Transformer from "./Transformer";
 import usePrevious from "../../../common/usePrevious";
 
@@ -11,7 +18,7 @@ import { v4 as uuid_v4 } from "uuid";
 import "./Channel.css";
 
 const nodeTypes = {
-    switchNode: SwitchNode,
+    MultiTargetNode: MultiTargetNode,
 };
 
 const Channel = ({ channel, onChannelUpdate }) => {
@@ -55,7 +62,8 @@ const Channel = ({ channel, onChannelUpdate }) => {
      * @param {*} params
      */
     const onConnect = (params) => {
-        setElements((els) => addEdge({ ...params, label: "Conexión" /*TODO Parametrizar*/ }, els));
+        console.log(params);
+        setElements((els) => addEdge({ ...params, label: "" /*TODO Parametrizar*/ }, els));
     };
     /**
      * Metodo para eliminar un nodo del flujo
@@ -162,7 +170,9 @@ const Channel = ({ channel, onChannelUpdate }) => {
                     </div>
 
                     <Sidebar
-                        selectedType={(elements && elements.find && elements.find((e) => e.id === selectedTypeId)) || {}}
+                        selectedType={
+                            (elements && elements.find && elements.find((e) => e.id === selectedTypeId)) || {}
+                        }
                         editNodeVisible={editNodeVisible}
                         onEditCancel={() => setEditNodeVisible(false)}
                         onNodeUpdate={onNodeUpdate}

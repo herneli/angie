@@ -1,9 +1,10 @@
-import React from "react";
-import { Button, Card, Col, Row, Input, Table, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Card, Col, Row, Input, Table, message, Popconfirm } from "antd";
 import { createUseStyles } from "react-jss";
+import axios from "axios";
 import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
-import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload } from "@mdi/js";
+import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload, mdiPencil } from "@mdi/js";
 import Icon from "@mdi/react";
 const { Search } = Input;
 
@@ -24,7 +25,17 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData, onDeleteData, onEditData, onSaveData, onSaveDataBatch, onSearchTermChange }) {
+export default function ModelTable({
+    modelInfo,
+    modelData,
+    onAddData,
+    onDeleteData,
+    onEditData,
+    onSaveData,
+    total,
+    onSearchData,
+    onSaveDataBatch,
+}) {
     const calculateColumns = (info) => {
         if (info) {
             let columns = info.listFields.map((field) => ({
@@ -35,16 +46,40 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
                 title: T.translate("configuration.actions"),
                 key: "_actions",
                 fixed: "right",
+                width: 180,
                 render: (text, record) => (
                     <Row justify="center">
                         <Button
-                            className={classes.button}
-                            icon={<Icon path={mdiContentCopy} className={classes.icon} />}
+                            icon={<Icon path={mdiPencil} className={classes.icon} />}
                             type="text"
-                            onClick={(e) => handleOnDuplicateModel(e, record)}
+                            title={T.translate("common.button.edit")}
+                            onClick={(e) => handleOnRowClick(record)}
                         />
-                        <Button icon={<Icon path={mdiDownload} className={classes.icon} />} type="text" onClick={(e) => handleOnDownloadModel(e, record)} />
-                        <Button icon={<Icon path={mdiDelete} className={classes.icon} />} type="text" onClick={(e) => handleOnDeleteModel(e, record)} />
+
+                        <Popconfirm
+                            title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
+                            onConfirm={(e) => handleOnDuplicateModel(e, record)}>
+                            <Button
+                                icon={<Icon path={mdiContentCopy} className={classes.icon} />}
+                                type="text"
+                                title={T.translate("common.button.duplicate")}
+                            />
+                        </Popconfirm>
+                        <Button
+                            icon={<Icon path={mdiDownload} className={classes.icon} />}
+                            type="text"
+                            title={T.translate("common.button.download")}
+                            onClick={(e) => handleOnDownloadModel(e, record)}
+                        />
+                        <Popconfirm
+                            title={T.translate("configuration.do_you_want_to_delete_the_item")}
+                            onConfirm={(e) => handleOnDeleteModel(e, record)}>
+                            <Button
+                                icon={<Icon path={mdiDelete} className={classes.icon} />}
+                                type="text"
+                                title={T.translate("common.button.delete")}
+                            />
+                        </Popconfirm>
                     </Row>
                 ),
             });
@@ -53,7 +88,10 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
             return null;
         }
     };
-    // const [searchString, setSearchString] = useState();
+    const [importItems, setImportItems] = useState();
+    const [searchString, setSearchString] = useState();
+    const [pagination, setPagination] = useState({});
+
     const classes = useStyles();
 
     const columns = calculateColumns(modelInfo);
@@ -62,31 +100,18 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
         onEditData(rowData);
     };
 
-    const handleOnSearch = (e) => {
-        onSearchTermChange(e.target.value);
-    };
-
     const handleOnDeleteModel = (e, row) => {
-        e.stopPropagation();
-
-        const msg = T.translate("configuration.do_you_want_to_delete_the_item");
-        if (window.confirm(`${msg} [${row.code}]`)) {
-            onDeleteData(row);
-        }
+        onDeleteData(row);
     };
 
     const handleOnDuplicateModel = (e, row) => {
-        e.stopPropagation();
-        const msg = T.translate("configuration.do_you_want_to_duplicate_the_item");
-        if (window.confirm(`${msg} [${row.code}]`)) {
-            const newItem = {
-                ...row,
-                id: null,
-                code: `${row.code}_CLONED`,
-                name_: `${row.name} CLONED`,
-            };
-            onSaveData(newItem);
-        }
+        const newItem = {
+            ...row,
+            id: null,
+            code: `${row.code}_CLONED`,
+            name_: `${row.name} CLONED`,
+        };
+        onSaveData(newItem);
     };
 
     const downloadJsonFile = (data, filename) => {
@@ -126,7 +151,7 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
     };
 
     const handleOnDownloadModel = (e, row) => {
-        e.stopPropagation();
+        // e.stopPropagation();
 
         const data = [row];
         downloadJsonFile(data, `${modelInfo.name}-${row.code}.json`);
@@ -147,23 +172,36 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
             .catch((error) => message.error(T.translate("configuration.error_loading_json_file")));
     };
 
-    const filterData = () => {
-        return modelData.filter((item) => {
-            let included = false;
-            modelInfo.listFields.forEach((field) => {
-                if (item[field.field] && item[field.field].toString().toLowerCase().includes(searchTerm.toLowerCase())) {
-                    included = true;
-                }
-            });
-            return included;
-        });
+    const search = async (params, searchValue) => {
+        let filters = {};
+
+        if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
+            filters = {
+                "data::text": {
+                    type: "jsonb",
+                    value: searchValue,
+                },
+            };
+        }
+
+        if (params?.pageSize && params?.current) {
+            filters.limit = params.pageSize ? params.pageSize : 10;
+            filters.start = (params.current ? params.current - 1 : 0) * (params.pageSize ? params.pageSize : 10);
+        }
+
+        await onSearchData(modelInfo, filters);
     };
 
-    let filteredData = !searchTerm ? modelData : filterData();
-    filteredData = filteredData.sort((a, b) => {
-        const value = a.code === b.code ? 0 : a.code < b.code ? -1 : 1;
-        return value;
-    });
+    //ComponentDidMount
+    useEffect(() => {
+        search();
+    }, []);
+
+    useEffect(() => {
+        setPagination({ total: total, showSizeChanger: true });
+    }, [total]);
+
+    let filteredData = !searchString ? modelData : "";
 
     if (!columns) {
         return <h1>Loading...</h1>;
@@ -171,43 +209,54 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
 
     return (
         <div>
-            <Card className={classes.card}>
-                <Row>
-                    <Col flex={1}>
-                        <Search className={classes.search} value={searchTerm} onChange={handleOnSearch} enterButton />
-                    </Col>
-                    <Col flex={2}>
-                        <Row justify="end" gutter={10}>
-                            <Col>
-                                <Button icon={<Icon path={mdiUpload} className={classes.icon} />} type="text" onClick={handleUploadTable} />
-                            </Col>
-                            <Col>
-                                <Button
-                                    icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                    type="text"
-                                    onClick={() => handleDownloadTable(filteredData)}
-                                />
-                            </Col>
-                            <Col>
-                                <Button icon={<Icon path={mdiPlus} className={classes.icon} />} type="text" onClick={onAddData} />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                <Table
-                    columns={columns}
-                    dataSource={filteredData}
-                    rowKey={(record) => record.id.toString()}
-                    pagination={{ pageSize: 100 }}
-                    onRow={(record, index) => {
-                        return {
-                            onClick: () => handleOnRowClick(record),
-                        };
-                    }}
-                    bordered
-                    size="small"
-                />
-            </Card>
+            {importItems ? <h1>Imported items</h1> : null}
+
+            {/* <Card className={classes.card}> */}
+            <Row className={classes.card}>
+                <Col flex={1}>
+                    <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
+                </Col>
+                <Col flex={2}>
+                    <Row justify="end" gutter={10}>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiUpload} className={classes.icon} />}
+                                type="text"
+                                onClick={handleUploadTable}
+                            />
+                        </Col>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiDownload} className={classes.icon} />}
+                                type="text"
+                                onClick={() => handleDownloadTable(filteredData)}
+                            />
+                        </Col>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiPlus} className={classes.icon} />}
+                                type="text"
+                                onClick={onAddData}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={filteredData}
+                pagination={pagination}
+                rowKey={"id"}
+                onChange={search}
+                // onRow={(record, index) => {
+                //     return {
+                //         onClick: () => handleOnRowClick(record),
+                //     };
+                // }}
+                bordered
+                size="small"
+            />
+            {/* </Card> */}
         </div>
     );
 }

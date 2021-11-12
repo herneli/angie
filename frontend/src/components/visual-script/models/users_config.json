@@ -1,0 +1,69 @@
+{
+    "code": "users_config",
+    "name": "Usuarios",
+    "table": "users",
+    "id_mode":"uuid",
+    "documentType": "object",
+    "listFields": [
+        {
+            "title": "id",
+            "field": "id"
+        },
+        {
+            "title": "username",
+            "field": "username"
+        },
+        {
+            "title": "email",
+            "field": "email"
+        },
+        {
+            "title": "organization_id",
+            "field": "organization_id"
+        },
+        {
+            "title": "created_time_stamp",
+            "field": "created_time_stamp"
+        }
+    ],
+    "schema": {
+        "title": "Add User",
+        "type": "object",
+        "required": [
+            "username"
+        ],
+        "properties": {
+            "username": {
+                "type": "string"
+            },
+            "email": {
+                "type": "string"
+            },
+            "organization_id": {
+                "$ref": "#/organizations/list",
+                "title": "Tipo base"
+            }
+
+        }
+    },
+    "uiSchema": {
+        "id": {
+            "ui:columnSize": "3"
+        },
+        "username": {
+            "ui:columnSize": "3"
+        },
+
+        "email": {
+            "ui:columnSize": "3"
+        },
+        "organization_id": {
+            "ui:columnSize": "3"
+        },
+        "created_time_stamp": {
+            "ui:columnSize": "12"
+        }
+
+    
+    }
+}

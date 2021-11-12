@@ -4,10 +4,10 @@ import Form from "@rjsf/antd";
 import lodash from "lodash";
 import axios from "axios";
 
-import CodeMirrorExt from "../../../components/CodeMirrorExt";
 import { Button, Modal } from "antd";
 
 import T from "i18n-react";
+import formConfig from "../../../components/rjsf";
 
 const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) => {
     const formEl = useRef(null);
@@ -32,13 +32,23 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
                 id: selectedType.data.type_id,
             });
             setFormData(lodash.omit(selectedType.data, ["label", "type_id"]));
-            setFormSchema(type.json_data_schema);
-            setUiSchema(type.json_ui_schema);
+            try {
+                setFormSchema(type.data && JSON.parse(type.data.json_data_schema));
+            } catch (ex) {
+                console.error(ex);
+                setFormSchema({});
+            }
+            try {
+                setUiSchema(type.data && JSON.parse(type.data.json_ui_schema));
+            } catch (ex) {
+                console.error(ex);
+                setUiSchema({});
+            }
         }
     }, [selectedType, selectedType.data, selectedType.position]);
 
     const loadNodeTypes = async () => {
-        const response = await axios.get("/node_type");
+        const response = await axios.get("/configuration/model/node_type/data");
 
         if (response?.data?.success) {
             setNodeTypes(response?.data?.data);
@@ -64,32 +74,49 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
         onEditCancel();
     };
 
-    const widgets = {
-        TextareaWidget: CodeMirrorExt,
+    const drawGroupedTypes = (types) => {
+        const sorted = lodash.sortBy(types, "data.group");
+        const grouped = sorted && sorted.length !== 0 ? lodash.groupBy(sorted, "data.group") : {};
+
+        let result = [];
+        for (const group in grouped) {
+            let child = grouped[group];
+
+            result.push(
+                <div key={group}>
+                    <span>{group}</span>
+                    <hr />
+                    {child.map((type) => (
+                        <div
+                            key={type.id}
+                            className={"dndnode " + type.data.react_component_type}
+                            onDragStart={(event) =>
+                                onDragStart(event, type.data.react_component_type, {
+                                    label: type.data.name,
+                                    type_id: type.id,
+                                    ...JSON.parse(type.data.defaults),
+                                })
+                            }
+                            draggable>
+                            {type.data.name}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        return result;
     };
+
     return (
         <aside>
             <div className="description">{T.translate("integrations.channel.sidebar.title")}</div>
 
-            {nodeTypes.map((type) => (
-                <div
-                    key={type.id}
-                    className={"dndnode " + type.react_component_type}
-                    onDragStart={(event) =>
-                        onDragStart(event, type.react_component_type, {
-                            label: type.name,
-                            type_id: type.id,
-                            ...type.defaults,
-                        })
-                    }
-                    draggable>
-                    {type.name}
-                </div>
-            ))}
+            {drawGroupedTypes(nodeTypes)}
 
             <Modal
                 width={800}
-                title={(T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data))}
+                title={T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
                 visible={editNodeVisible}
                 onOk={modalOk}
                 onCancel={modalCancel}
@@ -115,10 +142,12 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
                 {formSchema && formData && (
                     <Form
                         ref={formEl}
+                        ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                        ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                         schema={formSchema}
                         formData={formData}
                         uiSchema={uiSchema}
-                        widgets={widgets}
+                        widgets={formConfig.widgets}
                         onChange={(e) => setFormData(e.formData)}
                         onSubmit={() => onFormSubmit()}
                         onError={(e) => console.log(e)}>

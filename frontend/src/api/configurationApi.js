@@ -24,9 +24,11 @@ export function getModelInfo(model) {
     });
 }
 
-export function getModelDataList(model) {
-    return axios.get("/configuration/model/" + model + "/data").then((response) => {
-        return response.data.data.map((modelData) => frontendModelData(modelData));
+export function getModelDataList(model, filters) {
+    return axios.get("/configuration/model/" + model + "/data", { params: { filters: filters } }).then((response) => {
+        let ObjectMap = response.data.data.map((modelData) => frontendModelData(modelData));
+        ObjectMap.total = response.data.total;
+        return ObjectMap;
     });
 }
 
@@ -50,6 +52,8 @@ export function saveModelData(model, extendedData, overwrite = false) {
             .put("/configuration/model/" + model + "/data/" + extendedData.id.toString(), data)
             .then((response) => frontendModelData(response.data.data));
     } else {
-        return axios.post("/configuration/model/" + model + "/data/", data).then((response) => frontendModelData(response.data.data));
+        return axios
+            .post("/configuration/model/" + model + "/data/", data)
+            .then((response) => frontendModelData(response.data.data));
     }
 }

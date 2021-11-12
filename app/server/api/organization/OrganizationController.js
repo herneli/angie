@@ -2,7 +2,7 @@ import { BaseController, JsonResponse } from 'lisco';
 import lodash from 'lodash';
 import { OrganizationService } from './OrganizationService';
 
-const asyncHandler = require('express-async-handler')
+const expressAsyncHandler = require('express-async-handler')
 
 export class OrganizationController extends BaseController {
 

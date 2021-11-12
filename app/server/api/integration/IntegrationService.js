@@ -1,5 +1,5 @@
-import { Utils, BaseService } from "lisco";
-import { IntegrationChannelDao, IntegrationChannelService } from "../integration_channel";
+import { App, BaseService } from "lisco";
+import { IntegrationChannelService } from "../integration_channel";
 import { IntegrationDao } from "./IntegrationDao";
 import lodash from "lodash";
 import moment from "moment";
@@ -14,42 +14,87 @@ export class IntegrationService extends BaseService {
         this.jumDao = new JumDao();
     }
 
-    /**
-     * Obtencion de un elemento mediante su identificador
-     */
     //Overwrite
     async loadById(id) {
-        const integration = await this.dao.loadById(id);
-        const { data: channels } = await this.channelService.getIntegrationChannels(integration[0].id);
-        integration[0].channels = channels;
+        const [integration] = await super.loadById(id);
 
-        return integration;
+        if (integration.data.channels) {
+            for (let channel of integration.data.channels) {
+                channel = await this.channelService.channelObjStatus(channel);
+            }
+        }
+        return [integration];
     }
 
-    async integrationsWithChannels(filters, start, limit) {
-        //Pagination
-        start = start || 0;
-        limit = limit || 1000; //Default limit
-        let response = {};
-        response.total = await this.dao.countFilteredData(filters, start, limit);
-        const { data: integrations } = await super.list(filters, start, limit);
+    //Overwrite
+    async save(body) {
+        let entity = {
+            name: body.name,
+            enabled: body.enabled,
+            organization_id: body.organization_id,
+            data: body,
+        };
 
-        for (let integration of integrations) {
-            const { data: channels } = await this.channelService.getIntegrationChannels(integration.id);
-            integration.channels = channels;
+        const res = await super.save(entity);
+        App.events.emit("integration_saved", { body });
+        return res;
+    }
+
+    //Overwrite
+    async update(id, body) {
+        let entity = {
+            id: id,
+            name: body.name,
+            enabled: body.enabled,
+            organization_id: body.organization_id,
+            data: body,
+        };
+        const res = await super.update(id, entity);
+        App.events.emit("integration_updated", { body });
+        return res;
+    }
+
+    //Overwrite
+    async delete(id) {
+        const res = await super.delete(id);
+        App.events.emit("integration_deleted", { body: { id } });
+        return res;
+    }
+
+    //Overwrite
+    async list(filters, start, limit) {
+        if (!filters) {
+            filters = {};
         }
-        response.data = integrations;
+        filters.sort = { field: "name", direction: "ascend" };
 
-        return response;
+        let { data, total } = await super.list(filters, start, limit);
+
+        for (const integration of data) {
+            if (integration.data.channels) {
+                for (let channel of integration.data.channels) {
+                    channel = await this.channelService.channelObjStatus(channel);
+                }
+            }
+        }
+
+        return { data, total };
     }
 
     async integrationChannelStatuses(identifier) {
-        const { data: channels } = await this.channelService.getIntegrationChannels(identifier);
+        const [integration] = await this.loadById(identifier);
+        if (!integration) {
+            throw "Integration does not exist";
+        }
 
         let response = {};
-        for (let channel of channels) {
-            const channStatus = await this.jumDao.getRouteStatus(channel.id);
-
+        for (let channel of integration.data.channels) {
+            let channStatus;
+            try {
+                channStatus = await this.jumDao.getRouteStatus(channel.id);
+            } catch (ex) {
+                console.error(ex);
+            }
             response[channel.id] = (channStatus && channStatus.status) || "UNDEPLOYED";
         }
 
@@ -57,9 +102,12 @@ export class IntegrationService extends BaseService {
     }
 
     async deployIntegration(identifier) {
-        const response = await this.channelService.getIntegrationChannels(identifier);
+        const [integration] = await this.loadById(identifier);
+        if (!integration) {
+            throw "Integration does not exist";
+        }
 
-        for (const channel of response.data) {
+        for (const channel of integration.data.channels) {
             try {
                 let camelRoute = await this.channelService.convertChannelToCamel(channel);
 
@@ -76,27 +124,17 @@ export class IntegrationService extends BaseService {
     }
 
     async undeployIntegration(identifier) {
-        const response = await this.channelService.getIntegrationChannels(identifier);
+        const [integration] = await this.loadById(identifier);
+        if (!integration) {
+            throw "Integration does not exist";
+        }
 
-        for (let channel of response.data) {
+        for (const channel of integration.data.channels) {
             const response = await this.jumDao.undeployRoute(channel.id);
             console.log(response);
             channel.status = "UNDEPLOYED";
         }
 
         return response;
-    }
-
-    async saveFullIntegration(integration) {
-        integration.last_updated = moment().toISOString();
-        await this.saveOrUpdate(lodash.pick(integration, ["id", "created_on", "last_updated", "name", "description", "organization_id"]));
-
-        for (let channel of integration.channels) {
-            await this.channelService.saveOrUpdate({ ...channel });
-        }
-    }
-
-    saveOrUpdate(elm) {
-        return this.dao.saveOrUpdate(elm);
     }
 }

@@ -20,19 +20,57 @@
       "get": {
         "summary": "/user",
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       },
       "post": {
         "summary": "/user",
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       }
     },
     "/user/list": {
       "post": {
         "summary": "/user/list",
-        "responses": {},
-        "tags": []
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {},
+                      "example": [
+                        null
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "string",
+                      "example": "0"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
       }
     },
     "/user/{id}": {
@@ -49,7 +87,9 @@
           }
         ],
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       },
       "put": {
         "summary": "/user/{id}",
@@ -64,7 +104,9 @@
           }
         ],
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       },
       "delete": {
         "summary": "/user/{id}",
@@ -79,7 +121,9 @@
           }
         ],
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       }
     },
     "/login": {
@@ -264,7 +308,28 @@
     "/importUsers": {
       "post": {
         "summary": "/importUsers",
-        "responses": {},
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Request failed with status code 403"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "users"
         ]
@@ -274,14 +339,18 @@
       "post": {
         "summary": "/saveUser",
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       }
     },
     "/deleteUser": {
       "post": {
         "summary": "/deleteUser",
         "responses": {},
-        "tags": []
+        "tags": [
+          "user"
+        ]
       }
     },
     "/": {
@@ -4430,7 +4499,57 @@
       },
       "post": {
         "summary": "/integration",
-        "responses": {},
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "new"
+                        }
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "insert into \"integration\" (\"code\", \"created_on\", \"data\", \"id\", \"last_updated\") values (DEFAULT, $1, $2, $3, $4) - column \"code\" of relation \"integration\" does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "integration"
         ]
@@ -4547,6 +4666,615 @@
         "responses": {},
         "tags": [
           "integration"
+        ]
+      }
+    },
+    "/integration/{id}/deploy": {
+      "post": {
+        "summary": "/integration/{id}/deploy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/undeploy": {
+      "post": {
+        "summary": "/integration/{id}/undeploy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channels/status": {
+      "get": {
+        "summary": "/integration/{id}/channels/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration/{id}/channels/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/deploy": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/deploy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/undeploy": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/undeploy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/status": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/logs": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/logs",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/statistics": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/statistics",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/to_camel": {
+      "post": {
+        "summary": "/integration_channel/to_camel",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "<routes  xmlns=\"http://camel.apache.org/schema/spring\"></routes>"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "configService.getModelDataList is not a function"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/organization": {
+      "get": {
+        "summary": "/organization",
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "post": {
+        "summary": "/organization",
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization/list": {
+      "post": {
+        "summary": "/organization/list",
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization/{id}": {
+      "get": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "put": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "delete": {
+        "summary": "/organization/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/configuration/model/{code}": {
+      "get": {
+        "summary": "/configuration/model/{code}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/configuration/model/{code}/data": {
+      "get": {
+        "summary": "/configuration/model/{code}/data",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "post": {
+        "summary": "/configuration/model/{code}/data",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/configuration/model/{code}/data/{id}": {
+      "get": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "put": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "delete": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/script": {
+      "get": {
+        "summary": "/script",
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/object/members": {
+      "post": {
+        "summary": "/script/object/members",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "properties": {
+                          "type": "array",
+                          "items": {},
+                          "example": [
+                            null
+                          ]
+                        },
+                        "methods": {
+                          "type": "array",
+                          "items": {},
+                          "example": [
+                            null
+                          ]
+                        }
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}": {
+      "get": {
+        "summary": "/script/code/{code}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      },
+      "post": {
+        "summary": "/script/code/{code}",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}/generate": {
+      "get": {
+        "summary": "/script/code/{code}/generate",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}/execute": {
+      "get": {
+        "summary": "/script/code/{code}/execute",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
         ]
       }
     },
@@ -4740,6 +5468,26 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "connect ECONNREFUSED 127.0.0.1:6100"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -4781,1348 +5529,6 @@
         ]
       }
     },
-    "/integration/{id}/deploy": {
-      "post": {
-        "summary": "/integration/{id}/deploy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration/{id}/undeploy": {
-      "post": {
-        "summary": "/integration/{id}/undeploy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration/{id}/channels/status": {
-      "get": {
-        "summary": "/integration/{id}/channels/status",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "post": {
-        "summary": "/integration/{id}/channels/status",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel": {
-      "get": {
-        "summary": "/integration_channel",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "post": {
-        "summary": "/integration_channel",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/list": {
-      "post": {
-        "summary": "/integration_channel/list",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}": {
-      "get": {
-        "summary": "/integration_channel/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "put": {
-        "summary": "/integration_channel/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "delete": {
-        "summary": "/integration_channel/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}/deploy": {
-      "post": {
-        "summary": "/integration_channel/{id}/deploy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}/undeploy": {
-      "post": {
-        "summary": "/integration_channel/{id}/undeploy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}/status": {
-      "post": {
-        "summary": "/integration_channel/{id}/status",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}/logs": {
-      "post": {
-        "summary": "/integration_channel/{id}/logs",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/{id}/statistics": {
-      "post": {
-        "summary": "/integration_channel/{id}/statistics",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_channel/to_camel": {
-      "post": {
-        "summary": "/integration_channel/to_camel",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "string",
-                      "example": "<routes  xmlns=\"http://camel.apache.org/schema/spring\"></routes>"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "total": {
-                      "type": "number",
-                      "example": 1
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/node_type": {
-      "get": {
-        "summary": "/node_type",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          },
-                          "node_type": {
-                            "type": "string"
-                          },
-                          "react_component_type": {
-                            "type": "string"
-                          },
-                          "camel_component_id": {
-                            "type": "string"
-                          },
-                          "plugin_id": {
-                            "nullable": true
-                          },
-                          "handles": {
-                            "type": "string"
-                          },
-                          "form_type": {
-                            "type": "string"
-                          },
-                          "form_type_plugin_id": {
-                            "nullable": true
-                          },
-                          "json_data_schema": {
-                            "type": "object",
-                            "properties": {
-                              "title": {
-                                "type": "string"
-                              },
-                              "description": {
-                                "type": "string"
-                              },
-                              "type": {
-                                "type": "string"
-                              },
-                              "required": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              "properties": {
-                                "type": "object",
-                                "properties": {
-                                  "hostname": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "port": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "query_params": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "additionalProperties": {
-                                        "type": "object",
-                                        "properties": {
-                                          "type": {
-                                            "type": "string"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "path": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "terser_path": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "handles": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "items": {
-                                        "type": "object",
-                                        "properties": {
-                                          "type": {
-                                            "type": "string"
-                                          },
-                                          "properties": {
-                                            "type": "object",
-                                            "properties": {
-                                              "condition": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "type": {
-                                                    "type": "string"
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "name": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "code": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "json_ui_schema": {
-                            "type": "object",
-                            "properties": {
-                              "code": {
-                                "type": "object",
-                                "properties": {
-                                  "ui:widget": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "defaults": {
-                            "type": "object",
-                            "properties": {
-                              "hostname": {
-                                "type": "string"
-                              },
-                              "port": {
-                                "type": "number"
-                              },
-                              "terser_path": {
-                                "type": "string"
-                              },
-                              "handles": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string"
-                                    },
-                                    "condition": {
-                                      "type": "string"
-                                    },
-                                    "to": {
-                                      "type": "string"
-                                    }
-                                  }
-                                }
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "code": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "name",
-                          "description",
-                          "node_type",
-                          "react_component_type",
-                          "camel_component_id",
-                          "plugin_id",
-                          "handles",
-                          "form_type",
-                          "form_type_plugin_id",
-                          "json_data_schema",
-                          "json_ui_schema",
-                          "defaults"
-                        ]
-                      },
-                      "example": [
-                        {
-                          "id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
-                          "name": "TCP-MLLP Input",
-                          "description": "Message Input via TCP-MLLP Connection",
-                          "node_type": "node",
-                          "react_component_type": "input",
-                          "camel_component_id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
-                          "plugin_id": null,
-                          "handles": "out",
-                          "form_type": "jsonschema",
-                          "form_type_plugin_id": null,
-                          "json_data_schema": {
-                            "title": "TCP-MLLP Input",
-                            "description": "MLLP tcp input node.",
-                            "type": "object",
-                            "required": [
-                              "hostname",
-                              "port"
-                            ],
-                            "properties": {
-                              "hostname": {
-                                "type": "string"
-                              },
-                              "port": {
-                                "type": "number"
-                              },
-                              "query_params": {
-                                "type": "object",
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "json_ui_schema": {},
-                          "defaults": {
-                            "hostname": "0.0.0.0",
-                            "port": 8888
-                          }
-                        }
-                      ]
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "total": {
-                      "type": "string",
-                      "example": "6"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "node_type"
-        ]
-      },
-      "post": {
-        "summary": "/node_type",
-        "responses": {},
-        "tags": [
-          "node_type"
-        ]
-      }
-    },
-    "/node_type/list": {
-      "post": {
-        "summary": "/node_type/list",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          },
-                          "node_type": {
-                            "type": "string"
-                          },
-                          "react_component_type": {
-                            "type": "string"
-                          },
-                          "camel_component_id": {
-                            "type": "string"
-                          },
-                          "plugin_id": {
-                            "nullable": true
-                          },
-                          "handles": {
-                            "type": "string"
-                          },
-                          "form_type": {
-                            "type": "string"
-                          },
-                          "form_type_plugin_id": {
-                            "nullable": true
-                          },
-                          "json_data_schema": {
-                            "type": "object",
-                            "properties": {
-                              "title": {
-                                "type": "string"
-                              },
-                              "description": {
-                                "type": "string"
-                              },
-                              "type": {
-                                "type": "string"
-                              },
-                              "required": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              "properties": {
-                                "type": "object",
-                                "properties": {
-                                  "hostname": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "port": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "query_params": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "additionalProperties": {
-                                        "type": "object",
-                                        "properties": {
-                                          "type": {
-                                            "type": "string"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "path": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "terser_path": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "handles": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "items": {
-                                        "type": "object",
-                                        "properties": {
-                                          "type": {
-                                            "type": "string"
-                                          },
-                                          "properties": {
-                                            "type": "object",
-                                            "properties": {
-                                              "condition": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "type": {
-                                                    "type": "string"
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "name": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  },
-                                  "code": {
-                                    "type": "object",
-                                    "properties": {
-                                      "type": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "json_ui_schema": {
-                            "type": "object",
-                            "properties": {
-                              "code": {
-                                "type": "object",
-                                "properties": {
-                                  "ui:widget": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "defaults": {
-                            "type": "object",
-                            "properties": {
-                              "hostname": {
-                                "type": "string"
-                              },
-                              "port": {
-                                "type": "number"
-                              },
-                              "terser_path": {
-                                "type": "string"
-                              },
-                              "handles": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string"
-                                    },
-                                    "condition": {
-                                      "type": "string"
-                                    },
-                                    "to": {
-                                      "type": "string"
-                                    }
-                                  }
-                                }
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "code": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "name",
-                          "description",
-                          "node_type",
-                          "react_component_type",
-                          "camel_component_id",
-                          "plugin_id",
-                          "handles",
-                          "form_type",
-                          "form_type_plugin_id",
-                          "json_data_schema",
-                          "json_ui_schema",
-                          "defaults"
-                        ]
-                      },
-                      "example": [
-                        {
-                          "id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
-                          "name": "TCP-MLLP Input",
-                          "description": "Message Input via TCP-MLLP Connection",
-                          "node_type": "node",
-                          "react_component_type": "input",
-                          "camel_component_id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
-                          "plugin_id": null,
-                          "handles": "{\"out\"}",
-                          "form_type": "jsonschema",
-                          "form_type_plugin_id": null,
-                          "json_data_schema": {
-                            "title": "TCP-MLLP Input",
-                            "description": "MLLP tcp input node.",
-                            "type": "object",
-                            "required": [
-                              "hostname",
-                              "port"
-                            ],
-                            "properties": {
-                              "hostname": {
-                                "type": "string"
-                              },
-                              "port": {
-                                "type": "number"
-                              },
-                              "query_params": {
-                                "type": "object",
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "json_ui_schema": {},
-                          "defaults": {
-                            "hostname": "0.0.0.0",
-                            "port": 8888
-                          }
-                        }
-                      ]
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "total": {
-                      "type": "string",
-                      "example": "6"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "node_type"
-        ]
-      }
-    },
-    "/node_type/{id}": {
-      "get": {
-        "summary": "/node_type/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "node_type"
-        ]
-      },
-      "put": {
-        "summary": "/node_type/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "node_type"
-        ]
-      },
-      "delete": {
-        "summary": "/node_type/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "node_type"
-        ]
-      }
-    },
-    "/organization": {
-      "get": {
-        "summary": "/organization",
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      },
-      "post": {
-        "summary": "/organization",
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      }
-    },
-    "/organization/list": {
-      "post": {
-        "summary": "/organization/list",
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      }
-    },
-    "/organization/{id}": {
-      "get": {
-        "summary": "/organization/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      },
-      "put": {
-        "summary": "/organization/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      },
-      "delete": {
-        "summary": "/organization/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "organization"
-        ]
-      }
-    },
-    "/camel_component": {
-      "get": {
-        "summary": "/camel_component",
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      },
-      "post": {
-        "summary": "/camel_component",
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      }
-    },
-    "/camel_component/list": {
-      "post": {
-        "summary": "/camel_component/list",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "camel_component"
-        ]
-      }
-    },
-    "/camel_component/{id}": {
-      "get": {
-        "summary": "/camel_component/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      },
-      "put": {
-        "summary": "/camel_component/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      },
-      "delete": {
-        "summary": "/camel_component/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "camel_component"
-        ]
-      }
-    },
-    "/configuration/model/{code}": {
-      "get": {
-        "summary": "/configuration/model/{code}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/configuration/model/{code}/data": {
-      "get": {
-        "summary": "/configuration/model/{code}/data",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      },
-      "post": {
-        "summary": "/configuration/model/{code}/data",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/configuration/model/{code}/data/{id}": {
-      "get": {
-        "summary": "/configuration/model/{code}/data/{id}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      },
-      "put": {
-        "summary": "/configuration/model/{code}/data/{id}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      },
-      "delete": {
-        "summary": "/configuration/model/{code}/data/{id}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/script": {
-      "get": {
-        "summary": "/script",
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/script/object/members": {
-      "post": {
-        "summary": "/script/object/members",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "properties": {
-                          "type": "array",
-                          "items": {},
-                          "example": [
-                            null
-                          ]
-                        },
-                        "methods": {
-                          "type": "array",
-                          "items": {},
-                          "example": [
-                            null
-                          ]
-                        }
-                      }
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": ""
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": []
-      }
-    },
-    "/script/code/{code}": {
-      "get": {
-        "summary": "/script/code/{code}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      },
-      "post": {
-        "summary": "/script/code/{code}",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/script/code/{code}/generate": {
-      "post": {
-        "summary": "/script/code/{code}/generate",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": []
-      }
-    },
     "/anonymous": {
       "get": {
         "summary": "/anonymous",
@@ -6149,84 +5555,6 @@
           }
         },
         "tags": []
-      }
-    },
-    "/integration_route": {
-      "get": {
-        "summary": "/integration_route",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "post": {
-        "summary": "/integration_route",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_route/list": {
-      "post": {
-        "summary": "/integration_route/list",
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
-    "/integration_route/{id}": {
-      "get": {
-        "summary": "/integration_route/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "put": {
-        "summary": "/integration_route/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "delete": {
-        "summary": "/integration_route/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
       }
     },
     "/front*": {
@@ -6338,77 +5666,6 @@
         },
         "tags": []
       }
-    },
-    "/ldap_host/list": {
-      "post": {
-        "summary": "/ldap_host/list",
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host/{id}": {
-      "get": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "put": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      },
-      "delete": {
-        "summary": "/ldap_host/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
-    },
-    "/ldap_host": {
-      "post": {
-        "summary": "/ldap_host",
-        "responses": {},
-        "tags": [
-          "ldap"
-        ]
-      }
     }
   },
   "tags": [
@@ -6422,18 +5679,27 @@
       "name": "integration"
     },
     {
-      "name": "camel_component"
-    },
-    {
       "name": "organization"
     },
     {
-      "name": "node_type"
+      "name": "script"
+    },
+    {
+      "name": "configuration"
     }
   ],
   "servers": [
     {
       "url": "http://localhost:3105"
     }
-  ]
+  ],
+  "components": {
+    "securitySchemes": {
+      "authorization": {
+        "name": "authorization",
+        "in": "header",
+        "type": "apiKey"
+      }
+    }
+  }
 }

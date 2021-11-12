@@ -11,75 +11,58 @@ class ModelAdmin extends Component {
         modelInfo: null,
         modelData: null,
         edit: null,
+        total: null,
         redirectTo: null,
-        searchTerm: "",
     };
 
     componentDidMount() {
+        this.search(this.props.model);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.model !== this.props.model) {
+            this.search(this.props.model);
+        }
+    }
+
+    search = (modelInfo, filters) => {
         api.getModelInfo(this.props.model)
-            .then((modelInfo) => {
-                api.getModelDataList(this.props.model).then((list) => {
+            .then((element) => {
+                api.getModelDataList(this.props.model, filters).then((list) => {
                     const modelDataDict = list.reduce((result, model) => {
                         result = { ...result, [model.id]: model };
                         return result;
                     }, {});
                     this.setState({
                         ...this.state,
-                        modelInfo: modelInfo,
+                        modelInfo: element,
                         modelData: modelDataDict,
+                        total: list.total,
                     });
                 });
             })
             .catch(errorHandler);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.model !== this.props.model) {
-            api.getModelInfo(this.props.model)
-                .then((modelInfo) => {
-                    api.getModelDataList(this.props.model).then((list) => {
-                        const modelDataDict = list.reduce((result, model) => {
-                            result = { ...result, [model.id]: model };
-                            return result;
-                        }, {});
-                        this.setState({
-                            ...this.state,
-                            modelInfo: modelInfo,
-                            modelData: modelDataDict,
-                        });
-                    });
-                })
-                .catch(errorHandler);
-        }
-    }
+    };
 
     handleOnClose = () => {
         this.setState({ redirectTo: "/" });
     };
 
-    handleSearchTermChange = (searchTerm) => {
-        this.setState({ ...this.state, searchTerm: searchTerm });
-    };
-
     handleOnDelete = (data) => {
         return api.deleteModelData(this.props.model, data.id).then((response) => {
-            const { [data.id]: _, ...rest } = this.state.modelData;
             this.setState({
-                modelData: { ...rest },
                 edit: null,
             });
+            this.search(this.props.model);
         });
     };
 
     setEditData = (data) => {
         return api.getModelData(this.props.model, data.id).then((model) => {
             this.setState({
-                modelData: {
-                    ...this.state.modelData,
-                    [model.id]: model,
-                },
                 edit: model,
             });
+            this.search(this.props.model);
         });
     };
 
@@ -87,13 +70,7 @@ class ModelAdmin extends Component {
         return api
             .saveModelData(this.props.model, formData, overwrite)
             .then((model) => {
-                this.setState({
-                    modelData: {
-                        ...this.state.modelData,
-                        [model.id]: model,
-                    },
-                    edit: null,
-                });
+                this.search(this.props.model);
             })
             .catch(errorHandler);
     };
@@ -134,14 +111,14 @@ class ModelAdmin extends Component {
             <ModelTable
                 modelInfo={this.state.modelInfo}
                 modelData={Object.values(this.state.modelData)}
-                searchTerm={this.state.searchTerm}
                 onAddData={this.addCreateData}
                 onChangeColumn={this.onChangeColumn}
                 onDeleteData={this.handleOnDelete}
                 onEditData={this.setEditData}
+                onSearchData={this.search}
                 onSaveData={this.handleOnSave}
+                total={this.state.total}
                 onSaveDataBatch={this.handleOnSaveBatch}
-                onSearchTermChange={this.handleSearchTermChange}
             />
         );
     }

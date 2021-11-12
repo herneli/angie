@@ -3,27 +3,43 @@ import { ScriptDao } from "./ScriptDao";
 import { KnexConnector } from "lisco";
 import { ScriptService } from "./ScriptService";
 
+import expressAsyncHandler from "express-async-handler";
 export class ScriptController extends BaseController {
     configure() {
-        this.router.get("/script", (req, res, next) => {
-            this.index(req, res, next);
-        });
+        this.router.get(
+            "/script",
+            expressAsyncHandler((req, res, next) => {
+                this.index(req, res, next);
+            })
+        );
 
-        this.router.post("/script/object/members", (req, res, next) => {
-            this.getObjectMembers(req, res, next);
-        });
+        this.router.post(
+            "/script/object/members",
+            expressAsyncHandler((req, res, next) => {
+                this.getObjectMembers(req, res, next);
+            })
+        );
 
-        this.router.get("/script/code/:code", (req, res, next) => {
-            this.getScript(req, res, next);
-        });
+        this.router.get(
+            "/script/code/:code",
+            expressAsyncHandler((req, res, next) => {
+                this.getScript(req, res, next);
+            })
+        );
 
-        this.router.post("/script/code/:code", (req, res, next) => {
-            this.saveScript(req, res, next);
-        });
+        this.router.post(
+            "/script/code/:code",
+            expressAsyncHandler((req, res, next) => {
+                this.saveScript(req, res, next);
+            })
+        );
 
-        this.router.get("/script/code/:code/generate", (req, res, next) => {
-            this.generateCode(req, res, next);
-        });
+        this.router.get(
+            "/script/code/:code/generate",
+            expressAsyncHandler((req, res, next) => {
+                this.generateCode(req, res, next);
+            })
+        );
 
         this.router.get("/script/code/:code/execute", (req, res, next) => {
             this.executeCode(req, res, next);
@@ -56,10 +72,7 @@ export class ScriptController extends BaseController {
 
     async saveScript(request, response) {
         let service = new ScriptService();
-        let script = await service.saveScript(
-            request.params.code,
-            request.body
-        );
+        let script = await service.saveScript(request.params.code, request.body);
         response.json(new JsonResponse(true, script));
     }
 
