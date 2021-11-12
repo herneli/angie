@@ -14,6 +14,11 @@ export default function ScriptForm(props) {
         ExpressionField: ExpressionField,
     };
 
+    const handleValidate = (formData, errors) => {
+        console.log(formData, errors);
+        return errors;
+    };
+
     let enhancedProps = {
         ...props,
         widgets: props.widgets
@@ -29,6 +34,7 @@ export default function ScriptForm(props) {
             {...enhancedProps}
             ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
             ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+            validate={handleValidate}
         />
     );
 }

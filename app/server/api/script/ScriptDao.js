@@ -38,14 +38,15 @@ export class ScriptDao extends BaseKnexDao {
                 [language, type.type, type.objectCode]
             );
         } else if (type.type === "array") {
-            methods = methods.whereRaw("data ->> 'language' = ? and " + "( data -> 'parentType' ->> 'type' = ?  or data -> 'parentType' ->> 'type' = '$any')", [
-                language,
-                type.type,
-            ]);
+            methods = methods.whereRaw(
+                "data ->> 'language' = ? and " +
+                    "( data -> 'parentType' ->> 'type' = ?  or data -> 'parentType' ->> 'type' = '$any')",
+                [language, type.type]
+            );
         } else {
             methods = methods.whereRaw(
                 "data ->> 'language' = ? and " +
-                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any'or data -> 'parentType' ->> 'type' = '$anyPrimitive')",
+                    "( data -> 'parentType' ->> 'type' = ? or data -> 'parentType' ->> 'type' = '$any' or data -> 'parentType' ->> 'type' = '$anyPrimitive')",
                 [language, type.type]
             );
         }
@@ -69,7 +70,7 @@ export class ScriptDao extends BaseKnexDao {
             .insert({
                 document_type: documentType,
                 code: code,
-                data: data,
+                data: { ...data, code: code },
             })
             .onConflict(["document_type", "code"])
             .merge()

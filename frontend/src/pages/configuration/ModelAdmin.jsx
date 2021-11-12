@@ -18,7 +18,7 @@ class ModelAdmin extends Component {
     componentDidMount() {
         api.getModelInfo(this.props.model)
             .then((modelInfo) => {
-                api.getModelDataList(this.props.model).then((list) => {
+                api.getModelDataList(this.props.model, this.props.fixedData).then((list) => {
                     const modelDataDict = list.reduce((result, model) => {
                         result = { ...result, [model.id]: model };
                         return result;
@@ -37,7 +37,7 @@ class ModelAdmin extends Component {
         if (prevProps.model !== this.props.model) {
             api.getModelInfo(this.props.model)
                 .then((modelInfo) => {
-                    api.getModelDataList(this.props.model).then((list) => {
+                    api.getModelDataList(this.props.model, this.props.fixedData).then((list) => {
                         const modelDataDict = list.reduce((result, model) => {
                             result = { ...result, [model.id]: model };
                             return result;
@@ -108,7 +108,8 @@ class ModelAdmin extends Component {
     };
 
     addCreateData = (e) => {
-        this.setState({ ...this.state, edit: {} });
+        let defaultData = this.props.fixedData || {};
+        this.setState({ ...this.state, edit: { ...defaultData } });
     };
 
     render() {
@@ -134,6 +135,7 @@ class ModelAdmin extends Component {
             <ModelTable
                 modelInfo={this.state.modelInfo}
                 modelData={Object.values(this.state.modelData)}
+                fixedData={this.props.fixedData}
                 searchTerm={this.state.searchTerm}
                 onAddData={this.addCreateData}
                 onChangeColumn={this.onChangeColumn}

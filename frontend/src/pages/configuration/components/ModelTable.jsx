@@ -24,7 +24,17 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData, onDeleteData, onEditData, onSaveData, onSaveDataBatch, onSearchTermChange }) {
+export default function ModelTable({
+    modelInfo,
+    modelData,
+    searchTerm,
+    onAddData,
+    onDeleteData,
+    onEditData,
+    onSaveData,
+    onSaveDataBatch,
+    onSearchTermChange,
+}) {
     const calculateColumns = (info) => {
         if (info) {
             let columns = info.listFields.map((field) => ({
@@ -43,8 +53,16 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
                             type="text"
                             onClick={(e) => handleOnDuplicateModel(e, record)}
                         />
-                        <Button icon={<Icon path={mdiDownload} className={classes.icon} />} type="text" onClick={(e) => handleOnDownloadModel(e, record)} />
-                        <Button icon={<Icon path={mdiDelete} className={classes.icon} />} type="text" onClick={(e) => handleOnDeleteModel(e, record)} />
+                        <Button
+                            icon={<Icon path={mdiDownload} className={classes.icon} />}
+                            type="text"
+                            onClick={(e) => handleOnDownloadModel(e, record)}
+                        />
+                        <Button
+                            icon={<Icon path={mdiDelete} className={classes.icon} />}
+                            type="text"
+                            onClick={(e) => handleOnDeleteModel(e, record)}
+                        />
                     </Row>
                 ),
             });
@@ -151,7 +169,10 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
         return modelData.filter((item) => {
             let included = false;
             modelInfo.listFields.forEach((field) => {
-                if (item[field.field] && item[field.field].toString().toLowerCase().includes(searchTerm.toLowerCase())) {
+                if (
+                    item[field.field] &&
+                    item[field.field].toString().toLowerCase().includes(searchTerm.toLowerCase())
+                ) {
                     included = true;
                 }
             });
@@ -179,7 +200,11 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
                     <Col flex={2}>
                         <Row justify="end" gutter={10}>
                             <Col>
-                                <Button icon={<Icon path={mdiUpload} className={classes.icon} />} type="text" onClick={handleUploadTable} />
+                                <Button
+                                    icon={<Icon path={mdiUpload} className={classes.icon} />}
+                                    type="text"
+                                    onClick={handleUploadTable}
+                                />
                             </Col>
                             <Col>
                                 <Button
@@ -189,7 +214,11 @@ export default function ModelTable({ modelInfo, modelData, searchTerm, onAddData
                                 />
                             </Col>
                             <Col>
-                                <Button icon={<Icon path={mdiPlus} className={classes.icon} />} type="text" onClick={onAddData} />
+                                <Button
+                                    icon={<Icon path={mdiPlus} className={classes.icon} />}
+                                    type="text"
+                                    onClick={onAddData}
+                                />
                             </Col>
                         </Row>
                     </Col>

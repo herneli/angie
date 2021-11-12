@@ -11,16 +11,24 @@ const convertToExpressionSchema = (schema, uiSchema, variables) => {
             expSchema.properties[paramKey] = {
                 title: schema.properties[paramKey].title || paramKey,
                 oneOf: [
-                    { ...schema.properties[paramKey], title: "" },
+                    {
+                        ...schema.properties[paramKey],
+                        title: "",
+                        // This lines is needed to ensure that "Expression object" is not considered a valid primary object
+                        additionalProperties: false,
+                    },
                     {
                         title: "Expresión",
                         type: "object",
                         properties: {
-                            $exp: {},
+                            $exp: {
+                                type: "array",
+                            },
                         },
                         required: ["$exp"],
                     },
                 ],
+                default: schema.properties[paramKey].type === "object" ? {} : null,
             };
             // expSchema.properties[paramKey].oneOf[0].title = "";
             uiSchema[paramKey] = {

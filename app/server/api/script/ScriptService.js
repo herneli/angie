@@ -10,12 +10,7 @@ export class ScriptService extends BaseService {
         super(ScriptDao);
     }
 
-    async getObjectMembers({
-        type,
-        language,
-        excludeProperties,
-        excludeMethods,
-    }) {
+    async getObjectMembers({ type, language, excludeProperties, excludeMethods }) {
         let properties = [];
         let methods = [];
 
@@ -62,7 +57,7 @@ export class ScriptService extends BaseService {
             return {
                 document_type: "script",
                 code: code,
-                data: await this.newScript("context_test_groovy"),
+                data: { ...(await this.newScript("context_test_groovy")), code: code },
             };
         } else {
             return script;

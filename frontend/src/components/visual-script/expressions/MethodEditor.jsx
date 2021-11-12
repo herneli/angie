@@ -14,12 +14,7 @@ const useStyles = createUseStyles({
         marginTop: "20px",
     },
 });
-export default function MethodEditor({
-    member,
-    variables,
-    onParametersEntered,
-    onCancel,
-}) {
+export default function MethodEditor({ member, variables, onParametersEntered, onCancel }) {
     const [formOptions, setFormOptions] = useState(null);
     const { manager } = useScriptContext();
     const classes = useStyles();
@@ -46,10 +41,8 @@ export default function MethodEditor({
             });
             Promise.all(paramConfigPromises).then((paramConfigs) => {
                 paramConfigs.forEach((paramConfig) => {
-                    newFormOptions.schema.properties[paramConfig.member.code] =
-                        paramConfig.schema;
-                    newFormOptions.uiSchema[paramConfig.member.code] =
-                        paramConfig.uiSchema;
+                    newFormOptions.schema.properties[paramConfig.member.code] = paramConfig.schema;
+                    newFormOptions.uiSchema[paramConfig.member.code] = paramConfig.uiSchema;
                 });
                 setFormOptions(newFormOptions);
             });
@@ -156,8 +149,7 @@ export default function MethodEditor({
                     properties: {},
                 };
                 members.properties.forEach(async (childMember) => {
-                    returnObject.properties[childMember.code] =
-                        await memberToSchema(childMember);
+                    returnObject.properties[childMember.code] = await memberToSchema(childMember);
                 });
                 return returnObject;
             default:
@@ -168,12 +160,11 @@ export default function MethodEditor({
     if (!formOptions) {
         return <></>;
     }
-    const { schema: expSchema, uiSchema: expUiSchema } =
-        convertToExpressionSchema(
-            formOptions.schema,
-            formOptions.uiSchema,
-            variables
-        );
+    const { schema: expSchema, uiSchema: expUiSchema } = convertToExpressionSchema(
+        formOptions.schema,
+        formOptions.uiSchema,
+        variables
+    );
 
     return (
         <Modal
@@ -183,20 +174,16 @@ export default function MethodEditor({
             footer={null}
             visible={true}
             onCancel={onCancel}
-            width={1000}
-        >
+            width={1000}>
             <div>
                 <ScriptForm
                     schema={expSchema}
                     uiSchema={expUiSchema}
                     onSubmit={handleOnSubmit}
-                    formData={member.params}
-                >
+                    formData={member.params}>
                     <div className={classes.formFooter}>
                         <Space>
-                            <Button onClick={handleCancel}>
-                                {T.translate("visual_script.cancel")}
-                            </Button>
+                            <Button onClick={handleCancel}>{T.translate("visual_script.cancel")}</Button>
                             <Button type="primary" htmlType="submit">
                                 {T.translate("visual_script.accept")}
                             </Button>

@@ -3,8 +3,12 @@ import ScriptManager from "./ScriptManager";
 import withStyles from "react-jss";
 import ScriptContextProvider from "./ScriptContext";
 import Statement from "./statements/Statement";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
+import ModelAdmin from "../../pages/configuration/ModelAdmin";
 const styles = {
+    dialogContent: {
+        marginRight: "10px",
+    },
     canvas: {
         position: "relative",
         backgroundColor: "white",
@@ -47,11 +51,7 @@ class VisualScript extends Component {
     }
 
     repaint = (refresh) => {
-        this.state.manager &&
-            this.state.manager.drawConnections(
-                this.state.script.mainStatement,
-                refresh
-            );
+        this.state.manager && this.state.manager.drawConnections(this.state.script.mainStatement, refresh);
     };
     handleResize = debounce(() => this.repaint(true), 10);
     handleOnChangeStatement = (statement) => {
@@ -69,26 +69,45 @@ class VisualScript extends Component {
         this.props.onExecuteCode && this.props.onExecuteCode(this.state.script);
     };
 
+    handleOnCustomObjects = () => {
+        this.setState({ ...this.state, editCustomObjects: true });
+    };
+
+    handleOnCancelCustomObjects = () => {
+        this.setState({ ...this.state, editCustomObjects: false });
+    };
+
     render() {
         return (
-            <div>
-                <div>
-                    <Button onClick={this.handleOnSave}>Guardar</Button>
-                    <Button onClick={this.handleOnExecuteCode}>
-                        Ejecutar código
-                    </Button>
-                </div>
-                <div id="script-canvas" className={this.props.classes.canvas}>
-                    {this.state.manager ? (
-                        <ScriptContextProvider manager={this.state.manager}>
-                            <Statement
-                                statement={this.state.script.mainStatement}
-                                onChange={this.handleOnChangeStatement}
+            <>
+                {this.state.editCustomObjects ? (
+                    <Modal visible={true} width="1000px" onCancel={this.handleOnCancelCustomObjects} footer={false}>
+                        <div className={this.props.classes.dialogContent}>
+                            <ModelAdmin
+                                model="script_object"
+                                fixedData={{ customGroup: "script." + this.state.script.code }}
                             />
-                        </ScriptContextProvider>
-                    ) : null}
+                        </div>
+                    </Modal>
+                ) : null}
+                <div>
+                    <div>
+                        <Button onClick={this.handleOnSave}>Guardar</Button>
+                        <Button onClick={this.handleOnExecuteCode}>Ejecutar código</Button>
+                        <Button onClick={this.handleOnCustomObjects}>Custom objects</Button>
+                    </div>
+                    <div id="script-canvas" className={this.props.classes.canvas}>
+                        {this.state.manager ? (
+                            <ScriptContextProvider manager={this.state.manager}>
+                                <Statement
+                                    statement={this.state.script.mainStatement}
+                                    onChange={this.handleOnChangeStatement}
+                                />
+                            </ScriptContextProvider>
+                        ) : null}
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

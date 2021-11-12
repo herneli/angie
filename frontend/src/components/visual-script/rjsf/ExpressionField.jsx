@@ -12,13 +12,7 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function ExpressionField({
-    name,
-    formData,
-    schema,
-    uiSchema,
-    onChange,
-}) {
+export default function ExpressionField({ name, formData, schema, uiSchema, onChange }) {
     const { manager } = useScriptContext();
     const classes = useStyles();
 
@@ -31,11 +25,7 @@ export default function ExpressionField({
 
     if (!hideLabel) {
         return (
-            <Form.Item
-                label={schema.title || name}
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
+            <Form.Item label={schema.title || name} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
                 <div className={classes.expressionWrapper}>
                     <Expression
                         expression={expression}

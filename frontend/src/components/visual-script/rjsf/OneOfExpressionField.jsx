@@ -48,10 +48,7 @@ class OneOfExpressionField extends Component {
             !deepEquals(this.props.formData, prevProps.formData) &&
             this.props.idSchema.$id === prevProps.idSchema.$id
         ) {
-            const matchingOption = this.getMatchingOption(
-                this.props.formData,
-                this.props.options
-            );
+            const matchingOption = this.getMatchingOption(this.props.formData, this.props.options);
 
             if (!prevState || matchingOption === this.state.selectedOption) {
                 return;
@@ -79,19 +76,12 @@ class OneOfExpressionField extends Component {
         const selectedOption = parseInt(option, 10);
         const { formData, onChange, options, registry } = this.props;
         const { rootSchema } = registry;
-        const newOption = retrieveSchema(
-            options[selectedOption],
-            rootSchema,
-            formData
-        );
+        const newOption = retrieveSchema(options[selectedOption], rootSchema, formData);
 
         // If the new option is of type object and the current data is an object,
         // discard properties added using the old option.
         let newFormData = undefined;
-        if (
-            guessType(formData) === "object" &&
-            (newOption.type === "object" || newOption.properties)
-        ) {
+        if (guessType(formData) === "object" && (newOption.type === "object" || newOption.properties)) {
             newFormData = Object.assign({}, formData);
 
             const optionsToDiscard = options.slice();
@@ -109,17 +99,15 @@ class OneOfExpressionField extends Component {
             }
         }
         // Call getDefaultFormState to make sure defaults are populated on change.
-        onChange(
-            getDefaultFormState(
-                options[selectedOption],
-                newFormData,
-                rootSchema
-            )
-        );
+        this.handleOnChange(getDefaultFormState(options[selectedOption], newFormData, rootSchema));
 
         this.setState({
             selectedOption: parseInt(option, 10),
         });
+    };
+
+    handleOnChange = (value) => {
+        this.props.onChange(value);
     };
 
     render() {
@@ -153,9 +141,7 @@ class OneOfExpressionField extends Component {
         if (option) {
             // If the subschema doesn't declare a type, infer the type from the
             // parent schema
-            optionSchema = option.type
-                ? option
-                : Object.assign({}, option, { type: baseType });
+            optionSchema = option.type ? option : Object.assign({}, option, { type: baseType });
         }
 
         // const enumOptions = options.map((option, index) => ({
@@ -165,11 +151,7 @@ class OneOfExpressionField extends Component {
 
         const enumOptions = options.map((option, index) => {
             let iconPath;
-            if (
-                option.type === "object" &&
-                option.properties &&
-                "$exp" in option.properties
-            ) {
+            if (option.type === "object" && option.properties && "$exp" in option.properties) {
                 iconPath = getTypeIcon("expression");
             } else {
                 let type = option.type;
@@ -187,11 +169,7 @@ class OneOfExpressionField extends Component {
 
         let optionsUiSchema = { ...(uiSchema || {}) };
 
-        if (
-            optionSchema.type === "object" &&
-            optionSchema.properties &&
-            "$exp" in optionSchema.properties
-        ) {
+        if (optionSchema.type === "object" && optionSchema.properties && "$exp" in optionSchema.properties) {
             optionsUiSchema = {
                 ...optionsUiSchema,
                 "ui:field": "ExpressionField",
@@ -209,7 +187,7 @@ class OneOfExpressionField extends Component {
                             idSchema={idSchema}
                             idPrefix={idPrefix}
                             formData={formData}
-                            onChange={onChange}
+                            onChange={this.handleOnChange}
                             onBlur={onBlur}
                             onFocus={onFocus}
                             registry={registry}
@@ -218,19 +196,11 @@ class OneOfExpressionField extends Component {
                     )}
                 </div>
                 <div className={classes.selector}>
-                    <Select
-                        onSelect={this.onOptionChange}
-                        value={selectedOption}
-                        bordered={false}
-                    >
+                    <Select onSelect={this.onOptionChange} value={selectedOption} bordered={false}>
                         {enumOptions.map((enumOption) => {
                             return (
                                 <Select.Option value={enumOption.value}>
-                                    <Icon
-                                        className={classes.selectorIcon}
-                                        path={enumOption.iconPath}
-                                        size="18px"
-                                    />
+                                    <Icon className={classes.selectorIcon} path={enumOption.iconPath} size="18px" />
                                 </Select.Option>
                             );
                         })}

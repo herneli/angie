@@ -10,8 +10,8 @@ export class ConfigurationService extends BaseService {
         return this.dao.getModel(code);
     }
 
-    getModelDataList(code) {
-        return this.dao.getModelDataList(code);
+    getModelDataList(code, filter) {
+        return this.dao.getModelDataList(code, filter);
     }
 
     getModelData(code, id) {

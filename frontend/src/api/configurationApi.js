@@ -24,8 +24,8 @@ export function getModelInfo(model) {
     });
 }
 
-export function getModelDataList(model) {
-    return axios.get("/configuration/model/" + model + "/data").then((response) => {
+export function getModelDataList(model, filter) {
+    return axios.get("/configuration/model/" + model + "/data", { params: filter }).then((response) => {
         return response.data.data.map((modelData) => frontendModelData(modelData));
     });
 }
@@ -50,6 +50,8 @@ export function saveModelData(model, extendedData, overwrite = false) {
             .put("/configuration/model/" + model + "/data/" + extendedData.id.toString(), data)
             .then((response) => frontendModelData(response.data.data));
     } else {
-        return axios.post("/configuration/model/" + model + "/data/", data).then((response) => frontendModelData(response.data.data));
+        return axios
+            .post("/configuration/model/" + model + "/data/", data)
+            .then((response) => frontendModelData(response.data.data));
     }
 }
