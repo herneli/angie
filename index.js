@@ -94,6 +94,7 @@ module.exports = async () => {
             frameguard: {
                 action: "sameorigin",
             },
+            hsts: false,
             contentSecurityPolicy: {
                 useDefaults: true,
                 directives: {
