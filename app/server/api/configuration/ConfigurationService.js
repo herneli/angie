@@ -50,7 +50,7 @@ export class ConfigurationService extends BaseService {
         if (!filters) {
             filters = {};
         }
-        filters.sort = { field: "code", direction: "ascend" };
+        // filters.sort = { field: "code", direction: "ascend" };
         filters.document_type = model.data.documentType;
 
         const res = await super.list(filters, start, limit);
