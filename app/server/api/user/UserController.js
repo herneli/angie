@@ -1,17 +1,17 @@
 import { App, BaseController, JsonResponse } from 'lisco';
 import { UserService } from './UserService';
 
-const asyncHandler = require("express-async-handler");
+import expressAsyncHandler from "express-async-handler";
 
 export class UserController extends BaseController {
     configure() {
         super.configure('user', { service: UserService });
 
-        this.router.get('/login', App.keycloak.protect("realm:default-roles-angie"), asyncHandler((request, response, next) => { this.login(request, response, next); }));
-        this.router.get('/logout', asyncHandler((request, response, next) => { this.logout(request, response, next); }));
-        this.router.post('/importUsers', asyncHandler((res, req, next) => { this.importUsers(res, req, next); }));
-        this.router.post('/saveUser', asyncHandler((res, req, next) => { this.saveUsers(res, req, next); }));
-        this.router.post('/deleteUser', asyncHandler((res, req, next) => { this.deleteUser(res, req, next); }));
+        this.router.get('/login', App.keycloak.protect("realm:default-roles-angie"), expressAsyncHandler((request, response, next) => { this.login(request, response, next); }));
+        this.router.get('/logout', expressAsyncHandler((request, response, next) => { this.logout(request, response, next); }));
+        this.router.post('/importUsers', expressAsyncHandler((res, req, next) => { this.importUsers(res, req, next); }));
+        this.router.post('/saveUser', expressAsyncHandler((res, req, next) => { this.saveUsers(res, req, next); }));
+        this.router.post('/deleteUser', expressAsyncHandler((res, req, next) => { this.deleteUser(res, req, next); }));
 
         return this.router;
     }
@@ -71,9 +71,21 @@ export class UserController extends BaseController {
 
                 let exists = await bServ.loadById(e.id)
                 if(exists.length > 0){
-                    let update = await bServ.update(e.id,e)
+                    let r = {
+                        id: e.id,
+                        document_type : "object",
+                        code: e.username,
+                        data: e
+                    }
+                    let update = await bServ.update(r.id,r)
                 }else{
-                    usersTosave.push(e)
+                    let r = {
+                        id: e.id,
+                        document_type : "object",
+                        code: e.username,
+                        data: e
+                    }
+                    usersTosave.push(r)
                 }
             }
             

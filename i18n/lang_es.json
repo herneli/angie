@@ -83,6 +83,8 @@
             "description": "Descripción",
             "status": "Estado",
             "message_count": "Mensajes",
+            "last_updated": "Ult. Modificación",
+            "version": "Versión",
             "actions": "Acciones"
         },
         "channel": {
@@ -97,7 +99,7 @@
             "stoped": "Detenido",
             "undeployed": "Sin Desplegar",
             "sidebar": {
-                "title": "Paleta Nodos"
+                "title": "*Paleta Nodos*"
             },
             "node": {
                 "settings_title": "Opciónes Nodo: {label}"

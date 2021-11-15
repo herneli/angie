@@ -35,6 +35,7 @@ export default function ModelEditor({
 
     const handleOnSave = (event) => {
         onSave(event.formData);
+        onCancel();
     };
     return (
         <div className={classes.tableWrapper}>

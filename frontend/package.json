@@ -9,7 +9,6 @@
         "@craco/craco": "^6.3.0",
         "@jsplumb/browser-ui": "^5.0.0-RC43",
         "@jsplumb/connector-flowchart": "^5.0.0-RC43",
-        "@leifandersen/react-codemirror2": "^7.2.1",
         "@mdi/js": "^6.2.95",
         "@mdi/react": "^1.5.0",
         "@react-keycloak/web": "^3.4.0",
@@ -18,9 +17,9 @@
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^12.8.3",
+        "ace-builds": "^1.4.13",
         "antd": "^4.16.13",
         "axios-concurrency": "^1.0.4",
-        "codemirror": "^5.63.1",
         "craco-less": "^1.20.0",
         "handlebars": "^4.7.7",
         "i18n-react": "^0.7.0",
@@ -30,6 +29,7 @@
         "lodash": "^4.17.21",
         "query-string": "^7.0.1",
         "react": "^17.0.2",
+        "react-ace": "^9.5.0",
         "react-dom": "^17.0.2",
         "react-drag-listview": "^0.1.8",
         "react-flow-renderer": "^9.6.7",
@@ -40,11 +40,11 @@
         "uuid": "^8.3.2",
         "uuidv4": "^6.2.12",
         "web-vitals": "^1.1.2",
-        "xml-formatter": "^2.4.1"
+        "xml-beautifier": "^0.5.0"
     },
     "scripts": {
         "start": "craco start",
-        "build": "cross-env INLINE_RUNTIME_CHUNK=false craco  build",
+        "build": "cross-env GENERATE_SOURCEMAP=false INLINE_RUNTIME_CHUNK=false craco  build",
         "test": "craco test",
         "eject": "react-scripts eject"
     },

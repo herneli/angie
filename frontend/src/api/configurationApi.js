@@ -24,9 +24,11 @@ export function getModelInfo(model) {
     });
 }
 
-export function getModelDataList(model, filter) {
-    return axios.get("/configuration/model/" + model + "/data", { params: filter }).then((response) => {
-        return response.data.data.map((modelData) => frontendModelData(modelData));
+export function getModelDataList(model, filters) {
+    return axios.get("/configuration/model/" + model + "/data", { params: { filters: filters } }).then((response) => {
+        let ObjectMap = response.data.data.map((modelData) => frontendModelData(modelData));
+        ObjectMap.total = response.data.total;
+        return ObjectMap;
     });
 }
 

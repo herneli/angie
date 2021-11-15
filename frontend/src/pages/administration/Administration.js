@@ -6,9 +6,7 @@ import SubMenu from "./AdminSubMenu";
 
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import Script from "../../pages/script/Script";
-import CamelComponent from "./camel_component/CamelComponent";
-import NodeType from "./node_type/NodeType";
-import UsersConfig from "../Users/UsersConfig";
+import UsersConfig from "./Users/UsersConfig";
 import Integration from "./integration/Integration";
 import Integrations from "./integration/Integrations";
 // import OrganizationConfig from "./organization/OrganizationConfig";
@@ -51,15 +49,17 @@ const Administration = ({ app }) => {
                             )}
                         /> */}
 
-                        <Route
-                            exact
+                        <PrivateRoute
+                            roles={["default-roles-angie"]}
                             path="/admin/node_type"
-                            render={({ match }) => <NodeType match={match} {...defaultProps} />}
+                            component={() => <ModelAdmin model="node_type" />}
+                            {...defaultProps}
                         />
-                        <Route
-                            exact
+                        <PrivateRoute
+                            roles={["default-roles-angie"]}
                             path="/admin/camel_component"
-                            render={({ match }) => <CamelComponent match={match} {...defaultProps} />}
+                            component={() => <ModelAdmin model="camel_component" />}
+                            {...defaultProps}
                         />
 
                         <PrivateRoute

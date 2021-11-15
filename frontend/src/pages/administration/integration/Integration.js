@@ -4,13 +4,22 @@ import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
 import { Button, Modal, notification, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
 
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/mode-xml";
+import "ace-builds/src-noconflict/theme-github";
+
 import lodash from "lodash";
 import axios from "axios";
+import moment from "moment";
 
 import Channel from "./Channel";
 
 import Transformer from "./Transformer";
 import ChannelActions from "./ChannelActions";
+
+import formConfig from "../../../components/rjsf";
 import Icon from "@mdi/react";
 import {
     mdiCancel,
@@ -24,6 +33,7 @@ import {
     mdiCheckOutline,
     mdiStopCircle,
     mdiPlayCircle,
+    mdiBug,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -36,14 +46,24 @@ const integrationFormSchema = {
         required: ["name", "description"],
         properties: {
             name: {
+                title: "Nombre",
                 type: "string",
             },
+            enabled: {
+                title: "Activo",
+                type: "boolean",
+                enum: [true, false],
+                enumNames: ["Si", "No"],
+            },
             description: {
+                title: "Descripción",
                 type: "string",
             },
         },
     },
     uiSchema: {
+        name: { "ui:columnSize": 8 },
+        enabled: { "ui:columnSize": 4, "ui:widget": "select" },
         description: { "ui:widget": "textarea" },
     },
 };
@@ -98,7 +118,7 @@ const Integration = () => {
      */
     useEffect(() => {
         channelActions = new ChannelActions(channels, pendingChanges, setChannels, setActiveTab, onChannelUpdate);
-    }, [channels, pendingChanges]);
+    }, [currentRecord, channels, pendingChanges]);
 
     /**
      * Si cambia la integracion actual cargar la lista de canales
@@ -140,7 +160,7 @@ const Integration = () => {
             const response = await axios.get("/integration/" + identifier);
 
             if (response?.data?.data) {
-                let integration = response.data.data[0];
+                let { data: integration } = response.data.data[0];
                 setCurrentRecord(integration);
                 setEditHistory([{ ...integration }]);
                 setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
@@ -160,7 +180,7 @@ const Integration = () => {
      */
     const loadChannelStatus = async function (integration) {
         try {
-            if (!integration) {
+            if (!integration || integration.id === "new") {
                 return console.log("No Integration?");
             }
             const response = await axios.get(`/integration/${integration.id}/channels/status`);
@@ -188,7 +208,7 @@ const Integration = () => {
      */
     const onTabEdit = (targetKey, action) => {
         if (action === "add") {
-            return channelActions.add(currentRecord.id);
+            return channelActions.add();
         }
         if (action === "remove") {
             return channelActions.remove(targetKey, activeTab);
@@ -213,9 +233,9 @@ const Integration = () => {
         console.log("Notifying update");
         setPendingChanges(true);
 
-        setCurrentHistoryIndex(currentHistoryIndex + 1);
-
         setEditHistory([...editHistory.slice(0, currentHistoryIndex + 1), { ...newIntegration }]);
+
+        setCurrentHistoryIndex(currentHistoryIndex + 1);
     };
 
     /**
@@ -223,7 +243,11 @@ const Integration = () => {
      */
     const saveIntegration = async () => {
         try {
-            const response = await axios.post("/integration/full/", currentRecord);
+            const method = currentRecord.id !== "new" ? "put" : "post";
+            const response = await axios[method](
+                "/integration" + (currentRecord.id !== "new" ? `/${currentRecord.id}` : ""),
+                currentRecord
+            );
 
             if (response?.data?.success) {
                 setPendingChanges(false);
@@ -251,13 +275,23 @@ const Integration = () => {
      * @param {*} channel
      * @returns
      */
-    const onChannelUpdate = (channel) => {
-        let newChannels = channels.map((chn) => {
-            if (chn.id === channel.id) {
-                chn = channel;
-            }
-            return chn;
-        });
+    const onChannelUpdate = (channel, action) => {
+        let newChannels = [...channels];
+        if (action === "add") {
+            newChannels.push(channel);
+        } else if (action === "remove") {
+            newChannels = channels.filter((chn) => chn.id !== channel.id);
+        } else {
+            newChannels = channels.map((chn) => {
+                if (chn.id === channel.id) {
+                    channel.last_updated = moment().toISOString();
+                    channel.version += 1; //TODO mejorar?
+                    chn = channel;
+                }
+                return chn;
+            });
+        }
+
         const newIntegration = {
             ...currentRecord,
             channels: newChannels,
@@ -294,29 +328,55 @@ const Integration = () => {
 
         if (activeChannel.status === "STARTED" && activeChannel.enabled) {
             buttons.push(
-                <Button
+                <Popconfirm
                     key="undeploy"
-                    onClick={() => channelActions.undeployChannel(activeTab)}
-                    icon={<Icon path={mdiStopCircle} size={0.6} color="red" title={T.translate("integrations.channel.button.undeploy")} />}
-                />
+                    title={T.translate("common.question")}
+                    onConfirm={() => channelActions.undeployChannel(currentRecord.id, activeTab, true)}>
+                    <Button
+                        icon={
+                            <Icon
+                                path={mdiStopCircle}
+                                size={0.6}
+                                color="red"
+                                title={T.translate("integrations.channel.button.undeploy")}
+                            />
+                        }
+                    />
+                </Popconfirm>
             );
         } else if (activeChannel.enabled) {
             buttons.push(
                 <Button
                     key="deploy"
-                    onClick={() => channelActions.deployChannel(activeTab)}
-                    icon={<Icon path={mdiPlayCircle} color="green" size={0.6} title={T.translate("integrations.channel.button.deploy")} />}
+                    onClick={() => channelActions.deployChannel(currentRecord.id, activeTab, true)}
+                    icon={
+                        <Icon
+                            path={mdiPlayCircle}
+                            color="green"
+                            size={0.6}
+                            title={T.translate("integrations.channel.button.deploy")}
+                        />
+                    }
                 />
             );
         }
 
         if (activeChannel.enabled) {
             buttons.push(
-                <Button
+                <Popconfirm
                     key="disable"
-                    onClick={() => channelActions.toggleEnabled(activeTab)}
-                    icon={<Icon path={mdiCloseCircleOutline} size={0.6} title={T.translate("common.button.disable")} />}
-                />
+                    title={T.translate("common.question")}
+                    onConfirm={() => channelActions.toggleEnabled(activeTab)}>
+                    <Button
+                        icon={
+                            <Icon
+                                path={mdiCloseCircleOutline}
+                                size={0.6}
+                                title={T.translate("common.button.disable")}
+                            />
+                        }
+                    />
+                </Popconfirm>
             );
         } else {
             buttons.push(
@@ -328,8 +388,17 @@ const Integration = () => {
             );
         }
         return [
+            <Button
+                key="debug"
+                onClick={() => showChannelDebug()}
+                icon={<Icon path={mdiBug} size={0.6} title={T.translate("common.button.debug")} />}
+            />,
             ...buttons,
-            <Button key="edit" onClick={() => startEditingTab()} icon={<Icon path={mdiPencil} size={0.6} title={T.translate("common.button.edit")} />} />,
+            <Button
+                key="edit"
+                onClick={() => startEditingTab()}
+                icon={<Icon path={mdiPencil} size={0.6} title={T.translate("common.button.edit")} />}
+            />,
             <Button
                 key="undo"
                 disabled={!editHistory[currentHistoryIndex - 1]}
@@ -346,13 +415,59 @@ const Integration = () => {
     };
 
     /**
+     * Muestra la ventana de debug
+     */
+    const showChannelDebug = async () => {
+        const channel = lodash.find(channels, { id: activeTab });
+        if (channel) {
+            let camel = "";
+            try {
+                camel = await Transformer.fromBDToCamel(channel);
+            } catch (ex) {
+                console.error(ex);
+            }
+
+            Modal.info({
+                title: "Debugging camel",
+                width: 800,
+                content: (
+                    <div>
+                        <AceEditor
+                            setOptions={{
+                                useWorker: false,
+                            }}
+                            width="100%"
+                            value={camel}
+                            name="camel.code"
+                            mode="xml"
+                            theme="github"
+                        />
+                    </div>
+                ),
+                onOk() {},
+            });
+        }
+    };
+
+    /**
      * Método encargado de pintar los iconos de estado de cada uno de los canales (pestañas)
      */
     const renderChannelStatus = (channel) => {
-        if (!channel.enabled) return <Icon path={mdiCancel} size={0.6} color="gray" title={T.translate("common.disabled")} />;
-        if (channel.status === "STARTED") return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integrations.channel.started")} />;
-        if (channel.status === "STOPPED") return <Icon path={mdiStop} size={0.6} title={T.translate("integrations.channel.stopped")} />;
-        if (channel.status === "UNDEPLOYED") return <Icon path={mdiMinusBox} size={0.6} color="red" title={T.translate("integrations.channel.undeployed")} />;
+        if (!channel.enabled)
+            return <Icon path={mdiCancel} size={0.6} color="gray" title={T.translate("common.disabled")} />;
+        if (channel.status === "STARTED")
+            return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integrations.channel.started")} />;
+        if (channel.status === "STOPPED")
+            return <Icon path={mdiStop} size={0.6} title={T.translate("integrations.channel.stopped")} />;
+        if (channel.status === "UNDEPLOYED")
+            return (
+                <Icon
+                    path={mdiMinusBox}
+                    size={0.6}
+                    color="red"
+                    title={T.translate("integrations.channel.undeployed")}
+                />
+            );
     };
 
     const startEditingTab = () => {
@@ -374,6 +489,13 @@ const Integration = () => {
         setEditingTab({});
     };
 
+    const drawIntegrationStatus = (integ) => {
+        if (integ?.enabled) {
+            return <Tag color="green">{T.translate("common.enabled")}</Tag>;
+        }
+        return <Tag color="red">{T.translate("common.disabled")}</Tag>;
+    };
+
     return (
         <div>
             {!editHeader && (
@@ -382,7 +504,7 @@ const Integration = () => {
                         ghost={false}
                         title={T.translate("integrations.integration_form_title", { name: currentRecord?.name })}
                         subTitle={currentRecord?.description}
-                        tags={<Tag color="green">{T.translate("common.enabled")}</Tag>}
+                        tags={drawIntegrationStatus(currentRecord)}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
                                 {T.translate("common.button.edit")}
@@ -406,8 +528,7 @@ const Integration = () => {
                 <div>
                     <PageHeader
                         ghost={false}
-                        title={T.translate("integrations.integration_edit_title")} 
-                        tags={<Tag color="green">{T.translate("common.enabled")}</Tag>}
+                        title={T.translate("integrations.integration_edit_title")}
                         extra={[
                             <Button key="cancel" type="dashed" onClick={() => setEditHeader(false)}>
                                 {T.translate("common.button.cancel")}
@@ -430,6 +551,9 @@ const Integration = () => {
                         <div>
                             {currentRecord && (
                                 <Form
+                                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+                                    widgets={formConfig.widgets}
                                     ref={integForm}
                                     schema={integrationFormSchema.schema}
                                     formData={currentRecord}
@@ -445,7 +569,9 @@ const Integration = () => {
             )}
 
             <Tabs
-                tabBarExtraContent={<Space size="small">{channels && activeTab && drawStatusButtons(channels, activeTab)}</Space>}
+                tabBarExtraContent={
+                    <Space size="small">{channels && activeTab && drawStatusButtons(channels, activeTab)}</Space>
+                }
                 type="editable-card"
                 onChange={(activeKey) => setActiveTab(activeKey) && console.log("wii")}
                 activeKey={activeTab}
@@ -480,16 +606,24 @@ const Integration = () => {
                         type="primary"
                         onClick={(e) => {
                             //Forzar el submit del FORM simulando el evento
-                            editTabFormEl.current.onSubmit({ target: null, currentTarget: null, preventDefault: () => true, persist: () => true });
+                            editTabFormEl.current.onSubmit({
+                                target: null,
+                                currentTarget: null,
+                                preventDefault: () => true,
+                                persist: () => true,
+                            });
                         }}>
                         {T.translate("common.button.accept")}
                     </Button>,
                 ]}>
                 <Form
                     ref={editTabFormEl}
+                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                     schema={editTabFormSchema.schema}
                     formData={editingTab}
                     uiSchema={editTabFormSchema.uiSchema}
+                    widgets={formConfig.widgets}
                     onChange={(e) => setEditingTab(e.formData)}
                     onSubmit={(e) => editTabOk(e)}
                     onError={(e) => console.log(e)}>
