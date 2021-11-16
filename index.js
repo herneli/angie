@@ -15,6 +15,7 @@ import { IntegrationChannelController } from "./app/server/api/integration_chann
 import { OrganizationController } from "./app/server/api/organization";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
+import { ProfileController } from "./app/server/api/profile/ProfileController";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -86,6 +87,7 @@ module.exports = async () => {
         new OrganizationController(),
         new ConfigurationController(),
         new ScriptController(),
+        new ProfileController(),
     ];
 
     //Inicializar los componentes

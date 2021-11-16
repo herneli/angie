@@ -9,7 +9,7 @@ import Script from "../../pages/script/Script";
 import UsersConfig from "./Users/UsersConfig";
 import Integration from "./integration/Integration";
 import Integrations from "./integration/Integrations";
-// import OrganizationConfig from "./organization/OrganizationConfig";
+import OrganizationConfig from "./organization/OrganizationConfig";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
@@ -38,6 +38,18 @@ const Administration = ({ app }) => {
                             path="/admin/users"
                             render={({ match }) => <UsersConfig match={match} {...defaultProps} />}
                         />
+
+                        <Route
+                            exact
+                            path="/admin/organization"
+                            render={({ match }) => <OrganizationConfig match={match} {...defaultProps} />}
+                        />
+                        <Route
+                            exact
+                            path="/admin/profiles"
+                            render={({ match }) => <ModelAdmin match={match} model="profile_config" />}
+                        />
+
                         {/* <Route
                             exact
                             path="/admin/organization"

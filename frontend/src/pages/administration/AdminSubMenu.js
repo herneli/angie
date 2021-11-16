@@ -1,51 +1,135 @@
 import { mdiAccountGroup, mdiConnection, mdiPalette } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Layout, Menu } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useKeycloak } from "@react-keycloak/web";
+import T from 'i18n-react';
 
 const AdminSubMenu = () => {
     const { Sider } = Layout;
     const { SubMenu } = Menu;
+    const { keycloak } = useKeycloak();
+    const [paintedMenu, setPaintedMenu] = useState([]);
+
+    const icons = {
+        'mdiAccountGroup': mdiAccountGroup,
+        'mdiConnection': mdiConnection,
+        'mdiPalette': mdiPalette,
+      };
+      
+
+    const drawMenuItem = (item, sections) => {
+        if (item.children_sections) {
+            return drawSubMenu(item, sections);
+        }
+        return (
+            <Menu.Item key={item.url}>
+                <Link to={item.url} >
+                    {T.translate(item.name)}
+                </Link>
+            </Menu.Item>
+        );
+    };
+
+    const drawSubMenu = (item, sections) => {
+        let submenu = [];
+        for (let idx in item.children_sections) {
+            let child = item.children_sections[idx];
+            if (sections.includes(child.url)) {
+                submenu.push(drawMenuItem(child, sections));
+            }
+        }
+        return (
+            <SubMenu key={item.menu_item} icon={<Icon path={icons[item.icon]} size={1} />} title={item.menu_item}>
+                {submenu}
+            </SubMenu>
+        );
+    };
+
+    const drawMenu = async () => {
+        let finalMenu = [];
+        let menuElements = [
+            {
+                menu_item: "Gestión",
+                icon: "mdiAccountGroup",
+                url: "/admin/gestion",
+                children_sections: [
+                    { url: "/admin/users", name: "administration.users" },
+                    { url: "/admin/profiles", name: "administration.profiles" },
+                    { url: "/admin/organization", name: "administration.organization" },
+                ],
+            },
+            {
+                menu_item: "Comunicaciones",
+                icon: "mdiConnection",
+                url: "/admin/comunicaciones",
+                children_sections: [
+                    { url: "/admin/integration", name: "administration.integration" },
+                    { url: "/admin/node_type", name: "administration.node_type" },
+                    { url: "/admin/camel_component", name: "administration.camel_component" },
+                ],
+            },
+            {
+                menu_item: "Personalización",
+                icon: "mdiPalette",
+                url: "/admin/personalization",
+                children_sections: [
+                    { url: "/admin/config_context", name: "administration.config_context" },
+                    { url: "/admin/config_method", name: "administration.config_method" },
+                    { url: "/admin/config_object", name: "administration.config_object" },
+                    { url: "/admin/script/test_groovy", name: "administration.test_groovy" },
+                ],
+            },
+        ];
+
+        const resp = await checkAllowedSections();
+        let sections = []
+        if(resp && resp.data && resp.data.data && resp.data.data[0].data &&  resp.data.data[0].data.sections){
+            sections.push(resp.data.data[0].data.sections);
+        }
+        if(keycloak.tokenParsed.roles.includes("admin")){
+            sections.push("/admin/config_method")
+            sections.push("/admin/config_object")
+            sections.push("/admin/node_type")
+            sections.push("/admin/integration")
+            sections.push("/admin/users")
+            sections.push("/admin/profiles")
+            sections.push("/admin/organization")
+            sections.push("/admin/personalization")
+            sections.push("/admin/comunicaciones")
+            sections.push("/admin/gestion")
+            sections.push("/admin/script/test_groovy")
+        }
+ 
+
+
+        for (let idx in menuElements) {
+            let item = menuElements[idx];
+                if (sections.indexOf(item.url) > -1) {
+                    finalMenu.push(drawMenuItem(item, sections));
+                }
+        }
+
+
+        setPaintedMenu(finalMenu);
+    };
+
+    useEffect(() => {
+        drawMenu();
+    }, []);
+
+    const checkAllowedSections = async () => {
+        let id = keycloak.tokenParsed.sub;
+        const response = await axios.post("profile/permissions", { id: id });
+        return response;
+    };
+
     return (
         <Sider width={200} className="adm-submenu">
-            <Menu mode="inline" defaultOpenKeys={["gest", "comm", "custom"]} style={{ height: "100%", borderRight: 0 }}>
-                <SubMenu key="gest" icon={<Icon path={mdiAccountGroup} size={1} />} title="Gestión">
-                    <Menu.Item key="1">
-                        <Link to="/admin/users">Usuarios </Link>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <Link to="/admin/profiles">Perfiles </Link>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <Link to="/admin/organization">Organizaciones </Link>
-                    </Menu.Item>
-                </SubMenu>
-                <SubMenu key="comm" icon={<Icon path={mdiConnection} size={1} />} title="Comunicaciones">
-                    <Menu.Item key="integ">
-                        <Link to="/admin/integration">Integraciones </Link>
-                    </Menu.Item>
-                    <Menu.Item key="ntypes">
-                        <Link to="/admin/node_type">Tipos Nodos </Link>
-                    </Menu.Item>
-                    <Menu.Item key="ccompo">
-                        <Link to="/admin/camel_component">Componentes Camel </Link>
-                    </Menu.Item>
-                </SubMenu>
-                <SubMenu key="custom" icon={<Icon path={mdiPalette} size={1} />} title="Personalización">
-                    <Menu.Item key="config_context">
-                        <Link to="/admin/config_context">Contextos</Link>
-                    </Menu.Item>
-                    <Menu.Item key="config_method">
-                        <Link to="/admin/config_method">Métodos </Link>
-                    </Menu.Item>
-                    <Menu.Item key="config_object">
-                        <Link to="/admin/config_object">Objetos</Link>
-                    </Menu.Item>
-                    <Menu.Item key="script">
-                        <Link to="/admin/script/test_groovy">Script</Link>
-                    </Menu.Item>
-                </SubMenu>
+            <Menu mode="inline" defaultOpenKeys={["Gestión", "Comunicaciones", "Personalización"]} style={{ height: "100%", borderRight: 0 }}>
+                {paintedMenu}
             </Menu>
         </Sider>
     );

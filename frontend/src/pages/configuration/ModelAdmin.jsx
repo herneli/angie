@@ -119,6 +119,7 @@ class ModelAdmin extends Component {
                 onSearchData={this.search}
                 onSaveData={this.handleOnSave}
                 total={this.state.total}
+                onSearchTermChange={this.handleSearchTermChange}
                 onSaveDataBatch={this.handleOnSaveBatch}
             />
         );

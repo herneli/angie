@@ -22,6 +22,10 @@
             "field": "organization_id"
         },
         {
+            "title": "profile",
+            "field": "profile"
+        },
+        {
             "title": "created_time_stamp",
             "field": "created_time_stamp"
         }
@@ -40,10 +44,13 @@
                 "type": "string"
             },
             "organization_id": {
-                "$ref": "#/organizations/list",
-                "title": "Tipo base"
+                "type": "string",
+                "title": "Organization"
+            },
+            "profile": {
+                "type": "string",
+                "title": "Perfiles"
             }
-
         }
     },
     "uiSchema": {
@@ -58,7 +65,16 @@
             "ui:columnSize": "3"
         },
         "organization_id": {
-            "ui:columnSize": "3"
+            "ui:columnSize": "6",
+            "ui:widget": "SelectRemoteWidget",
+            "ui:multiple": true,
+            "ui:selectOptions": "/configuration/model/organization_config/data#path=data&value=id&label=data.name"
+        },
+        "profile": {
+            "ui:columnSize": "3",
+            "ui:widget": "SelectRemoteWidget",
+            "ui:selectOptions": "/configuration/model/profile_config/data#path=data&value=id&label=data.name"
+
         },
         "created_time_stamp": {
             "ui:columnSize": "12"

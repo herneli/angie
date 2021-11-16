@@ -1,27 +1,52 @@
-import { App, BaseController, JsonResponse } from 'lisco';
-import { UserService } from './UserService';
+import { App, BaseController, JsonResponse } from "lisco";
+import { UserService } from "./UserService";
 
 import expressAsyncHandler from "express-async-handler";
 
 export class UserController extends BaseController {
     configure() {
-        super.configure('user', { service: UserService });
+        super.configure("user", { service: UserService });
 
-        this.router.get('/login', App.keycloak.protect("realm:default-roles-angie"), expressAsyncHandler((request, response, next) => { this.login(request, response, next); }));
-        this.router.get('/logout', expressAsyncHandler((request, response, next) => { this.logout(request, response, next); }));
-        this.router.post('/importUsers', expressAsyncHandler((res, req, next) => { this.importUsers(res, req, next); }));
-        this.router.post('/saveUser', expressAsyncHandler((res, req, next) => { this.saveUsers(res, req, next); }));
-        this.router.post('/deleteUser', expressAsyncHandler((res, req, next) => { this.deleteUser(res, req, next); }));
+        this.router.get(
+            "/login",
+            App.keycloak.protect("realm:default-roles-angie"),
+            expressAsyncHandler((request, response, next) => {
+                this.login(request, response, next);
+            })
+        );
+        this.router.get(
+            "/logout",
+            expressAsyncHandler((request, response, next) => {
+                this.logout(request, response, next);
+            })
+        );
+        this.router.post(
+            "/importUsers",
+            expressAsyncHandler((res, req, next) => {
+                this.importUsers(res, req, next);
+            })
+        );
+
+        //listen on events to update Keycloak data
+        App.events.on("config_deleted_users_config", (id) => {
+            this.deleteUser(id.id);
+        });
+        App.events.on("config_saved_users_config", (data) => {
+            this.saveUsers(data.model, data.body);
+        });
+        App.events.on("config_updated_users_config", (data) => {
+            this.updateUser(data.model, data.body, data.id);
+        });
 
         return this.router;
     }
 
     async login(request, response) {
         let username = "";
-        let  header = []
-        let content =[]
-        if(request.headers.authorization){
-            header,content =  App.Utils.parseToken(request)
+        let header = [];
+        let content = [];
+        if (request.headers.authorization) {
+            header, (content = App.Utils.parseToken(request));
         }
         username = content.preferred_username;
 
@@ -30,7 +55,7 @@ export class UserController extends BaseController {
         jsRes.message = `Hello '${username}' `;
         response.json(jsRes);
     }
-   /**
+    /**
      * Import Users desde Keycloak
      *
      *
@@ -47,98 +72,107 @@ export class UserController extends BaseController {
         try {
             const bServ = new UserService();
             var jsRes = new JsonResponse();
-            let usersTosave = []
-            let users =  App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : []
+            let usersTosave = [];
+            let users = App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : [];
             for await (let e of users) {
                 let roles = await App.keycloakAdmin.users.listRoleMappings({
                     id: e.id,
                 });
-                roles.pop
+                roles.pop;
                 let groups = await App.keycloakAdmin.users.listGroups({
                     id: e.id,
                 });
-                delete e.totp
-                delete e.disableableCredentialTypes
-                delete e.requiredActions
-                delete e.notBefore
-                delete e.access
-                delete e.firstName
-                e.created_time_stamp = e.createdTimeStamp
-                delete e.createdTimestamp
-                e.email_verified = e.emailVerified
-                delete e.emailVerified
-                e.roles = JSON.stringify(roles)
+                delete e.totp;
+                delete e.disableableCredentialTypes;
+                delete e.requiredActions;
+                delete e.notBefore;
+                delete e.access;
+                delete e.firstName;
+                e.created_time_stamp = e.createdTimeStamp;
+                delete e.createdTimestamp;
+                e.email_verified = e.emailVerified;
+                delete e.emailVerified;
+                e.roles = JSON.stringify(roles);
 
-                let exists = await bServ.loadById(e.id)
-                if(exists.length > 0){
+                let exists = await bServ.loadById(e.id);
+                if (exists.length > 0) {
                     let r = {
                         id: e.id,
-                        document_type : "object",
+                        document_type: "object",
                         code: e.username,
-                        data: e
-                    }
-                    let update = await bServ.update(r.id,r)
-                }else{
+                        data: e,
+                    };
+                    r = {...exists[0],...r}
+                    let update = await bServ.update(r.id, r);
+                } else {
                     let r = {
                         id: e.id,
-                        document_type : "object",
+                        document_type: "object",
                         code: e.username,
-                        data: e
-                    }
-                    usersTosave.push(r)
+                        data: e,
+                    };
+                    usersTosave.push(r);
                 }
             }
             
-
-            let data  = usersTosave.length > 0 ? await bServ.save(usersTosave)   : []
+            let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
             jsRes.success = false;
             jsRes.message = users;
             response.json(jsRes);
         } catch (e) {
             next(e);
         }
-
     }
 
     /*
-    */
-    async saveUsers(request, response, next) {
+     */
+    async saveUsers(mode, body) {
         try {
             const bServ = new UserService();
             var jsRes = new JsonResponse();
-            delete request.body.organization_id
-            let data =  await App.keycloakAdmin.users.create(request.body);
-            
-            request.body.id = data.id
-            await bServ.save(request.body)
+            let data = await App.keycloakAdmin.users.create(body);
+
             jsRes.success = false;
             jsRes.message = data;
-            response.json(jsRes);
+            return res;
         } catch (e) {
-            next(e);
+            console.log(e);
         }
-
     }
 
+    async updateUser(mode, body, id) {
+        try {
+            const bServ = new UserService();
+            var jsRes = new JsonResponse();
+            delete body.roles;
+            delete body.profile;
+            delete body.organization_id;
+            delete body.email_verified;
+            let data = await App.keycloakAdmin.users.update({ id: id }, body);
+            
+            jsRes.success = false;
+            jsRes.message = data;
+            return res;
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     /*
-    */
-     async deleteUser(request, response, next) {
+     */
+    async deleteUser(id) {
         try {
             const bServ = new UserService();
             var jsRes = new JsonResponse();
-            let data =  await App.keycloakAdmin.users.del({id: request.body.id});
-            
-            await bServ.delete(request.body.id)
+            let data = await App.keycloakAdmin.users.del({ id: id });
+
             jsRes.success = false;
             jsRes.message = data;
-            response.json(jsRes);
+            return jsRes;
         } catch (e) {
-            next(e);
+            console.log(e);
         }
-
     }
-
 
     /**
      * Cierre de sessión
