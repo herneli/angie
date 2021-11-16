@@ -4,6 +4,8 @@ import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
 import { Button, Modal, notification, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
 
+import { useHistory } from "react-router";
+
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-javascript";
@@ -82,6 +84,7 @@ const editTabFormSchema = {
 let channelActions;
 
 const Integration = () => {
+    const history = useHistory();
     const integForm = useRef(null);
     const editTabFormEl = useRef(null);
 
@@ -145,6 +148,15 @@ const Integration = () => {
             if (state.new) {
                 setEditHeader(true);
             }
+        } else if (id === "new") {
+            setCurrentRecord({
+                id: "new",
+                name: "",
+                description: "",
+                created_on: moment().toISOString(),
+                channels: [],
+            });
+            setEditHeader(true);
         } else if (id) {
             await fetchIntegration(id);
         }
@@ -251,6 +263,11 @@ const Integration = () => {
 
             if (response?.data?.success) {
                 setPendingChanges(false);
+                if (currentRecord.id === "new") { //Redirigir al nuevo identificador
+                    history.push({
+                        pathname: "/admin/integration/" + response.data.data.id,
+                    });
+                }
                 return notification.success({
                     message: T.translate("common.messages.saved.title"),
                     description: T.translate("common.messages.saved.description"),

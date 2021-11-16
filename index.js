@@ -2,11 +2,7 @@ import { App, KnexConnector } from "lisco";
 import { UserController } from "./app/server/api/user";
 import { MainController } from "./app/server/api/main";
 import { Settings, Utils } from "./app/server/common";
-import {
-    handleResponses,
-    handleRequests,
-    SPEC_OUTPUT_FILE_BEHAVIOR,
-} from "express-oas-generator";
+import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from "express-oas-generator";
 import { initKeycloak, getKeycloak } from "./config/keycloak-config";
 import { keycloakAdmin } from "./config/keycloak-admin-client-config";
 import { Runtime } from "./app/server/common/";
@@ -16,6 +12,10 @@ import { OrganizationController } from "./app/server/api/organization";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
 import { ProfileController } from "./app/server/api/profile/ProfileController";
+
+import { contentSecurityPolicy } from "helmet";
+
+import lodash from "lodash";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -38,14 +38,7 @@ module.exports = async () => {
             //Escucha las respuestas para ir generando la openapi
             specOutputPath: __dirname + "/openapi.json",
             ignoredNodeEnvironments: ["production"],
-            tags: [
-                "user",
-                "integration",
-                "organization",
-                "config_model",
-                "script",
-                "configuration"
-            ],
+            tags: ["user", "integration", "organization", "config_model", "script", "configuration"],
             specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE,
         });
 
@@ -90,6 +83,11 @@ module.exports = async () => {
         new ProfileController(),
     ];
 
+    const directives = {
+        ...lodash.omit(contentSecurityPolicy.getDefaultDirectives(), ["upgrade-insecure-requests"]),
+        "default-src": "dangerouslyDisableDefaultSrc", //FIXME necesario revisarlo
+        "connect-src": ["'self'", "http://localhost:3114", "http://localhost:6100"],
+    };
     //Inicializar los componentes
     await App.init({
         helmet: {
@@ -97,17 +95,11 @@ module.exports = async () => {
                 action: "sameorigin",
             },
             hsts: false,
-            contentSecurityPolicy: {
-                useDefaults: true,
-                directives: {
-                    defaultSrc: "dangerouslyDisableDefaultSrc", //FIXME necesario revisarlo
-                    "connect-src": [
-                        "'self'",
-                        "http://localhost:3114",
-                        "http://localhost:6100",
-                    ],
-                },
-            },
+            contentSecurityPolicy: false, //TODO: Revisar funcionamiento
+            // contentSecurityPolicy: {
+            //     useDefaults: false,
+            //     directives: directives,
+            // },
         },
     });
 

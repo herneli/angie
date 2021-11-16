@@ -41,8 +41,8 @@ class Transformer {
                     id: node.id,
                     position: node.position,
                     data: {
-                        ...node.data,
                         label: node.custom_name,
+                        ...node.data,
                         type_id: node.type_id,
                     },
                     type: nodeType.data.react_component_type,
