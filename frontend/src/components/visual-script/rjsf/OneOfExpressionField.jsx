@@ -23,6 +23,7 @@ const styles = {
     widget: {
         flexGrow: 1,
         overflow: "auto",
+        paddingRight: "12px",
     },
     selector: {
         flexGrow: 0,

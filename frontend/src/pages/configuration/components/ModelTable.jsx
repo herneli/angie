@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Col, Row, Input, Table, message, Popconfirm } from "antd";
+import { Button, Col, Row, Input, Table, message, Popconfirm } from "antd";
 import { createUseStyles } from "react-jss";
-import axios from "axios";
 import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
 import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload, mdiPencil } from "@mdi/js";
