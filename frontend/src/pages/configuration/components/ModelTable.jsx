@@ -40,6 +40,7 @@ export default function ModelTable({
             let columns = info.listFields.map((field) => ({
                 title: field.title,
                 dataIndex: field.field,
+                sorter: true,
             }));
             columns.push({
                 title: T.translate("configuration.actions"),
@@ -90,6 +91,7 @@ export default function ModelTable({
     const [importItems, setImportItems] = useState();
     const [searchString, setSearchString] = useState();
     const [pagination, setPagination] = useState({});
+    const [paramsPagination, setParamsPagination] = useState({ limit: 10, start: 0 });
 
     const classes = useStyles();
 
@@ -171,24 +173,45 @@ export default function ModelTable({
             .catch((error) => message.error(T.translate("configuration.error_loading_json_file")));
     };
 
-    const search = async (params, searchValue) => {
+    // const handleOnCheckAction = (checked) => {
+    //     const items = importItems;
+    //     setImportItems(null);
+    //     const promises = items.map((item) =>
+    //         onSaveData({ ...item, id: null }, checked)
+    //     );
+    //     Promise.all(promises).then((values) => {
+    //         message.info(T.translate("configuration.end_of_loading_json_file"));
+    //     });
+    // };
+
+    const search = async (params, searchValue, sorter) => {
+        let paginationObject = paramsPagination;
         let filters = {};
+        let tableSort = { field: "data->'" + sorter?.column?.dataIndex + "'" || "data->'" + sorter?.field + "'", direction: sorter?.order };
 
         if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
             filters = {
-                "data::text": {
+                column: {
                     type: "jsonb",
                     value: searchValue,
                 },
             };
         }
 
-        if (params?.pageSize && params?.current) {
-            filters.limit = params.pageSize ? params.pageSize : 10;
-            filters.start = (params.current ? params.current - 1 : 0) * (params.pageSize ? params.pageSize : 10);
+        if (tableSort.field && tableSort.direction) {
+            filters.sort = tableSort;
         }
 
-        await onSearchData(modelInfo, filters);
+        if (params?.pageSize && params?.current) {
+            paginationObject = { limit: params.pageSize, start: params.current * params.pageSize - params.pageSize + 1 };
+            if (params.current == 1) {
+                paginationObject.start = 0;
+            }
+
+            await onSearchData(modelInfo, filters, paginationObject);
+        } else {
+            await onSearchData(modelInfo, filters, paginationObject);
+        }
     };
 
     //ComponentDidMount
@@ -208,54 +231,54 @@ export default function ModelTable({
 
     return (
         <div>
+            {/* {importItems && (
+        <ModelOverwriteDialog
+          open={!!importItems}
+          onCheckAction={handleOnCheckAction}
+          onClose={() => setImportItems(null)}
+        />
+      )} */}
             {importItems ? <h1>Imported items</h1> : null}
 
-            {/* <Card className={classes.card}> */}
-            <Row className={classes.card}>
-                <Col flex={1}>
-                    <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
-                </Col>
-                <Col flex={2}>
-                    <Row justify="end" gutter={10}>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiUpload} className={classes.icon} />}
-                                type="text"
-                                onClick={handleUploadTable}
-                            />
-                        </Col>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                type="text"
-                                onClick={() => handleDownloadTable(filteredData)}
-                            />
-                        </Col>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiPlus} className={classes.icon} />}
-                                type="text"
-                                onClick={onAddData}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
-            <Table
-                columns={columns}
-                dataSource={filteredData}
-                pagination={pagination}
-                rowKey={"id"}
-                onChange={search}
-                // onRow={(record, index) => {
-                //     return {
-                //         onClick: () => handleOnRowClick(record),
-                //     };
-                // }}
-                bordered
-                size="small"
-            />
-            {/* </Card> */}
+            <Card className={classes.card}>
+                <Row>
+                    <Col flex={1}>
+                        <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
+                    </Col>
+                    <Col flex={2}>
+                        <Row justify="end" gutter={10}>
+                            <Col>
+                                <Button icon={<Icon path={mdiUpload} className={classes.icon} />} type="text" onClick={handleUploadTable} />
+                            </Col>
+                            <Col>
+                                <Button
+                                    icon={<Icon path={mdiDownload} className={classes.icon} />}
+                                    type="text"
+                                    onClick={() => handleDownloadTable(filteredData)}
+                                />
+                            </Col>
+                            <Col>
+                                <Button icon={<Icon path={mdiPlus} className={classes.icon} />} type="text" onClick={onAddData} />
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={filteredData}
+                    pagination={pagination}
+                    rowKey={"id"}
+                    sorta
+                    onChange={search}
+                    onRow={(record, index) => {
+                        return {
+                            onClick: () => handleOnRowClick(record),
+                        };
+                    }}
+                    bordered
+                    size="small"
+                />
+            </Card>
         </div>
     );
 }

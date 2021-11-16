@@ -19,7 +19,7 @@ export class ConfigurationService extends BaseService {
         const model = await this.getModel(code);
         let entity = {
             document_type: model.data.documentType,
-            code: body.code,
+            code: body.code ? body.code : model.data.code,
             data: body,
         };
         if (model.data.id_mode && model.data.id_mode === "uuid") {

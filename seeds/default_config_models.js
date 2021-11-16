@@ -643,6 +643,7 @@ exports.seed = async function (knex) {
                 code: "users_config",
                 name: "Usuarios",
                 table: "users",
+                id_mode: "uuid",
                 documentType: "object",
                 listFields: [
                     {
@@ -656,6 +657,10 @@ exports.seed = async function (knex) {
                     {
                         title: "email",
                         field: "email",
+                    },
+                    {
+                        title: "profile",
+                        field: "profile",
                     },
                     {
                         title: "organization_id",
@@ -677,9 +682,13 @@ exports.seed = async function (knex) {
                         email: {
                             type: "string",
                         },
+                        profile: {
+                            type: "string",
+                            title: "Perfil",
+                        },
                         organization_id: {
                             type: "string",
-                            enum: ["foo", "bar"],
+                            title: "Organization",
                         },
                     },
                 },
@@ -694,8 +703,20 @@ exports.seed = async function (knex) {
                     email: {
                         "ui:columnSize": "3",
                     },
+                    profile: {
+                        "ui:columnSize": "6",
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:options":  {
+                           
+                        },
+                        "ui:selectOptions":
+                            "/configuration/model/profile_config/data#path=data&value=id&label=data.name",
+                    },
                     organization_id: {
-                        "ui:columnSize": "3",
+                        "ui:columnSize": "6",
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:selectOptions":
+                            "/configuration/model/organization_config/data#path=data&value=id&label=data.name",
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",
@@ -989,12 +1010,13 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "organizations_config",
-            name: "organizations_config",
+            code: "organization_config",
+            name: "organization_config",
             data: {
-                code: "organizations_config",
+                code: "organization_config",
                 name: "Organizaciones",
-                table: "organizations",
+                id_mode: "uuid",
+                table: "organization",
                 documentType: "object",
                 listFields: [
                     {
@@ -1032,6 +1054,85 @@ exports.seed = async function (knex) {
                     },
 
                     config: {
+                        "ui:columnSize": "3",
+                    },
+                },
+            },
+        },
+        {
+            code: "profile_config",
+            name: "profile_config",
+            data: {
+                code: "profile_config",
+                name: "Perfiles",
+                table: "profile",
+                id_mode: "uuid",
+                documentType: "object",
+                listFields: [
+                    {
+                        title: "id",
+                        field: "id",
+                    },
+                    {
+                        title: "name",
+                        field: "name",
+                    },
+                    {
+                        title: "sections",
+                        field: "sections",
+                    },
+                ],
+                schema: {
+                    title: "Create Profile",
+                    type: "object",
+                    required: ["name"],
+                    properties: {
+                        name: {
+                            type: "string",
+                        },
+                        sections: {
+                            type: "string",
+                            enum: [
+                                "/admin/users",
+                                "/admin/profiles",
+                                "/admin/organization",
+                                "/admin/integration",
+                                "/admin/node_type",
+                                "/admin/camel_component",
+                                "/admin/config_context",
+                                "/admin/config_method",
+                                "/admin/config_object",
+                                "/admin/gestion",
+                                "/admin/comunicaciones",
+                                "/admin/personalization",
+                                "/admin/script/test_groovy",
+                            ],
+                            enumNames: [
+                                "Usuarios",
+                                "Perfiles",
+                                "Organizaciones",
+                                "Integraciones",
+                                "Tipos Nodos",
+                                "Componentes Camel",
+                                "Contextos",
+                                "Métodos",
+                                "Objetos",
+                                "Gestion",
+                                "Comunicaciones",
+                                "Personalización",
+                                "Script"
+                            ],
+                        },
+                    },
+                },
+                uiSchema: {
+                    id: {
+                        "ui:columnSize": "3",
+                    },
+                    name: {
+                        "ui:columnSize": "3",
+                    },
+                    sections: {
                         "ui:columnSize": "3",
                     },
                 },

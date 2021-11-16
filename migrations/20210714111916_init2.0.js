@@ -52,7 +52,14 @@ exports.up = async function (knex) {
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["document_type", "code"]);
+        });
+    }
+    if (!(await knex.schema.hasTable("profile"))) {
+        await knex.schema.createTable("profile", function (table) {
+            table.uuid("id").primary();
+            table.string("document_type").notNullable();
+            table.string("code").notNullable();
+            table.jsonb("data");
         });
     }
     if (!(await knex.schema.hasTable("node_type_subflow"))) {
@@ -133,6 +140,10 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("users")) {
         await knex.schema.dropTable("users");
     }
+    if (await knex.schema.hasTable("profile")) {
+        await knex.schema.dropTable("profile");
+    }
+
 
     if (await knex.schema.hasTable("node_type_subflow")) {
         await knex.schema.dropTable("node_type_subflow");

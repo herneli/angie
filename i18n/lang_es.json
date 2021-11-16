@@ -5,7 +5,7 @@
         "user_info": {
             "title": "Información Usuario",
             "user_label": "*Usuario: *",
-            "organization_label": "*Centro: *",
+            "organization_label": "*Organización: *",
             "organization_change_label": "_(cambiar)_",
             "logout": "Salir",
             "logout_title": "Cerrar Sesión",
@@ -105,6 +105,18 @@
                 "settings_title": "Opciónes Nodo: {label}"
             }
         }
+    },
+    "administration": {
+        "users": "Usuarios",
+        "profiles": "Perfiles",
+        "organization": "Organizaciones",
+        "integration": "Integraciones",
+        "node_type": "Tipos Nodos ",
+        "camel_component": "Componentes Camel",
+        "config_context": "Contextos",
+        "config_method": "Métodos",
+        "config_object": "Objetos",
+        "test_groovy": "Script"
     },
     "configuration": {
         "actions": "Acciones",

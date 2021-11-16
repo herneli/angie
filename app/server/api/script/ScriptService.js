@@ -44,9 +44,9 @@ export class ScriptService extends BaseService {
                 memberType: "context",
                 code: "context",
                 name: "context",
-                type: context.type,
+                type: context ? context.type : "context_type",
             },
-            language: context.language,
+            language: context ? context.language : "context_language",
             mainStatement: mainStatement,
         };
     }
