@@ -16,8 +16,15 @@ let useStyles = createUseStyles({
         zIndex: 1,
         height: "18px",
         width: "18px",
+        top: "-5px",
     },
     finalPointCell: {
+        lineHeight: "1px",
+    },
+    button: {
+        height: "20px",
+    },
+    selectorTableRow: {
         lineHeight: "1px",
     },
 });
@@ -58,8 +65,7 @@ export default function StatementBlock({ statement, variables, onChange }) {
             ...statement.nestedStatements.slice(0, index),
             ...statement.nestedStatements.slice(index + 1),
         ];
-        onChange &&
-            onChange({ ...statement, nestedStatements: newNestedStatements });
+        onChange && onChange({ ...statement, nestedStatements: newNestedStatements });
     };
     const handleOnInsert = (index) => (statementKey) => {
         let selectedStatement = manager.createStatement(statementKey);
@@ -68,10 +74,7 @@ export default function StatementBlock({ statement, variables, onChange }) {
             nestedStatements: [
                 ...statement.nestedStatements.slice(0, index),
                 selectedStatement,
-                ...statement.nestedStatements.slice(
-                    index,
-                    statement.nestedStatements.length
-                ),
+                ...statement.nestedStatements.slice(index, statement.nestedStatements.length),
             ],
         };
         onChange(newStatement);
@@ -80,13 +83,10 @@ export default function StatementBlock({ statement, variables, onChange }) {
     const Selector = ({ onSelect }) => {
         return (
             <StatementSelector onSelect={onSelect}>
-                <Button type="text">
-                    <img
-                        className={classes.icon}
-                        src={selectIcon}
-                        alt="Select"
-                    />
-                </Button>
+                <Button
+                    type="text"
+                    className={classes.button}
+                    icon={<img className={classes.icon} src={selectIcon} alt="Select" />}></Button>
             </StatementSelector>
         );
     };
@@ -109,11 +109,9 @@ export default function StatementBlock({ statement, variables, onChange }) {
                         </td>
                     </tr>
                     {!statement.main || !(index === statements.length - 1) ? (
-                        <tr>
+                        <tr className={classes.selectorTableRow}>
                             <td>
-                                <Selector
-                                    onSelect={handleOnInsert(index + 1)}
-                                />
+                                <Selector onSelect={handleOnInsert(index + 1)} />
                             </td>
                         </tr>
                     ) : null}
@@ -123,10 +121,7 @@ export default function StatementBlock({ statement, variables, onChange }) {
     };
 
     return (
-        <table
-            id={manager.getStatementDOMId(statement)}
-            className={classes.root}
-        >
+        <table id={manager.getStatementDOMId(statement)} className={classes.root}>
             <tbody>
                 {!statement.main ? (
                     <>

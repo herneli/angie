@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
         fontSize: "12px",
         display: "inline-block",
         zIndex: 1,
-        marginTop: "20px",
+        marginTop: "12px",
     },
     noLabel: {
         backgroundColor: "#b1b0b0",
