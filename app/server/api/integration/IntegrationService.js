@@ -1,10 +1,8 @@
 import { App, BaseService } from "lisco";
 import { IntegrationChannelService } from "../integration_channel";
 import { IntegrationDao } from "./IntegrationDao";
-import lodash from "lodash";
-import moment from "moment";
-
 import { JumDao } from "../../integration/jum-angie";
+import { ScriptService } from "../script/ScriptService";
 
 export class IntegrationService extends BaseService {
     constructor() {
@@ -26,31 +24,72 @@ export class IntegrationService extends BaseService {
         return [integration];
     }
 
+    async applyBeforeSave(action, node) {
+        switch (action) {
+            case "generateCode":
+                let scriptService = new ScriptService();
+                let code = await scriptService.generateCode(node.data.script);
+                return {
+                    ...node,
+                    data: {
+                        ...node.data,
+                        code: code,
+                    },
+                };
+            default:
+                return node;
+        }
+    }
+
+    async completeBeforeSave(body) {
+        let completedChannels = [];
+        for (const channel of body.channels) {
+            let nodes = [];
+            if (channel.nodes && channel.nodes.list) {
+                for (const node of channel.nodes.list) {
+                    if (node.data.beforeSave) {
+                        let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
+                        nodes.push(completedNode);
+                    } else {
+                        nodes.push(node);
+                    }
+                }
+            }
+            completedChannels.push({ ...channel, nodes: { list: nodes } });
+        }
+        return {
+            ...body,
+            channels: completedChannels,
+        };
+    }
+
     //Overwrite
     async save(body) {
+        let integrationData = await this.completeBeforeSave(body);
         let entity = {
-            name: body.name,
-            enabled: body.enabled,
-            organization_id: body.organization_id,
-            data: body,
+            name: integrationData.name,
+            enabled: integrationData.enabled,
+            organization_id: integrationData.organization_id,
+            data: integrationData,
         };
 
         const res = await super.save(entity);
-        App.events.emit("integration_saved", { body });
+        App.events.emit("integration_saved", { integrationData });
         return res;
     }
 
     //Overwrite
     async update(id, body) {
+        let integrationData = await this.completeBeforeSave(body);
         let entity = {
             id: id,
-            name: body.name,
-            enabled: body.enabled,
-            organization_id: body.organization_id,
-            data: body,
+            name: integrationData.name,
+            enabled: integrationData.enabled,
+            organization_id: integrationData.organization_id,
+            data: integrationData,
         };
         const res = await super.update(id, entity);
-        App.events.emit("integration_updated", { body });
+        App.events.emit("integration_updated", { integrationData });
         return res;
     }
 

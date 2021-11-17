@@ -12,7 +12,7 @@ import "ace-builds/src-noconflict/theme-github";
 
 import beautify from "xml-beautifier";
 
-const AceEditorWidget = function ({ id, value, onChange, options }) {
+const AceEditorWidget = function ({ id, value, onChange, options, readonly }) {
     const beautifyCode = (val) => {
         let newValue = val;
         try {
@@ -54,6 +54,7 @@ const AceEditorWidget = function ({ id, value, onChange, options }) {
             setOptions={{
                 useWorker: false,
             }}
+            readOnly={readonly}
             commands={[
                 {
                     // commands is array of key bindings.

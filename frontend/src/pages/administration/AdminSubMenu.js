@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useKeycloak } from "@react-keycloak/web";
-import T from 'i18n-react';
+import T from "i18n-react";
 
 const AdminSubMenu = () => {
     const { Sider } = Layout;
@@ -14,11 +14,10 @@ const AdminSubMenu = () => {
     const [paintedMenu, setPaintedMenu] = useState([]);
 
     const icons = {
-        'mdiAccountGroup': mdiAccountGroup,
-        'mdiConnection': mdiConnection,
-        'mdiPalette': mdiPalette,
-      };
-      
+        mdiAccountGroup: mdiAccountGroup,
+        mdiConnection: mdiConnection,
+        mdiPalette: mdiPalette,
+    };
 
     const drawMenuItem = (item, sections) => {
         if (item.children_sections) {
@@ -26,9 +25,7 @@ const AdminSubMenu = () => {
         }
         return (
             <Menu.Item key={item.url}>
-                <Link to={item.url} >
-                    {T.translate(item.name)}
-                </Link>
+                <Link to={item.url}>{T.translate(item.name)}</Link>
             </Menu.Item>
         );
     };
@@ -85,33 +82,32 @@ const AdminSubMenu = () => {
         ];
 
         const resp = await checkAllowedSections();
-        let sections = []
-        if(resp && resp.data && resp.data.data && resp.data.data[0].data &&  resp.data.data[0].data.sections){
+        let sections = [];
+        if (resp && resp.data && resp.data.data && resp.data.data[0].data && resp.data.data[0].data.sections) {
             sections.push(resp.data.data[0].data.sections);
         }
-        if(keycloak.tokenParsed.roles.includes("admin")){
-            sections.push("/admin/config_method")
-            sections.push("/admin/config_object")
-            sections.push("/admin/node_type")
-            sections.push("/admin/integration")
-            sections.push("/admin/users")
-            sections.push("/admin/profiles")
-            sections.push("/admin/organization")
-            sections.push("/admin/personalization")
-            sections.push("/admin/comunicaciones")
-            sections.push("/admin/gestion")
-            sections.push("/admin/script/test_groovy")
+        if (keycloak.tokenParsed.roles.includes("admin")) {
+            sections.push("/admin/config_context");
+            sections.push("/admin/config_method");
+            sections.push("/admin/config_object");
+            sections.push("/admin/camel_component");
+            sections.push("/admin/node_type");
+            sections.push("/admin/integration");
+            sections.push("/admin/users");
+            sections.push("/admin/profiles");
+            sections.push("/admin/organization");
+            sections.push("/admin/personalization");
+            sections.push("/admin/comunicaciones");
+            sections.push("/admin/gestion");
+            sections.push("/admin/script/test_groovy");
         }
- 
-
 
         for (let idx in menuElements) {
             let item = menuElements[idx];
-                if (sections.indexOf(item.url) > -1) {
-                    finalMenu.push(drawMenuItem(item, sections));
-                }
+            if (sections.indexOf(item.url) > -1) {
+                finalMenu.push(drawMenuItem(item, sections));
+            }
         }
-
 
         setPaintedMenu(finalMenu);
     };
@@ -128,7 +124,10 @@ const AdminSubMenu = () => {
 
     return (
         <Sider width={200} className="adm-submenu">
-            <Menu mode="inline" defaultOpenKeys={["Gestión", "Comunicaciones", "Personalización"]} style={{ height: "100%", borderRight: 0 }}>
+            <Menu
+                mode="inline"
+                defaultOpenKeys={["Gestión", "Comunicaciones", "Personalización"]}
+                style={{ height: "100%", borderRight: 0 }}>
                 {paintedMenu}
             </Menu>
         </Sider>

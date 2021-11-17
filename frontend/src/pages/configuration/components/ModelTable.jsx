@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Row, Input, Table, message, Popconfirm } from "antd";
+import { Button, Card, Col, Row, Input, Table, message, Popconfirm } from "antd";
 import { createUseStyles } from "react-jss";
 import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
@@ -91,7 +91,7 @@ export default function ModelTable({
     const [importItems, setImportItems] = useState();
     const [searchString, setSearchString] = useState();
     const [pagination, setPagination] = useState({});
-    const [paramsPagination, setParamsPagination] = useState({ limit: 10, start: 0 });
+    const [paramsPagination, setParamsPagination] = useState({ limit: 100, start: 0 });
 
     const classes = useStyles();
 
@@ -187,7 +187,10 @@ export default function ModelTable({
     const search = async (params, searchValue, sorter) => {
         let paginationObject = paramsPagination;
         let filters = {};
-        let tableSort = { field: "data->'" + sorter?.column?.dataIndex + "'" || "data->'" + sorter?.field + "'", direction: sorter?.order };
+        let tableSort = {
+            field: "data->'" + sorter?.column?.dataIndex + "'" || "data->'" + sorter?.field + "'",
+            direction: sorter?.order,
+        };
 
         if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
             filters = {
@@ -203,7 +206,10 @@ export default function ModelTable({
         }
 
         if (params?.pageSize && params?.current) {
-            paginationObject = { limit: params.pageSize, start: params.current * params.pageSize - params.pageSize + 1 };
+            paginationObject = {
+                limit: params.pageSize,
+                start: params.current * params.pageSize - params.pageSize + 1,
+            };
             if (params.current == 1) {
                 paginationObject.start = 0;
             }
@@ -220,7 +226,7 @@ export default function ModelTable({
     }, []);
 
     useEffect(() => {
-        setPagination({ total: total, showSizeChanger: true });
+        setPagination({ total: total, showSizeChanger: true, pageSize: 100 });
     }, [total]);
 
     let filteredData = !searchString ? modelData : "";
@@ -248,7 +254,11 @@ export default function ModelTable({
                     <Col flex={2}>
                         <Row justify="end" gutter={10}>
                             <Col>
-                                <Button icon={<Icon path={mdiUpload} className={classes.icon} />} type="text" onClick={handleUploadTable} />
+                                <Button
+                                    icon={<Icon path={mdiUpload} className={classes.icon} />}
+                                    type="text"
+                                    onClick={handleUploadTable}
+                                />
                             </Col>
                             <Col>
                                 <Button
@@ -258,7 +268,11 @@ export default function ModelTable({
                                 />
                             </Col>
                             <Col>
-                                <Button icon={<Icon path={mdiPlus} className={classes.icon} />} type="text" onClick={onAddData} />
+                                <Button
+                                    icon={<Icon path={mdiPlus} className={classes.icon} />}
+                                    type="text"
+                                    onClick={onAddData}
+                                />
                             </Col>
                         </Row>
                     </Col>

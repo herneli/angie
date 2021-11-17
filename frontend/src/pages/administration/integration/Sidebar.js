@@ -33,7 +33,8 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
             });
             setFormData(lodash.omit(selectedType.data, ["type_id"]));
             try {
-                setFormSchema(type.data && JSON.parse(type.data.json_data_schema));
+                let json = type.data && JSON.parse(type.data.json_data_schema);
+                setFormSchema(json);
             } catch (ex) {
                 console.error(ex);
                 setFormSchema({});
@@ -148,6 +149,7 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
                         formData={formData}
                         uiSchema={uiSchema}
                         widgets={formConfig.widgets}
+                        fields={formConfig.fields}
                         onChange={(e) => setFormData(e.formData)}
                         onSubmit={() => onFormSubmit()}
                         onError={(e) => console.log(e)}>

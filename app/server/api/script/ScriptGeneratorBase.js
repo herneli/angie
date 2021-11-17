@@ -16,18 +16,13 @@ export default class ScriptGeneratorBase {
         let fullCode = "";
         let service = new ScriptService();
         let context = await service.getContext(this.script.contextCode);
-
-        fullCode +=
-            this.getCommentCode("Code preparation") +
-            "\n\n" +
-            context.data.startCode +
-            "\n";
+        if (context.data.startCode) {
+            fullCode += this.getCommentCode("Code preparation") + "\n\n" + context.data.startCode + "\n";
+        }
 
         // Execution of getStatementCode will collect the variable "this.usedMethods"
         // with all the methods refefenced.
-        let mainCode = this.getStatementCode(this.script.mainStatement).join(
-            "\n"
-        );
+        let mainCode = this.getStatementCode(this.script.mainStatement).join("\n");
         // Get used methods will generate the code for the methods used
         // and they will be returned on top of the source code
         let usedMethodsCode = await this.getUsedMethodsCode();
@@ -138,16 +133,10 @@ export default class ScriptGeneratorBase {
                     expressionCode = expressionCode + "?." + member.code;
                     break;
                 case "method":
-                    expressionCode = this.getMethodCode(
-                        member,
-                        expressionCode,
-                        variablePath
-                    );
+                    expressionCode = this.getMethodCode(member, expressionCode, variablePath);
                     break;
                 default:
-                    throw Error(
-                        "Member type " + member.memberType + "not expected"
-                    );
+                    throw Error("Member type " + member.memberType + "not expected");
             }
         });
 
@@ -165,8 +154,7 @@ export default class ScriptGeneratorBase {
             };
         }
         let options = this.getMethodOptions(member, variablePath);
-        let methodCode =
-            functionName + "(" + expressionCode + ", " + options + ")";
+        let methodCode = functionName + "(" + expressionCode + ", " + options + ")";
         if (member.not) {
             methodCode = "!(" + methodCode + ")";
         }
@@ -179,12 +167,7 @@ export default class ScriptGeneratorBase {
         let tryNumber = 0;
 
         do {
-            if (
-                this.functionNames.includes(
-                    functionName +
-                        (tryNumber > 0 ? "_" + tryNumber.toString() : "")
-                )
-            ) {
+            if (this.functionNames.includes(functionName + (tryNumber > 0 ? "_" + tryNumber.toString() : ""))) {
                 tryNumber++;
             } else {
                 this.functionNames.push(functionName);

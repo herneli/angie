@@ -87,9 +87,8 @@ export class ScriptService extends BaseService {
                 throw Error("Language " + script.language + " not expected");
         }
     }
-    async generateCode(scriptCode) {
-        let script = await this.dao.getScriptConfig("script", scriptCode);
-        let generator = this.getGenerator(script.data);
+    async generateCode(script) {
+        let generator = this.getGenerator(script);
         let code = generator.generateCode();
         return code;
     }

@@ -3,8 +3,9 @@ import ScriptManager from "./ScriptManager";
 import withStyles from "react-jss";
 import ScriptContextProvider from "./ScriptContext";
 import Statement from "./statements/Statement";
-import { Button, Modal } from "antd";
+import { Button, Modal, Space } from "antd";
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
+import T from "i18n-react";
 const styles = {
     dialogContent: {
         marginRight: "10px",
@@ -65,10 +66,6 @@ class VisualScript extends Component {
         this.props.onSave && this.props.onSave(this.state.script);
     };
 
-    handleOnExecuteCode = () => {
-        this.props.onExecuteCode && this.props.onExecuteCode(this.state.script);
-    };
-
     handleOnCustomObjects = () => {
         this.setState({ ...this.state, editCustomObjects: true });
     };
@@ -92,9 +89,12 @@ class VisualScript extends Component {
                 ) : null}
                 <div>
                     <div>
-                        <Button onClick={this.handleOnSave}>Guardar</Button>
-                        <Button onClick={this.handleOnExecuteCode}>Ejecutar código</Button>
-                        <Button onClick={this.handleOnCustomObjects}>Custom objects</Button>
+                        <Space>
+                            <Button type="primary" onClick={this.handleOnSave}>
+                                {T.translate("visual_script.save")}
+                            </Button>
+                            <Button onClick={this.handleOnCustomObjects}>Custom objects</Button>
+                        </Space>
                     </div>
                     <div id="script-canvas" className={this.props.classes.canvas}>
                         {this.state.manager ? (

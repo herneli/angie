@@ -13,6 +13,10 @@ export class ScriptController extends BaseController {
             })
         );
 
+        this.router.get("/script/new/:contextCode", (req, res, next) => {
+            this.getNewScript(req, res, next);
+        });
+
         this.router.post(
             "/script/object/members",
             expressAsyncHandler((req, res, next) => {
@@ -64,6 +68,11 @@ export class ScriptController extends BaseController {
         response.json(new JsonResponse(true, members));
     }
 
+    async getNewScript(request, response) {
+        let service = new ScriptService();
+        let script = await service.newScript(request.params.contextCode);
+        response.json(new JsonResponse(true, script));
+    }
     async getScript(request, response) {
         let service = new ScriptService();
         let scriptData = await service.getScript(request.params.code);
@@ -78,7 +87,8 @@ export class ScriptController extends BaseController {
 
     async generateCode(request, response) {
         let service = new ScriptService();
-        let code = await service.generateCode(request.params.code);
+        let scriptData = await service.getScript(request.params.code);
+        let code = await service.generateCode(scriptData.data);
         response.json(new JsonResponse(true, code));
     }
 
