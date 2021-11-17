@@ -10,8 +10,8 @@ import Icon from "@mdi/react";
 
 const useStyles = createUseStyles({
     root: {
-        margin: "10px 10px",
-        padding: "10px 15px",
+        margin: "4px 4px",
+        padding: "4px 10px",
         minWidth: 300,
         "&.all": {
             borderLeft: "3px solid dodgerblue",
@@ -28,18 +28,18 @@ const useStyles = createUseStyles({
     },
     title: {
         display: "inline-block",
-        lineHeight: "32px",
+        lineHeight: "24px",
         color: "gray",
     },
     icon: {
         color: "gray",
         marginRight: "10px",
-        fontSize: 14,
+        fontSize: 12,
         position: "relative",
         top: 4,
     },
     toolbar: {
-        fontSize: 14,
+        fontSize: 12,
         marginBottom: 2,
     },
     actions: {
@@ -52,7 +52,7 @@ const useStyles = createUseStyles({
     },
     menuIcon: {
         color: "gray",
-        fontSize: "16px",
+        fontSize: "12px",
     },
 });
 export default function StatementBox({
@@ -62,8 +62,10 @@ export default function StatementBox({
     iconPath,
     children,
     hideDelete,
+    customActions,
     onChange,
     onDelete,
+    onCustomAction,
 }) {
     const [editing, setEditing] = useState(false);
     const classes = useStyles();
@@ -79,36 +81,35 @@ export default function StatementBox({
     const handleCancelEdit = () => {
         setEditing(false);
     };
+
+    const handleOnCustomAction = (code) => () => {
+        onCustomAction(code);
+    };
     const actions = (
         <Menu>
             {!hideDelete ? (
                 <Menu.Item
                     key="0"
-                    icon={
-                        <Icon
-                            className={classes.menuIcon}
-                            path={mdiContentCut}
-                            size="16px"
-                        />
-                    }
-                    onClick={onDelete}
-                >
+                    icon={<Icon className={classes.menuIcon} path={mdiContentCut} size="16px" />}
+                    onClick={onDelete}>
                     {T.translate("visual_script.cut")}
                 </Menu.Item>
             ) : null}
             <Menu.Item
                 key="1"
-                icon={
-                    <Icon
-                        className={classes.menuIcon}
-                        path={mdiPencil}
-                        size="16px"
-                    />
-                }
-                onClick={handleOnEdit}
-            >
+                icon={<Icon className={classes.menuIcon} path={mdiPencil} size="16px" />}
+                onClick={handleOnEdit}>
                 {T.translate("visual_script.edit")}
             </Menu.Item>
+            {customActions &&
+                customActions.map((customAction) => (
+                    <Menu.Item
+                        key={customAction.code}
+                        icon={<Icon className={classes.menuIcon} path={customAction.iconPath} size="16px" />}
+                        onClick={handleOnCustomAction(customAction.code)}>
+                        {customAction.text}
+                    </Menu.Item>
+                ))}
         </Menu>
     );
     return (
@@ -117,29 +118,14 @@ export default function StatementBox({
                 <div className={classes.toolbar}>
                     <div>
                         <span className={classes.title}>
-                            {iconPath ? (
-                                <StatementIcon
-                                    className={classes.icon}
-                                    path={iconPath}
-                                />
-                            ) : null}
-                            <span className={classes.titleText}>
-                                {title || statement.name}
-                            </span>
+                            {iconPath ? <StatementIcon className={classes.icon} path={iconPath} /> : null}
+                            <span className={classes.titleText}>{title || statement.name}</span>
                         </span>
                     </div>
                 </div>
                 <div className={classes.actions}>
                     <Dropdown overlay={actions} trigger={["click"]}>
-                        <Button
-                            type="text"
-                            icon={
-                                <StatementIcon
-                                    className={classes.actionsIcon}
-                                    path={mdiCog}
-                                />
-                            }
-                        />
+                        <Button type="text" icon={<StatementIcon className={classes.actionsIcon} path={mdiCog} />} />
                     </Dropdown>
                 </div>
                 {children}

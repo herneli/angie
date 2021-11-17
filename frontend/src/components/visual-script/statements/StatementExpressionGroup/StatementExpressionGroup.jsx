@@ -6,6 +6,7 @@ import { Button } from "antd";
 import StatementBox from "../StatementBox";
 import { useScriptContext } from "../../ScriptContext";
 import registry from ".";
+import { mdiPlus } from "@mdi/js";
 
 let useStyles = createUseStyles({
     addExpressionButton: {
@@ -24,15 +25,16 @@ let useStyles = createUseStyles({
     },
 });
 
-export default function StatementExpressionGroup({
-    statement,
-    variables,
-    onChange,
-    onDelete,
-}) {
+export default function StatementExpressionGroup({ statement, variables, onChange, onDelete }) {
     const classes = useStyles();
     const { manager } = useScriptContext();
 
+    const handleOnCustomAction = (code) => {
+        switch (code) {
+            case "addExpression":
+                handleAddExpression();
+        }
+    };
     const handleAddExpression = () => {
         onChange({
             ...statement,
@@ -50,27 +52,22 @@ export default function StatementExpressionGroup({
     };
 
     const handleExpressionDelete = (index) => (value) => {
-        let newExpressions = [
-            ...statement.expressions.slice(0, index),
-            ...statement.expressions.slice(index + 1),
-        ];
+        let newExpressions = [...statement.expressions.slice(0, index), ...statement.expressions.slice(index + 1)];
         onChange({ ...statement, expressions: newExpressions });
     };
 
-    let expressionComponents = statement.expressions.map(
-        (expression, index) => {
-            return (
-                <ExpressionWrapper
-                    key={index}
-                    expression={expression}
-                    variables={variables}
-                    expectedType={{ type: "void" }}
-                    onChange={handleExpressionChange(index)}
-                    onDelete={handleExpressionDelete(index)}
-                />
-            );
-        }
-    );
+    let expressionComponents = statement.expressions.map((expression, index) => {
+        return (
+            <ExpressionWrapper
+                key={index}
+                expression={expression}
+                variables={variables}
+                expectedType={{ type: "void" }}
+                onChange={handleExpressionChange(index)}
+                onDelete={handleExpressionDelete(index)}
+            />
+        );
+    });
 
     return (
         <StatementBox
@@ -79,19 +76,11 @@ export default function StatementExpressionGroup({
             iconPath={registry.iconPath}
             onChange={onChange}
             onDelete={onDelete}
-        >
+            customActions={[
+                { code: "addExpression", iconPath: mdiPlus, text: T.translate("visual_script.add_expression") },
+            ]}
+            onCustomAction={handleOnCustomAction}>
             {expressionComponents}
-            <div className={classes.statementFooter}>
-                <Button
-                    type="link"
-                    className={classes.addExpressionButton}
-                    onClick={handleAddExpression}
-                >
-                    {(
-                        T.translate("visual_script.add_expression") || ""
-                    ).toUpperCase()}
-                </Button>
-            </div>
         </StatementBox>
     );
 }

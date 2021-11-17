@@ -42,7 +42,7 @@ class VisualScript extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.script && this.state.manager) {
+        if (this.props.script && this.state.manager) {
             setTimeout(() => this.repaint(true), 1);
         }
     }
@@ -52,18 +52,15 @@ class VisualScript extends Component {
     }
 
     repaint = (refresh) => {
-        this.state.manager && this.state.manager.drawConnections(this.state.script.mainStatement, refresh);
+        this.state.manager && this.state.manager.drawConnections(this.props.script.mainStatement, refresh);
     };
     handleResize = debounce(() => this.repaint(true), 10);
     handleOnChangeStatement = (statement) => {
-        this.setState({
-            ...this.state,
-            script: { ...this.state.script, mainStatement: statement },
-        });
-    };
-
-    handleOnSave = () => {
-        this.props.onSave && this.props.onSave(this.state.script);
+        this.props.onChange &&
+            this.props.onChange({
+                ...this.props.script,
+                mainStatement: statement,
+            });
     };
 
     handleOnCustomObjects = () => {
@@ -82,25 +79,17 @@ class VisualScript extends Component {
                         <div className={this.props.classes.dialogContent}>
                             <ModelAdmin
                                 model="script_object"
-                                fixedData={{ customGroup: "script." + this.state.script.code }}
+                                fixedData={{ customGroup: "script." + this.props.script.code }}
                             />
                         </div>
                     </Modal>
                 ) : null}
                 <div>
-                    <div>
-                        <Space>
-                            <Button type="primary" onClick={this.handleOnSave}>
-                                {T.translate("visual_script.save")}
-                            </Button>
-                            <Button onClick={this.handleOnCustomObjects}>Custom objects</Button>
-                        </Space>
-                    </div>
                     <div id="script-canvas" className={this.props.classes.canvas}>
                         {this.state.manager ? (
                             <ScriptContextProvider manager={this.state.manager}>
                                 <Statement
-                                    statement={this.state.script.mainStatement}
+                                    statement={this.props.script.mainStatement}
                                     onChange={this.handleOnChangeStatement}
                                 />
                             </ScriptContextProvider>

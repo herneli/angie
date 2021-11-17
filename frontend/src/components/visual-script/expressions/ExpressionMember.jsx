@@ -31,13 +31,7 @@ function isObject(value) {
     return value !== null && typeof value === "object";
 }
 
-export default function ExpressionMember({
-    classes,
-    expressionMember,
-    variables,
-    onChange,
-    onEdit,
-}) {
+export default function ExpressionMember({ classes, expressionMember, variables, onChange, onEdit }) {
     const handleOnChange = (param) => (value) => {
         onChange({
             ...expressionMember,
@@ -50,17 +44,13 @@ export default function ExpressionMember({
     };
 
     const renderMethod = () => {
-        const templateParts = getRenderPatternParts(
-            expressionMember.renderTemplate
-        );
+        const templateParts = getRenderPatternParts(expressionMember.renderTemplate);
         const methodComponents = [];
         let key = 0;
         templateParts.forEach((templatePart) => {
             key++;
             if (templatePart.type === "text") {
-                methodComponents.push(
-                    <span key={key}>{templatePart.value}</span>
-                );
+                methodComponents.push(<span key={key}>{templatePart.value}</span>);
             } else {
                 if (!(templatePart.value in (expressionMember.params || {}))) {
                     return "{{" + templatePart.value + "}}";
@@ -74,7 +64,7 @@ export default function ExpressionMember({
                             variables={variables}
                             onChange={(expression) => {
                                 handleOnChange(templatePart.value)({
-                                    $stm: expression,
+                                    $exp: expression,
                                 });
                             }}
                             displayOnly
@@ -85,11 +75,9 @@ export default function ExpressionMember({
                         <ParamEditor
                             key={key + "-editor"}
                             value={expressionMember.params[templatePart.value]}
-                            paramMember={expressionMember.paramMembers.find(
-                                (item) => {
-                                    return item.code === templatePart.value;
-                                }
-                            )}
+                            paramMember={expressionMember.paramMembers.find((item) => {
+                                return item.code === templatePart.value;
+                            })}
                             onClickEdit={handleOnClickEdit}
                             onChange={handleOnChange(templatePart.value)}
                         />
@@ -99,13 +87,7 @@ export default function ExpressionMember({
         });
         key++;
         methodComponents.push(
-            <Icon
-                className={classes.editIcon}
-                key={key}
-                path={editIcon}
-                size="1em"
-                onClick={handleOnClickEdit}
-            />
+            <Icon className={classes.editIcon} key={key} path={editIcon} size="1em" onClick={handleOnClickEdit} />
         );
         return methodComponents;
     };
@@ -116,12 +98,9 @@ export default function ExpressionMember({
                 className={
                     classes.member +
                     " " +
-                    (expressionMember.renderOperator
-                        ? "opearator-value"
-                        : expressionMember.memberType) +
+                    (expressionMember.renderOperator ? "opearator-value" : expressionMember.memberType) +
                     (expressionMember.color ? " " + expressionMember.color : "")
-                }
-            >
+                }>
                 {renderMethod()}
             </div>
         );

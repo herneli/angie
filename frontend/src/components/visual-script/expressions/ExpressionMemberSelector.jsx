@@ -23,19 +23,12 @@ export default function ExpressionMemberSelector({
     const { manager } = useScriptContext();
 
     useEffect(() => {
-        if (
-            open &&
-            (!membersForType ||
-                !areSameTypes(
-                    membersForType.type,
-                    getLastExpressionMember().type
-                ))
-        ) {
+        if (open && (!membersForType || !areSameTypes(membersForType.type, getLastExpressionMember().type))) {
             getMembers();
         }
     }, [expression, open]);
 
-    const itemStyle = { padding: "4px 8px" };
+    const itemStyle = { padding: "2px 4px" };
 
     const getLastExpressionMember = () => {
         return expression[expression.length - 1];
@@ -61,10 +54,7 @@ export default function ExpressionMemberSelector({
             if (m.properties) {
                 m.properties.sort(memberSorter).forEach((property) => {
                     membersLocal.push({
-                        memberType:
-                            lastExpressionMember.memberType === "variable"
-                                ? "variable"
-                                : "property",
+                        memberType: lastExpressionMember.memberType === "variable" ? "variable" : "property",
                         ...property,
                     });
                 });
@@ -78,10 +68,7 @@ export default function ExpressionMemberSelector({
             if (lastExpressionMember.memberType !== "context" && m.methods) {
                 m.methods.sort(memberSorter).forEach((method) => {
                     // Include methods with code ended with ".setter" only for variables
-                    if (
-                        !method.code.endsWith(".setter") ||
-                        lastExpressionMember.memberType === "variable"
-                    ) {
+                    if (!method.code.endsWith(".setter") || lastExpressionMember.memberType === "variable") {
                         membersLocal.push({
                             memberType: "method",
                             ...method,
@@ -186,7 +173,7 @@ export default function ExpressionMemberSelector({
     };
 
     const AvatarIcon = ({ path }) => {
-        return <Icon path={path} size={1} color={"gray"} />;
+        return <Icon path={path} size={"16px"} color={"gray"} />;
     };
 
     const renderMenu = () => {
@@ -197,12 +184,7 @@ export default function ExpressionMemberSelector({
         return (
             <div className={classes.memberSelectorWrapper}>
                 {membersForType.members.length > 1 ? (
-                    <Input
-                        value={filter}
-                        onChange={handleOnChangeFilter}
-                        autoFocus
-                        style={{ marginBottom: "4px" }}
-                    />
+                    <Input value={filter} onChange={handleOnChangeFilter} autoFocus style={{ marginBottom: "4px" }} />
                 ) : null}
                 <List size="small">
                     {expression.length > 1 ? (
@@ -210,15 +192,10 @@ export default function ExpressionMemberSelector({
                             key={"delete"}
                             onClick={handleOnSelect({ memberType: "delete" })}
                             className={classes.memberSelectorListItem}
-                            style={itemStyle}
-                        >
+                            style={itemStyle}>
                             <List.Item.Meta
-                                avatar={
-                                    <AvatarIcon path={mdiBackspaceOutline} />
-                                }
-                                title={T.translate(
-                                    "visual_script.delete_previous"
-                                )}
+                                avatar={<AvatarIcon path={mdiBackspaceOutline} />}
+                                title={T.translate("visual_script.delete_previous")}
                             />
                         </List.Item>
                     ) : null}
@@ -228,14 +205,9 @@ export default function ExpressionMemberSelector({
                                 key={index}
                                 onClick={handleOnSelect(member)}
                                 className={classes.memberSelectorListItem}
-                                style={itemStyle}
-                            >
+                                style={itemStyle}>
                                 <List.Item.Meta
-                                    avatar={
-                                        <AvatarIcon
-                                            path={getTypeIcon(member.type.type)}
-                                        />
-                                    }
+                                    avatar={<AvatarIcon path={getTypeIcon(member.type.type)} />}
                                     title={member.name}
                                     description={member.description}
                                 />
@@ -254,8 +226,7 @@ export default function ExpressionMemberSelector({
                 visible={open && !methodMember}
                 onVisibleChange={onOpenChange}
                 overlayClassName={classes.propertyPopover}
-                autoAdjustOverflow={true}
-            >
+                autoAdjustOverflow={true}>
                 <Button
                     type="text"
                     icon={<Icon size="14px" path={mdiChevronDown} />}

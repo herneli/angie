@@ -116,7 +116,7 @@ const Sidebar = ({ selectedType, onNodeUpdate, editNodeVisible, onEditCancel }) 
             {drawGroupedTypes(nodeTypes)}
 
             <Modal
-                width={800}
+                width={"calc(100vw - 40px)"}
                 title={T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
                 visible={editNodeVisible}
                 onOk={modalOk}

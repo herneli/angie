@@ -9,9 +9,10 @@ const styles = {
         borderRadius: "3px",
         boxShadow: "0 0 6px rgb(0 0 0 / 28%), 0 0 2px rgb(0 0 0 / 22%)",
         whiteSpace: "nowrap",
-        minHeight: "28px",
-        fontSize: "14px",
-        margin: "2px 10px 2px 0",
+        // minHeight: "28px",
+        // fontSize: "14px",
+        fontSize: "12px",
+        margin: "2px 5px 2px 0",
     },
     member: {
         display: "flex",

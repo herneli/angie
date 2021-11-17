@@ -14,11 +14,14 @@ export default function Script({ match }) {
         });
     }, [code]);
 
-    const handleOnSave = (script) => {
-        axios.post("/script/code/" + code, script).then((response) => {
-            setScript(response.data.data.data);
-            message.info(T.translate("visual_script.script_saved"));
-        });
+    // const handleOnSave = (script) => {
+    //     axios.post("/script/code/" + code, script).then((response) => {
+    //         setScript(response.data.data.data);
+    //         message.info(T.translate("visual_script.script_saved"));
+    //     });
+    // };
+    const handleOnChange = (script) => {
+        setScript(script);
     };
 
     const handleOnExecuteCode = (script) => {
@@ -42,13 +45,7 @@ export default function Script({ match }) {
     };
 
     if (script) {
-        return (
-            <VisualScript
-                script={script}
-                onSave={handleOnSave}
-                onExecuteCode={handleOnExecuteCode}
-            />
-        );
+        return <VisualScript script={script} onChange={handleOnChange} onExecuteCode={handleOnExecuteCode} />;
     } else {
         return <h1>Loading...</h1>;
     }
