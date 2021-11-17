@@ -184,40 +184,24 @@ export default function ModelTable({
     //     });
     // };
 
-    const search = async (params, searchValue, sorter) => {
-        let paginationObject = paramsPagination;
+    const search = async (params, searchValue) => {
         let filters = {};
-        let tableSort = {
-            field: "data->'" + sorter?.column?.dataIndex + "'" || "data->'" + sorter?.field + "'",
-            direction: sorter?.order,
-        };
 
         if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
             filters = {
-                column: {
+                "data::text": {
                     type: "jsonb",
                     value: searchValue,
                 },
             };
         }
 
-        if (tableSort.field && tableSort.direction) {
-            filters.sort = tableSort;
-        }
-
         if (params?.pageSize && params?.current) {
-            paginationObject = {
-                limit: params.pageSize,
-                start: params.current * params.pageSize - params.pageSize + 1,
-            };
-            if (params.current == 1) {
-                paginationObject.start = 0;
-            }
-
-            await onSearchData(modelInfo, filters, paginationObject);
-        } else {
-            await onSearchData(modelInfo, filters, paginationObject);
+            filters.limit = params.pageSize ? params.pageSize : 10;
+            filters.start = (params.current ? params.current - 1 : 0) * (params.pageSize ? params.pageSize : 10);
         }
+
+        await onSearchData(modelInfo, filters);
     };
 
     //ComponentDidMount
@@ -284,11 +268,11 @@ export default function ModelTable({
                     rowKey={"id"}
                     sorta
                     onChange={search}
-                    onRow={(record, index) => {
-                        return {
-                            onClick: () => handleOnRowClick(record),
-                        };
-                    }}
+                    // onRow={(record, index) => {
+                    //     return {
+                    //         onClick: () => handleOnRowClick(record),
+                    //     };
+                    // }}
                     bordered
                     size="small"
                 />
