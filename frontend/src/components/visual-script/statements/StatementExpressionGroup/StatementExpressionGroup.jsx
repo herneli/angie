@@ -7,6 +7,7 @@ import StatementBox from "../StatementBox";
 import { useScriptContext } from "../../ScriptContext";
 import registry from ".";
 import { mdiPlus } from "@mdi/js";
+import ReactDragListView from "react-drag-listview";
 
 let useStyles = createUseStyles({
     addExpressionButton: {
@@ -56,6 +57,15 @@ export default function StatementExpressionGroup({ statement, variables, onChang
         onChange({ ...statement, expressions: newExpressions });
     };
 
+    const handleOnDragEnd = (fromIndex, toIndex) => {
+        if (fromIndex !== toIndex) {
+            let newExpressions = [...statement.expressions];
+            let fromExpression = newExpressions[fromIndex];
+            newExpressions.splice(fromIndex, 1);
+            newExpressions.splice(toIndex, 0, fromExpression);
+            onChange({ ...statement, expressions: newExpressions });
+        }
+    };
     let expressionComponents = statement.expressions.map((expression, index) => {
         return (
             <ExpressionWrapper
@@ -85,7 +95,12 @@ export default function StatementExpressionGroup({ statement, variables, onChang
                 },
             ]}
             onCustomAction={handleOnCustomAction}>
-            {expressionComponents}
+            <ReactDragListView
+                handleSelector="span.drag-handle"
+                nodeSelector="div.drag-item"
+                onDragEnd={handleOnDragEnd}>
+                {expressionComponents}
+            </ReactDragListView>
         </StatementBox>
     );
 }
