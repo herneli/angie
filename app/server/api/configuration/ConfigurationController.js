@@ -18,6 +18,7 @@ export class ConfigurationController extends BaseController {
             })
         );
 
+
         this.router.get(
             "/configuration/model/:code/data/:id",
             expressAsyncHandler((req, res, next) => {
@@ -73,14 +74,22 @@ export class ConfigurationController extends BaseController {
         try {
             let service = new ConfigurationService();
             let filters = request && request.query && request.query.filters ? JSON.parse(request.query.filters) : {};
+            let relations = request && request.query && request.query.relations ? JSON.parse('['+request.query.relations.join(',')+']') : {};
+            let selectQuery = request && request.query && request.query.selectQuery ? request.query.selectQuery : {};
+            let modelList = [];
 
-            const modelList = await service.list(request.params.code, filters, filters.start, filters.limit);
+            if(relations.length > 0 && selectQuery){
+                modelList = await service.listWithRelations(request.params.code, filters, filters.start,filters.limit,relations, selectQuery);
+            }else{
+                modelList = await service.list(request.params.code, filters, filters.start, filters.limit);
+            }
 
             response.json(new JsonResponse(true, modelList.data, "", modelList.total));
         } catch (ex) {
             next(ex);
         }
     }
+
 
     async postModel(request, response, next) {
         try {

@@ -42,7 +42,6 @@ export default function ModelEditor({
             <Button onClick={onCancel}>
                 {T.translate("configuration.return")}
             </Button>
-            <Card className={classes.paper}>
                 <Form
                     ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                     ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
@@ -67,7 +66,6 @@ export default function ModelEditor({
                         </Space>
                     </Row>
                 </Form>
-            </Card>
         </div>
     );
 }
