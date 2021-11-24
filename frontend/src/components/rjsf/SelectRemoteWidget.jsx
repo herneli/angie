@@ -19,6 +19,7 @@ const processValue = (schema, value) => {
     if (value === "") {
         return undefined;
     } else if (type === "array" && items && nums.has(items.type)) {
+        console.log(value.map(asNumber))
         return value.map(asNumber);
     } else if (type === "boolean") {
         return value === "true";
@@ -81,9 +82,11 @@ export default class SelectRemoteWidget extends Component {
 
             this.setState({ ...this.state, options: options });
         });
+
     }
 
     handleOnChange = (value) => {
+        console.log(this.props)
         this.props.onChange(processValue(this.props.schema, value));
     };
     handleOnBlur = (selectedValue) => {
@@ -103,6 +106,7 @@ export default class SelectRemoteWidget extends Component {
                 options={this.state.options}
                 value={typeof value === "undefined" || value === null ? emptyValue : value}
                 required={required}
+                mode={this.props.options && this.props.options.mode ? this.props.options.mode : null}
                 disabled={disabled || readonly}
                 autoFocus={autofocus}
                 onChange={this.handleOnChange}

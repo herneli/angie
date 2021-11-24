@@ -230,7 +230,6 @@ export default function ModelTable({
       )} */}
             {importItems ? <h1>Imported items</h1> : null}
 
-            <Card className={classes.card}>
                 <Row>
                     <Col flex={1}>
                         <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
@@ -276,7 +275,6 @@ export default function ModelTable({
                     bordered
                     size="small"
                 />
-            </Card>
         </div>
     );
 }

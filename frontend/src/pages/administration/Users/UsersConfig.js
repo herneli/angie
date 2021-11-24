@@ -49,12 +49,11 @@ const UsersConfig = () => {
     return (
         <>
             <Popconfirm onConfirm={importUsers}>
-                <Button style={{ display: "flex", float: "right", margin: "1.5%" }} type="primary">
+                <Button style={{ display: "flex", float: "right", marginLeft: "1.5%" }} type="primary">
                     Importar Usuarios
                 </Button>
             </Popconfirm>
 
-            <Divider></Divider>
             <ModelAdmin model="users_config" />
         </>
     );
