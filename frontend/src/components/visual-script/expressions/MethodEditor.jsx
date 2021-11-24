@@ -15,6 +15,7 @@ const useStyles = createUseStyles({
         marginTop: "20px",
     },
 });
+
 export default function MethodEditor({ member, variables, onParametersEntered, onCancel }) {
     const [formOptions, setFormOptions] = useState(null);
     const { manager } = useScriptContext();
@@ -36,7 +37,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
             }
             let paramConfigPromises = member.paramMembers.map((paramMember) => {
                 if (!(paramMember.code in member.params)) {
-                    member.params[paramMember.code] = null;
+                    member.params[paramMember.code] = getDefaultByType(paramMember.type);
                 }
                 return memberToFormSchemas(paramMember, member);
             });
@@ -91,10 +92,10 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
         }
         if (member.options) {
             member.options.forEach((option) => {
-                if (!uiSchema["ui:paramOptions"]) {
-                    uiSchema["ui:paramOptions"] = {};
+                if (!uiSchema["ui:options"]) {
+                    uiSchema["ui:options"] = {};
                 }
-                uiSchema["ui:paramOptions"][option.code] = option;
+                uiSchema["ui:options"][option.code] = option.value;
             });
         }
         return uiSchema;
@@ -131,7 +132,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
                 return {
                     type: "boolean",
                     title: member.name,
-                    default: false,
+                    default: true,
                 };
             case "array":
                 return {
@@ -153,6 +154,44 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
                     returnObject.properties[childMember.code] = await memberToSchema(childMember);
                 });
                 return returnObject;
+            case "$any":
+            case "$anyPrimitive":
+                return {
+                    type: "string",
+                    title: member.name,
+                };
+            case "$anyObject":
+                return {
+                    type: "object",
+                    title: member.name,
+                    properties: {},
+                };
+
+            default:
+                throw Error("Type member not supported: ", member.type.type);
+        }
+    };
+
+    const getDefaultByType = (type) => {
+        switch (type.type) {
+            case "string":
+            case "date":
+                return "";
+            case "integer":
+            case "number":
+                return 0;
+            case "boolean":
+                return false;
+            case "array":
+                return [];
+            case "object":
+                return {};
+            case "$any":
+            case "$anyPrimitive":
+                return "";
+            case "$anyObject":
+                return {};
+
             default:
                 throw Error("Type member not supported: ", member.type.type);
         }

@@ -269,7 +269,7 @@ exports.seed = async function (knex) {
                                                     title: "Necesaria",
                                                 },
                                             },
-                                            required: ["code", "type"],
+                                            required: ["code"],
                                         },
                                     },
                                 },
@@ -315,6 +315,7 @@ exports.seed = async function (knex) {
                                     enum: [
                                         "$any",
                                         "$anyPrimitive",
+                                        "$anyObject",
                                         "array",
                                         "boolean",
                                         "date",
@@ -326,6 +327,7 @@ exports.seed = async function (knex) {
                                     enumNames: [
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
+                                        "Cualquier objecto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -346,6 +348,7 @@ exports.seed = async function (knex) {
                                                     enum: [
                                                         "$any",
                                                         "$anyPrimitive",
+                                                        "$anyObject",
                                                         "boolean",
                                                         "date",
                                                         "number",
@@ -392,6 +395,7 @@ exports.seed = async function (knex) {
                                         "$item",
                                         "$any",
                                         "$anyPrimitive",
+                                        "$anyObject",
                                         "array",
                                         "boolean",
                                         "date",
@@ -406,6 +410,7 @@ exports.seed = async function (knex) {
                                         "$item",
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
+                                        "Cualquier objeto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -423,7 +428,14 @@ exports.seed = async function (knex) {
                                         {
                                             properties: {
                                                 type: {
-                                                    enum: ["void", "$self", "$item", "$any", "$anyPrimitive"],
+                                                    enum: [
+                                                        "void",
+                                                        "$self",
+                                                        "$item",
+                                                        "$any",
+                                                        "$anyPrimitive",
+                                                        "$anyObject",
+                                                    ],
                                                 },
                                             },
                                         },

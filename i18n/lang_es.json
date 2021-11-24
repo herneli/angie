@@ -153,6 +153,7 @@
         "clipoard": "Portapapeles",
         "condition_yes": "Sí",
         "condition_no": "No",
+        "confirm_delete": "¿Seguro que desea eliminar?",
         "cut": "Cortar",
         "delete_previous": "Anterior",
         "edit": "Editar",

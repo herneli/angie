@@ -39,12 +39,17 @@ const AceEditorWidget = function ({ id, value, onChange, options, readonly }) {
         }
     }, []);
 
+    let mode = options.mode;
+    if (mode === "json_text") {
+        mode = "json";
+    }
+
     //editorProps={{ $blockScrolling: true }}
     return (
         <AceEditor
             width="100%"
             height={options.height || "200px"}
-            mode={options.mode}
+            mode={mode}
             theme={"github"}
             onChange={(value) => {
                 onChange(value);

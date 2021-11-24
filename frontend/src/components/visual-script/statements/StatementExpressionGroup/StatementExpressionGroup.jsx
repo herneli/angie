@@ -57,6 +57,14 @@ export default function StatementExpressionGroup({ statement, variables, onChang
         onChange({ ...statement, expressions: newExpressions });
     };
 
+    const handleExpressionDuplicate = (index) => (value) => {
+        let newExpressions = [
+            ...statement.expressions.slice(0, index),
+            statement.expressions[index],
+            ...statement.expressions.slice(index),
+        ];
+        onChange({ ...statement, expressions: newExpressions });
+    };
     const handleOnDragEnd = (fromIndex, toIndex) => {
         if (fromIndex !== toIndex) {
             let newExpressions = [...statement.expressions];
@@ -75,6 +83,7 @@ export default function StatementExpressionGroup({ statement, variables, onChang
                 expectedType={{ type: "void" }}
                 onChange={handleExpressionChange(index)}
                 onDelete={handleExpressionDelete(index)}
+                onDuplicate={handleExpressionDuplicate(index)}
             />
         );
     });

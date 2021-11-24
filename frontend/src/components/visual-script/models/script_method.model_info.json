@@ -116,7 +116,7 @@
                                         "title": "Necesaria"
                                     }
                                 },
-                                "required": ["code", "type"]
+                                "required": ["code"]
                             }
                         }
                     }
@@ -162,6 +162,7 @@
                         "enum": [
                             "$any",
                             "$anyPrimitive",
+                            "$anyObject",
                             "array",
                             "boolean",
                             "date",
@@ -173,6 +174,7 @@
                         "enumNames": [
                             "Cualquier tipo",
                             "Cualquier tipo primitivo",
+                            "Cualquier objeto",
                             "Lista",
                             "Boleano",
                             "Fecha",
@@ -193,6 +195,7 @@
                                         "enum": [
                                             "$any",
                                             "$anyPrimitive",
+                                            "$anyObject",
                                             "boolean",
                                             "date",
                                             "number",
@@ -239,6 +242,7 @@
                             "$item",
                             "$any",
                             "$anyPrimitive",
+                            "$anyObject",
                             "array",
                             "boolean",
                             "date",
@@ -253,6 +257,7 @@
                             "$item",
                             "Cualquier tipo",
                             "Cualquier tipo primitivo",
+                            "Cualquier objeto",
                             "Lista",
                             "Boleano",
                             "Fecha",
@@ -270,7 +275,7 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive"]
+                                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive", "$anyObject"]
                                     }
                                 }
                             },
