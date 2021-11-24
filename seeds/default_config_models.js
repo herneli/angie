@@ -5,7 +5,151 @@ exports.seed = async function (knex) {
     // Inserts seed entries
     await knex("config_model").insert([
         {
-            name: "Script",
+            name: "Script context",
+            code: "script_context",
+            data: {
+                code: "context",
+                name: "Contexto",
+                table: "script_config",
+                documentType: "context",
+                listFields: [
+                    {
+                        title: "Código",
+                        field: "code",
+                    },
+                    {
+                        title: "Nombre",
+                        field: "name",
+                    },
+                    {
+                        title: "Lenguaje",
+                        field: "language",
+                    },
+                    {
+                        title: "Tipo de contexto",
+                        field: ["type", "type"],
+                    },
+                ],
+                schema: {
+                    type: "object",
+                    properties: {
+                        code: {
+                            type: "string",
+                            title: "Código",
+                        },
+                        name: {
+                            type: "string",
+                            title: "Nombre",
+                        },
+                        language: {
+                            title: "Lenguaje",
+                            type: "string",
+                            enum: ["js", "python", "groovy"],
+                            enumNames: ["Javascript", "Python", "Groovy"],
+                        },
+                        type: { $ref: "#/definitions/type" },
+                        startCode: {
+                            type: "string",
+                            title: 'Ejecutar código al inicio (cargar objecto "context"',
+                        },
+                        endCode: {
+                            type: "string",
+                            title: "Ejecutar código al finalizar (variables disponibles",
+                        },
+                    },
+                    definitions: {
+                        type: {
+                            type: "object",
+                            properties: {
+                                type: {
+                                    type: "string",
+                                    title: "Tipo",
+                                    enum: ["array", "boolean", "date", "number", "integer", "object", "string"],
+                                    enumNames: ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
+                                    default: "",
+                                },
+                            },
+                            dependencies: {
+                                type: {
+                                    oneOf: [
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["boolean", "date", "number", "integer", "string"],
+                                                },
+                                                selectOptions: {
+                                                    title: "Valores remotos",
+                                                    type: ["string", "null"],
+                                                },
+                                                widget: {
+                                                    title: "Editor",
+                                                    type: ["string", "null"],
+                                                },
+                                            },
+                                        },
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["object"],
+                                                },
+                                                objectCode: {
+                                                    type: "string",
+                                                    title: "Código de objeto",
+                                                },
+                                            },
+                                            selectOptions: {
+                                                title: "Valores remotos",
+                                                type: ["string", "null"],
+                                            },
+                                            widget: {
+                                                title: "Editor",
+                                                type: ["string", "null"],
+                                            },
+                                        },
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["array"],
+                                                },
+                                                items: {
+                                                    $ref: "#/definitions/type",
+                                                },
+                                            },
+                                            widget: {
+                                                title: "Editor",
+                                                type: ["string", "null"],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "4",
+                    },
+                    name: {
+                        "ui:columnSize": "4",
+                    },
+                    language: {
+                        "ui:columnSize": "4",
+                    },
+                    type: {
+                        objectCode: {
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:selectOptions":
+                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                        },
+                    },
+                    startCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
+                    endCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
+                },
+            },
+        },
+        {
+            name: "Script method",
             code: "script_method",
             data: {
                 code: "method",
@@ -40,7 +184,7 @@ exports.seed = async function (knex) {
                 ],
                 schema: {
                     type: "object",
-                    required: ["code", "name", "complexityLevel", "parentType"],
+                    required: ["code", "name", "complexityLevel", "language", "parentType"],
                     properties: {
                         code: {
                             title: "Código",
@@ -129,6 +273,13 @@ exports.seed = async function (knex) {
                                         },
                                     },
                                 },
+                            },
+                        },
+                        imports: {
+                            title: "Imports",
+                            type: "array",
+                            items: {
+                                type: "string",
                             },
                         },
                         sourceCode: {
@@ -385,9 +536,11 @@ exports.seed = async function (knex) {
                             },
                         },
                     },
-
+                    imports: {
+                        "ui:columnSize": "6",
+                    },
                     sourceCode: {
-                        "ui:widget": "textarea",
+                        "ui:widget": "AceEditorWidget",
                         "ui:options": {
                             rows: 8,
                         },
@@ -503,7 +656,10 @@ exports.seed = async function (knex) {
                                         title: "Obligatorio",
                                         type: "boolean",
                                     },
-
+                                    path: {
+                                        title: "Ruta",
+                                        type: "string",
+                                    },
                                     description: {
                                         title: "Descripción",
                                         type: "string",
@@ -618,6 +774,7 @@ exports.seed = async function (knex) {
                             required: {
                                 "ui:columnSize": "3",
                             },
+                            path: { "ui:columnSize": "6" },
                             description: {
                                 "ui:columnSize": "12",
                                 "ui:widget": "textarea",
@@ -706,9 +863,7 @@ exports.seed = async function (knex) {
                     profile: {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
-                        "ui:options":  {
-                           
-                        },
+                        "ui:options": {},
                         "ui:selectOptions":
                             "/configuration/model/profile_config/data#path=data&value=id&label=data.name",
                     },
@@ -1120,7 +1275,7 @@ exports.seed = async function (knex) {
                                 "Gestion",
                                 "Comunicaciones",
                                 "Personalización",
-                                "Script"
+                                "Script",
                             ],
                         },
                     },

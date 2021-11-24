@@ -77,7 +77,12 @@ export default function StatementExpressionGroup({ statement, variables, onChang
             onChange={onChange}
             onDelete={onDelete}
             customActions={[
-                { code: "addExpression", iconPath: mdiPlus, text: T.translate("visual_script.add_expression") },
+                {
+                    code: "addExpression",
+                    iconPath: mdiPlus,
+                    text: T.translate("visual_script.add_expression"),
+                    asButton: true,
+                },
             ]}
             onCustomAction={handleOnCustomAction}>
             {expressionComponents}

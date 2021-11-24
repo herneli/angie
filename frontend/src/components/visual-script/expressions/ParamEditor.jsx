@@ -6,11 +6,16 @@ const useStyles = createUseStyles({
         margin: "0 5px",
         "& input": {
             textAlign: "center",
-            background: "transparent",
+            backgrounfColor: "white",
             border: 0,
-            borderBottom: "1px dotted",
+            borderRadius: "4px",
             fontSize: "14px",
             outline: "none",
+            fontSize: 12,
+            maxWidth: 500,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
         },
     },
     editorDisplay: {
@@ -25,12 +30,7 @@ const useStyles = createUseStyles({
 });
 const MAX_STRING_SIZE = 40;
 
-export default function ParamEditor({
-    paramMember,
-    value,
-    onClickEdit,
-    onChange,
-}) {
+export default function ParamEditor({ paramMember, value, onClickEdit, onChange }) {
     const classes = useStyles();
     const handleOnChange = (e) => {
         let value = e.target.value;
@@ -42,10 +42,7 @@ export default function ParamEditor({
     };
 
     const getValue = () => {
-        if (
-            paramMember.type.type === "integer" ||
-            paramMember.type.type === "number"
-        ) {
+        if (paramMember.type.type === "integer" || paramMember.type.type === "number") {
             if (value === 0) {
                 return 0;
             } else {
@@ -73,29 +70,20 @@ export default function ParamEditor({
                     value = value + "...";
                 }
                 return (
-                    <span
-                        className={classes.editorDisplay}
-                        onClick={onClickEdit}
-                    >
+                    <span className={classes.editorDisplay} onClick={onClickEdit}>
                         [{value}]
                     </span>
                 );
             case "boolean":
                 let editorValue = value.toString();
                 return (
-                    <span
-                        className={classes.editorDisplay}
-                        onClick={onClickEdit}
-                    >
+                    <span className={classes.editorDisplay} onClick={onClickEdit}>
                         {editorValue}
                     </span>
                 );
             default:
                 return (
-                    <span
-                        className={classes.editorDisplay}
-                        onClick={onClickEdit}
-                    >
+                    <span className={classes.editorDisplay} onClick={onClickEdit}>
                         Edit
                     </span>
                 );
@@ -140,23 +128,13 @@ export default function ParamEditor({
                             className={classes.editor}
                             value={value}
                             type={type}
-                            inputStyle={{
-                                fontSize: 14,
-                                maxWidth: 500,
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                            }}
                             minWidth={minWidth}
                             onChange={handleOnChange}
                         />
                     );
                 } else {
                     return (
-                        <span
-                            className={classes.editorDisplay}
-                            onClick={onClickEdit}
-                        >
+                        <span className={classes.editorDisplay} onClick={onClickEdit}>
                             {value}
                         </span>
                     );

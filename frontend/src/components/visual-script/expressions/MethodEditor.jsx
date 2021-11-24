@@ -6,6 +6,7 @@ import { useScriptContext } from "../ScriptContext";
 import { createUseStyles } from "react-jss";
 import ScriptForm from "../rjsf/ScriptForm";
 import convertToExpressionSchema from "./convertToExpressionSchema";
+import getMembers from "../getMembers";
 
 const useStyles = createUseStyles({
     formFooter: {
@@ -140,7 +141,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
                     items: await memberToSchema({ type: member.type.items }),
                 };
             case "object":
-                let members = await manager.getMembers(member.type, {
+                let members = await getMembers(manager.getLanguage(), member.type, {
                     excludeMethods: true,
                 });
                 let returnObject = {
@@ -160,6 +161,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
     if (!formOptions) {
         return <></>;
     }
+
     const { schema: expSchema, uiSchema: expUiSchema } = convertToExpressionSchema(
         formOptions.schema,
         formOptions.uiSchema,

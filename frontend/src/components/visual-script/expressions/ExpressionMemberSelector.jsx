@@ -7,6 +7,7 @@ import getTypeIcon from "../getTypeIcon";
 import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
+import getMembers from "../getMembers";
 
 export default function ExpressionMemberSelector({
     expression,
@@ -24,7 +25,7 @@ export default function ExpressionMemberSelector({
 
     useEffect(() => {
         if (open && (!membersForType || !areSameTypes(membersForType.type, getLastExpressionMember().type))) {
-            getMembers();
+            calculateMembers();
         }
     }, [expression, open]);
 
@@ -47,9 +48,9 @@ export default function ExpressionMemberSelector({
         }
     };
 
-    const getMembers = () => {
+    const calculateMembers = () => {
         let lastExpressionMember = getLastExpressionMember();
-        manager.getMembers(lastExpressionMember.type).then((m) => {
+        getMembers(manager.getLanguage(), lastExpressionMember.type).then((m) => {
             let membersLocal = [];
             if (m.properties) {
                 m.properties.sort(memberSorter).forEach((property) => {
