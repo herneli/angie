@@ -56,7 +56,7 @@ class Transformer {
                             sourceHandle: link.handle,
                             target: link.node_id,
                             targetHandle: null,
-                            label: "Conexión",
+                            label: "",
                             // "type": 'smoothstep',
                             id: `reactflow__edge-${node.id}${link.handle}-${link.node_id}null`,
                         });

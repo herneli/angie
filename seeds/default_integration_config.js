@@ -13,7 +13,7 @@ exports.seed = async function (knex) {
                 name: "Code",
                 options: '{"language": "string","source":"string","target":"string","code":"string"}',
                 xml_template:
-                    '<route> <from uri="direct:{{source}}"/> <setBody>  <{{language}}>{{safe code}}</{{language}}>    </setBody> <multicast>{{#each target}} <to uri="direct:{{this}}"/> {{/each}}</multicast> </route>',
+                    '<route> <from uri="direct:{{source}}"/> <setBody>  <{{language}}><![CDATA[{{safe code}}]]></{{language}}>    </setBody> <multicast>{{#each target}} <to uri="direct:{{this}}"/> {{/each}}</multicast> </route>',
             },
         },
         {
@@ -105,7 +105,7 @@ exports.seed = async function (knex) {
                 name: "Groovy Code",
                 group: "Utilidades",
                 handles: "in,out",
-                defaults: '{\n    "language": "",\n    "code": ""\n}',
+                defaults: '{\n    "language": "groovy",\n    "code": ""\n}',
                 form_type: "jsonschema",
                 node_type: "node",
                 plugin_id: null,

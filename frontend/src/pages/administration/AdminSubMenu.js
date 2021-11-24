@@ -86,7 +86,7 @@ const AdminSubMenu = () => {
         if (resp && resp.data && resp.data.data && resp.data.data[0].data && resp.data.data[0].data.sections) {
             sections.push(resp.data.data[0].data.sections);
         }
-        if (keycloak.tokenParsed.roles.includes("admin")) {
+        if (keycloak.tokenParsed.roles && keycloak.tokenParsed.roles.includes("admin")) {
             sections.push("/admin/config_context");
             sections.push("/admin/config_method");
             sections.push("/admin/config_object");
