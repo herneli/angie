@@ -31,9 +31,19 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
         code.push("// " + this.getCommentCode(statement.name));
 
         let arrayExpression = this.getExpressionCode(statement.arrayExpression);
-        code.push(arrayExpression + ".forEach(" + statement.itemVariable + " => {");
+        code.push(
+            arrayExpression + ".forEach((" + statement.itemVariable + "," + statement.itemVariable + "Index) => {"
+        );
         code.push(
             this.TAB_SPACES + "context.variables['" + statement.itemVariable + "'] =  " + statement.itemVariable + ";"
+        );
+        code.push(
+            this.TAB_SPACES +
+                "context.variables['" +
+                statement.itemVariable +
+                "Index'] =  " +
+                statement.itemVariable +
+                "Index;"
         );
         let loopCode = this.getStatementCode(statement.nestedStatements[0]);
         code = code.concat(loopCode.map((code) => this.TAB_SPACES + code));

@@ -41,12 +41,14 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
         code.push(this.getCommentCode(statement.name));
 
         let arrayExpression = this.getExpressionCode(statement.arrayExpression);
+        code.push("context.variables['" + statement.itemVariable + "Index'] =  0;");
         code.push("for (" + statement.itemVariable + " in " + arrayExpression + ") {");
         code.push(
             this.TAB_SPACES + "context.variables['" + statement.itemVariable + "'] =  " + statement.itemVariable + ";"
         );
         let loopCode = this.getStatementCode(statement.nestedStatements[0]);
         code = code.concat(loopCode.map((code) => this.TAB_SPACES + code));
+        code.push("context.variables['" + statement.itemVariable + "Index'] +=  1;");
         code.push("}");
         return code;
     };

@@ -100,6 +100,12 @@ export default function StatementLoop({ statement, variables, onChange, onDelete
                     name: statement.itemVariable,
                     type: exp[exp.length - 1].type.items,
                 },
+                [statement.itemVariable + "Index"]: {
+                    memberType: "variable",
+                    code: statement.itemVariable + "Index",
+                    name: statement.itemVariable + "Index",
+                    type: exp[exp.length - 1].type.items,
+                },
             };
         } else {
             return {};
