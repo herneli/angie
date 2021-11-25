@@ -1,9 +1,11 @@
 import { ScriptService } from "./ScriptService";
+import union from "lodash.union";
 
 export default class ScriptGeneratorBase {
     TAB_SPACES = "    ";
     constructor(script) {
         this.usedMethods = {};
+        this.imports = [];
         this.functionNames = [];
         this.script = script;
     }
@@ -12,22 +14,42 @@ export default class ScriptGeneratorBase {
         return "// " + comment;
     }
 
+    getCommonFunctionsCode() {
+        return "";
+    }
+
+    getImportsCode() {
+        return "";
+    }
+
     async generateCode() {
-        let fullCode = "";
         let service = new ScriptService();
-        let context = await service.getContext(this.script.contextCode);
-        if (context.data.startCode) {
-            fullCode += this.getCommentCode("Code preparation") + "\n\n" + context.data.startCode + "\n";
-        }
 
         // Execution of getStatementCode will collect the variable "this.usedMethods"
         // with all the methods refefenced.
         let mainCode = this.getStatementCode(this.script.mainStatement).join("\n");
         // Get used methods will generate the code for the methods used
-        // and they will be returned on top of the source code
+        // and they will be returned on top of the source code. It also fills this.imports array
+        // with used imports
         let usedMethodsCode = await this.getUsedMethodsCode();
+        let importsCode = this.getImportsCode();
 
+        let fullCode = "";
+        // Add imports on top
+        fullCode += importsCode + "\n";
+
+        // Add start context code
+        let context = await service.getContext(this.script.contextCode);
+        if (context.data.startCode) {
+            fullCode += this.getCommentCode("Code preparation") + "\n" + context.data.startCode + "\n";
+        }
+        // Add common function to set nested variables on dictionaries
+        fullCode += this.getCommonFunctionsCode() + "\n";
+
+        // Add used methods code
         fullCode += usedMethodsCode;
+
+        // Add main code
         fullCode += mainCode;
 
         return fullCode;
@@ -153,6 +175,7 @@ export default class ScriptGeneratorBase {
                 functionName: functionName,
             };
         }
+
         let options = this.getMethodOptions(member, variablePath);
         let methodCode = functionName + "(" + expressionCode + ", " + options + ")";
         if (member.not) {
@@ -167,11 +190,12 @@ export default class ScriptGeneratorBase {
         let tryNumber = 0;
 
         do {
-            if (this.functionNames.includes(functionName + (tryNumber > 0 ? "_" + tryNumber.toString() : ""))) {
+            let tryFunctionName = functionName + (tryNumber > 0 ? "_" + tryNumber.toString() : "");
+            if (this.functionNames.includes(tryFunctionName)) {
                 tryNumber++;
             } else {
-                this.functionNames.push(functionName);
-                return functionName;
+                this.functionNames.push(tryFunctionName);
+                return tryFunctionName;
             }
         } while (true);
     };

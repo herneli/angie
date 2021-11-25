@@ -42,7 +42,10 @@
                             "title": "Obligatorio",
                             "type": "boolean"
                         },
-
+                        "path": {
+                            "title": "Ruta",
+                            "type": "string"
+                        },
                         "description": {
                             "title": "Descripción",
                             "type": "string"
@@ -157,6 +160,7 @@
                 "required": {
                     "ui:columnSize": "3"
                 },
+                "path": { "ui:columnSize": "6" },
                 "description": {
                     "ui:columnSize": "12",
                     "ui:widget": "textarea"

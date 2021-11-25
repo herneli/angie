@@ -1,9 +1,9 @@
-import axios from "axios";
 import { newInstance, ready } from "@jsplumb/browser-ui";
 import { FlowchartConnector } from "@jsplumb/connector-flowchart";
 import { v4 as uuidv4 } from "uuid";
 
 import statementRegistry from "./statements/statementRegistry";
+import getMembers from "./getMembers";
 const arrowOverlay = {
     width: 6,
     length: 6,
@@ -80,13 +80,7 @@ export default class ScriptManager {
     }
 
     getMembers(type, options) {
-        return axios
-            .post("/script/object/members", {
-                language: this.getLanguage(),
-                type: type,
-                ...options,
-            })
-            .then((response) => response.data.data);
+        return getMembers(this.getLanguage(), type, options);
     }
 
     getStatementDOMId(statement) {
@@ -141,10 +135,7 @@ export default class ScriptManager {
         let statementId = this.getStatementDOMId(statement);
         let finalPointId = statementId + "-final";
 
-        if (
-            statement.nestedStatements &&
-            statement.nestedStatements.length > 0
-        ) {
+        if (statement.nestedStatements && statement.nestedStatements.length > 0) {
             statement.nestedStatements.forEach((childStatement) => {
                 let parallelNode = this.createConnections(childStatement);
                 this.connect(statementId, parallelNode.initial);
@@ -152,17 +143,23 @@ export default class ScriptManager {
                 if (loop) {
                     let loopBackId = statementId + "-loop-back";
                     this.connect(finalPointId, loopBackId, {
-                        anchor: "Left",
+                        anchor: [
+                            [0, 0.5, -1, 0],
+                            [0, 0.5, -1, 0],
+                        ],
+                        // overlays: [{ type: "Arrow", options: arrowOverlay }],
+                    });
+                    this.connect(loopBackId, statementId, {
+                        anchor: [
+                            [0, 0.5, 0, 0],
+                            // [0, 0.5, 1, 0],
+                        ],
+                        connector: {
+                            type: FlowchartConnector.type,
+                            options: { stub: 0 },
+                        },
                         overlays: [{ type: "Arrow", options: arrowOverlay }],
                     });
-                    // this.connect(loopBackId, statementId, {
-                    //     anchor: ["Left", "Right"],
-                    //     connector: {
-                    //         type: FlowchartConnector.type,
-                    //         options: { stub: 0 },
-                    //     },
-                    //     overlays: [{ type: "Arrow", options: arrowOverlay }],
-                    // });
                 }
             });
 
@@ -204,8 +201,7 @@ export default class ScriptManager {
         let registry = this.getStatementRegistry(statement.type);
         return {
             schema: (registry.schema && registry.schema(this)) || {},
-            uiSchema:
-                (registry.uiSchema && registry.uiSchema(this, variables)) || {},
+            uiSchema: (registry.uiSchema && registry.uiSchema(this, variables)) || {},
         };
     }
 

@@ -73,12 +73,7 @@ const useStyles = createUseStyles({
         display: "flex",
     },
 });
-export default function StatementLoop({
-    statement,
-    variables,
-    onChange,
-    onDelete,
-}) {
+export default function StatementLoop({ statement, variables, onChange, onDelete }) {
     const { manager } = useScriptContext();
     const statementId = manager.getStatementDOMId(statement);
     const classes = useStyles();
@@ -92,8 +87,7 @@ export default function StatementLoop({
             childStatement,
             ...statement.nestedStatements.slice(index + 1),
         ];
-        onChange &&
-            onChange({ ...statement, nestedStatements: newNestedStatements });
+        onChange && onChange({ ...statement, nestedStatements: newNestedStatements });
     };
 
     const calculateLoopVariable = () => {
@@ -104,6 +98,12 @@ export default function StatementLoop({
                     memberType: "variable",
                     code: statement.itemVariable,
                     name: statement.itemVariable,
+                    type: exp[exp.length - 1].type.items,
+                },
+                [statement.itemVariable + "Index"]: {
+                    memberType: "variable",
+                    code: statement.itemVariable + "Index",
+                    name: statement.itemVariable + "Index",
                     type: exp[exp.length - 1].type.items,
                 },
             };
@@ -136,15 +136,10 @@ export default function StatementLoop({
                             variables={variables}
                             iconPath={registry.iconPath}
                             onChange={onChange}
-                            onDelete={onDelete}
-                        >
+                            onDelete={onDelete}>
                             <div className={classes.expressionAssignment}>
                                 <Space>
-                                    <span>
-                                        {T.translate(
-                                            "visual_script.loop_repeat"
-                                        )}
-                                    </span>
+                                    <span>{T.translate("visual_script.loop_repeat")}</span>
                                     <Expression
                                         expression={statement.arrayExpression}
                                         variables={variables}
@@ -152,23 +147,13 @@ export default function StatementLoop({
                                             type: "array",
                                             items: { type: "$any" },
                                         }}
-                                        onChange={handleOnChange(
-                                            "arrayExpression"
-                                        )}
+                                        onChange={handleOnChange("arrayExpression")}
                                     />
-                                    <span>
-                                        {T.translate(
-                                            "visual_script.loop_to_variable"
-                                        )}
-                                    </span>
+                                    <span>{T.translate("visual_script.loop_to_variable")}</span>
 
                                     <Input
                                         value={statement.itemVariable}
-                                        onChange={(e) =>
-                                            handleOnChange("itemVariable")(
-                                                e.target.value
-                                            )
-                                        }
+                                        onChange={(e) => handleOnChange("itemVariable")(e.target.value)}
                                     />
                                 </Space>
                             </div>

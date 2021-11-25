@@ -32,15 +32,18 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
 
         let arrayExpression = this.getExpressionCode(statement.arrayExpression);
         code.push(
-            arrayExpression + ".forEach(" + statement.itemVariable + " => {"
+            arrayExpression + ".forEach((" + statement.itemVariable + "," + statement.itemVariable + "Index) => {"
+        );
+        code.push(
+            this.TAB_SPACES + "context.variables['" + statement.itemVariable + "'] =  " + statement.itemVariable + ";"
         );
         code.push(
             this.TAB_SPACES +
                 "context.variables['" +
                 statement.itemVariable +
-                "'] =  " +
+                "Index'] =  " +
                 statement.itemVariable +
-                ";"
+                "Index;"
         );
         let loopCode = this.getStatementCode(statement.nestedStatements[0]);
         code = code.concat(loopCode.map((code) => this.TAB_SPACES + code));
@@ -52,39 +55,18 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
         let params = [];
         if (member.params) {
             params = Object.keys(member.params).map((param) => {
-                if (
-                    typeof member.params[param] === "object" &&
-                    member.params[param].$exp
-                ) {
-                    return (
-                        '"' +
-                        param +
-                        '": ' +
-                        this.getExpressionCode(member.params[param].$exp)
-                    );
+                if (typeof member.params[param] === "object" && member.params[param].$exp) {
+                    return '"' + param + '": ' + this.getExpressionCode(member.params[param].$exp);
                 } else {
-                    return (
-                        '"' +
-                        param +
-                        '": ' +
-                        JSON.stringify(member.params[param])
-                    );
+                    return '"' + param + '": ' + JSON.stringify(member.params[param]);
                 }
             });
         }
         let variablePathString = "";
         if (variablePath) {
-            variablePathString =
-                ", variablePath: {" +
-                variablePath.map((path) => '"' + path + '"').join(", ") +
-                "}";
+            variablePathString = ", variablePath: {" + variablePath.map((path) => '"' + path + '"').join(", ") + "}";
         }
-        let options =
-            "{context: context, params: [" +
-            params.join(", ") +
-            "}" +
-            variablePathString +
-            "}";
+        let options = "{context: context, params: [" + params.join(", ") + "}" + variablePathString + "}";
         return options;
     }
 
@@ -92,11 +74,11 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
         let service = new ScriptService();
         let methodDefinitions = "// Functions\n";
 
-        for await (const method of Object.keys(this.usedMethods).map((code) =>
-            service.getMethod(code)
-        )) {
+        for await (const method of Object.keys(this.usedMethods).map((code) => service.getMethod(code))) {
             let methodSourceCode = method.data.sourceCode;
-
+            if (method.data.imports) {
+                this.imports = union(this.imports, method.data.imports);
+            }
             // Tabulate source code
             methodSourceCode = methodSourceCode
                 .split("\n")
@@ -114,5 +96,9 @@ export default class ScriptGeneratorJavascript extends ScriptGeneratorBase {
             methodDefinitions = methodDefinitions + "\n" + methodSourceCode;
         }
         return methodDefinitions;
+    }
+
+    getImportsCode() {
+        return this.imports.map((importItem) => importItem + ";\n").join("");
     }
 }

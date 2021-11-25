@@ -28,18 +28,18 @@ class ModelAdmin extends Component {
     search = (modelInfo, filters) => {
         api.getModelInfo(this.props.model)
             .then((element) => {
-                api.getModelDataList(this.props.model, filters).then((list) => {
-                    const modelDataDict = list.reduce((result, model) => {
-                        result = { ...result, [model.id]: model };
-                        return result;
-                    }, {});
-                    this.setState({
-                        ...this.state,
-                        modelInfo: element,
-                        modelData: modelDataDict,
-                        total: list.total,
+                    api.getModelDataList(this.props.model, filters,element?.relation_schema,element?.selectQuery).then((list) => {
+                        const modelDataDict = list.reduce((result, model) => {
+                            result = { ...result, [model.id]: model };
+                            return result;
+                        }, {});
+                        this.setState({
+                            ...this.state,
+                            modelInfo: element,
+                            modelData: modelDataDict,
+                            total: list.total,
+                        });
                     });
-                });
             })
             .catch(errorHandler);
     };

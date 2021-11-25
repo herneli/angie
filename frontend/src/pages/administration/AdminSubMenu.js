@@ -20,71 +20,75 @@ const AdminSubMenu = () => {
     };
 
     const drawMenuItem = (item, sections) => {
-        if (item.children_sections) {
+        if (item.children) {
             return drawSubMenu(item, sections);
         }
         return (
-            <Menu.Item key={item.url}>
-                <Link to={item.url}>{T.translate(item.name)}</Link>
+            <Menu.Item key={item.value}>
+                <Link to={item.value}>{T.translate(item.title)}</Link>
             </Menu.Item>
         );
     };
 
     const drawSubMenu = (item, sections) => {
         let submenu = [];
-        for (let idx in item.children_sections) {
-            let child = item.children_sections[idx];
-            if (sections.includes(child.url)) {
+        for (let idx in item.children) {
+            let child = item.children[idx];
+            if(sections.indexOf(item.value) > -1){
+                submenu.push(drawMenuItem(child, sections));
+            }else if (sections.indexOf(child.value) > -1) {
                 submenu.push(drawMenuItem(child, sections));
             }
         }
-        return (
-            <SubMenu key={item.menu_item} icon={<Icon path={icons[item.icon]} size={1} />} title={item.menu_item}>
-                {submenu}
-            </SubMenu>
-        );
+        if(submenu.length > 0){
+            return (
+                <SubMenu key={item.title} icon={<Icon path={icons[item.icon]} size={1} />} title={item.title}>
+                    {submenu}
+                </SubMenu>
+            );
+        }
     };
 
     const drawMenu = async () => {
         let finalMenu = [];
         let menuElements = [
             {
-                menu_item: "Gestión",
+                title: "Gestión",
                 icon: "mdiAccountGroup",
-                url: "/admin/gestion",
-                children_sections: [
-                    { url: "/admin/users", name: "administration.users" },
-                    { url: "/admin/profiles", name: "administration.profiles" },
-                    { url: "/admin/organization", name: "administration.organization" },
+                value: "/admin/gestion",
+                children: [
+                    { value: "/admin/users", title: T.translate("administration.users") },
+                    { value: "/admin/profiles", title: T.translate("administration.profiles") },
+                    { value: "/admin/organization", title: T.translate("administration.organization") },
                 ],
             },
             {
-                menu_item: "Comunicaciones",
+                title: "Comunicaciones",
                 icon: "mdiConnection",
-                url: "/admin/comunicaciones",
-                children_sections: [
-                    { url: "/admin/integration", name: "administration.integration" },
-                    { url: "/admin/node_type", name: "administration.node_type" },
-                    { url: "/admin/camel_component", name: "administration.camel_component" },
+                value: "/admin/comunicaciones",
+                children: [
+                    { value: "/admin/integration", title: T.translate("administration.integration") },
+                    { value: "/admin/node_type", title: T.translate("administration.node_type") },
+                    { value: "/admin/camel_component", title: T.translate("administration.camel_component") },
                 ],
             },
             {
-                menu_item: "Personalización",
+                title: "Personalización",
                 icon: "mdiPalette",
-                url: "/admin/personalization",
-                children_sections: [
-                    { url: "/admin/config_context", name: "administration.config_context" },
-                    { url: "/admin/config_method", name: "administration.config_method" },
-                    { url: "/admin/config_object", name: "administration.config_object" },
-                    { url: "/admin/script/test_groovy", name: "administration.test_groovy" },
+                value: "/admin/personalization",
+                children: [
+                    { value: "/admin/config_context", title: T.translate("administration.config_context") },
+                    { value: "/admin/config_method", title: T.translate("administration.config_method") },
+                    { value: "/admin/config_object", title: T.translate("administration.config_object") },
+                    { value: "/admin/script/test_groovy", title: T.translate("administration.test_groovy") },
                 ],
-            },
+            }
         ];
 
         const resp = await checkAllowedSections();
         let sections = [];
         if (resp && resp.data && resp.data.data && resp.data.data[0].data && resp.data.data[0].data.sections) {
-            sections.push(resp.data.data[0].data.sections);
+            sections = resp.data.data[0].data.sections;
         }
         if (keycloak.tokenParsed.roles && keycloak.tokenParsed.roles.includes("admin")) {
             sections.push("/admin/config_context");
@@ -104,9 +108,7 @@ const AdminSubMenu = () => {
 
         for (let idx in menuElements) {
             let item = menuElements[idx];
-            if (sections.indexOf(item.url) > -1) {
-                finalMenu.push(drawMenuItem(item, sections));
-            }
+            finalMenu.push(drawMenuItem(item, sections));
         }
 
         setPaintedMenu(finalMenu);

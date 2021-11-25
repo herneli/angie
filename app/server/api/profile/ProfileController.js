@@ -24,12 +24,12 @@ export class ProfileController extends BaseController {
             const prof = new ProfileService();
 
             let user = await serv.loadById(request.body.id);
-            let jsRes = {}
+            let jsRes = {};
 
-            if(user && user[0] && user[0].data && user[0].data.profile){
+            if (user && user[0] && user[0].data && user[0].data.profile) {
                 let profile = await prof.loadById(user[0].data.profile);
                 jsRes = new JsonResponse(true, profile, null);
-            }else{
+            } else {
                 jsRes = new JsonResponse(false, null, null);
             }
 

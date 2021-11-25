@@ -34,7 +34,7 @@ export class ScriptDao extends BaseKnexDao {
         if (type.type === "object") {
             methods = methods.whereRaw(
                 "data ->> 'language' = ? and " +
-                    "( (data -> 'parentType' ->> 'type' = ? and data -> 'parentType' ->> 'objectCode' = ? ) or data -> 'parentType' ->> 'type' = '$any')",
+                    "( (data -> 'parentType' ->> 'type' = ? and data -> 'parentType' ->> 'objectCode' = ? ) or data -> 'parentType' ->> 'type' = '$any' or data -> 'parentType' ->> 'type' = '$anyObject')",
                 [language, type.type, type.objectCode]
             );
         } else if (type.type === "array") {

@@ -1,7 +1,16 @@
+import { union } from "lodash";
 import ScriptGeneratorBase from "./ScriptGeneratorBase";
 import { ScriptService } from "./ScriptService";
-
 export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
+    constructor(script) {
+        super(script);
+        this.imports.push("com.github.mustachejava.DefaultMustacheFactory");
+        this.imports.push("com.github.mustachejava.Mustache");
+        this.imports.push("java.io.StringReader");
+        this.imports.push("java.io.StringWriter");
+        this.imports.push("java.io.Writer");
+    }
+
     getStatementConditionCode = (statement) => {
         let code = [];
         code.push("");
@@ -32,12 +41,14 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
         code.push(this.getCommentCode(statement.name));
 
         let arrayExpression = this.getExpressionCode(statement.arrayExpression);
+        code.push("context.variables['" + statement.itemVariable + "Index'] =  0;");
         code.push("for (" + statement.itemVariable + " in " + arrayExpression + ") {");
         code.push(
             this.TAB_SPACES + "context.variables['" + statement.itemVariable + "'] =  " + statement.itemVariable + ";"
         );
         let loopCode = this.getStatementCode(statement.nestedStatements[0]);
         code = code.concat(loopCode.map((code) => this.TAB_SPACES + code));
+        code.push("context.variables['" + statement.itemVariable + "Index'] +=  1;");
         code.push("}");
         return code;
     };
@@ -58,11 +69,11 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
             variablePathString = ", variablePath: [" + variablePath.map((path) => '"' + path + '"').join(", ") + "]";
         }
         let options =
-            "[ context: context, params: [" +
+            "[ params: [" +
             (params.length > 0 ? params.join(", ") : ":") +
             "]" +
             variablePathString +
-            "]";
+            ", context: context]";
         return options;
     }
 
@@ -71,6 +82,9 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
         let methodDefinitions = this.getCommentCode("Functions") + "\n";
 
         for await (const method of Object.keys(this.usedMethods).map((code) => service.getMethod(code))) {
+            if (method.data.imports) {
+                this.imports = union(this.imports, method.data.imports);
+            }
             let methodSourceCode = method.data.sourceCode;
 
             // Tabulate source code
@@ -96,5 +110,36 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
             methodDefinitions = methodDefinitions + "\n" + methodSourceCode;
         }
         return methodDefinitions;
+    }
+
+    getCommonFunctionsCode() {
+        return (
+            "def nestedSet( variables, variablePath, Object value){\n" +
+            "    def index = 0\n" +
+            "    def currentVariable = variables\n" +
+            "    for (member in variablePath){\n" +
+            "        if (index == variablePath.size() - 1) {\n" +
+            "            currentVariable[member] = value\n" +
+            "        }else{\n" +
+            "            if (!currentVariable.containsKey(member)){\n" +
+            "                currentVariable[member] = [:]\n" +
+            "            }\n" +
+            "            currentVariable = currentVariable[member]\n" +
+            "        }\n" +
+            "        index++\n" +
+            "    }\n" +
+            "}\n" +
+            "\n" +
+            "def resolveTemplate(String template, Object context){\n" +
+            "    Writer writer = new StringWriter();\n" +
+            "    DefaultMustacheFactory mf = new DefaultMustacheFactory();\n" +
+            '    mf.compile(new StringReader(template),"test","#{","}").execute(writer,context);\n' +
+            "    return writer.toString();\n" +
+            "}\n"
+        );
+    }
+
+    getImportsCode() {
+        return this.imports.map((importItem) => "import " + importItem + ";\n").join("");
     }
 }

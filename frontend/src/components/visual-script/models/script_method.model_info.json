@@ -31,7 +31,7 @@
     ],
     "schema": {
         "type": "object",
-        "required": ["code", "name", "complexityLevel", "parentType"],
+        "required": ["code", "name", "complexityLevel", "language", "parentType"],
         "properties": {
             "code": {
                 "title": "Código",
@@ -116,10 +116,17 @@
                                         "title": "Necesaria"
                                     }
                                 },
-                                "required": ["code", "type"]
+                                "required": ["code"]
                             }
                         }
                     }
+                }
+            },
+            "imports": {
+                "title": "Imports",
+                "type": "array",
+                "items": {
+                    "type": "string"
                 }
             },
             "sourceCode": {
@@ -152,8 +159,30 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": ["$any", "$anyPrimitive", "array", "boolean", "date", "number", "integer", "object", "string"],
-                        "enumNames": ["Cualquier tipo", "Cualquier tipo primitivo", "Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
+                        "enum": [
+                            "$any",
+                            "$anyPrimitive",
+                            "$anyObject",
+                            "array",
+                            "boolean",
+                            "date",
+                            "number",
+                            "integer",
+                            "object",
+                            "string"
+                        ],
+                        "enumNames": [
+                            "Cualquier tipo",
+                            "Cualquier tipo primitivo",
+                            "Cualquier objeto",
+                            "Lista",
+                            "Boleano",
+                            "Fecha",
+                            "Decimal",
+                            "Entero",
+                            "Objeto",
+                            "String"
+                        ],
                         "default": ""
                     }
                 },
@@ -163,7 +192,16 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": ["$any", "$anyPrimitive", "boolean", "date", "number", "integer", "string"]
+                                        "enum": [
+                                            "$any",
+                                            "$anyPrimitive",
+                                            "$anyObject",
+                                            "boolean",
+                                            "date",
+                                            "number",
+                                            "integer",
+                                            "string"
+                                        ]
                                     }
                                 }
                             },
@@ -198,13 +236,28 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive", "array", "boolean", "date", "number", "integer", "object", "string"],
+                        "enum": [
+                            "void",
+                            "$self",
+                            "$item",
+                            "$any",
+                            "$anyPrimitive",
+                            "$anyObject",
+                            "array",
+                            "boolean",
+                            "date",
+                            "number",
+                            "integer",
+                            "object",
+                            "string"
+                        ],
                         "enumNames": [
                             "Vacío",
                             "$self",
                             "$item",
                             "Cualquier tipo",
                             "Cualquier tipo primitivo",
+                            "Cualquier objeto",
                             "Lista",
                             "Boleano",
                             "Fecha",
@@ -222,7 +275,7 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive"]
+                                        "enum": ["void", "$self", "$item", "$any", "$anyPrimitive", "$anyObject"]
                                     }
                                 }
                             },
@@ -331,9 +384,11 @@
                 }
             }
         },
-
+        "imports": {
+            "ui:columnSize": "6"
+        },
         "sourceCode": {
-            "ui:widget": "textarea",
+            "ui:widget": "AceEditorWidget",
             "ui:options": {
                 "rows": 8
             },

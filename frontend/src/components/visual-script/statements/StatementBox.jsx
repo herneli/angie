@@ -102,14 +102,16 @@ export default function StatementBox({
                 {T.translate("visual_script.edit")}
             </Menu.Item>
             {customActions &&
-                customActions.map((customAction) => (
-                    <Menu.Item
-                        key={customAction.code}
-                        icon={<Icon className={classes.menuIcon} path={customAction.iconPath} size="16px" />}
-                        onClick={handleOnCustomAction(customAction.code)}>
-                        {customAction.text}
-                    </Menu.Item>
-                ))}
+                customActions.map((customAction) =>
+                    !customAction.asButton ? (
+                        <Menu.Item
+                            key={customAction.code}
+                            icon={<Icon className={classes.menuIcon} path={customAction.iconPath} size="16px" />}
+                            onClick={handleOnCustomAction(customAction.code)}>
+                            {customAction.text}
+                        </Menu.Item>
+                    ) : null
+                )}
         </Menu>
     );
     return (
@@ -124,6 +126,19 @@ export default function StatementBox({
                     </div>
                 </div>
                 <div className={classes.actions}>
+                    {customActions &&
+                        customActions.map((customAction) =>
+                            customAction.asButton ? (
+                                <Button
+                                    key={customAction.code}
+                                    type="text"
+                                    icon={
+                                        <StatementIcon className={classes.actionsIcon} path={customAction.iconPath} />
+                                    }
+                                    onClick={handleOnCustomAction(customAction.code)}
+                                />
+                            ) : null
+                        )}
                     <Dropdown overlay={actions} trigger={["click"]}>
                         <Button type="text" icon={<StatementIcon className={classes.actionsIcon} path={mdiCog} />} />
                     </Dropdown>

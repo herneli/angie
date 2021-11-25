@@ -5,7 +5,151 @@ exports.seed = async function (knex) {
     // Inserts seed entries
     await knex("config_model").insert([
         {
-            name: "Script",
+            name: "Script context",
+            code: "script_context",
+            data: {
+                code: "context",
+                name: "Contexto",
+                table: "script_config",
+                documentType: "context",
+                listFields: [
+                    {
+                        title: "Código",
+                        field: "code",
+                    },
+                    {
+                        title: "Nombre",
+                        field: "name",
+                    },
+                    {
+                        title: "Lenguaje",
+                        field: "language",
+                    },
+                    {
+                        title: "Tipo de contexto",
+                        field: ["type", "type"],
+                    },
+                ],
+                schema: {
+                    type: "object",
+                    properties: {
+                        code: {
+                            type: "string",
+                            title: "Código",
+                        },
+                        name: {
+                            type: "string",
+                            title: "Nombre",
+                        },
+                        language: {
+                            title: "Lenguaje",
+                            type: "string",
+                            enum: ["js", "python", "groovy"],
+                            enumNames: ["Javascript", "Python", "Groovy"],
+                        },
+                        type: { $ref: "#/definitions/type" },
+                        startCode: {
+                            type: "string",
+                            title: 'Ejecutar código al inicio (cargar objecto "context"',
+                        },
+                        endCode: {
+                            type: "string",
+                            title: "Ejecutar código al finalizar (variables disponibles",
+                        },
+                    },
+                    definitions: {
+                        type: {
+                            type: "object",
+                            properties: {
+                                type: {
+                                    type: "string",
+                                    title: "Tipo",
+                                    enum: ["array", "boolean", "date", "number", "integer", "object", "string"],
+                                    enumNames: ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
+                                    default: "",
+                                },
+                            },
+                            dependencies: {
+                                type: {
+                                    oneOf: [
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["boolean", "date", "number", "integer", "string"],
+                                                },
+                                                selectOptions: {
+                                                    title: "Valores remotos",
+                                                    type: ["string", "null"],
+                                                },
+                                                widget: {
+                                                    title: "Editor",
+                                                    type: ["string", "null"],
+                                                },
+                                            },
+                                        },
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["object"],
+                                                },
+                                                objectCode: {
+                                                    type: "string",
+                                                    title: "Código de objeto",
+                                                },
+                                            },
+                                            selectOptions: {
+                                                title: "Valores remotos",
+                                                type: ["string", "null"],
+                                            },
+                                            widget: {
+                                                title: "Editor",
+                                                type: ["string", "null"],
+                                            },
+                                        },
+                                        {
+                                            properties: {
+                                                type: {
+                                                    enum: ["array"],
+                                                },
+                                                items: {
+                                                    $ref: "#/definitions/type",
+                                                },
+                                            },
+                                            widget: {
+                                                title: "Editor",
+                                                type: ["string", "null"],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "4",
+                    },
+                    name: {
+                        "ui:columnSize": "4",
+                    },
+                    language: {
+                        "ui:columnSize": "4",
+                    },
+                    type: {
+                        objectCode: {
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:selectOptions":
+                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                        },
+                    },
+                    startCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
+                    endCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
+                },
+            },
+        },
+        {
+            name: "Script method",
             code: "script_method",
             data: {
                 code: "method",
@@ -40,7 +184,7 @@ exports.seed = async function (knex) {
                 ],
                 schema: {
                     type: "object",
-                    required: ["code", "name", "complexityLevel", "parentType"],
+                    required: ["code", "name", "complexityLevel", "language", "parentType"],
                     properties: {
                         code: {
                             title: "Código",
@@ -125,10 +269,17 @@ exports.seed = async function (knex) {
                                                     title: "Necesaria",
                                                 },
                                             },
-                                            required: ["code", "type"],
+                                            required: ["code"],
                                         },
                                     },
                                 },
+                            },
+                        },
+                        imports: {
+                            title: "Imports",
+                            type: "array",
+                            items: {
+                                type: "string",
                             },
                         },
                         sourceCode: {
@@ -164,6 +315,7 @@ exports.seed = async function (knex) {
                                     enum: [
                                         "$any",
                                         "$anyPrimitive",
+                                        "$anyObject",
                                         "array",
                                         "boolean",
                                         "date",
@@ -175,6 +327,7 @@ exports.seed = async function (knex) {
                                     enumNames: [
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
+                                        "Cualquier objecto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -195,6 +348,7 @@ exports.seed = async function (knex) {
                                                     enum: [
                                                         "$any",
                                                         "$anyPrimitive",
+                                                        "$anyObject",
                                                         "boolean",
                                                         "date",
                                                         "number",
@@ -241,6 +395,7 @@ exports.seed = async function (knex) {
                                         "$item",
                                         "$any",
                                         "$anyPrimitive",
+                                        "$anyObject",
                                         "array",
                                         "boolean",
                                         "date",
@@ -255,6 +410,7 @@ exports.seed = async function (knex) {
                                         "$item",
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
+                                        "Cualquier objeto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -272,7 +428,14 @@ exports.seed = async function (knex) {
                                         {
                                             properties: {
                                                 type: {
-                                                    enum: ["void", "$self", "$item", "$any", "$anyPrimitive"],
+                                                    enum: [
+                                                        "void",
+                                                        "$self",
+                                                        "$item",
+                                                        "$any",
+                                                        "$anyPrimitive",
+                                                        "$anyObject",
+                                                    ],
                                                 },
                                             },
                                         },
@@ -385,9 +548,11 @@ exports.seed = async function (knex) {
                             },
                         },
                     },
-
+                    imports: {
+                        "ui:columnSize": "6",
+                    },
                     sourceCode: {
-                        "ui:widget": "textarea",
+                        "ui:widget": "AceEditorWidget",
                         "ui:options": {
                             rows: 8,
                         },
@@ -503,7 +668,10 @@ exports.seed = async function (knex) {
                                         title: "Obligatorio",
                                         type: "boolean",
                                     },
-
+                                    path: {
+                                        title: "Ruta",
+                                        type: "string",
+                                    },
                                     description: {
                                         title: "Descripción",
                                         type: "string",
@@ -618,6 +786,7 @@ exports.seed = async function (knex) {
                             required: {
                                 "ui:columnSize": "3",
                             },
+                            path: { "ui:columnSize": "6" },
                             description: {
                                 "ui:columnSize": "12",
                                 "ui:widget": "textarea",
@@ -644,6 +813,23 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
+                selectQuery: "users.*,p.data as profile_data,o.data as organization_data",
+                relation_schema: [
+                    {
+                        type: "LEFT JOIN",
+                        tabletoJoin: "profile as p",
+                        column1: "(users.data->>'profile')::text",
+                        column2: " text(p.id)",
+                        relationColumn: "profile_data",
+                    },
+                    {
+                        type: "LEFT JOIN",
+                        tabletoJoin: "organization as o",
+                        column1: "(users.data->>'organization_id')::text",
+                        column2: " text(o.id)",
+                        relationColumn: "organization_data",
+                    },
+                ],
                 documentType: "object",
                 listFields: [
                     {
@@ -659,12 +845,12 @@ exports.seed = async function (knex) {
                         field: "email",
                     },
                     {
-                        title: "profile",
-                        field: "profile",
+                        title: "Perfil",
+                        field: ["profile_data", "name"],
                     },
                     {
-                        title: "organization_id",
-                        field: "organization_id",
+                        title: "Organization",
+                        field: ["organization_data", "name"],
                     },
                     {
                         title: "created_time_stamp",
@@ -706,9 +892,6 @@ exports.seed = async function (knex) {
                     profile: {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
-                        "ui:options":  {
-                           
-                        },
                         "ui:selectOptions":
                             "/configuration/model/profile_config/data#path=data&value=id&label=data.name",
                     },
@@ -1091,37 +1274,26 @@ exports.seed = async function (knex) {
                             type: "string",
                         },
                         sections: {
-                            type: "string",
-                            enum: [
-                                "/admin/users",
-                                "/admin/profiles",
-                                "/admin/organization",
-                                "/admin/integration",
-                                "/admin/node_type",
-                                "/admin/camel_component",
-                                "/admin/config_context",
-                                "/admin/config_method",
-                                "/admin/config_object",
-                                "/admin/gestion",
-                                "/admin/comunicaciones",
-                                "/admin/personalization",
-                                "/admin/script/test_groovy",
-                            ],
-                            enumNames: [
-                                "Usuarios",
-                                "Perfiles",
-                                "Organizaciones",
-                                "Integraciones",
-                                "Tipos Nodos",
-                                "Componentes Camel",
-                                "Contextos",
-                                "Métodos",
-                                "Objetos",
-                                "Gestion",
-                                "Comunicaciones",
-                                "Personalización",
-                                "Script"
-                            ],
+                            type: "array",
+                            items: {
+                                type: "string",
+                                enum: [
+                                    "/admin/users",
+                                    "/admin/profiles",
+                                    "/admin/organization",
+                                    "/admin/integration",
+                                    "/admin/node_type",
+                                    "/admin/camel_component",
+                                    "/admin/config_context",
+                                    "/admin/config_method",
+                                    "/admin/config_object",
+                                    "/admin/gestion",
+                                    "/admin/comunicaciones",
+                                    "/admin/personalization",
+                                    "/admin/script/test_groovy",
+                                ],
+                            },
+                            uniqueItems: true,
                         },
                     },
                 },
@@ -1133,7 +1305,10 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "3",
                     },
                     sections: {
+                        "ui:ArrayFieldTemplate": null,
                         "ui:columnSize": "3",
+                        "ui:widget": "MultipleSelectWidget",
+                        "ui:url": "/getMenuConfiguration",
                     },
                 },
             },

@@ -7,6 +7,7 @@ import StatementBox from "../StatementBox";
 import { useScriptContext } from "../../ScriptContext";
 import registry from ".";
 import { mdiPlus } from "@mdi/js";
+import ReactDragListView from "react-drag-listview";
 
 let useStyles = createUseStyles({
     addExpressionButton: {
@@ -56,6 +57,23 @@ export default function StatementExpressionGroup({ statement, variables, onChang
         onChange({ ...statement, expressions: newExpressions });
     };
 
+    const handleExpressionDuplicate = (index) => (value) => {
+        let newExpressions = [
+            ...statement.expressions.slice(0, index),
+            statement.expressions[index],
+            ...statement.expressions.slice(index),
+        ];
+        onChange({ ...statement, expressions: newExpressions });
+    };
+    const handleOnDragEnd = (fromIndex, toIndex) => {
+        if (fromIndex !== toIndex) {
+            let newExpressions = [...statement.expressions];
+            let fromExpression = newExpressions[fromIndex];
+            newExpressions.splice(fromIndex, 1);
+            newExpressions.splice(toIndex, 0, fromExpression);
+            onChange({ ...statement, expressions: newExpressions });
+        }
+    };
     let expressionComponents = statement.expressions.map((expression, index) => {
         return (
             <ExpressionWrapper
@@ -65,6 +83,7 @@ export default function StatementExpressionGroup({ statement, variables, onChang
                 expectedType={{ type: "void" }}
                 onChange={handleExpressionChange(index)}
                 onDelete={handleExpressionDelete(index)}
+                onDuplicate={handleExpressionDuplicate(index)}
             />
         );
     });
@@ -77,10 +96,20 @@ export default function StatementExpressionGroup({ statement, variables, onChang
             onChange={onChange}
             onDelete={onDelete}
             customActions={[
-                { code: "addExpression", iconPath: mdiPlus, text: T.translate("visual_script.add_expression") },
+                {
+                    code: "addExpression",
+                    iconPath: mdiPlus,
+                    text: T.translate("visual_script.add_expression"),
+                    asButton: true,
+                },
             ]}
             onCustomAction={handleOnCustomAction}>
-            {expressionComponents}
+            <ReactDragListView
+                handleSelector="span.drag-handle"
+                nodeSelector="div.drag-item"
+                onDragEnd={handleOnDragEnd}>
+                {expressionComponents}
+            </ReactDragListView>
         </StatementBox>
     );
 }
