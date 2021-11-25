@@ -130,11 +130,25 @@ Configuraciones necesarias:
 2. Crear usuario para la aplicación
 3. Crear cliente **angie-front**
 4. Crear cliente **angie-back**
-5. *Opcional:* Crear roles asociados a los clientes y usuarios.
-6. *Opcional:* Establecer el tema **angie** en el realm.
+5. *Opcional:* Establecer el tema **angie** en el realm.
 
 
 **TODO**  Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
+
+**Administrador**
+6. Desde la pantalla Clients, en **angie-front** crear un rol 'admin'
+7. Asignar al usuario creado ese rol
+8. Crear un "Client Scope" llamado "client-roles-angie" (todo por defecto)
+9. Crear un "Mapper" llamado **roles** asociado a **angie-front**  con `Token Claim Name: roles` y `Claim JSON Type:  String`
+10. Ir al cliente **angie-front** y asociarle el Client Scope creado como Default (parte superior)
+
+
+**Acceso REST**
+11. Seleccionar el cliente **admin-cli**
+12. Habilitar el switch "Service Account Enabled"
+13. Guardar, aparecerá la pestaña Service Account Roles
+14. En Client Roles seleccionar `realm_management`
+15. Asociar el rol `view_users` mediante el botón **Add Selected**
 
 ## Tests
 
