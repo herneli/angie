@@ -1,0 +1,1754 @@
+{
+  "definitions": {},
+  "info": {
+    "title": "angie",
+    "version": "1.0.0",
+    "license": {
+      "name": "SEE LICENSE IN LICENSE"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nAngie's "
+  },
+  "paths": {
+    "*": {
+      "options": {
+        "summary": "*",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "/user",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "user"
+        ]
+      },
+      "post": {
+        "summary": "/user",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/list": {
+      "post": {
+        "summary": "/user/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {},
+                  "example": [
+                    null
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "0"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "summary": "/user/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "user"
+        ]
+      },
+      "put": {
+        "summary": "/user/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "user"
+        ]
+      },
+      "delete": {
+        "summary": "/user/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/login": {
+      "get": {
+        "summary": "/login",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "/logout",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/importUsers": {
+      "post": {
+        "summary": "/importUsers",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "lastName": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "properties": {
+                          "parametro_chulo": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "email_verified": {
+                        "type": "boolean"
+                      },
+                      "roles": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": "115d97ca-f9a4-404f-8eca-54bf4cd83fe3",
+                      "username": "thorin",
+                      "enabled": true,
+                      "lastName": "sardina",
+                      "email": "iago.sardina@landrasistemas.es",
+                      "attributes": {
+                        "parametro_chulo": [
+                          "lalalala"
+                        ]
+                      },
+                      "email_verified": false,
+                      "roles": "{\"realmMappings\":[{\"id\":\"60a23d88-6574-441c-b75b-b88b4b748d5b\",\"name\":\"default-roles-angie\",\"description\":\"${role_default-roles}\",\"composite\":true,\"clientRole\":false,\"containerId\":\"Angie\"}],\"clientMappings\":{\"angie-front\":{\"id\":\"825985ed-276a-454c-bb5e-9d0b0fe00774\",\"client\":\"angie-front\",\"mappings\":[{\"id\":\"771e7a58-67d1-4659-b1ee-c6266823c57b\",\"name\":\"admin\",\"composite\":false,\"clientRole\":true,\"containerId\":\"825985ed-276a-454c-bb5e-9d0b0fe00774\"}]}}}"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Request failed with status code 403"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/front(/*)?": {
+      "get": {
+        "summary": "/front(/*)?",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/translation": {
+      "get": {
+        "summary": "/translation",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "/config",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "core.keycloak.url": {
+                  "type": "string",
+                  "example": "http://localhost:3114/auth"
+                },
+                "core.keycloak.realm": {
+                  "type": "string",
+                  "example": "Angie"
+                },
+                "core.keycloak.front-client": {
+                  "type": "string",
+                  "example": "angie-front"
+                },
+                "core.application.name": {
+                  "type": "string",
+                  "example": "Angie"
+                },
+                "core.application.lang.current": {
+                  "type": "string",
+                  "example": "es"
+                },
+                "core.application.lang.fallback": {
+                  "type": "string",
+                  "example": "es"
+                },
+                "core.application.lang.available": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "es"
+                  ]
+                },
+                "core.jum.url": {
+                  "type": "string",
+                  "example": "http://127.0.0.1:6100"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "literal"
+                }
+              }
+            }
+          },
+          "304": {}
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/memory": {
+      "get": {
+        "summary": "/memory",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/log/{log}": {
+      "get": {
+        "summary": "/log/{log}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "log",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/integration": {
+      "get": {
+        "summary": "/integration",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "3eb26172-80fb-4a5f-8e4d-6138477be10c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "LabFlow Results"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "3eb26172-80fb-4a5f-8e4d-6138477be10c"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "LabFlow Results"
+                            },
+                            "description": {
+                              "type": "string",
+                              "example": "Envío de resultados de Labflow a SmartLIS"
+                            },
+                            "created_on": {
+                              "type": "string",
+                              "example": "2021-11-15T15:10:25.800Z"
+                            },
+                            "channels": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "created_on": {
+                                    "type": "string"
+                                  },
+                                  "version": {
+                                    "type": "number"
+                                  },
+                                  "nodes": {
+                                    "type": "object",
+                                    "properties": {
+                                      "list": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string"
+                                            },
+                                            "type_id": {
+                                              "type": "string"
+                                            },
+                                            "custom_name": {
+                                              "type": "string"
+                                            },
+                                            "links": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "node_id": {
+                                                    "type": "string"
+                                                  },
+                                                  "handle": {
+                                                    "type": "null"
+                                                  }
+                                                },
+                                                "required": [
+                                                  "node_id",
+                                                  "handle"
+                                                ]
+                                              }
+                                            },
+                                            "position": {
+                                              "type": "object",
+                                              "properties": {
+                                                "x": {
+                                                  "type": "number"
+                                                },
+                                                "y": {
+                                                  "type": "number"
+                                                }
+                                              }
+                                            },
+                                            "data": {
+                                              "type": "object",
+                                              "properties": {
+                                                "protocol": {
+                                                  "type": "string"
+                                                },
+                                                "hostname": {
+                                                  "type": "string"
+                                                },
+                                                "port": {
+                                                  "type": "number"
+                                                },
+                                                "language": {
+                                                  "type": "string"
+                                                },
+                                                "code": {
+                                                  "type": "string"
+                                                },
+                                                "name": {
+                                                  "type": "string"
+                                                },
+                                                "path": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "type_id",
+                                            "custom_name",
+                                            "links",
+                                            "position",
+                                            "data"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "enabled": {
+                                    "type": "boolean"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "last_updated": {
+                                    "type": "string"
+                                  },
+                                  "message_count": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "example": [
+                                {
+                                  "name": "Entrada",
+                                  "id": "c6c40e58-b4cf-4142-9503-063e834ddd92",
+                                  "created_on": "2021-11-15T16:03:37.188Z",
+                                  "version": 47,
+                                  "nodes": {
+                                    "list": [
+                                      {
+                                        "id": "a5853a9e-7356-42c5-a942-c45161ed0dec",
+                                        "type_id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
+                                        "custom_name": "TCP/MLLP Input",
+                                        "links": [
+                                          {
+                                            "node_id": "e9d0cc1a-ce57-4125-9857-d5a89a3eedad",
+                                            "handle": null
+                                          }
+                                        ],
+                                        "position": {
+                                          "x": 112,
+                                          "y": 119
+                                        },
+                                        "data": {
+                                          "protocol": "mllp",
+                                          "hostname": "0.0.0.0",
+                                          "port": 8888
+                                        }
+                                      },
+                                      {
+                                        "id": "e9d0cc1a-ce57-4125-9857-d5a89a3eedad",
+                                        "type_id": "50b890b5-a309-4b7c-9fa0-5c8b23b25c6f",
+                                        "custom_name": "Groovy Code",
+                                        "links": [
+                                          {
+                                            "node_id": "cb4b97ba-2228-45ce-b019-07fd39504d34",
+                                            "handle": null
+                                          },
+                                          {
+                                            "node_id": "f67afb3a-a817-4ae6-988d-1f802b98cf96",
+                                            "handle": null
+                                          }
+                                        ],
+                                        "position": {
+                                          "x": 409,
+                                          "y": 134
+                                        },
+                                        "data": {
+                                          "language": "groovy",
+                                          "code": "import ca.uhn.hl7v2.model.v25.group.ORM_O01_ORDER;import ca.uhn.hl7v2.model.v25.message.ORM_O01;\r\ndef msg = request.getBody(ca.uhn.hl7v2.model.Message.class);\r\ndef terser = new ca.uhn.hl7v2.util.Terser(msg);\r\ndef tests = [:];ORM_O01 orm_o01 = (ORM_O01) msg;\r\ndef counter = 0;\r\nfor (ORM_O01_ORDER orderObservation : orm_o01.getORDERAll()) {\r\n    def orc = orderObservation.getORC();\r\n    def obr = orderObservation.getORDER_DETAIL().getOBR();\r\n    tests[counter++] = [\r\n        \"test_code\":obr.getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue(),\r\n        \"test_name\":obr.getObr4_UniversalServiceIdentifier().getCe2_Text().getValue(),\r\n        \"sample_key\": orc.getOrc4_PlacerGroupNumber().getName(),\r\n        \"sample_name\": null,\r\n        \"container\": null,\r\n        \"result\": null,\r\n        \"result_date\": null\r\n    ]\r\n};\r\ndef json = [\r\n    order_number_source: terser.get(\"/ORDER/ORC-2-1\"),\r\n    order_number: terser.get(\"/ORDER/ORC-2-1\"),order_comment: null,\r\n    order_status: null,\r\n    order_date: terser.get(\"/MSH-7-1\"),\r\n    order_source: terser.get(\"/MSH-3-1\"),\r\n    nif: terser.get(\"/PATIENT/PID-20-1\"),\r\n    nhc: null, firstname: terser.get(\"/PATIENT/PID-5-2\"),\r\n    lastname: terser.get(\"/PATIENT/PID-5-1\"),\r\n    lastname2: null,\r\n    birthdate: terser.get(\"/PATIENT/PID-7-1\"),\r\n    address: terser.get(\"/PATIENT/PID-11-1\"),\r\n    sex: terser.get(\"/PATIENT/PID-8-1\"),\r\n    phone: terser.get(\"/PATIENT/PID-13-1\"),\r\n    physician: terser.get(\"/ORDER/ORC-12-1-1\"),\r\n    physician_name: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-9-1-1\") + terser.get(\"/PATIENT/PATIENT_VISIT/PV1-9-2-1\"),\r\n    physician_esp_name: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-20-2-1\"),\r\n    domain: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-2\"),\r\n    type: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-2\"),\r\n    area: null,\r\n    area_name: null,\r\n    priority: null,\r\n    bed: null,\r\n    collpoint: null,\r\n    inscomp: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-20-1-1\"),\r\n    collpoint_name: null,\r\n    tests: tests\r\n];  return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(json);"
+                                        }
+                                      },
+                                      {
+                                        "id": "cb4b97ba-2228-45ce-b019-07fd39504d34",
+                                        "type_id": "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+                                        "custom_name": "Log",
+                                        "links": [],
+                                        "position": {
+                                          "x": 711,
+                                          "y": 248
+                                        },
+                                        "data": {
+                                          "name": "debug"
+                                        }
+                                      },
+                                      {
+                                        "id": "f67afb3a-a817-4ae6-988d-1f802b98cf96",
+                                        "type_id": "50b890b5-a309-4b7c-9fa0-5c8b23b25c6f",
+                                        "custom_name": "Groovy Code",
+                                        "links": [
+                                          {
+                                            "node_id": "a85a327e-175e-4768-9271-57a68656ec91",
+                                            "handle": null
+                                          }
+                                        ],
+                                        "position": {
+                                          "x": 635,
+                                          "y": 132
+                                        },
+                                        "data": {
+                                          "language": "",
+                                          "code": "import ca.uhn.hl7v2.model.v25.group.ORM_O01_ORDER\r\nimport groovy.json.JsonSlurper\r\nimport groovy.json.JsonParserType\r\n\r\ndef msg = request.getBody()\r\ndef post = new URL(\"http://10.10.1.34/system/login/\").openConnection()\r\ndef message = '{\"usr\":\"suser\",\"pwd\":\"smartlis\"}'\r\ndef parser = new JsonSlurper()\r\ndef parser1 = new JsonSlurper()\r\npost.setRequestMethod(\"POST\")\r\npost.setDoOutput(true)\r\npost.setRequestProperty(\"Content-Type\", \"application/json\")\r\npost.getOutputStream().write(message.getBytes(\"UTF-8\"))\r\ndef postRC = post.getResponseCode()\r\n\r\nif (postRC.equals(200)) {\r\n\r\n    def session = post.getInputStream().getText()\r\n    def json = parser.parseText(session)\r\n    msg = parser1.parseText(msg)\r\n    def exec = [\"job_info\": [\"name\"  : \"ORDER_CREATE: \" + msg[\"order_number\"],\"param1\": msg[\"order_number\"]],\"work_sess_id\": json[\"data\"][\"new_sess_key\"],\"space_code\": \"\",\"exec\": [:]]\r\n    def commandCounter = 1\r\n    def newOrder = [\"cmd\": \"new\", \"id\": msg[\"order_number\"]]\r\n    exec[\"exec\"][commandCounter++] =  newOrder\r\n    def newOrderCommand = [\"cmd\": \"modify_order_data\", \"field\": \"order_source\", \"data\": json[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  newOrderCommand\r\n    def addOrderDemographicCommand1 = [\"cmd\": \"modify_order_data\", \"field\": \"physician_name\", \"data\": json[\"physician_name\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand1\r\n    def addOrderDemographicCommand2 = [\"cmd\": \"modify_order_data\", \"field\": \"physician\", \"data\": json[\"physician\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand2\r\n    def addOrderDemographicCommand3 = [\"cmd\": \"modify_order_data\", \"field\": \"pat_name\", \"data\": json[\"lastname\"]]\r\n    exec[\"exec\"][commandCounter++] = addOrderDemographicCommand3 \r\n    def addOrderDemographicCommand4 = [\"cmd\": \"modify_order_data\", \"field\": \"pat_name\", \"data\": json[\"lastname\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand4\r\n    def addOrderDemographicCommand11 = [\"cmd\": \"modify_order_data\", \"field\": \"source\", \"data\": msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand11\r\n    def col1lp1oint = [\"cmd\"  : \"modify_order_data\",\"field\": \"collpoint\",\"data\" : \"5006\"]\r\n    exec[\"exec\"][commandCounter++] =  col1lp1oint\r\n    def ins1comp = [\"cmd\"  : \"modify_order_data\",\"field\": \"inscomp\",\"data\" : \"CEY-262\"]\r\n    exec[\"exec\"][commandCounter++] =  ins1comp\r\n    def coll_name = [\"cmd\"  : \"modify_order_data\",\"field\": \"collpoint_name\",\"data\" : msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  coll_name\r\n    def source = [\"cmd\"  : \"modify_order_data\",\"field\": \"source\",\"data\" : msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  source\r\n\r\n    if (msg[\"tests\"] != null) {\r\n        for (def genTestIndex in msg[\"tests\"]) {\r\n            def genTest =  genTestIndex.collect([] as HashSet){entry -> entry.value}\r\n             \r\n            def addGenTestCommand = [\"cmd\": \"add_test2\", \"test_code\":genTestIndex.collect({entry -> entry.value.test_code})[0] ]\r\n            \r\n            if (genTest &amp;&amp; genTest[\"comment\"] != null &amp;&amp; genTest[\"comment\"] != \"\") {\r\n            \r\n            }\r\n            exec[\"exec\"][commandCounter++] =  addGenTestCommand\r\n        }\r\n    }\r\n\r\n    def saveCommand = [\"cmd\": \"save\", \"async_mode\": \"false\"]\r\n    exec[\"exec\"][commandCounter++] =  saveCommand\r\n    return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(exec)\r\n}"
+                                        }
+                                      },
+                                      {
+                                        "id": "a85a327e-175e-4768-9271-57a68656ec91",
+                                        "type_id": "a97136c1-68b6-4b97-b6b1-acc692289e3d",
+                                        "custom_name": "HTTP Output",
+                                        "links": [],
+                                        "position": {
+                                          "x": 890,
+                                          "y": 134
+                                        },
+                                        "data": {
+                                          "protocol": "http",
+                                          "hostname": "127.0.0.1",
+                                          "path": "",
+                                          "port": 8787
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "enabled": true,
+                                  "status": "UNDEPLOYED",
+                                  "last_updated": "2021-11-22T11:09:13.389Z",
+                                  "message_count": 0
+                                }
+                              ]
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "example": true
+                            },
+                            "last_updated": {
+                              "type": "string",
+                              "example": "2021-11-22T11:09:14.972Z"
+                            }
+                          }
+                        },
+                        "organization_id": {
+                          "type": "null",
+                          "example": null
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/integration/list": {
+      "post": {
+        "summary": "/integration/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "created_on": {
+                            "type": "string"
+                          },
+                          "channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "string"
+                                },
+                                "created_on": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "number"
+                                },
+                                "nodes": {
+                                  "type": "array",
+                                  "properties": {
+                                    "list": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "type": "string"
+                                          },
+                                          "type_id": {
+                                            "type": "string"
+                                          },
+                                          "custom_name": {
+                                            "type": "string"
+                                          },
+                                          "links": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "node_id": {
+                                                  "type": "string"
+                                                },
+                                                "handle": {
+                                                  "type": "null"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "position": {
+                                            "type": "object",
+                                            "properties": {
+                                              "x": {
+                                                "type": "number"
+                                              },
+                                              "y": {
+                                                "type": "number"
+                                              }
+                                            }
+                                          },
+                                          "data": {
+                                            "type": "object",
+                                            "properties": {
+                                              "protocol": {
+                                                "type": "string"
+                                              },
+                                              "hostname": {
+                                                "type": "string"
+                                              },
+                                              "path": {
+                                                "type": "string"
+                                              },
+                                              "port": {
+                                                "type": "number"
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "required": [
+                                          "id",
+                                          "type_id",
+                                          "custom_name",
+                                          "links",
+                                          "position",
+                                          "data"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "items": {}
+                                },
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "last_updated": {
+                                  "type": "string"
+                                },
+                                "message_count": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "id",
+                                "created_on",
+                                "version",
+                                "nodes",
+                                "enabled",
+                                "status",
+                                "message_count"
+                              ]
+                            }
+                          },
+                          "last_updated": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "organization_id": {
+                        "type": "null"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": "8cf46387-37c5-4f38-ac34-3fc90389adef",
+                      "name": "Test",
+                      "data": {
+                        "id": "8cf46387-37c5-4f38-ac34-3fc90389adef",
+                        "name": "Test",
+                        "description": "asdfasdfasdfasdf",
+                        "created_on": "2021-11-11T09:31:01.081Z",
+                        "channels": [
+                          {
+                            "name": "Channel",
+                            "id": "bf1149b6-150d-4e21-83a6-8a12114d8de0",
+                            "created_on": "2021-11-11T16:34:16.408Z",
+                            "version": 3,
+                            "nodes": {
+                              "list": [
+                                {
+                                  "id": "c8914a7e-24d6-4072-8572-8f170f8ae8b0",
+                                  "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                  "custom_name": "HTTP Input",
+                                  "links": [
+                                    {
+                                      "node_id": "5230e0a1-b0f0-481f-b491-7fefd774ae12",
+                                      "handle": null
+                                    }
+                                  ],
+                                  "position": {
+                                    "x": 191,
+                                    "y": 92
+                                  },
+                                  "data": {
+                                    "protocol": "jetty:http",
+                                    "hostname": "0.0.0.0",
+                                    "path": "",
+                                    "port": 8888
+                                  }
+                                },
+                                {
+                                  "id": "5230e0a1-b0f0-481f-b491-7fefd774ae12",
+                                  "type_id": "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+                                  "custom_name": "Log",
+                                  "links": [],
+                                  "position": {
+                                    "x": 525,
+                                    "y": 176
+                                  },
+                                  "data": {
+                                    "name": "debug"
+                                  }
+                                }
+                              ]
+                            },
+                            "enabled": true,
+                            "status": "UNDEPLOYED",
+                            "last_updated": "2021-11-11T16:34:23.384Z",
+                            "message_count": 0
+                          },
+                          {
+                            "name": "Channel",
+                            "id": "7ba17693-8937-4be8-948c-b57c5f4f382b",
+                            "created_on": "2021-11-12T07:42:25.774Z",
+                            "version": 0,
+                            "nodes": [],
+                            "enabled": true,
+                            "status": "UNDEPLOYED",
+                            "message_count": 0
+                          },
+                          {
+                            "name": "Channel",
+                            "id": "3966e0db-6116-4ac5-bab4-8e171b5c4092",
+                            "created_on": "2021-11-12T07:42:26.555Z",
+                            "version": 0,
+                            "nodes": [],
+                            "enabled": true,
+                            "status": "UNDEPLOYED",
+                            "message_count": 0
+                          }
+                        ],
+                        "last_updated": "2021-11-12T07:42:28.951Z",
+                        "enabled": true
+                      },
+                      "organization_id": null,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/integration/{id}": {
+      "get": {
+        "summary": "/integration/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "put": {
+        "summary": "/integration/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "delete": {
+        "summary": "/integration/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/deploy": {
+      "post": {
+        "summary": "/integration/{id}/deploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/undeploy": {
+      "post": {
+        "summary": "/integration/{id}/undeploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channels/status": {
+      "get": {
+        "summary": "/integration/{id}/channels/status",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/deploy": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/deploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/undeploy": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/undeploy",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/status": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/status",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/logs": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/logs",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/statistics": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/statistics",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration_channel/to_camel": {
+      "post": {
+        "summary": "/integration_channel/to_camel",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "example": "<routes  xmlns=\"http://camel.apache.org/schema/spring\"><route> <from uri=\"mllp://0.0.0.0:8888\"/> <multicast> <to uri=\"direct:e9d0cc1a-ce57-4125-9857-d5a89a3eedad\"/> </multicast></route><route> <from uri=\"direct:e9d0cc1a-ce57-4125-9857-d5a89a3eedad\"/> <setBody>  <groovy>import ca.uhn.hl7v2.model.v25.group.ORM_O01_ORDER;import ca.uhn.hl7v2.model.v25.message.ORM_O01;\r\ndef msg = request.getBody(ca.uhn.hl7v2.model.Message.class);\r\ndef terser = new ca.uhn.hl7v2.util.Terser(msg);\r\ndef tests = [:];ORM_O01 orm_o01 = (ORM_O01) msg;\r\ndef counter = 0;\r\nfor (ORM_O01_ORDER orderObservation : orm_o01.getORDERAll()) {\r\n    def orc = orderObservation.getORC();\r\n    def obr = orderObservation.getORDER_DETAIL().getOBR();\r\n    tests[counter++] = [\r\n        \"test_code\":obr.getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue(),\r\n        \"test_name\":obr.getObr4_UniversalServiceIdentifier().getCe2_Text().getValue(),\r\n        \"sample_key\": orc.getOrc4_PlacerGroupNumber().getName(),\r\n        \"sample_name\": null,\r\n        \"container\": null,\r\n        \"result\": null,\r\n        \"result_date\": null\r\n    ]\r\n};\r\ndef json = [\r\n    order_number_source: terser.get(\"/ORDER/ORC-2-1\"),\r\n    order_number: terser.get(\"/ORDER/ORC-2-1\"),order_comment: null,\r\n    order_status: null,\r\n    order_date: terser.get(\"/MSH-7-1\"),\r\n    order_source: terser.get(\"/MSH-3-1\"),\r\n    nif: terser.get(\"/PATIENT/PID-20-1\"),\r\n    nhc: null, firstname: terser.get(\"/PATIENT/PID-5-2\"),\r\n    lastname: terser.get(\"/PATIENT/PID-5-1\"),\r\n    lastname2: null,\r\n    birthdate: terser.get(\"/PATIENT/PID-7-1\"),\r\n    address: terser.get(\"/PATIENT/PID-11-1\"),\r\n    sex: terser.get(\"/PATIENT/PID-8-1\"),\r\n    phone: terser.get(\"/PATIENT/PID-13-1\"),\r\n    physician: terser.get(\"/ORDER/ORC-12-1-1\"),\r\n    physician_name: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-9-1-1\") + terser.get(\"/PATIENT/PATIENT_VISIT/PV1-9-2-1\"),\r\n    physician_esp_name: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-20-2-1\"),\r\n    domain: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-2\"),\r\n    type: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-2\"),\r\n    area: null,\r\n    area_name: null,\r\n    priority: null,\r\n    bed: null,\r\n    collpoint: null,\r\n    inscomp: terser.get(\"/PATIENT/PATIENT_VISIT/PV1-20-1-1\"),\r\n    collpoint_name: null,\r\n    tests: tests\r\n];  return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(json);</groovy>    </setBody> <multicast> <to uri=\"direct:f67afb3a-a817-4ae6-988d-1f802b98cf96\"/> </multicast> </route><route> <from uri=\"direct:cb4b97ba-2228-45ce-b019-07fd39504d34\"/> <to uri=\"log:debug\"/> </route><route> <from uri=\"direct:f67afb3a-a817-4ae6-988d-1f802b98cf96\"/> <setBody>  <>import ca.uhn.hl7v2.model.v25.group.ORM_O01_ORDER\r\nimport groovy.json.JsonSlurper\r\nimport groovy.json.JsonParserType\r\n\r\n//Login to SL\r\ndef msg = request.getBody()\r\ndef post = new URL(\"http://10.10.1.34/system/login/\").openConnection()\r\ndef message = '{\"usr\":\"suser\",\"pwd\":\"smartlis\"}'\r\n\r\npost.setRequestMethod(\"POST\")\r\npost.setDoOutput(true)\r\npost.setRequestProperty(\"Content-Type\", \"application/json\")\r\npost.getOutputStream().write(message.getBytes(\"UTF-8\"))\r\ndef postRC = post.getResponseCode()\r\n\r\ndef parser = new JsonSlurper()\r\ndef parser1 = new JsonSlurper()\r\nif (postRC.equals(200)) { //If Login Succesfull\r\n\r\n    def session = post.getInputStream().getText()\r\n    def json = parser.parseText(session)\r\n    msg = parser1.parseText(msg)\r\n    def exec = [\"job_info\": [\"name\"  : \"ORDER_CREATE: \" + msg[\"order_number\"],\"param1\": msg[\"order_number\"]],\"work_sess_id\": json[\"data\"][\"new_sess_key\"],\"space_code\": \"\",\"exec\": [:]]\r\n    def commandCounter = 1\r\n    def newOrder = [\"cmd\": \"new\", \"id\": msg[\"order_number\"]]\r\n    exec[\"exec\"][commandCounter++] =  newOrder\r\n    def newOrderCommand = [\"cmd\": \"modify_order_data\", \"field\": \"order_source\", \"data\": json[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  newOrderCommand\r\n    def addOrderDemographicCommand1 = [\"cmd\": \"modify_order_data\", \"field\": \"physician_name\", \"data\": json[\"physician_name\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand1\r\n    def addOrderDemographicCommand2 = [\"cmd\": \"modify_order_data\", \"field\": \"physician\", \"data\": json[\"physician\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand2\r\n    def addOrderDemographicCommand3 = [\"cmd\": \"modify_order_data\", \"field\": \"pat_name\", \"data\": json[\"lastname\"]]\r\n    exec[\"exec\"][commandCounter++] = addOrderDemographicCommand3 \r\n    def addOrderDemographicCommand4 = [\"cmd\": \"modify_order_data\", \"field\": \"pat_name\", \"data\": json[\"lastname\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand4\r\n    def addOrderDemographicCommand11 = [\"cmd\": \"modify_order_data\", \"field\": \"source\", \"data\": msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  addOrderDemographicCommand11\r\n    def col1lp1oint = [\"cmd\"  : \"modify_order_data\",\"field\": \"collpoint\",\"data\" : \"5006\"]\r\n    exec[\"exec\"][commandCounter++] =  col1lp1oint\r\n    def ins1comp = [\"cmd\"  : \"modify_order_data\",\"field\": \"inscomp\",\"data\" : \"CEY-262\"]\r\n    exec[\"exec\"][commandCounter++] =  ins1comp\r\n    def coll_name = [\"cmd\"  : \"modify_order_data\",\"field\": \"collpoint_name\",\"data\" : msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  coll_name\r\n    def source = [\"cmd\"  : \"modify_order_data\",\"field\": \"source\",\"data\" : msg[\"order_source\"]]\r\n    exec[\"exec\"][commandCounter++] =  source\r\n\r\n    if (msg[\"tests\"] != null) {\r\n        for (def genTestIndex in msg[\"tests\"]) {\r\n            def genTest =  genTestIndex.collect([] as HashSet){entry -> entry.value}\r\n             \r\n            def addGenTestCommand = [\"cmd\": \"add_test2\", \"test_code\":genTestIndex.collect({entry -> entry.value.test_code})[0] ]\r\n            \r\n            if (genTest &amp;&amp; genTest[\"comment\"] != null &amp;&amp; genTest[\"comment\"] != \"\") {\r\n            \r\n            }\r\n            exec[\"exec\"][commandCounter++] =  addGenTestCommand\r\n        }\r\n    }\r\n\r\n    def saveCommand = [\"cmd\": \"save\", \"async_mode\": \"false\"]\r\n    exec[\"exec\"][commandCounter++] =  saveCommand\r\n    return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(exec)\r\n}</>    </setBody> <multicast> <to uri=\"direct:cb4b97ba-2228-45ce-b019-07fd39504d34\"/> </multicast> </route></routes>"
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "number",
+                  "example": 1
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Missing helper: \"camelSafe\""
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/organization": {
+      "get": {
+        "summary": "/organization",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "post": {
+        "summary": "/organization",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization/list": {
+      "post": {
+        "summary": "/organization/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organization/{id}": {
+      "get": {
+        "summary": "/organization/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "put": {
+        "summary": "/organization/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      },
+      "delete": {
+        "summary": "/organization/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/configuration/model/{code}": {
+      "get": {
+        "summary": "/configuration/model/{code}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/configuration/model/{code}/data": {
+      "get": {
+        "summary": "/configuration/model/{code}/data",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "post": {
+        "summary": "/configuration/model/{code}/data",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/configuration/model/{code}/data/{id}": {
+      "get": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "put": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      },
+      "delete": {
+        "summary": "/configuration/model/{code}/data/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/script": {
+      "get": {
+        "summary": "/script",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/new/{contextCode}": {
+      "get": {
+        "summary": "/script/new/{contextCode}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "contextCode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/object/members": {
+      "post": {
+        "summary": "/script/object/members",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}": {
+      "get": {
+        "summary": "/script/code/{code}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      },
+      "post": {
+        "summary": "/script/code/{code}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}/generate": {
+      "get": {
+        "summary": "/script/code/{code}/generate",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}/execute": {
+      "get": {
+        "summary": "/script/code/{code}/execute",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "/profile",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/profile",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/profile/list": {
+      "post": {
+        "summary": "/profile/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/profile/{id}": {
+      "get": {
+        "summary": "/profile/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/profile/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/profile/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/profile/permissions": {
+      "post": {
+        "summary": "/profile/permissions",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "null",
+                  "example": null
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0",
+  "tags": [
+    {
+      "name": "user"
+    },
+    {
+      "name": "integration"
+    },
+    {
+      "name": "organization"
+    },
+    {
+      "name": "config_model"
+    },
+    {
+      "name": "script"
+    },
+    {
+      "name": "configuration"
+    }
+  ]
+}

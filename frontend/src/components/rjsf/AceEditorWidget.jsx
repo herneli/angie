@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 
 import AceEditor from "react-ace";
 
+import "ace-builds/src-noconflict/mode-groovy";
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-html";

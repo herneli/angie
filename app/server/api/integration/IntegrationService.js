@@ -45,8 +45,8 @@ export class IntegrationService extends BaseService {
         let completedChannels = [];
         for (const channel of body.channels) {
             let nodes = [];
-            if (channel.nodes && channel.nodes.list) {
-                for (const node of channel.nodes.list) {
+            if (channel.nodes) {
+                for (const node of channel.nodes) {
                     if (node.data.beforeSave) {
                         let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
                         nodes.push(completedNode);
@@ -55,7 +55,7 @@ export class IntegrationService extends BaseService {
                     }
                 }
             }
-            completedChannels.push({ ...channel, nodes: { list: nodes } });
+            completedChannels.push({ ...channel, nodes: nodes });
         }
         return {
             ...body,

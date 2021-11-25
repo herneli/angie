@@ -28,8 +28,13 @@ class Transformer {
         }
         try {
             const elements = [];
+            
+            //Para mantener compatibilidad, quitar en el futuro.
+            if (!Array.isArray(bdModel.nodes) && bdModel.nodes.list) {
+                bdModel.nodes = bdModel.nodes.list;
+            }
 
-            for (const node of bdModel?.nodes?.list) {
+            for (const node of bdModel?.nodes) {
                 const nodeType = lodash.find(this.nodeTypes, {
                     id: node.type_id,
                 });
@@ -43,7 +48,6 @@ class Transformer {
                     data: {
                         label: node.custom_name,
                         ...node.data,
-                        type_id: node.type_id,
                     },
                     type: nodeType.data.react_component_type,
                     sourcePosition: "right",
@@ -96,7 +100,7 @@ class Transformer {
                         handle: con.sourceHandle,
                     })),
                     position: element.position,
-                    data: lodash.omit(element.data, ["label", "type_id", "onNodeUpdate"]),
+                    data: lodash.omit(element.data, ["label", "type_id"]),
                 };
                 if (node.data.handles) {
                     node.data.handles = Transformer.linkHandles(node.data.handles, node.links);
@@ -105,7 +109,7 @@ class Transformer {
             }
         }
 
-        channel.nodes = { list: nodes };
+        channel.nodes = nodes;
         return channel;
     }
     static async fromBDToCamel(channel) {

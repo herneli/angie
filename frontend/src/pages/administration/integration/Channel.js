@@ -1,34 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactFlow, {
-    ReactFlowProvider,
-    addEdge,
-    removeElements,
-    Controls,
-    MiniMap,
-    Background,
-} from "react-flow-renderer";
+import ReactFlow, { ReactFlowProvider, Controls, MiniMap, Background } from "react-flow-renderer";
 
 import Sidebar from "./Sidebar";
 import MultiTargetNode from "./custom_nodes/MultiTargetNode";
 import Transformer from "./Transformer";
-import usePrevious from "../../../common/usePrevious";
 
 import { v4 as uuid_v4 } from "uuid";
 
 import "./Channel.css";
+import NodeEditModal from "./NodeEditModal";
 
-const nodeTypes = {
+import lodash from "lodash";
+
+const customNodes = {
     MultiTargetNode: MultiTargetNode,
 };
 
-const Channel = ({ channel, onChannelUpdate }) => {
+const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState(undefined);
-    const [selectedTypeId, changeSelection] = useState(null);
+    const [selectedType, changeSelection] = useState(null);
     const [editNodeVisible, setEditNodeVisible] = useState(false);
 
-    const prevElements = usePrevious(elements);
     /**
      * Almacena la instancia actual del RFlow
      * @param {*} _reactFlowInstance
@@ -37,40 +31,52 @@ const Channel = ({ channel, onChannelUpdate }) => {
     const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
     /**
-     * Carga inicial de los elements en base al canal recibido como prop
+     * Carga inicial de los elements en base al canal recibido como prop.
+     *
+     * Todas las modificaciones que se realicen sobre el flujo y los nodos se notifican al componente superior esperando
+     * recibir el nuevo canal en formato BD para convertirlo en "elements" y actualizarlo en el react flow
+     *
      */
     useEffect(() => {
         if (channel) {
+            console.log("transform!");
             setElements(Transformer.transformFromBd(channel));
         }
-    }, []);
-
-    /**
-     * Evento que escucha las modificaciones en el flujo de RFlow y lo envia al componente superior para notificar la modificacion.
-     *
-     * Realiza la transformacion desde RFlow -> BD
-     */
-    useEffect(() => {
-        if (prevElements !== undefined) {
-            //Si es undefined y se esta ejecutando es porque se esta estableciendo por primera vez y no es necesario notificar arriba.
-            onChannelUpdate(Transformer.transformToBD(channel, elements));
-        }
-    }, [elements]);
+    }, [channel]);
 
     /**
      * Metodo para crear una conexión entre dos nodos
      * @param {*} params
      */
     const onConnect = (params) => {
-        console.log(params);
-        setElements((els) => addEdge({ ...params, label: "" /*TODO Parametrizar*/ }, els));
+        let newChannel = lodash.cloneDeep(channel);
+        let modifiedNode = lodash.find(newChannel.nodes, { id: params.source });
+
+        if (!modifiedNode.links) {
+            modifiedNode.links = [];
+        }
+        modifiedNode.links = [
+            ...modifiedNode.links,
+            {
+                node_id: params.target,
+                handle: params.sourceHandle,
+            },
+        ];
+        onNodeEditEnd(modifiedNode.id, modifiedNode);
     };
+
     /**
-     * Metodo para eliminar un nodo del flujo
+     * Metodo para eliminar un nodo
      * @param {*} elementsToRemove
      * @returns
      */
-    const onElementsRemove = (elementsToRemove) => setElements((els) => removeElements(elementsToRemove, els));
+    const onElementsRemove = (elementsToRemove) => {
+        let idsToRemove = lodash.map(elementsToRemove, "id"); //Obtener solo aquellos con id
+
+        let newChannel = lodash.cloneDeep(channel);
+        newChannel.nodes = newChannel.nodes.filter((node) => idsToRemove.indexOf(node.id) === -1);
+        onChannelUpdate(newChannel);
+    };
 
     /**
      * Evento al finalizar el drag de los nodos
@@ -84,9 +90,9 @@ const Channel = ({ channel, onChannelUpdate }) => {
      * Genera los identificadores de los handles de un nodo
      * @param {*} data
      */
-    const generateHandleIds = (data) => {
-        if (data.handles && data.handles.length !== 0) {
-            data.handles = data.handles.map((handle, idx) => {
+    const generateHandleIds = (handles) => {
+        if (handles && handles.length !== 0) {
+            return handles.map((handle, idx) => {
                 if (!handle.id) {
                     handle.id = "out" + idx;
                 }
@@ -96,24 +102,23 @@ const Channel = ({ channel, onChannelUpdate }) => {
     };
 
     /**
-     * Evento desencadenado al actualizar un nodo
-     * @param {*} event
-     * @param {*} node
+     * Metodo ejecutado al finalizar la edición de un nodo.
+     * @param {*} id
+     * @param {*} newData
      */
-    const onNodeUpdate = (event, node) => {
+    const onNodeEditEnd = (id, newData) => {
         setEditNodeVisible(false);
-        setElements((els) =>
-            els.map((e) => {
-                if (e.id === node.id) {
-                    e.position = node.position || e.position;
-                    e.data = node.data || e.data;
-                    if (e.data.handles) {
-                        generateHandleIds(e.data);
-                    }
-                }
-                return e;
-            })
-        );
+
+        let newNodes = channel.nodes.map((node) => {
+            if (node.id === id) {
+                node = { ...node, ...newData };
+                node.data.handles = generateHandleIds(node.data.handles);
+            }
+            return node;
+        });
+        let newChannel = lodash.cloneDeep(channel);
+        newChannel.nodes = newNodes;
+        onChannelUpdate(newChannel);
     };
 
     /**
@@ -132,16 +137,27 @@ const Channel = ({ channel, onChannelUpdate }) => {
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top,
         });
-        const newNode = {
-            id: uuid_v4(),
-            type,
-            position,
-            data: { ...extra },
-            sourcePosition: "right",
-            targetPosition: "left",
-        };
 
-        setElements((es) => es.concat(newNode));
+        let newChannel = lodash.cloneDeep(channel);
+        newChannel.nodes.push({
+            id: uuid_v4(),
+            type_id: type,
+            custom_name: extra.label,
+            links: [],
+            position: position,
+            data: lodash.omit(extra, ["label"]),
+        });
+        onChannelUpdate(newChannel);
+    };
+
+    /**
+     * Metodo encargado de comenzar la edición de un nodo
+     */
+    const startEditing = (nodeId) => {
+        let selection = lodash.find(channel.nodes, { id: nodeId });
+
+        changeSelection(selection);
+        setEditNodeVisible(true);
     };
 
     return (
@@ -155,13 +171,17 @@ const Channel = ({ channel, onChannelUpdate }) => {
                             onElementsRemove={onElementsRemove}
                             onLoad={onLoad}
                             onDrop={onDrop}
-                            nodeTypes={nodeTypes}
+                            nodeTypes={customNodes}
                             deleteKeyCode={46}
                             onDragOver={onDragOver}
-                            onNodeDragStop={onNodeUpdate}
+                            onNodeDragStop={(event, node) => {
+                                onNodeEditEnd(node.id, {
+                                    position: node.position,
+                                    data: node.data,
+                                });
+                            }}
                             onNodeDoubleClick={(event, node) => {
-                                changeSelection(node.id);
-                                setEditNodeVisible(true);
+                                startEditing(node.id);
                             }}>
                             <Controls />
                             <MiniMap />
@@ -169,13 +189,14 @@ const Channel = ({ channel, onChannelUpdate }) => {
                         </ReactFlow>
                     </div>
 
-                    <Sidebar
-                        selectedType={
-                            (elements && elements.find && elements.find((e) => e.id === selectedTypeId)) || {}
-                        }
+                    <Sidebar nodeTypes={nodeTypes} />
+
+                    <NodeEditModal
+                        selectedType={selectedType}
+                        nodeTypes={nodeTypes}
                         editNodeVisible={editNodeVisible}
                         onEditCancel={() => setEditNodeVisible(false)}
-                        onNodeUpdate={onNodeUpdate}
+                        onNodeEditEnd={onNodeEditEnd}
                     />
                 </ReactFlowProvider>
             </div>

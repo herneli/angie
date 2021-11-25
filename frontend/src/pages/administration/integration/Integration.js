@@ -91,7 +91,7 @@ const Integration = () => {
     const { state } = useLocation();
     const { id } = useParams();
 
-    const [currentRecord, setCurrentRecord] = useState(null);
+    const [currentIntegration, setCurrentIntegration] = useState(null);
     const [activeTab, setActiveTab] = useState();
     const [channels, setChannels] = useState([]);
     const [editHeader, setEditHeader] = useState(false);
@@ -101,12 +101,17 @@ const Integration = () => {
 
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+    const [nodeTypes, setNodeTypes] = useState([]);
+
+    useEffect(() => {
+        loadNodeTypes();
+    }, []);
 
     /**
      * Interval para ir actualizando en tiempo real el estado de los canales
      */
     useInterval(() => {
-        loadChannelStatus(currentRecord);
+        loadChannelStatus(currentIntegration);
     }, 30 * 1000);
 
     /**
@@ -121,27 +126,27 @@ const Integration = () => {
      */
     useEffect(() => {
         channelActions = new ChannelActions(channels, pendingChanges, setChannels, setActiveTab, onChannelUpdate);
-    }, [currentRecord, channels, pendingChanges]);
+    }, [currentIntegration, channels, pendingChanges]);
 
     /**
      * Si cambia la integracion actual cargar la lista de canales
      */
     useEffect(() => {
-        if (currentRecord) {
-            setChannels(currentRecord.channels);
+        if (currentIntegration) {
+            setChannels(currentIntegration.channels);
         }
-    }, [currentRecord]);
+    }, [currentIntegration]);
 
     /**
      * Metodo encargado de cargar la integración ya sea desde el state de la navegación o desde el servidor
      */
     const loadIntegration = async () => {
-        setCurrentRecord(null); //Resetear primero
+        setCurrentIntegration(null); //Resetear primero
         setChannels([]);
 
         await Transformer.init();
         if (state && state.record) {
-            setCurrentRecord(state.record);
+            setCurrentIntegration(state.record);
             setActiveTab(state.record && state.record.channels[0] && state.record.channels[0].id);
             setEditHistory([{ ...state.record }]);
 
@@ -149,7 +154,7 @@ const Integration = () => {
                 setEditHeader(true);
             }
         } else if (id === "new") {
-            setCurrentRecord({
+            setCurrentIntegration({
                 id: "new",
                 name: "",
                 description: "",
@@ -164,6 +169,19 @@ const Integration = () => {
     };
 
     /**
+     *
+     */
+    const loadNodeTypes = async () => {
+        const response = await axios.get("/configuration/model/node_type/data");
+
+        if (response?.data?.success) {
+            setNodeTypes(response?.data?.data);
+        } else {
+            console.error(response.data);
+        }
+    };
+
+    /**
      * Método encargado de obtener una integración del servidor y cargarla en el state.
      * @param {*} identifier
      */
@@ -173,7 +191,7 @@ const Integration = () => {
 
             if (response?.data?.data) {
                 let { data: integration } = response.data.data[0];
-                setCurrentRecord(integration);
+                setCurrentIntegration(integration);
                 setEditHistory([{ ...integration }]);
                 setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
             }
@@ -233,7 +251,7 @@ const Integration = () => {
     const confirmIntegrationChanges = (values) => {
         setEditHeader(false);
         const newIntegration = values.formData;
-        setCurrentRecord(newIntegration);
+        setCurrentIntegration(newIntegration);
 
         onIntegrationChange(newIntegration);
     };
@@ -255,19 +273,21 @@ const Integration = () => {
      */
     const saveIntegration = async () => {
         try {
-            const method = currentRecord.id !== "new" ? "put" : "post";
+            const method = currentIntegration.id !== "new" ? "put" : "post";
             const response = await axios[method](
-                "/integration" + (currentRecord.id !== "new" ? `/${currentRecord.id}` : ""),
-                currentRecord
+                "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
+                currentIntegration
             );
 
             if (response?.data?.success) {
                 setPendingChanges(false);
-                if (currentRecord.id === "new") { //Redirigir al nuevo identificador
+                if (currentIntegration.id === "new") {
+                    //Redirigir al nuevo identificador
                     history.push({
                         pathname: "/admin/integration/" + response.data.data.id,
                     });
                 }
+                setCurrentIntegration(response.data.data.data);
                 return notification.success({
                     message: T.translate("common.messages.saved.title"),
                     description: T.translate("common.messages.saved.description"),
@@ -310,10 +330,10 @@ const Integration = () => {
         }
 
         const newIntegration = {
-            ...currentRecord,
+            ...currentIntegration,
             channels: newChannels,
         };
-        setCurrentRecord(newIntegration);
+        setCurrentIntegration(newIntegration);
         onIntegrationChange(newIntegration);
 
         return newChannels;
@@ -321,15 +341,13 @@ const Integration = () => {
 
     const undo = () => {
         if (editHistory[currentHistoryIndex - 1]) {
-            setChannels([]);
-            setCurrentRecord({ ...editHistory[currentHistoryIndex - 1] });
+            setCurrentIntegration({ ...editHistory[currentHistoryIndex - 1] });
             setCurrentHistoryIndex(currentHistoryIndex - 1);
         }
     };
     const redo = () => {
         if (editHistory[currentHistoryIndex + 1]) {
-            setChannels([]);
-            setCurrentRecord({ ...editHistory[currentHistoryIndex + 1] });
+            setCurrentIntegration({ ...editHistory[currentHistoryIndex + 1] });
             setCurrentHistoryIndex(currentHistoryIndex + 1);
         }
     };
@@ -348,7 +366,7 @@ const Integration = () => {
                 <Popconfirm
                     key="undeploy"
                     title={T.translate("common.question")}
-                    onConfirm={() => channelActions.undeployChannel(currentRecord.id, activeTab, true)}>
+                    onConfirm={() => channelActions.undeployChannel(currentIntegration.id, activeTab, true)}>
                     <Button
                         icon={
                             <Icon
@@ -365,7 +383,7 @@ const Integration = () => {
             buttons.push(
                 <Button
                     key="deploy"
-                    onClick={() => channelActions.deployChannel(currentRecord.id, activeTab, true)}
+                    onClick={() => channelActions.deployChannel(currentIntegration.id, activeTab, true)}
                     icon={
                         <Icon
                             path={mdiPlayCircle}
@@ -445,20 +463,38 @@ const Integration = () => {
             }
 
             Modal.info({
-                title: "Debugging camel",
+                title: "Debugging Channel",
                 width: 800,
+                closable: true,
+                centered: true,
                 content: (
                     <div>
-                        <AceEditor
-                            setOptions={{
-                                useWorker: false,
-                            }}
-                            width="100%"
-                            value={camel}
-                            name="camel.code"
-                            mode="xml"
-                            theme="github"
-                        />
+                        <Tabs defaultActiveKey="1">
+                            <TabPane tab="Canal JSON" key="1">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    width="100%"
+                                    value={JSON.stringify(channel, null, 4)}
+                                    name="DB.code"
+                                    mode="json"
+                                    theme="github"
+                                />
+                            </TabPane>
+                            <TabPane tab="Camel XML" key="2">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    width="100%"
+                                    value={camel}
+                                    name="camel.code"
+                                    mode="xml"
+                                    theme="github"
+                                />
+                            </TabPane>
+                        </Tabs>
                     </div>
                 ),
                 onOk() {},
@@ -496,7 +532,6 @@ const Integration = () => {
     };
 
     const editTabOk = ({ formData }) => {
-        console.log(formData);
         onChannelUpdate(formData);
         setEditTabVisible(false);
     };
@@ -519,9 +554,9 @@ const Integration = () => {
                 <div>
                     <PageHeader
                         ghost={false}
-                        title={T.translate("integrations.integration_form_title", { name: currentRecord?.name })}
-                        subTitle={currentRecord?.description}
-                        tags={drawIntegrationStatus(currentRecord)}
+                        title={T.translate("integrations.integration_form_title", { name: currentIntegration?.name })}
+                        subTitle={currentIntegration?.description}
+                        tags={drawIntegrationStatus(currentIntegration)}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
                                 {T.translate("common.button.edit")}
@@ -566,14 +601,14 @@ const Integration = () => {
                             </Button>,
                         ]}>
                         <div>
-                            {currentRecord && (
+                            {currentIntegration && (
                                 <Form
                                     ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                                     ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                                     widgets={formConfig.widgets}
                                     ref={integForm}
                                     schema={integrationFormSchema.schema}
-                                    formData={currentRecord}
+                                    formData={currentIntegration}
                                     uiSchema={integrationFormSchema.uiSchema}
                                     onSubmit={(e) => confirmIntegrationChanges(e)}
                                     onError={(e) => console.log(e)}>
@@ -603,7 +638,7 @@ const Integration = () => {
                         }
                         key={channel.id}
                         closable={true}>
-                        <Channel channel={channel} onChannelUpdate={onChannelUpdate} />
+                        <Channel channel={channel} onChannelUpdate={onChannelUpdate} nodeTypes={nodeTypes} />
                     </TabPane>
                 ))}
             </Tabs>

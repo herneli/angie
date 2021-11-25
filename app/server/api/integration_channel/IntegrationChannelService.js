@@ -45,7 +45,7 @@ export class IntegrationChannelService {
 
         const { data: node_types } = await configService.list("node_type");
 
-        const nodes = lodash.cloneDeep(channel.nodes.list);
+        const nodes = lodash.cloneDeep(channel.nodes);
 
         let camelStr = "";
         for (const idx in nodes) {
