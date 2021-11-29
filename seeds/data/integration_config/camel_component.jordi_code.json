@@ -4,6 +4,6 @@
     "code": "visual_code",
     "name": "Visual code",
     "options": "{\n    \"source\": \"string\",\n    \"target\": \"string\",\n    \"script\": \"object\",\n    \"code\": \"string\"\n}",
-    "xml_template": "<route>\n    <from uri=\"direct:{{source}}\"/>\n    <script>\n        <{{script.language}}>\n            <![CDATA[{{safe code}}]]>\n        </{{script.language}}>\n    </script>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <script>\n        <{{script.language}}>\n            <![CDATA[{{safe code}}]]>\n        </{{script.language}}>\n    </script>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
   }
 ]

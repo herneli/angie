@@ -4,6 +4,6 @@
     "code": "debug",
     "name": "Debug",
     "options": "{}",
-    "xml_template": "<route>\n    <from uri=\"direct:{{source}}\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
   }
 ]

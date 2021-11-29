@@ -1,0 +1,29 @@
+[
+  {
+    "code": "groovy.core.string.concat",
+    "name": "Concatenar",
+    "type": {
+      "type": "$self"
+    },
+    "isActive": true,
+    "language": "groovy",
+    "parentType": {
+      "type": "string"
+    },
+    "sourceCode": "return self + params.value;",
+    "description": "",
+    "paramMembers": [
+      {
+        "code": "value",
+        "name": "Valor",
+        "type": {
+          "type": "$self"
+        },
+        "required": false
+      }
+    ],
+    "complexityLevel": 1,
+    "sourceCodeForBinaryOperator": "",
+    "id": 1045
+  }
+]
