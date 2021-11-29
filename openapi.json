@@ -703,6 +703,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "body.channels is not iterable"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -987,6 +1003,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "select \"integration\".* from \"integration\" left join \"organization\" on \"integration\".\"organization_id\" = \"organization\".\"id\" order by data->>'description' ASC limit $1 - column reference \"data\" is ambiguous"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1156,6 +1188,28 @@
       }
     },
     "/integration/{id}/channel/{channel}/status": {
+      "get": {
+        "summary": "/integration/{id}/channel/{channel}/status",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
       "post": {
         "summary": "/integration/{id}/channel/{channel}/status",
         "consumes": [
@@ -1179,9 +1233,31 @@
         ]
       }
     },
-    "/integration/{id}/channel/{channel}/logs": {
+    "/integration/{id}/channel/{channel}/statistics": {
+      "get": {
+        "summary": "/integration/{id}/channel/{channel}/statistics",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
       "post": {
-        "summary": "/integration/{id}/channel/{channel}/logs",
+        "summary": "/integration/{id}/channel/{channel}/statistics",
         "consumes": [
           "application/json"
         ],
@@ -1203,9 +1279,9 @@
         ]
       }
     },
-    "/integration/{id}/channel/{channel}/statistics": {
-      "post": {
-        "summary": "/integration/{id}/channel/{channel}/statistics",
+    "/integration/{id}/channel/{channel}/log": {
+      "get": {
+        "summary": "/integration/{id}/channel/{channel}/log",
         "consumes": [
           "application/json"
         ],
@@ -1536,9 +1612,242 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "properties": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string"
+                              },
+                              "objectCode": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "complexityLevel": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "name",
+                          "type",
+                          "complexityLevel"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "code": "functions",
+                          "name": "Funciones",
+                          "type": {
+                            "type": "object",
+                            "objectCode": "functions"
+                          },
+                          "complexityLevel": 1
+                        }
+                      ]
+                    },
+                    "methods": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "null"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string"
+                              },
+                              "objectCode": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "language": {
+                            "type": "string"
+                          },
+                          "parentType": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string"
+                              },
+                              "objectCode": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "sourceCode": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "paramMembers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "widget": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "options": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "code": {
+                                        "type": "string"
+                                      },
+                                      "value": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "required": [
+                                "code",
+                                "name",
+                                "type",
+                                "required"
+                              ]
+                            }
+                          },
+                          "renderTemplate": {
+                            "type": "string"
+                          },
+                          "complexityLevel": {
+                            "type": "number"
+                          },
+                          "sourceCodeForBinaryOperator": {
+                            "type": "string"
+                          },
+                          "imports": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "name",
+                          "type",
+                          "isActive",
+                          "language",
+                          "parentType",
+                          "sourceCode",
+                          "description",
+                          "paramMembers",
+                          "renderTemplate",
+                          "complexityLevel",
+                          "sourceCodeForBinaryOperator"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": null,
+                          "code": "groovy.any.setter",
+                          "name": "Asignar valor",
+                          "type": {
+                            "type": "void"
+                          },
+                          "color": "green",
+                          "isActive": true,
+                          "language": "groovy",
+                          "parentType": {
+                            "type": "$any"
+                          },
+                          "sourceCode": "nestedSet(context.variables, variablePath, params.value);",
+                          "description": "",
+                          "paramMembers": [
+                            {
+                              "code": "value",
+                              "name": "Valor",
+                              "type": {
+                                "type": "$self"
+                              },
+                              "required": false
+                            }
+                          ],
+                          "renderTemplate": "Asignar valor {{value}}",
+                          "complexityLevel": 1,
+                          "sourceCodeForBinaryOperator": ""
+                        }
+                      ]
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "script"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -1726,6 +2035,30 @@
         "tags": [],
         "produces": [
           "application/json"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/logs": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/logs",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
         ]
       }
     }

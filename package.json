@@ -33,7 +33,7 @@
     "jsreport-handlebars": "^2.1.0",
     "jsreport-phantom-pdf": "^2.6.1",
     "keycloak-connect": "^15.0.2",
-    "lisco": "^1.0.24",
+    "lisco": "^1.0.25",
     "lodash": "^4.17.21",
     "lodash.union": "^4.6.0",
     "moment": "^2.29.1",

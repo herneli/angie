@@ -1,0 +1,14 @@
+[
+  {
+    "id": "fa6b5212-a518-49f8-8867-c965473ac4d0",
+    "code": "debug",
+    "name": "Debug",
+    "group": "Utilidades",
+    "handles": "in,out",
+    "defaults": "{}",
+    "json_ui_schema": "{}",
+    "json_data_schema": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"name\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+    "camel_component_id": "a5587797-ed99-4834-b267-5fe804583da0",
+    "react_component_type": "default"
+  }
+]

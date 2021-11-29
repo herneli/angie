@@ -46,6 +46,9 @@ export class IntegrationService extends BaseService {
         for (const channel of body.channels) {
             let nodes = [];
             if (channel.nodes) {
+                if (channel.nodes.list) {
+                    channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
+                }
                 for (const node of channel.nodes) {
                     if (node.data.beforeSave) {
                         let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
@@ -105,7 +108,9 @@ export class IntegrationService extends BaseService {
         if (!filters) {
             filters = {};
         }
-        filters.sort = { field: "name", direction: "ascend" };
+        if (!filters.sort) {
+            filters.sort = { field: "name", direction: "ascend" };
+        }
 
         let { data, total } = await super.list(filters, start, limit);
 

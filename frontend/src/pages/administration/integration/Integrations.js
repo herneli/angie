@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Input, notification, Popconfirm, Row, Space, Table } from "antd";
+import { Button, Col, Input, message, notification, Popconfirm, Row, Space, Table } from "antd";
 import axios from "axios";
 import moment from "moment";
 import lodash from "lodash";
@@ -82,13 +82,20 @@ const Integrations = () => {
         setLoading(false);
     };
 
-    const search = async (pagination, filters = {}) => {
+    const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
         if (pagination?.pageSize && pagination?.current) {
             filters.limit = pagination.pageSize ? pagination.pageSize : 10;
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
+        }
+
+        if (sorts) {
+            filters.sort = Object.keys(sorts).length !== 0 && {
+                field: sorts.columnKey || sorts.field,
+                direction: sorts.order,
+            };
         }
 
         try {
@@ -182,9 +189,8 @@ const Integrations = () => {
             .then((importItems) => {
                 const promises = importItems.map((item) => saveIntegration({ ...item, id: null }, false));
                 Promise.all(promises).then((values) => {
-                    notification.success({
-                        message: T.translate("configuration.end_of_loading_json_file"),
-                    });
+                    message.success(T.translate("configuration.end_of_loading_json_file"));
+                    search();
                 });
             })
             .catch((error) =>
@@ -292,18 +298,30 @@ const Integrations = () => {
             dataIndex: "name",
             key: "name",
             ellipsis: true,
+            sorter: true,
+            render: (text, record) => {
+                if (record.channels) return <b>{text}</b>;
+
+                return text;
+            },
         },
         {
             title: T.translate("integrations.columns.description"),
             dataIndex: "description",
-            key: "description",
+            key: "integration.data->>'description'",
             ellipsis: true,
+            sorter: true,
+            render: (text, record) => {
+                if (record.channels) return <b>{text}</b>;
+
+                return text;
+            },
         },
         {
             title: T.translate("integrations.columns.status"),
             dataIndex: "status",
             key: "status",
-            align: 'center',
+            align: "center",
             width: 60,
             render: (text, record) => {
                 if (record.channels) return;
@@ -339,8 +357,9 @@ const Integrations = () => {
         {
             title: T.translate("integrations.columns.last_updated"),
             dataIndex: "last_updated",
-            key: "last_updated",
+            key: "integration.data->>'last_updated'",
             width: 180,
+            sorter: true,
             render: (text, record) => {
                 return moment(text).format("DD/MM/YYYY HH:mm:ss");
             },
@@ -449,10 +468,12 @@ const Integrations = () => {
                 key="integrations-table"
                 dataSource={dataSource}
                 columns={columns}
+                onChange={search}
                 pagination={pagination}
                 rowKey={"id"}
                 childrenColumnName={"channels"}
                 bordered
+                sort
                 size="small"
                 expandable={{ expandedRowKeys: dataSourceKeys }}
             />

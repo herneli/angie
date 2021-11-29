@@ -41,7 +41,7 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
                 uiSchema: uiSchema,
             });
         }
-    }, [nodeTypes, selectedType, editNodeVisible]);
+    }, [editNodeVisible]);
 
     /**
      * Actualiza el nodo con las nuevas propiedades
@@ -61,6 +61,7 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
             visible={editNodeVisible}
             onOk={onFormSubmit}
             onCancel={onEditCancel}
+            destroyOnClose={true}
             footer={[
                 <Button key="cancel" type="dashed" onClick={() => onEditCancel()}>
                     {T.translate("common.button.cancel")}

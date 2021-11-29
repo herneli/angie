@@ -39,6 +39,7 @@ export default function ModelTable({
         if (info) {
             let columns = info.listFields.map((field) => ({
                 title: field.title,
+                key: field.key,
                 dataIndex: field.field,
                 sorter: true,
             }));
@@ -165,9 +166,12 @@ export default function ModelTable({
     const handleUploadTable = () => {
         uploadJsonFile()
             .then((importItems) => {
-                const promises = importItems.map((item) => onSaveDataBatch({ ...item, id: null }, false));
+                const promises = importItems.map((item) =>
+                    onSaveDataBatch(modelInfo.id_mode === "uuid" ? { ...item } : { ...item, id: null }, false)
+                );
                 Promise.all(promises).then((values) => {
                     message.info(T.translate("configuration.end_of_loading_json_file"));
+                    search();
                 });
             })
             .catch((error) => message.error(T.translate("configuration.error_loading_json_file")));
@@ -184,7 +188,7 @@ export default function ModelTable({
     //     });
     // };
 
-    const search = async (params, searchValue) => {
+    const search = async (params, searchValue, sorts) => {
         let filters = {};
 
         if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
@@ -199,6 +203,13 @@ export default function ModelTable({
         if (params?.pageSize && params?.current) {
             filters.limit = params.pageSize ? params.pageSize : 10;
             filters.start = (params.current ? params.current - 1 : 0) * (params.pageSize ? params.pageSize : 10);
+        }
+
+        if (sorts) {
+            filters.sort = Object.keys(sorts).length !== 0 && {
+                field: sorts.columnKey || sorts.field,
+                direction: sorts.order,
+            };
         }
 
         await onSearchData(modelInfo, filters);
@@ -230,51 +241,51 @@ export default function ModelTable({
       )} */}
             {importItems ? <h1>Imported items</h1> : null}
 
-                <Row>
-                    <Col flex={1}>
-                        <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
-                    </Col>
-                    <Col flex={2}>
-                        <Row justify="end" gutter={10}>
-                            <Col>
-                                <Button
-                                    icon={<Icon path={mdiUpload} className={classes.icon} />}
-                                    type="text"
-                                    onClick={handleUploadTable}
-                                />
-                            </Col>
-                            <Col>
-                                <Button
-                                    icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                    type="text"
-                                    onClick={() => handleDownloadTable(filteredData)}
-                                />
-                            </Col>
-                            <Col>
-                                <Button
-                                    icon={<Icon path={mdiPlus} className={classes.icon} />}
-                                    type="text"
-                                    onClick={onAddData}
-                                />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                <Table
-                    columns={columns}
-                    dataSource={filteredData}
-                    pagination={pagination}
-                    rowKey={"id"}
-                    sorta
-                    onChange={search}
-                    // onRow={(record, index) => {
-                    //     return {
-                    //         onClick: () => handleOnRowClick(record),
-                    //     };
-                    // }}
-                    bordered
-                    size="small"
-                />
+            <Row>
+                <Col flex={1}>
+                    <Search className={classes.search} onSearch={(element) => search(null, element)} enterButton />
+                </Col>
+                <Col flex={2}>
+                    <Row justify="end" gutter={10}>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiUpload} className={classes.icon} />}
+                                type="text"
+                                onClick={handleUploadTable}
+                            />
+                        </Col>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiDownload} className={classes.icon} />}
+                                type="text"
+                                onClick={() => handleDownloadTable(filteredData)}
+                            />
+                        </Col>
+                        <Col>
+                            <Button
+                                icon={<Icon path={mdiPlus} className={classes.icon} />}
+                                type="text"
+                                onClick={onAddData}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={filteredData}
+                pagination={pagination}
+                rowKey={"id"}
+                sort
+                onChange={search}
+                // onRow={(record, index) => {
+                //     return {
+                //         onClick: () => handleOnRowClick(record),
+                //     };
+                // }}
+                bordered
+                size="small"
+            />
         </div>
     );
 }

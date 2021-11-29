@@ -18,23 +18,23 @@ export class IntegrationChannelController extends BaseController {
                 this.undeployChannel(request, response, next);
             })
         );
-        this.router.post(
+        this.router.get(
             `/integration/:id/channel/:channel/status`,
             expressAsyncHandler((request, response, next) => {
                 this.channelStatus(request, response, next);
             })
         );
 
-        this.router.post(
-            `/integration/:id/channel/:channel/logs`,
-            expressAsyncHandler((request, response, next) => {
-                this.channelLogs(request, response, next);
-            })
-        );
-        this.router.post(
+        this.router.get(
             `/integration/:id/channel/:channel/statistics`,
             expressAsyncHandler((request, response, next) => {
                 this.channelStats(request, response, next);
+            })
+        );
+        this.router.get(
+            `/integration/:id/channel/:channel/log`,
+            expressAsyncHandler((request, response, next) => {
+                this.channelLogs(request, response, next);
             })
         );
 
@@ -93,13 +93,13 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async channelLogs(request, response, next) {
+    async channelStats(request, response, next) {
         try {
             let service = new IntegrationChannelService();
             let integration = request.params.id;
             let channel = request.params.channel;
 
-            let res = await service.channelLogs(integration, channel);
+            let res = await service.channelStats(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -108,13 +108,13 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async channelStats(request, response, next) {
+    async channelLogs(request, response, next) {
         try {
             let service = new IntegrationChannelService();
             let integration = request.params.id;
             let channel = request.params.channel;
 
-            let res = await service.channelStats(integration, channel);
+            let res = await service.channelLogs(integration, channel);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());

@@ -92,13 +92,6 @@ export class IntegrationChannelService {
         return this.channelObjStatus(channel);
     }
 
-    async channelLogs(integration, channelId) {
-        const channel = await this.findIntegrationChannel(integration, channelId);
-
-        channel.logs = {}; //TODO
-
-        return channel;
-    }
 
     async channelStats(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);
@@ -122,5 +115,15 @@ export class IntegrationChannelService {
         channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
         channel.message_count = (channStatus && channStatus.messages_count) || 0;
         return channel;
+    }
+
+    async channelLogs(integration, channel) {
+        let channelLogs = "";
+        try {
+            channelLogs = await this.jumDao.getRouteLogs(channel);
+        } catch (ex) {
+            console.error(ex);
+        }
+        return channelLogs;
     }
 }

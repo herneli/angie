@@ -10,7 +10,7 @@ import { v4 as uuid_v4 } from "uuid";
 import "./Channel.css";
 import NodeEditModal from "./NodeEditModal";
 
-import lodash from "lodash";
+import lodash, { filter } from "lodash";
 
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
@@ -66,6 +66,28 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     };
 
     /**
+     * Recorre los nodos y recalcula los links entre ellos eliminando aquellos cuya referencia se haya perdido.
+     *
+     * @param {*} nodes
+     * @returns
+     */
+    const recalculateLinks = (nodes, linksToRemove) => {
+        return nodes.map((node) => {
+            //Recalcular los enlaces entre nodos
+            node.links = lodash.filter(node.links, (link) => {
+                //Si hay algun link a eliminar se filtra para el origen y el destino evitando asi que este presente.
+                if (linksToRemove && lodash.find(linksToRemove, { source: node.id, target: link.node_id })) {
+                    return false;
+                }
+                //Aun asi se revisa si existe algun link con un elemento "missing"
+                const existTarget = lodash.find(nodes, { id: link.node_id });
+                return existTarget != null;
+            });
+            return node;
+        });
+    };
+
+    /**
      * Metodo para eliminar un nodo
      * @param {*} elementsToRemove
      * @returns
@@ -73,8 +95,12 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     const onElementsRemove = (elementsToRemove) => {
         let idsToRemove = lodash.map(elementsToRemove, "id"); //Obtener solo aquellos con id
 
+        let linksToRemove = lodash.filter(elementsToRemove, (el) => el.source && el.target); //Los links tienen un source y un target con lo que se obtienen para revisar su eliminacion.
+
         let newChannel = lodash.cloneDeep(channel);
-        newChannel.nodes = newChannel.nodes.filter((node) => idsToRemove.indexOf(node.id) === -1);
+        let newNodes = newChannel.nodes.filter((node) => idsToRemove.indexOf(node.id) === -1); //Quitar el que estamos eliminando
+        newChannel.nodes = recalculateLinks(newNodes, linksToRemove);
+
         onChannelUpdate(newChannel);
     };
 
@@ -87,7 +113,9 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     };
 
     /**
-     * Genera los identificadores de los handles de un nodo
+     * Genera los identificadores de los handles de un nodo.
+     *
+     * Ejemplo:  el switch que dispone de multiples handles o el loop que tiene dos pero son dinamicos
      * @param {*} data
      */
     const generateHandleIds = (handles) => {
@@ -109,14 +137,15 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     const onNodeEditEnd = (id, newData) => {
         setEditNodeVisible(false);
 
-        let newNodes = channel.nodes.map((node) => {
+        let newChannel = lodash.cloneDeep(channel);
+
+        let newNodes = newChannel.nodes.map((node) => {
             if (node.id === id) {
                 node = { ...node, ...newData };
                 node.data.handles = generateHandleIds(node.data.handles);
             }
             return node;
         });
-        let newChannel = lodash.cloneDeep(channel);
         newChannel.nodes = newNodes;
         onChannelUpdate(newChannel);
     };

@@ -5,150 +5,6 @@ exports.seed = async function (knex) {
     // Inserts seed entries
     await knex("config_model").insert([
         {
-            name: "Script context",
-            code: "script_context",
-            data: {
-                code: "context",
-                name: "Contexto",
-                table: "script_config",
-                documentType: "context",
-                listFields: [
-                    {
-                        title: "Código",
-                        field: "code",
-                    },
-                    {
-                        title: "Nombre",
-                        field: "name",
-                    },
-                    {
-                        title: "Lenguaje",
-                        field: "language",
-                    },
-                    {
-                        title: "Tipo de contexto",
-                        field: ["type", "type"],
-                    },
-                ],
-                schema: {
-                    type: "object",
-                    properties: {
-                        code: {
-                            type: "string",
-                            title: "Código",
-                        },
-                        name: {
-                            type: "string",
-                            title: "Nombre",
-                        },
-                        language: {
-                            title: "Lenguaje",
-                            type: "string",
-                            enum: ["js", "python", "groovy"],
-                            enumNames: ["Javascript", "Python", "Groovy"],
-                        },
-                        type: { $ref: "#/definitions/type" },
-                        startCode: {
-                            type: "string",
-                            title: 'Ejecutar código al inicio (cargar objecto "context"',
-                        },
-                        endCode: {
-                            type: "string",
-                            title: "Ejecutar código al finalizar (variables disponibles",
-                        },
-                    },
-                    definitions: {
-                        type: {
-                            type: "object",
-                            properties: {
-                                type: {
-                                    type: "string",
-                                    title: "Tipo",
-                                    enum: ["array", "boolean", "date", "number", "integer", "object", "string"],
-                                    enumNames: ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
-                                    default: "",
-                                },
-                            },
-                            dependencies: {
-                                type: {
-                                    oneOf: [
-                                        {
-                                            properties: {
-                                                type: {
-                                                    enum: ["boolean", "date", "number", "integer", "string"],
-                                                },
-                                                selectOptions: {
-                                                    title: "Valores remotos",
-                                                    type: ["string", "null"],
-                                                },
-                                                widget: {
-                                                    title: "Editor",
-                                                    type: ["string", "null"],
-                                                },
-                                            },
-                                        },
-                                        {
-                                            properties: {
-                                                type: {
-                                                    enum: ["object"],
-                                                },
-                                                objectCode: {
-                                                    type: "string",
-                                                    title: "Código de objeto",
-                                                },
-                                            },
-                                            selectOptions: {
-                                                title: "Valores remotos",
-                                                type: ["string", "null"],
-                                            },
-                                            widget: {
-                                                title: "Editor",
-                                                type: ["string", "null"],
-                                            },
-                                        },
-                                        {
-                                            properties: {
-                                                type: {
-                                                    enum: ["array"],
-                                                },
-                                                items: {
-                                                    $ref: "#/definitions/type",
-                                                },
-                                            },
-                                            widget: {
-                                                title: "Editor",
-                                                type: ["string", "null"],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    },
-                },
-                uiSchema: {
-                    code: {
-                        "ui:columnSize": "4",
-                    },
-                    name: {
-                        "ui:columnSize": "4",
-                    },
-                    language: {
-                        "ui:columnSize": "4",
-                    },
-                    type: {
-                        objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
-                            "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
-                        },
-                    },
-                    startCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
-                    endCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },
-                },
-            },
-        },
-        {
             name: "Script method",
             code: "script_method",
             data: {
@@ -920,10 +776,12 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        key: "code",
                     },
                     {
                         title: "Nombre",
                         field: "name",
+                        key: "data->>'name'",
                     },
                 ],
                 schema: {
@@ -975,10 +833,12 @@ exports.seed = async function (knex) {
                     {
                         title: "Nombre",
                         field: "name",
+                        key: "data->>'name'",
                     },
                     {
                         title: "Grupo",
                         field: "group",
+                        key: "data->>'group'",
                     },
                 ],
                 schema: {

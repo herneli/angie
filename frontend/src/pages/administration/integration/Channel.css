@@ -88,11 +88,11 @@
     width: 150px;
 }
 
-.dndflow .CodeMirror {
-    height: 300px;
+.dndflow .react-flow__edge-path {
+    stroke-width: 3px;
 }
 
 
-.avoid-selection{
+.avoid-selection {
     user-select: none;
 }

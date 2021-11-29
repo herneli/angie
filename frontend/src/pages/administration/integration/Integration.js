@@ -2,7 +2,7 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, Modal, notification, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
+import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
 
 import { useHistory } from "react-router";
 
@@ -36,6 +36,7 @@ import {
     mdiStopCircle,
     mdiPlayCircle,
     mdiBug,
+    mdiTextLong,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -288,10 +289,11 @@ const Integration = () => {
                     });
                 }
                 setCurrentIntegration(response.data.data.data);
-                return notification.success({
-                    message: T.translate("common.messages.saved.title"),
-                    description: T.translate("common.messages.saved.description"),
-                });
+                // return notification.success({
+                //     message: T.translate("common.messages.saved.title"),
+                //     description: T.translate("common.messages.saved.description"),
+                // });
+                return message.success(T.translate("common.messages.saved.title"));
             }
         } catch (ex) {
             return notification.error({
@@ -424,6 +426,11 @@ const Integration = () => {
         }
         return [
             <Button
+                key="log"
+                onClick={() => showChannelLog()}
+                icon={<Icon path={mdiTextLong} size={0.6} title={T.translate("common.button.debug")} />}
+            />,
+            <Button
                 key="debug"
                 onClick={() => showChannelDebug()}
                 icon={<Icon path={mdiBug} size={0.6} title={T.translate("common.button.debug")} />}
@@ -495,6 +502,36 @@ const Integration = () => {
                                 />
                             </TabPane>
                         </Tabs>
+                    </div>
+                ),
+                onOk() {},
+            });
+        }
+    };
+
+    /**
+     * Muestra la ventana de debug
+     */
+    const showChannelLog = async () => {
+        if (activeTab) {
+            const response = await axios.get(`/integration/${currentIntegration.id}/channel/${activeTab}/log`);
+
+            Modal.info({
+                title: "Log Channel",
+                width: "60vw",
+                closable: true,
+                centered: true,
+                content: (
+                    <div>
+                        <AceEditor
+                            setOptions={{
+                                useWorker: false,
+                            }}
+                            width="100%"
+                            value={response.data.data}
+                            name="chann.log"
+                            theme="github"
+                        />
                     </div>
                 ),
                 onOk() {},

@@ -28,7 +28,7 @@ class Transformer {
         }
         try {
             const elements = [];
-            
+
             //Para mantener compatibilidad, quitar en el futuro.
             if (!Array.isArray(bdModel.nodes) && bdModel.nodes.list) {
                 bdModel.nodes = bdModel.nodes.list;
@@ -55,6 +55,10 @@ class Transformer {
                 });
                 if (node.links) {
                     for (const link of node.links) {
+                        const existTarget = lodash.find(bdModel?.nodes, { id: link.node_id });
+                        if (!existTarget) {
+                            continue; //Ignorar los inexistentes
+                        }
                         elements.push({
                             source: node.id,
                             sourceHandle: link.handle,
