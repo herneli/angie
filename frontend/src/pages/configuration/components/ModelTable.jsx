@@ -156,7 +156,9 @@ export default function ModelTable({
         // e.stopPropagation();
 
         const data = [row];
-        downloadJsonFile(data, `${modelInfo.name}-${row.code}.json`);
+        const code = row.code || row.name;
+
+        downloadJsonFile(data, `${modelInfo.name}-${code}.json`);
     };
 
     const handleDownloadTable = (data) => {
