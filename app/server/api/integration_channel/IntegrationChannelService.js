@@ -9,8 +9,52 @@ import { IntegrationDao } from "../integration/IntegrationDao";
 
 export class IntegrationChannelService {
     constructor() {
+        /**
+         * FROM here: https://gist.github.com/servel333/21e1eedbd70db5a7cfff327526c72bc5
+         */
+        const reduceOp = function (args, reducer) {
+            args = Array.from(args);
+            args.pop(); // => options
+            var first = args.shift();
+            return args.reduce(reducer, first);
+        };
+        Handlebars.registerHelper({
+            eq: function () {
+                return reduceOp(arguments, (a, b) => a === b);
+            },
+            ne: function () {
+                return reduceOp(arguments, (a, b) => a !== b);
+            },
+            lt: function () {
+                return reduceOp(arguments, (a, b) => a < b);
+            },
+            gt: function () {
+                return reduceOp(arguments, (a, b) => a > b);
+            },
+            lte: function () {
+                return reduceOp(arguments, (a, b) => a <= b);
+            },
+            gte: function () {
+                return reduceOp(arguments, (a, b) => a >= b);
+            },
+            and: function () {
+                return reduceOp(arguments, (a, b) => a && b);
+            },
+            or: function () {
+                return reduceOp(arguments, (a, b) => a || b);
+            },
+        });
+
         Handlebars.registerHelper("safe", function (inputData) {
             return new Handlebars.SafeString(inputData);
+        });
+        Handlebars.registerHelper("jsonStringSafe", function (inputData) {
+            try {
+                return new Handlebars.SafeString(JSON.stringify(inputData));
+            } catch (ex) {
+                console.error(ex);
+            }
+            return "";
         });
         Handlebars.registerHelper("querystring", function (inputData) {
             let data = inputData;
@@ -91,7 +135,6 @@ export class IntegrationChannelService {
 
         return this.channelObjStatus(channel);
     }
-
 
     async channelStats(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);

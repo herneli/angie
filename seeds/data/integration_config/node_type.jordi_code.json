@@ -1,7 +1,7 @@
 [
   {
     "id": "b30ed503-44f3-4387-af08-b7cd2df81f5e",
-    "code": "visual_groovy_code",
+    "code": "core.code.groovy.visual_editor",
     "name": "Visual Groovy Code",
     "group": "Utilidades",
     "handles": "in, out",

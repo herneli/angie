@@ -1,6 +1,8 @@
 import React from "react";
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { createUseStyles } from "react-jss";
+import { canExpand } from "@rjsf/core/lib/utils";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
 const useStyles = createUseStyles({
     border: {
@@ -19,6 +21,10 @@ const AntdObjectFieldTemplate = ({
     uiSchema,
     idSchema,
     formData,
+    schema,
+    disabled,
+    readonly,
+    onAddClick,
 }) => {
     const classes = useStyles();
     const uiGridContainer = uiSchema["ui:grid"];
@@ -32,47 +38,26 @@ const AntdObjectFieldTemplate = ({
         <Row {...props}>
             {(uiSchema["ui:title"] || title) && (
                 <Col span={12}>
-                    <TitleField
-                        id={`${idSchema.$id}-title`}
-                        title={title}
-                        required={required}
-                    />
+                    <TitleField id={`${idSchema.$id}-title`} title={title} required={required} />
                 </Col>
             )}
             {description && (
                 <Col span={24}>
-                    <DescriptionField
-                        id={`${idSchema.$id}-description`}
-                        description={description}
-                    />
+                    <DescriptionField id={`${idSchema.$id}-description`} description={description} />
                 </Col>
             )}
             <Col span={24}>
-                <div
-                    className={
-                        uiSchema["ui:withBorder"] ? classes.border : null
-                    }
-                >
+                <div className={uiSchema["ui:withBorder"] ? classes.border : null}>
                     <Row gutter={24}>
                         {properties.map((prop, index) => {
                             let columnSize = 12;
                             let uiGridItem = null;
-                            if (
-                                prop.content &&
-                                prop.content.props &&
-                                prop.content.props.uiSchema
-                            ) {
-                                if (
-                                    prop.content.props.uiSchema["ui:columnSize"]
-                                ) {
-                                    columnSize =
-                                        prop.content.props.uiSchema[
-                                            "ui:columnSize"
-                                        ];
+                            if (prop.content && prop.content.props && prop.content.props.uiSchema) {
+                                if (prop.content.props.uiSchema["ui:columnSize"]) {
+                                    columnSize = prop.content.props.uiSchema["ui:columnSize"];
                                 }
                                 if (prop.content.props.uiSchema.uiGridItem) {
-                                    uiGridItem =
-                                        prop.content.props.uiSchema["ui:grid"];
+                                    uiGridItem = prop.content.props.uiSchema["ui:grid"];
                                 }
                             }
 
@@ -91,6 +76,22 @@ const AntdObjectFieldTemplate = ({
                     </Row>
                 </div>
             </Col>
+            {canExpand(schema, uiSchema, formData) && (
+                <Col span={24}>
+                    <Row gutter={24} justify="end">
+                        <Col flex="192px">
+                            <Button
+                                block
+                                className="object-property-expand"
+                                disabled={disabled || readonly}
+                                onClick={onAddClick(schema)}
+                                type="primary">
+                                <PlusCircleOutlined /> Add Item
+                            </Button>
+                        </Col>
+                    </Row>
+                </Col>
+            )}
         </Row>
     );
 };

@@ -46,6 +46,18 @@ Los puertos en los que se encuentra, por defecto, cada componente son:
 
 _**Nota:** en determinados entornos el script de `dbinit/01-init.sh` de postgre no funciona correctamente. En entornos Linux/Mac es necesario dar permisos (chmod 777) y en windows cambiar el tipo de salto de línea a LF._
 
+
+### Optimización
+
+Es importante, en windows, activar WSL2 para mejorar el rendimiento de Docker. Adicionalmente, para evitar que consuma demasiada ram se puede crear un archivo `.wslconfig` en `C:\Users\[user]` con el siguiente contenido:
+```
+[wsl2]
+memory=3GB   # Limits VM memory in WSL 2 up to 3GB
+processors=2 # Makes the WSL 2 VM use two virtual processors
+```
+
+Con 3 Gb es suficiente para los contenedores actuales.
+
 ## Ejecutando la aplicación
 
 Ejecutar el servidor

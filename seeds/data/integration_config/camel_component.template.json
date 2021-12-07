@@ -1,0 +1,9 @@
+[
+  {
+    "id": "476ea812-7bb4-4308-b438-9a12bfcfb511",
+    "code": "core.utils.template",
+    "name": "Template",
+    "options": "{\n    \"source\": \"string\",\n    \"target\": \"string\",\n    \"code\": \"string\"\n}",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{{safe code}}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+  }
+]

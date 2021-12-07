@@ -1,7 +1,7 @@
 [
   {
     "id": "fa6b5212-a518-49f8-8867-c965473ac4d0",
-    "code": "debug",
+    "code": "core.utils.debug",
     "name": "Debug",
     "group": "Utilidades",
     "handles": "in,out",
