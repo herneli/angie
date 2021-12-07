@@ -1,5 +1,4 @@
 exports.up = async function (knex) {
-    
     if (!(await knex.schema.hasTable("organization"))) {
         await knex.schema.createTable("organization", function (table) {
             table.uuid("id").primary();
@@ -16,11 +15,11 @@ exports.up = async function (knex) {
             table.string("name").notNullable();
             table.json("data");
             table.uuid("organization_id");
-            table.foreign('organization_id').references('organization.id')
+            table.foreign("organization_id").references("organization.id");
             table.boolean("enabled").defaultTo(true);
         });
     }
-    
+
     if (!(await knex.schema.hasTable("camel_component"))) {
         await knex.schema.createTable("camel_component", function (table) {
             table.uuid("id").primary();
@@ -71,7 +70,6 @@ exports.up = async function (knex) {
         });
     }
 
-
     if (!(await knex.schema.hasTable("historic"))) {
         await knex.schema.createTable("historic", function (table) {
             table.increments();
@@ -103,10 +101,12 @@ exports.up = async function (knex) {
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
             table.increments();
+            table.string("package_name").notNullable();
+            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["document_type", "code"]);
+            table.unique(["package_name", "package_version", "document_type", "code"]);
         });
     }
 
@@ -143,7 +143,6 @@ exports.down = async function (knex) {
     if (await knex.schema.hasTable("profile")) {
         await knex.schema.dropTable("profile");
     }
-
 
     if (await knex.schema.hasTable("node_type_subflow")) {
         await knex.schema.dropTable("node_type_subflow");

@@ -19,6 +19,8 @@ export class ConfigurationService extends BaseService {
         const model = await this.getModel(code);
         let entity = {
             id: body.id,
+            package_name: model.data.packageName,
+            package_version: model.data.packageVersion,
             document_type: model.data.documentType,
             code: body.code ? body.code : model.data.code,
             data: body,
