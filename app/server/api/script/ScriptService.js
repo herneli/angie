@@ -10,15 +10,13 @@ export class ScriptService extends BaseService {
         super(ScriptDao);
     }
 
-    async getObjectMembers({ type, language, excludeProperties, excludeMethods }) {
+    async getObjectMembers({ type, language, excludeProperties, excludeMethods, recursive = false }) {
         let properties = [];
         let methods = [];
+        let childrenObjects = {};
 
         if (!excludeProperties) {
-            let objectData = await this.dao.getObjectData(type);
-            if (objectData && objectData.data && objectData.data.properties) {
-                properties = objectData.data.properties;
-            }
+            properties = await this.getProperties(type, recursive, childrenObjects);
         }
 
         if (!excludeMethods) {
@@ -28,7 +26,37 @@ export class ScriptService extends BaseService {
                 return method.data;
             });
         }
-        return { properties, methods };
+        return { properties, methods, childrenObjects };
+    }
+
+    async getProperties(type, recursive = false, childrenObjects = {}) {
+        let properties = [];
+        if (type.type === "object") {
+            let objectData = await this.dao.getObjectData(type);
+            if (objectData && objectData.data && objectData.data.properties) {
+                properties = objectData.data.properties;
+                if (!(type.objectCode in childrenObjects)) {
+                    childrenObjects[type.objectCode] = properties;
+                }
+                if (recursive) {
+                    for (const property of properties) {
+                        if (property.type.type === "object") {
+                            await this.getProperties(property.type, recursive, childrenObjects);
+                        } else if (
+                            property.type.type === "array" &&
+                            property.type.items &&
+                            property.type.items.type === "object"
+                        ) {
+                            await this.getProperties(property.type.items, recursive, childrenObjects);
+                        }
+                    }
+                }
+            }
+            if (!(type.objectCode in childrenObjects)) {
+                childrenObjects[type.objectCode] = properties;
+            }
+        }
+        return properties;
     }
 
     async getContext(contextCode) {

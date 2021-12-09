@@ -64,12 +64,12 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
     const memberToFormSchemas = async (member, parentMember) => {
         return {
             member,
-            schema: await memberToSchema(member, parentMember),
-            uiSchema: memberToUiSchema(member, parentMember),
+            schema: await memberToSchema(member, {}),
+            uiSchema: memberToUiSchema(member),
         };
     };
 
-    const memberToUiSchema = (member, parentMember) => {
+    const memberToUiSchema = (member) => {
         let uiSchema = {};
         if (member.type.selectOptions) {
             if (member.type.type === "array") {
@@ -101,7 +101,8 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
         return uiSchema;
     };
 
-    const memberToSchema = async (member) => {
+    const memberToSchema = async (member, childrenObjects) => {
+        let objectProperties = [];
         switch (member.type.type) {
             case "string":
                 return {
@@ -139,20 +140,29 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
                     type: "array",
                     title: member.name,
                     default: [],
-                    items: await memberToSchema({ type: member.type.items }),
+                    items: await memberToSchema({ type: member.type.items }, childrenObjects),
                 };
             case "object":
-                let members = await getMembers(manager.getLanguage(), member.type, {
-                    excludeMethods: true,
-                });
+                if (member.type.objectCode in childrenObjects) {
+                    objectProperties = childrenObjects[member.type.objectCode];
+                } else {
+                    let members = await getMembers(manager.getLanguage(), member.type, {
+                        excludeMethods: true,
+                        recursive: true,
+                    });
+                    objectProperties = members.properties;
+                    childrenObjects = { ...childrenObjects, ...members.childrenObjects };
+                }
+
                 let returnObject = {
                     type: "object",
                     title: member.name,
                     properties: {},
                 };
-                members.properties.forEach(async (childMember) => {
-                    returnObject.properties[childMember.code] = await memberToSchema(childMember);
+                objectProperties.forEach(async (childMember) => {
+                    returnObject.properties[childMember.code] = await memberToSchema(childMember, childrenObjects);
                 });
+
                 return returnObject;
             case "$any":
             case "$anyPrimitive":
