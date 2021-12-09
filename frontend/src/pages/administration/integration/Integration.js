@@ -40,6 +40,7 @@ import {
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
+import SwitchField from "../../../components/rjsf/SwitchField";
 
 const { TabPane } = Tabs;
 
@@ -78,9 +79,62 @@ const editTabFormSchema = {
             name: {
                 type: "string",
             },
+            options: {
+                title: "Opciones",
+                description: "Configura diferentes opciones de comportamiento a nivel del canal.",
+                type: "object",
+                properties: {
+                    trace_file: {
+                        title: "Traza Completa (Archivo log)",
+                        type: "boolean",
+                    },
+                    trace_incoming_message: {
+                        title: "Almacenar Mensaje Recibido (Elastic)",
+                        type: "boolean",
+                    },
+                    trace_headers: {
+                        title: "Almacenar Cabeceras (Elastic)",
+                        type: "boolean",
+                    },
+                    trace_properties: {
+                        title: "Almacenar Propiedades (Elastic)",
+                        type: "boolean",
+                    },
+                    trace_outgoing_message: {
+                        title: "Almacenar Mensaje Salida (Elastic)",
+                        type: "boolean",
+                    },
+                },
+            },
         },
     },
-    uiSchema: {},
+    uiSchema: {
+        name: {
+            "ui:columnSize": "8",
+        },
+        options: {
+            trace_file: {
+                "ui:widget": "checkbox",
+                "ui:columnSize": "4",
+            },
+            trace_incoming_message: {
+                "ui:widget": "checkbox",
+                "ui:columnSize": "4",
+            },
+            trace_headers: {
+                "ui:widget": "checkbox",
+                "ui:columnSize": "4",
+            },
+            trace_properties: {
+                "ui:widget": "checkbox",
+                "ui:columnSize": "4",
+            },
+            trace_outgoing_message: {
+                "ui:widget": "checkbox",
+                "ui:columnSize": "4",
+            },
+        },
+    },
 };
 let channelActions;
 

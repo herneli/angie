@@ -26,6 +26,13 @@ class ChannelActions {
                 created_on: moment().toISOString(),
                 version: 0,
                 nodes: [],
+                options: {
+                    trace_file: true,
+                    trace_incoming_message: false,
+                    trace_headers: false,
+                    trace_properties: false,
+                    trace_outgoing_message: false,
+                },
                 enabled: true,
                 status: "UNDEPLOYED",
             },

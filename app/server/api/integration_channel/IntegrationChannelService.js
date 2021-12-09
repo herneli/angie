@@ -113,14 +113,14 @@ export class IntegrationChannelService {
             }
         }
 
-        return `<routes  xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
+        return `<routes xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
     }
 
     async deployChannel(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);
 
         let camelRoute = await this.convertChannelToCamel(channel);
-        const response = await this.jumDao.deployRoute(channelId, camelRoute);
+        const response = await this.jumDao.deployRoute(channelId, camelRoute, channel.options || {});
 
         console.log(response);
 

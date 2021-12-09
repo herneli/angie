@@ -6,11 +6,12 @@ export default class JumDao {
         this.jum_url = App.settings.getConfigValue("core:jum:url");
     }
 
-    async deployRoute(id, content) {
+    async deployRoute(id, content, options) {
         const response = await axios.post(this.jum_url + "/create", {
             routeId: id,
             routeConfiguration: content,
             name: id,
+            options: options
         });
 
         if (response.status != 200) {
