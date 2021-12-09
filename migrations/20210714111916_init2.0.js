@@ -101,12 +101,10 @@ exports.up = async function (knex) {
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
             table.increments();
-            table.string("package_name").notNullable();
-            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["package_name", "package_version", "document_type", "code"]);
+            table.unique(["document_type", "code"]);
         });
     }
 
