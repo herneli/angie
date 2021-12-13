@@ -3,6 +3,7 @@ import ReactFlow, { ReactFlowProvider, Controls, MiniMap, Background } from "rea
 
 import Sidebar from "./Sidebar";
 import MultiTargetNode from "./custom_nodes/MultiTargetNode";
+import ButtonNode from "./custom_nodes/ButtonNode";
 import Transformer from "./Transformer";
 
 import { v4 as uuid_v4 } from "uuid";
@@ -14,6 +15,7 @@ import lodash, { filter } from "lodash";
 
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
+    ButtonNode: ButtonNode,
 };
 
 const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
@@ -42,6 +44,7 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
             console.log("transform!");
             setElements(Transformer.transformFromBd(channel));
         }
+        console.log(channel);
     }, [channel]);
 
     /**
