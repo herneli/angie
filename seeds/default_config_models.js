@@ -852,8 +852,8 @@ exports.seed = async function (knex) {
                         react_component_type: {
                             title: "Tipo Componente",
                             type: "string",
-                            enum: ["default", "output", "input", "MultiTargetNode"],
-                            enumNames: ["Default", "Output", "Input", "MultiTargetNode"],
+                            enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode"],
+                            enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode"],
                         },
                         camel_component_id: {
                             type: "string",
