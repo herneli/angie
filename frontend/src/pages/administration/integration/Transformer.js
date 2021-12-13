@@ -47,6 +47,8 @@ class Transformer {
                     position: node.position,
                     data: {
                         label: node.custom_name,
+                        channel_id: bdModel.id,
+                        channel_status: bdModel.status,
                         ...node.data,
                     },
                     type: nodeType.data.react_component_type,
