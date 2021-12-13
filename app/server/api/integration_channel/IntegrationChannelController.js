@@ -1,6 +1,8 @@
 import { BaseController, JsonResponse } from "lisco";
 import lodash from "lodash";
 import { IntegrationChannelService } from "./IntegrationChannelService";
+import { App } from "lisco";
+import axios from "axios";
 
 import expressAsyncHandler from "express-async-handler";
 
@@ -42,6 +44,13 @@ export class IntegrationChannelController extends BaseController {
             `/integration_channel/to_camel`,
             expressAsyncHandler((request, response, next) => {
                 this.convertToCamel(request, response, next);
+            })
+        );
+
+        this.router.post(
+            `/channel/:id`,
+            expressAsyncHandler((request, response, next) => {
+                this.buttonController(request, response, next);
             })
         );
 
@@ -132,6 +141,19 @@ export class IntegrationChannelController extends BaseController {
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async buttonController(request, response, next) {
+        //TODO: Hacer un controlador genérico
+        const jum_url = App.settings.getConfigValue("core:jum:url");
+        const { url, ...newBody } = request.body;
+        const channelId = request.params.id;
+        try {
+            const axiosResponse = await axios.post(`${jum_url}/${url}/${channelId}`, newBody);
+            response.sendStatus(axiosResponse.status);
         } catch (e) {
             next(e);
         }
