@@ -65,7 +65,7 @@ export default class BaseDao {
         return this.search(params);
     }
 
-    get(identifier) {
+    async get(identifier) {
         let response = await this.search({
             index: this.tableName,
             type: this.documentType,
@@ -310,7 +310,7 @@ export default class BaseDao {
         });
     }
 
-    addOrUpdateDocumentNoMerge(id, data) {
+    async addOrUpdateDocumentNoMerge(id, data) {
         if (!id) return callback('Id cannot be undefined');
 
         try {

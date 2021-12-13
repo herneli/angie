@@ -82,7 +82,9 @@
             "name": "Nombre",
             "description": "Descripción",
             "status": "Estado",
-            "message_count": "Mensajes",
+            "messages_sent": "Enviados",
+            "messages_error": "Errores",
+            "messages_total": "Total",
             "last_updated": "Ult. Modificación",
             "version": "Versión",
             "actions": "Acciones"

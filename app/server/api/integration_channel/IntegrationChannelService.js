@@ -156,7 +156,9 @@ export class IntegrationChannelService {
             console.error(ex);
         }
         channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
-        channel.message_count = (channStatus && channStatus.messages_count) || 0;
+        channel.messages_total = (channStatus && channStatus.messages_total) || 0;
+        channel.messages_error = (channStatus && channStatus.messages_error) || 0;
+        channel.messages_sent = (channStatus && channStatus.messages_sent) || 0;
         return channel;
     }
 

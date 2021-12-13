@@ -8,8 +8,8 @@ export default class JumDao {
 
     async deployRoute(id, content, options) {
         const response = await axios.post(this.jum_url + "/create", {
-            routeId: id,
-            routeConfiguration: content,
+            id: id,
+            xmlContent: content,
             name: id,
             options: options
         });

@@ -63,7 +63,7 @@ class ChannelActions {
     toggleEnabled = async (identifier) => {
         let channel = lodash.find(this.channels, { id: identifier });
         channel.enabled = !channel.enabled;
-        if (!channel.enabled && channel.status === "STARTED") {
+        if (!channel.enabled && channel.status === "Started") {
             await this.undeployChannel(identifier);
         }
 

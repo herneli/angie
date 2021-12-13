@@ -77,6 +77,7 @@ const editTabFormSchema = {
         required: ["name"],
         properties: {
             name: {
+                title: "Nombre",
                 type: "string",
             },
             options: {
@@ -417,7 +418,7 @@ const Integration = () => {
 
         let buttons = [];
 
-        if (activeChannel.status === "STARTED" && activeChannel.enabled) {
+        if (activeChannel.status === "Started" && activeChannel.enabled) {
             buttons.push(
                 <Popconfirm
                     key="undeploy"
@@ -599,9 +600,9 @@ const Integration = () => {
     const renderChannelStatus = (channel) => {
         if (!channel.enabled)
             return <Icon path={mdiCancel} size={0.6} color="gray" title={T.translate("common.disabled")} />;
-        if (channel.status === "STARTED")
+        if (channel.status === "Started")
             return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integrations.channel.started")} />;
-        if (channel.status === "STOPPED")
+        if (channel.status === "Stopped")
             return <Icon path={mdiStop} size={0.6} title={T.translate("integrations.channel.stopped")} />;
         if (channel.status === "UNDEPLOYED")
             return (

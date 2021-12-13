@@ -14,14 +14,14 @@ export class IntegrationService extends BaseService {
 
     //Overwrite
     async loadById(id) {
-        const [integration] = await super.loadById(id);
+        const integration = await super.loadById(id);
 
-        if (integration.data.channels) {
+        if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
                 channel = await this.channelService.channelObjStatus(channel);
             }
         }
-        return [integration];
+        return integration;
     }
 
     async applyBeforeSave(action, node) {
@@ -43,22 +43,24 @@ export class IntegrationService extends BaseService {
 
     async completeBeforeSave(body) {
         let completedChannels = [];
-        for (const channel of body.channels) {
-            let nodes = [];
-            if (channel.nodes) {
-                if (channel.nodes.list) {
-                    channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
-                }
-                for (const node of channel.nodes) {
-                    if (node.data.beforeSave) {
-                        let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
-                        nodes.push(completedNode);
-                    } else {
-                        nodes.push(node);
+        if (body.channels) {
+            for (const channel of body.channels) {
+                let nodes = [];
+                if (channel.nodes) {
+                    if (channel.nodes.list) {
+                        channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
+                    }
+                    for (const node of channel.nodes) {
+                        if (node.data.beforeSave) {
+                            let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
+                            nodes.push(completedNode);
+                        } else {
+                            nodes.push(node);
+                        }
                     }
                 }
+                completedChannels.push({ ...channel, nodes: nodes });
             }
-            completedChannels.push({ ...channel, nodes: nodes });
         }
         return {
             ...body,
@@ -126,7 +128,7 @@ export class IntegrationService extends BaseService {
     }
 
     async integrationChannelStatuses(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }
@@ -146,7 +148,7 @@ export class IntegrationService extends BaseService {
     }
 
     async deployIntegration(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }
@@ -157,7 +159,7 @@ export class IntegrationService extends BaseService {
 
                 const response = await this.jumDao.deployRoute(channel.id, camelRoute);
                 console.log(response);
-                channel.status = "STARTED"; //TODO
+                channel.status = "Started"; //TODO
             } catch (e) {
                 console.error(e);
                 channel.status = "CONVERSION_ERROR";
@@ -168,7 +170,7 @@ export class IntegrationService extends BaseService {
     }
 
     async undeployIntegration(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }

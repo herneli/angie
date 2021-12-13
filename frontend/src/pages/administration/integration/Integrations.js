@@ -214,7 +214,7 @@ const Integrations = () => {
         });
         return (
             <Space size="middle">
-                {record.status === "STARTED" && (
+                {record.status === "Started" && (
                     <Popconfirm
                         title={T.translate("common.question")}
                         onConfirm={async () => {
@@ -235,7 +235,7 @@ const Integrations = () => {
                         />
                     </Popconfirm>
                 )}
-                {record.status !== "STARTED" && (
+                {record.status !== "Started" && (
                     <Button
                         key="deploy"
                         type="text"
@@ -328,9 +328,9 @@ const Integrations = () => {
                 return (
                     <div>
                         {!record.enabled && <span>DISABLED</span>}
-                        {record.enabled && text === "STARTED" && <span title={text}>🟢</span>}
+                        {record.enabled && text === "Started" && <span title={text}>🟢</span>}
                         {record.enabled && text === "UNDEPLOYED" && <span title={text}>🔴</span>}
-                        {record.enabled && text === "STOPPED" && <span title={text}>🟠</span>}
+                        {record.enabled && text === "Stopped" && <span title={text}>🟠</span>}
                     </div>
                 );
             },
@@ -345,9 +345,29 @@ const Integrations = () => {
             },
         },
         {
-            title: T.translate("integrations.columns.message_count"),
-            dataIndex: "message_count",
-            key: "message_count",
+            title: T.translate("integrations.columns.messages_sent"),
+            dataIndex: "messages_sent",
+            key: "messages_sent",
+            width: 100,
+            render: (text, record) => {
+                if (record.channels) return;
+                return text;
+            },
+        },
+        {
+            title: T.translate("integrations.columns.messages_error"),
+            dataIndex: "messages_error",
+            key: "messages_error",
+            width: 100,
+            render: (text, record) => {
+                if (record.channels) return;
+                return text;
+            },
+        },
+        {
+            title: T.translate("integrations.columns.messages_total"),
+            dataIndex: "messages_total",
+            key: "messages_total",
             width: 100,
             render: (text, record) => {
                 if (record.channels) return;
