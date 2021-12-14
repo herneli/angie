@@ -30,7 +30,11 @@ async function callApi(node) {
 const ButtonNode = (node) => {
     const { data, isConnectable } = node;
     return (
-        <div style={{ minHeight: 18 }}>
+        <div
+            style={{
+                background: "white",
+                minHeight: 18,
+            }}>
             <Handle type="source" position="right" isConnectable={isConnectable} />
             <div
                 style={{
@@ -38,7 +42,6 @@ const ButtonNode = (node) => {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "white",
                     gap: ".2rem",
                 }}>
                 {data.label}

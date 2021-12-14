@@ -96,3 +96,11 @@
 .avoid-selection {
     user-select: none;
 }
+
+.react-flow__node-ButtonNode .react-flow__handle {
+    background: #237a52;
+}
+
+.react-flow__node-ButtonNode {
+    border-color: #237a52;
+}
