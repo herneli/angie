@@ -21,7 +21,7 @@ export default class JumDao {
     }
 
     async undeployRoute(id) {
-        const response = await axios.post(this.jum_url + "/undeploy/" + id);
+        const response = await axios.delete(this.jum_url + "/undeploy/" + id);
 
         if (response.status != 200) {
             throw response;
@@ -30,7 +30,7 @@ export default class JumDao {
     }
 
     async startRoute(id) {
-        const response = await axios.post(this.jum_url + "/start/" + id);
+        const response = await axios.put(this.jum_url + "/start/" + id);
 
         if (response.status != 200) {
             throw response;
@@ -39,7 +39,7 @@ export default class JumDao {
     }
 
     async stopRoute(id) {
-        const response = await axios.post(this.jum_url + "/stop/" + id);
+        const response = await axios.put(this.jum_url + "/stop/" + id);
 
         if (response.status != 200) {
             throw response;
