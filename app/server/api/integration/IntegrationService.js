@@ -135,13 +135,8 @@ export class IntegrationService extends BaseService {
 
         let response = {};
         for (let channel of integration.data.channels) {
-            let channStatus;
-            try {
-                channStatus = await this.jumDao.getRouteStatus(channel.id);
-            } catch (ex) {
-                console.error(ex);
-            }
-            response[channel.id] = (channStatus && channStatus.status) || "UNDEPLOYED";
+            const channStatus = await this.channelService.channelObjStatus(channel);
+            response[channel.id] = channStatus.status;
         }
 
         return response;
@@ -158,8 +153,8 @@ export class IntegrationService extends BaseService {
                 let camelRoute = await this.channelService.convertChannelToCamel(channel);
 
                 const response = await this.jumDao.deployRoute(channel.id, camelRoute);
-                console.log(response);
-                channel.status = "Started"; //TODO
+                // console.log(response);
+                channel.status = response && response.status; //TODO
             } catch (e) {
                 console.error(e);
                 channel.status = "CONVERSION_ERROR";

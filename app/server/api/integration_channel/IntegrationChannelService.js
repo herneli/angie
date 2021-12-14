@@ -122,9 +122,9 @@ export class IntegrationChannelService {
         let camelRoute = await this.convertChannelToCamel(channel);
         const response = await this.jumDao.deployRoute(channelId, camelRoute, channel.options || {});
 
-        console.log(response);
+        // console.log(response);
 
-        return this.channelObjStatus(channel);
+        return this.channelObjStatus(channel, response);
     }
 
     async undeployChannel(integration, channelId) {
@@ -138,7 +138,19 @@ export class IntegrationChannelService {
 
     async channelStats(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);
-        channel.stats = {}; //TODO
+        let channStats;
+        try {
+            channStats = await this.jumDao.getRouteStats(channel.id);
+        } catch (ex) {
+            if (ex.response && ex.response.status == 404) {
+                //Ignorar errores de canal no localizado ya que no aportan nada.
+                //console.error(`Channel "${channel.id}" does not exist in JUM.`);
+            } else {
+                console.error(ex);
+            }
+        }
+
+        channel.stats = channStats; //TODO
 
         return channel;
     }
@@ -148,12 +160,20 @@ export class IntegrationChannelService {
         return channelObjStatus(channel);
     }
 
-    async channelObjStatus(channel) {
-        let channStatus;
+    async channelObjStatus(channel, currentStatus) {
+        let channStatus = currentStatus;
         try {
-            channStatus = await this.jumDao.getRouteStatus(channel.id);
+            if (!channStatus) {
+                //Si no se proporciona uno se realiza la llamada para obtenerlo.
+                channStatus = await this.jumDao.getRouteStatus(channel.id);
+            }
         } catch (ex) {
-            console.error(ex);
+            if (ex.response && ex.response.status == 404) {
+                //Ignorar errores de canal no localizado ya que no aportan nada.
+                //console.error(`Channel "${channel.id}" does not exist in JUM.`);
+            } else {
+                console.error(ex);
+            }
         }
         channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
         channel.messages_total = (channStatus && channStatus.messages_total) || 0;

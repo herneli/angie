@@ -56,6 +56,15 @@ export default class JumDao {
         return response.data;
     }
 
+    async getRouteStats(id) {
+        const response = await axios.get(this.jum_url + "/get/" + id+"?includeStats=true");
+
+        if (response.status != 200) {
+            throw response;
+        }
+        return response.data;
+    }
+
     async getRouteLogs(id) {
         const response = await axios.get(this.jum_url + "/log/" + id);
 
