@@ -11,7 +11,7 @@ export default class JumDao {
             id: id,
             xmlContent: content,
             name: id,
-            options: options
+            options: options,
         });
 
         if (response.status != 200) {
@@ -48,6 +48,7 @@ export default class JumDao {
     }
 
     async getRouteStatus(id) {
+        console.log("obteniendo estado canal");
         const response = await axios.get(this.jum_url + "/get/" + id);
 
         if (response.status != 200) {
@@ -56,8 +57,17 @@ export default class JumDao {
         return response.data;
     }
 
+    async list() {
+        const response = await axios.get(this.jum_url + "/list");
+
+        if (response.status != 200) {
+            throw response;
+        }
+        return response.data;
+    }
+
     async getRouteStats(id) {
-        const response = await axios.get(this.jum_url + "/get/" + id+"?includeStats=true");
+        const response = await axios.get(this.jum_url + "/get/" + id + "?includeStats=true");
 
         if (response.status != 200) {
             throw response;

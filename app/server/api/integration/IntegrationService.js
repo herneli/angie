@@ -4,6 +4,7 @@ import { IntegrationDao } from "./IntegrationDao";
 import { JumDao } from "../../integration/jum-angie";
 import { ScriptService } from "../script/ScriptService";
 
+import lodash from "lodash";
 export class IntegrationService extends BaseService {
     constructor() {
         super(IntegrationDao);
@@ -15,10 +16,11 @@ export class IntegrationService extends BaseService {
     //Overwrite
     async loadById(id) {
         const integration = await super.loadById(id);
-
+        let deployedChannels = await this.jumDao.list();
         if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
-                channel = await this.channelService.channelObjStatus(channel);
+                let deployedState = lodash.find(deployedChannels, { id: channel.id });
+                channel = this.channelService.channelApplyStatus(channel, deployedState);
             }
         }
         return integration;
@@ -116,10 +118,12 @@ export class IntegrationService extends BaseService {
 
         let { data, total } = await super.list(filters, start, limit);
 
+        let deployedChannels = await this.jumDao.list();
         for (const integration of data) {
             if (integration.data.channels) {
                 for (let channel of integration.data.channels) {
-                    channel = await this.channelService.channelObjStatus(channel);
+                    let deployedState = lodash.find(deployedChannels, { id: channel.id });
+                    channel = await this.channelService.channelApplyStatus(channel, deployedState);
                 }
             }
         }
@@ -135,8 +139,7 @@ export class IntegrationService extends BaseService {
 
         let response = {};
         for (let channel of integration.data.channels) {
-            const channStatus = await this.channelService.channelObjStatus(channel);
-            response[channel.id] = channStatus.status;
+            response[channel.id] = channel.status;
         }
 
         return response;

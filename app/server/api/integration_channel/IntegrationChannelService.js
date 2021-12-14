@@ -124,14 +124,22 @@ export class IntegrationChannelService {
 
         // console.log(response);
 
-        return this.channelObjStatus(channel, response);
+        return this.channelApplyStatus(channel, response);
     }
 
     async undeployChannel(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);
 
-        const response = await this.jumDao.undeployRoute(channelId);
-        console.log(response);
+        try {
+            await this.jumDao.undeployRoute(channelId);
+        } catch (ex) {
+            if (ex.response && ex.response.status == 404) {
+                //Ignorar errores de canal no localizado ya que no aportan nada.
+                //console.error(`Channel "${channel.id}" does not exist in JUM.`);
+            } else {
+                console.error(ex);
+            }
+        }
 
         return this.channelObjStatus(channel);
     }
@@ -160,12 +168,12 @@ export class IntegrationChannelService {
         return channelObjStatus(channel);
     }
 
-    async channelObjStatus(channel, currentStatus) {
-        let channStatus = currentStatus;
+    async channelObjStatus(channel) {
+        let remoteStatus;
         try {
-            if (!channStatus) {
+            if (!remoteStatus) {
                 //Si no se proporciona uno se realiza la llamada para obtenerlo.
-                channStatus = await this.jumDao.getRouteStatus(channel.id);
+                remoteStatus = await this.jumDao.getRouteStatus(channel.id);
             }
         } catch (ex) {
             if (ex.response && ex.response.status == 404) {
@@ -175,10 +183,15 @@ export class IntegrationChannelService {
                 console.error(ex);
             }
         }
-        channel.status = (channStatus && channStatus.status) || "UNDEPLOYED";
-        channel.messages_total = (channStatus && channStatus.messages_total) || 0;
-        channel.messages_error = (channStatus && channStatus.messages_error) || 0;
-        channel.messages_sent = (channStatus && channStatus.messages_sent) || 0;
+        
+        return this.channelApplyStatus(channel, remoteStatus);
+    }
+
+    async channelApplyStatus(channel, remoteChannel){
+        channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
+        channel.messages_total = (remoteChannel && remoteChannel.messages_total) || 0;
+        channel.messages_error = (remoteChannel && remoteChannel.messages_error) || 0;
+        channel.messages_sent = (remoteChannel && remoteChannel.messages_sent) || 0;
         return channel;
     }
 
