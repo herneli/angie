@@ -69,7 +69,7 @@ export class IntegrationChannelService {
     }
 
     async findIntegrationChannel(integrationId, channel) {
-        const [integration] = await this.dao.loadById(integrationId);
+        const integration = await this.dao.loadById(integrationId);
         return lodash.find(integration.data.channels, { id: channel });
     }
 
