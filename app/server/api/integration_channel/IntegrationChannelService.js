@@ -204,4 +204,9 @@ export class IntegrationChannelService {
         }
         return channelLogs;
     }
+
+
+    sendMessageToRoute(channel, endpoint, content){
+        return this.jumDao.sendMessageToRoute(channel, endpoint, content)
+    }
 }

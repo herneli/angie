@@ -11,9 +11,8 @@ async function callApi(node) {
     // if (data.channel_status === "STARTED") {
     //TODO: Revisar notificaciones
     try {
-        await axios.post(`/channel/${data.channel_id}`, {
-            url: data.url,
-            endpoint: `direct:${node.id}`,
+        await axios.post(`/channel/${data.channel_id}/${data.url}`, {
+            endpoint: `direct://${node.id}`,
             content: "",
         });
         message.success(T.translate("common.success"));

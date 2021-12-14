@@ -48,9 +48,9 @@ export class IntegrationChannelController extends BaseController {
         );
 
         this.router.post(
-            `/channel/:id`,
+            `/channel/:id/sendMessageToRoute`,
             expressAsyncHandler((request, response, next) => {
-                this.buttonController(request, response, next);
+                this.sendMessageToRoute(request, response, next);
             })
         );
 
@@ -146,14 +146,16 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async buttonController(request, response, next) {
-        //TODO: Hacer un controlador genérico
-        const jum_url = App.settings.getConfigValue("core:jum:url");
-        const { url, ...newBody } = request.body;
-        const channelId = request.params.id;
+    async sendMessageToRoute(request, response, next) {
         try {
-            const axiosResponse = await axios.post(`${jum_url}/${url}/${channelId}`, newBody);
-            response.sendStatus(axiosResponse.status);
+            let service = new IntegrationChannelService();
+
+            const { endpoint, content } = request.body;
+            const channelId = request.params.id;
+
+            await service.sendMessageToRoute(channelId, endpoint, content);
+
+            response.status(200);
         } catch (e) {
             next(e);
         }

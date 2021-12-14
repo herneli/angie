@@ -84,5 +84,17 @@ export default class JumDao {
         return response.data;
     }
 
+    async sendMessageToRoute(id, endpoint, content) {
+        const response = await axios.post(this.jum_url + "/sendMessageToRoute/" + id, {
+            endpoint: endpoint,
+            content: content,
+        });
+
+        if (response.status != 200) {
+            throw response;
+        }
+        return response.data;
+    }
+
     getRouteStats(id) {}
 }
