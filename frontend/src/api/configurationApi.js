@@ -51,7 +51,11 @@ export function deleteModelData(model, id) {
 export function saveModelData(model, extendedData, packageData, overwrite = false) {
     let data = backendModelData(extendedData);
     if (packageData) {
-        data = { ...data, packageCode: packageData.code, packageVersion: packageData.version };
+        data = {
+            ...data,
+            packageCode: packageData.currentPackage.code,
+            packageVersion: packageData.currentPackage.version,
+        };
     }
     if (extendedData.id) {
         return axios

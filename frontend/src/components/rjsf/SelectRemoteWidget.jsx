@@ -40,8 +40,8 @@ const processValue = (schema, value) => {
     return value;
 };
 
-function getselectOptions(url, returnPath) {
-    return axios.get(url).then((response) => {
+function getselectOptions(url, filters, returnPath) {
+    return axios.get(url, { params: { filters: filters } }).then((response) => {
         if (!response || !response.data) {
             return [];
         }
@@ -55,10 +55,9 @@ function getselectOptions(url, returnPath) {
 export default class SelectRemoteWidget extends Component {
     state = { options: [] };
     componentDidMount() {
-        let { selectOptions } = this.props.options;
+        let { selectOptions, filters = null } = this.props.options;
         let valueField = "code";
         let labelField = "name";
-        let packages = [];
         let path = null;
 
         // Parse selectOptions field for config
@@ -73,10 +72,8 @@ export default class SelectRemoteWidget extends Component {
             if (config.label) {
                 labelField = config.label;
             }
-            if (config.package) {
-            }
         }
-        getselectOptions(url, path).then((entries) => {
+        getselectOptions(url, filters, path).then((entries) => {
             let options = entries.map((entry) => ({
                 value: get(entry, valueField),
                 label: get(entry, labelField) + " (" + get(entry, valueField) + ")",

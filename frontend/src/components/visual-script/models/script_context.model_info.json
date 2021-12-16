@@ -126,7 +126,7 @@
         },
         "type": {
             "objectCode": {
-                "ui:widget": "SelectRemoteWidget",
+                "ui:widget": "SelectRemoteWithPackageWidget",
                 "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             }
         },

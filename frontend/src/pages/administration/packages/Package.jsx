@@ -6,7 +6,7 @@ import T from "i18n-react";
 import ModelAdmin from "../../configuration/ModelAdmin";
 import axios from "axios";
 import { createUseStyles } from "react-jss";
-import PackageContextProvider from "./PackageContext";
+import PackageContextProvider from "../../../components/packages/PackageContext";
 const { Sider, Content, Header } = Layout;
 
 const useStyles = createUseStyles({

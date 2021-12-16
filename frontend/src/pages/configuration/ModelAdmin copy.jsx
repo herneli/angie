@@ -3,7 +3,6 @@ import { withRouter, Redirect } from "react-router-dom";
 
 import * as api from "../../api/configurationApi";
 import errorHandler from "../../api/errorHandler";
-import { usePackage } from "../administration/packages/PackageContext";
 import ModelEditor from "./components/ModelEditor";
 import ModelTable from "./components/ModelTable";
 

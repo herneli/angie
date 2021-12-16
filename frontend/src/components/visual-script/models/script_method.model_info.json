@@ -355,13 +355,13 @@
             "ui:columnSize": "6",
             "ui:withBorder": true,
             "objectCode": {
-                "ui:widget": "SelectRemoteWidget",
+                "ui:widget": "SelectRemoteWithPackageWidget",
                 "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
-                    "ui:widget": "SelectRemoteWidget",
+                    "ui:widget": "SelectRemoteWithPackageWidget",
                     "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                 }
             }
@@ -370,13 +370,13 @@
             "ui:columnSize": "6",
             "ui:withBorder": true,
             "objectCode": {
-                "ui:widget": "SelectRemoteWidget",
+                "ui:widget": "SelectRemoteWithPackageWidget",
                 "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
-                    "ui:widget": "SelectRemoteWidget",
+                    "ui:widget": "SelectRemoteWithPackageWidget",
                     "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                 }
             }
@@ -423,13 +423,13 @@
                     "ui:columnSize": "12",
                     "ui:withBorder": true,
                     "objectCode": {
-                        "ui:widget": "SelectRemoteWidget",
+                        "ui:widget": "SelectRemoteWithPackageWidget",
                         "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                     },
                     "items": {
                         "ui:withBorder": true,
                         "objectCode": {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                         }
                     }
