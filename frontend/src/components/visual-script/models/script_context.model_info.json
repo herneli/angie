@@ -24,10 +24,7 @@
     "schema": {
         "type": "object",
         "properties": {
-            "code": {
-                "type": "string",
-                "title": "Código"
-            },
+            "code": { "title": "Código", "type": "string", "pattern": "^[a-zA-Z_$][a-zA-Z_$0-9]*$" },
             "name": {
                 "type": "string",
                 "title": "Nombre"
@@ -55,24 +52,8 @@
                     "type": {
                         "type": "string",
                         "title": "Tipo",
-                        "enum": [
-                            "array",
-                            "boolean",
-                            "date",
-                            "number",
-                            "integer",
-                            "object",
-                            "string"
-                        ],
-                        "enumNames": [
-                            "Lista",
-                            "Boleano",
-                            "Fecha",
-                            "Decimal",
-                            "Entero",
-                            "Objeto",
-                            "String"
-                        ],
+                        "enum": ["array", "boolean", "date", "number", "integer", "object", "string"],
+                        "enumNames": ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
                         "default": ""
                     }
                 },
@@ -82,13 +63,7 @@
                             {
                                 "properties": {
                                     "type": {
-                                        "enum": [
-                                            "boolean",
-                                            "date",
-                                            "number",
-                                            "integer",
-                                            "string"
-                                        ]
+                                        "enum": ["boolean", "date", "number", "integer", "string"]
                                     },
                                     "selectOptions": {
                                         "title": "Valores remotos",
@@ -152,7 +127,7 @@
         "type": {
             "objectCode": {
                 "ui:widget": "SelectRemoteWidget",
-                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             }
         },
         "startCode": { "ui:widget": "textarea", "ui:options": { "rows": 5 } },

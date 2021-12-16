@@ -1,41 +1,43 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 
 import * as api from "../../api/configurationApi";
 import errorHandler from "../../api/errorHandler";
+import { usePackage } from "../administration/packages/PackageContext";
 import ModelEditor from "./components/ModelEditor";
 import ModelTable from "./components/ModelTable";
 
-class ModelAdmin extends Component {
-    state = {
+const ModelAdmin = ({ model, fixedData }) => {
+    const [state, setState] = useState({
         modelInfo: null,
         modelData: null,
         edit: null,
         total: null,
         redirectTo: null,
-    };
+    });
+    const packageData = usePackage();
+    console.log("pack", packageData);
+    useEffect(() => {
+        search(model);
+    }, [model]);
 
-    componentDidMount() {
-        this.search(this.props.model);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.model !== this.props.model) {
-            this.search(this.props.model);
+    const search = (modelInfo, filters) => {
+        let searchFilters = { ...filters };
+        if (packageData) {
+            searchFilters[["package_code", "package_version"]] = { type: "in", value: packageData.dependencies };
         }
-    }
 
-    search = (modelInfo, filters) => {
-        api.getModelInfo(this.props.model)
+        api.getModelInfo(model)
             .then((element) => {
-                api.getModelDataList(this.props.model, filters, element?.relation_schema, element?.selectQuery).then(
+                api.getModelDataList(model, searchFilters, element?.relation_schema, element?.selectQuery).then(
                     (list) => {
                         const modelDataDict = list.reduce((result, model) => {
                             result = { ...result, [model.id]: model };
                             return result;
                         }, {});
-                        this.setState({
-                            ...this.state,
+                        setState({
+                            ...state,
+                            edit: null,
                             modelInfo: element,
                             modelData: modelDataDict,
                             total: list.total,
@@ -46,86 +48,83 @@ class ModelAdmin extends Component {
             .catch(errorHandler);
     };
 
-    handleOnClose = () => {
-        this.setState({ redirectTo: "/" });
+    const handleOnClose = () => {
+        setState({ ...state, redirectTo: "/" });
     };
 
-    handleOnDelete = (data) => {
-        return api.deleteModelData(this.props.model, data.id).then((response) => {
-            this.setState({
+    const handleOnDelete = (data) => {
+        return api.deleteModelData(model, data.id).then((response) => {
+            setState({
+                ...state,
                 edit: null,
             });
-            this.search(this.props.model);
+            search(model);
         });
     };
 
-    setEditData = (data) => {
-        return api.getModelData(this.props.model, data.id).then((model) => {
-            this.setState({
+    const setEditData = (data) => {
+        return api.getModelData(model, data.id).then((model) => {
+            setState({
+                ...state,
                 edit: model,
             });
-            this.search(this.props.model);
         });
     };
 
-    handleOnSave = (formData, overwrite = false) => {
+    const handleOnSave = (formData, overwrite = false) => {
         return api
-            .saveModelData(this.props.model, formData, overwrite)
+            .saveModelData(model, formData, packageData, overwrite)
             .then((model) => {
-                this.search(this.props.model);
+                search(model);
             })
             .catch(errorHandler);
     };
 
-    handleOnSaveBatch = (formData, overwrite = false) => {
+    const handleOnSaveBatch = (formData, overwrite = false) => {
         return api
-            .saveModelData(this.props.model, formData, overwrite)
+            .saveModelData(model, formData, packageData, overwrite)
             .then((model) => {
                 return true;
             })
             .catch(errorHandler);
     };
 
-    addCreateData = (e) => {
-        let defaultData = this.props.fixedData || {};
-        this.setState({ ...this.state, edit: { ...defaultData } });
+    const addCreateData = (e) => {
+        let defaultData = fixedData || {};
+        setState({ ...state, edit: { ...defaultData } });
     };
 
-    render() {
-        const { modelInfo, modelData, edit, redirectTo } = this.state;
-        return redirectTo ? (
-            <Redirect push={true} to={redirectTo} />
-        ) : !modelData ? (
-            <h1>Loading...</h1>
-        ) : edit ? (
-            <ModelEditor
-                schema={modelInfo.schema}
-                uiSchema={modelInfo.uiSchema}
-                data={edit}
-                onCancel={() => {
-                    this.setState({ edit: null });
-                }}
-                onClose={() => {
-                    this.setState({ edit: null });
-                }}
-                onSave={this.handleOnSave}
-            />
-        ) : (
-            <ModelTable
-                modelInfo={this.state.modelInfo}
-                modelData={Object.values(this.state.modelData)}
-                onAddData={this.addCreateData}
-                onChangeColumn={this.onChangeColumn}
-                onDeleteData={this.handleOnDelete}
-                onEditData={this.setEditData}
-                onSearchData={this.search}
-                onSaveData={this.handleOnSave}
-                total={this.state.total}
-                onSearchTermChange={this.handleSearchTermChange}
-                onSaveDataBatch={this.handleOnSaveBatch}
-            />
-        );
-    }
-}
+    const { modelInfo, modelData, edit, redirectTo } = state;
+    return redirectTo ? (
+        <Redirect push={true} to={redirectTo} />
+    ) : !modelData ? (
+        <h1>Loading...</h1>
+    ) : edit ? (
+        <ModelEditor
+            schema={modelInfo.schema}
+            uiSchema={modelInfo.uiSchema}
+            data={edit}
+            onCancel={() => {
+                setState({ ...state, edit: null });
+            }}
+            onClose={() => {
+                setState({ ...state, edit: null });
+            }}
+            onSave={handleOnSave}
+        />
+    ) : (
+        <ModelTable
+            modelInfo={state.modelInfo}
+            modelData={Object.values(state.modelData)}
+            onAddData={addCreateData}
+            onDeleteData={handleOnDelete}
+            onEditData={setEditData}
+            onSearchData={search}
+            onSaveData={handleOnSave}
+            total={state.total}
+            onSaveDataBatch={handleOnSaveBatch}
+        />
+    );
+};
 
 export default withRouter(ModelAdmin);

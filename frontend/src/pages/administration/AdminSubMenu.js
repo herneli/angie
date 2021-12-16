@@ -34,13 +34,13 @@ const AdminSubMenu = () => {
         let submenu = [];
         for (let idx in item.children) {
             let child = item.children[idx];
-            if(sections.indexOf(item.value) > -1){
+            if (sections.indexOf(item.value) > -1) {
                 submenu.push(drawMenuItem(child, sections));
-            }else if (sections.indexOf(child.value) > -1) {
+            } else if (sections.indexOf(child.value) > -1) {
                 submenu.push(drawMenuItem(child, sections));
             }
         }
-        if(submenu.length > 0){
+        if (submenu.length > 0) {
             return (
                 <SubMenu key={item.title} icon={<Icon path={icons[item.icon]} size={1} />} title={item.title}>
                     {submenu}
@@ -72,17 +72,6 @@ const AdminSubMenu = () => {
                     { value: "/admin/camel_component", title: T.translate("administration.camel_component") },
                 ],
             },
-            {
-                title: "Personalización",
-                icon: "mdiPalette",
-                value: "/admin/personalization",
-                children: [
-                    { value: "/admin/config_context", title: T.translate("administration.config_context") },
-                    { value: "/admin/config_method", title: T.translate("administration.config_method") },
-                    { value: "/admin/config_object", title: T.translate("administration.config_object") },
-                    { value: "/admin/script/test_groovy", title: T.translate("administration.test_groovy") },
-                ],
-            }
         ];
 
         const resp = await checkAllowedSections();
@@ -91,9 +80,6 @@ const AdminSubMenu = () => {
             sections = resp.data.data[0].data.sections;
         }
         if (keycloak.tokenParsed.roles && keycloak.tokenParsed.roles.includes("admin")) {
-            sections.push("/admin/config_context");
-            sections.push("/admin/config_method");
-            sections.push("/admin/config_object");
             sections.push("/admin/camel_component");
             sections.push("/admin/node_type");
             sections.push("/admin/integration");
@@ -103,7 +89,6 @@ const AdminSubMenu = () => {
             sections.push("/admin/personalization");
             sections.push("/admin/comunicaciones");
             sections.push("/admin/gestion");
-            sections.push("/admin/script/test_groovy");
         }
 
         for (let idx in menuElements) {

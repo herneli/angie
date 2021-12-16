@@ -48,9 +48,11 @@ export function deleteModelData(model, id) {
     });
 }
 
-export function saveModelData(model, extendedData, overwrite = false) {
-    const data = backendModelData(extendedData);
-
+export function saveModelData(model, extendedData, packageData, overwrite = false) {
+    let data = backendModelData(extendedData);
+    if (packageData) {
+        data = { ...data, packageCode: packageData.code, packageVersion: packageData.version };
+    }
     if (extendedData.id) {
         return axios
             .put("/configuration/model/" + model + "/data/" + extendedData.id.toString(), data)

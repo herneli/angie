@@ -1,26 +1,29 @@
 import { BaseKnexDao, KnexConnector } from "lisco";
-
+import { unpackObjectCode } from "./utils";
 export class ScriptDao extends BaseKnexDao {
     tableName = "script_config";
 
-    getObjectData(type) {
+    getObjectData(type, packages) {
         let knex = KnexConnector.connection;
 
         // Select properties
         if (type.type === "object") {
-            let objectData = knex("script_config")
-                .where({
-                    document_type: "object",
-                    code: type.objectCode,
-                })
-                .first();
-            return objectData;
+            const [packageCode, code] = unpackObjectCode(type.objectCode);
+            let objectData = knex("script_config").where({
+                packageCode: packageCode,
+                document_type: "object",
+                code: code,
+            });
+            if (packages) {
+                objectData.whereIn([package_code, package_version], packages);
+            }
+            return objectData.first();
         } else {
             return Promise.resolve(null);
         }
     }
 
-    getMethods(type, language) {
+    getMethods(type, language, packages) {
         let knex = KnexConnector.connection;
 
         if (type.type === "void" || type.type === "boolean") {
@@ -51,6 +54,9 @@ export class ScriptDao extends BaseKnexDao {
             );
         }
         // console.log(methods.toSQL().toNative());
+        if (packages) {
+            methods.whereIn([package_code, package_version], packages);
+        }
         return methods;
     }
 

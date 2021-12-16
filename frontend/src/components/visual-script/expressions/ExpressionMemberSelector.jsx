@@ -68,8 +68,8 @@ export default function ExpressionMemberSelector({
             // Exclude methods for a context
             if (lastExpressionMember.memberType !== "context" && m.methods) {
                 m.methods.sort(memberSorter).forEach((method) => {
-                    // Include methods with code ended with ".setter" only for variables
-                    if (!method.code.endsWith(".setter") || lastExpressionMember.memberType === "variable") {
+                    // Include methods with code ended with "_setter" only for variables
+                    if (!method.code.endsWith("_setter") || lastExpressionMember.memberType === "variable") {
                         membersLocal.push({
                             memberType: "method",
                             ...method,

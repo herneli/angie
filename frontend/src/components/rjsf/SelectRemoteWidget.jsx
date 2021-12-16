@@ -19,7 +19,7 @@ const processValue = (schema, value) => {
     if (value === "") {
         return undefined;
     } else if (type === "array" && items && nums.has(items.type)) {
-        console.log(value.map(asNumber))
+        console.log(value.map(asNumber));
         return value.map(asNumber);
     } else if (type === "boolean") {
         return value === "true";
@@ -58,6 +58,7 @@ export default class SelectRemoteWidget extends Component {
         let { selectOptions } = this.props.options;
         let valueField = "code";
         let labelField = "name";
+        let packages = [];
         let path = null;
 
         // Parse selectOptions field for config
@@ -72,6 +73,8 @@ export default class SelectRemoteWidget extends Component {
             if (config.label) {
                 labelField = config.label;
             }
+            if (config.package) {
+            }
         }
         getselectOptions(url, path).then((entries) => {
             let options = entries.map((entry) => ({
@@ -82,11 +85,10 @@ export default class SelectRemoteWidget extends Component {
 
             this.setState({ ...this.state, options: options });
         });
-
     }
 
     handleOnChange = (value) => {
-        console.log(this.props)
+        console.log(this.props);
         this.props.onChange(processValue(this.props.schema, value));
     };
     handleOnBlur = (selectedValue) => {

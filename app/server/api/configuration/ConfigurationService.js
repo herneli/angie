@@ -23,6 +23,9 @@ export class ConfigurationService extends BaseService {
             code: body.code ? body.code : model.data.code,
             data: body,
         };
+        if (body.packageCode) {
+            entity = { ...entity, package_code: body.packageCode, package_version: body.packageVersion };
+        }
         if (!entity.id && model.data.id_mode && model.data.id_mode === "uuid") {
             entity.id = uuid_v4(); //Por defecto se usa el increments pero se puede personalizar para que la tabla de configuracion utilice uuid
         }

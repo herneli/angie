@@ -42,10 +42,7 @@ exports.seed = async function (knex) {
                     type: "object",
                     required: ["code", "name", "complexityLevel", "language", "parentType"],
                     properties: {
-                        code: {
-                            title: "Código",
-                            type: "string",
-                        },
+                        code: { title: "Código", type: "string", pattern: "^[a-zA-Z_$][a-zA-Z_$0-9]*$" },
                         name: {
                             title: "Nombre",
                             type: "string",
@@ -499,7 +496,7 @@ exports.seed = async function (knex) {
                     type: "object",
                     required: ["code", "name"],
                     properties: {
-                        code: { title: "Código", type: "string" },
+                        code: { title: "Código", type: "string", pattern: "^[a-zA-Z_$][a-zA-Z_$0-9]*$" },
                         name: { title: "Nombre", type: "string" },
                         customGroup: { title: "Grupo de personalización", type: "string" },
                         properties: {
@@ -937,10 +934,7 @@ exports.seed = async function (knex) {
                 schema: {
                     type: "object",
                     properties: {
-                        code: {
-                            type: "string",
-                            title: "Código",
-                        },
+                        code: { title: "Código", type: "string", pattern: "^[a-zA-Z_$][a-zA-Z_$0-9]*$" },
                         name: {
                             type: "string",
                             title: "Nombre",

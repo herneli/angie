@@ -118,6 +118,13 @@
         "config_object": "Objetos",
         "test_groovy": "Script"
     },
+    "packages": {
+        "configure": "Configurar",
+        "contexts": "Contextos",
+        "methods": "Métodos",
+        "objects": "Objetos",
+        "select_package": "Seleccione un paquete"
+    },
     "configuration": {
         "actions": "Acciones",
         "add_item": "Añadir elemento",

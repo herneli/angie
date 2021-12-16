@@ -98,13 +98,26 @@ exports.up = async function (knex) {
         });
     }
 
+    if (!(await knex.schema.hasTable("package"))) {
+        await knex.schema.createTable("package", function (table) {
+            table.increments();
+            table.string("code").notNullable();
+            table.string("version").notNullable();
+            table.string("name").notNullable();
+            table.boolean("modified");
+            table.unique(["code", "version"]);
+        });
+    }
+
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
             table.increments();
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["document_type", "code"]);
+            table.unique(["package_code", "package_version", "document_type", "code"]);
         });
     }
 
@@ -160,6 +173,10 @@ exports.down = async function (knex) {
 
     if (await knex.schema.hasTable("script_config")) {
         await knex.schema.dropTable("script_config");
+    }
+
+    if (await knex.schema.hasTable("package")) {
+        await knex.schema.dropTable("package");
     }
     if (await knex.schema.hasTable("integration_config")) {
         await knex.schema.dropTable("integration_config");

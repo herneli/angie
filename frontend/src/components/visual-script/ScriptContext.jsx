@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import ScriptManager from "./ScriptManager";
 
 const ScriptContext = React.createContext();
 
@@ -10,8 +9,7 @@ export default function ScriptContextProvider({ manager, children }) {
             value={{
                 manager: stateManager,
                 setManager: setStateManager,
-            }}
-        >
+            }}>
             {children}
         </ScriptContext.Provider>
     );

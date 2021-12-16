@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Col, Row, Input, Table, message, Popconfirm } from "antd";
+import { Button, Col, Row, Input, Table, message, Popconfirm } from "antd";
 import { createUseStyles } from "react-jss";
 import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
@@ -280,11 +280,6 @@ export default function ModelTable({
                 rowKey={"id"}
                 sort
                 onChange={search}
-                // onRow={(record, index) => {
-                //     return {
-                //         onClick: () => handleOnRowClick(record),
-                //     };
-                // }}
                 bordered
                 size="small"
             />
