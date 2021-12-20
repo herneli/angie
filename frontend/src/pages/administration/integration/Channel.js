@@ -233,6 +233,11 @@ const Channel = ({ channel, undo, redo, onChannelUpdate, nodeTypes }) => {
      * Event handler para las acciones de teclado
      */
     useEventListener("keyup", async (event) => {
+        //Ignorar el evento
+        if (event.target.className.indexOf("ant-tabs-tabpane") === -1) {
+            event.stopPropagation();
+            return;
+        }
         if (event.keyCode === 67 && event.ctrlKey && !editNodeVisible) {
             console.log("copy pressed");
             await performCopy();
