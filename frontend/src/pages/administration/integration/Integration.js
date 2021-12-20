@@ -246,12 +246,13 @@ const Integration = () => {
             const response = await axios.get("/integration/" + identifier);
 
             if (response?.data?.data) {
-                let { data: integration } = response.data.data[0];
+                let { data: integration } = response.data.data;
                 setCurrentIntegration(integration);
                 setEditHistory([{ ...integration }]);
                 setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
             }
         } catch (ex) {
+            console.error(ex);
             return notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
@@ -730,7 +731,13 @@ const Integration = () => {
                         }
                         key={channel.id}
                         closable={true}>
-                        <Channel channel={channel} onChannelUpdate={onChannelUpdate} nodeTypes={nodeTypes} />
+                        <Channel
+                            channel={channel}
+                            onChannelUpdate={onChannelUpdate}
+                            nodeTypes={nodeTypes}
+                            undo={undo}
+                            redo={redo}
+                        />
                     </TabPane>
                 ))}
             </Tabs>

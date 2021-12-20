@@ -1,7 +1,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import Form from "@rjsf/antd";
-import { Button, Card, Row, Space } from "antd";
+import { Button, Row, Space } from "antd";
 import T from "i18n-react";
 import { useEffect } from "react";
 import formConfig from "../../../components/rjsf";

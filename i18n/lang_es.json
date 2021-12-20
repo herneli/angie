@@ -97,6 +97,13 @@
                 "stop": "Detener",
                 "start": "Arrancar"
             },
+            "context_menu": {
+                "configure": "Configurar",
+                "copy": "Copiar",
+                "cut": "Cortar",
+                "paste": "Pegar",
+                "delete": "Eliminar"
+            },
             "started": "En Ejecución",
             "stoped": "Detenido",
             "undeployed": "Sin Desplegar",

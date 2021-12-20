@@ -104,3 +104,7 @@
 .react-flow__node-ButtonNode {
     border-color: #237a52;
 }
+
+.react-flow__node.selected {
+    box-shadow: 0 0 0 0.5px #1a192b;
+}

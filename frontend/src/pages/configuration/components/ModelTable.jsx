@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Col, Row, Input, Table, message, Popconfirm } from "antd";
+import { Button, Col, Row, Input, Table, message, Popconfirm } from "antd";
 import { createUseStyles } from "react-jss";
 import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
@@ -89,10 +89,9 @@ export default function ModelTable({
             return null;
         }
     };
-    const [importItems, setImportItems] = useState();
-    const [searchString, setSearchString] = useState();
+    const [importItems, ] = useState();
+    const [searchString, ] = useState();
     const [pagination, setPagination] = useState({});
-    const [paramsPagination, setParamsPagination] = useState({ limit: 100, start: 0 });
 
     const classes = useStyles();
 
@@ -193,7 +192,7 @@ export default function ModelTable({
     const search = async (params, searchValue, sorts) => {
         let filters = {};
 
-        if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
+        if (searchValue && Object.keys(searchValue).length > 0) {
             filters = {
                 "data::text": {
                     type: "jsonb",
