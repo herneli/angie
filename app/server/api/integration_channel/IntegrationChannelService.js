@@ -167,7 +167,7 @@ export class IntegrationChannelService {
 
     async channelStatus(integration, channelId) {
         let channel = await this.findIntegrationChannel(integration, channelId);
-        return channelObjStatus(channel);
+        return this.channelObjStatus(channel);
     }
 
     async channelObjStatus(channel) {

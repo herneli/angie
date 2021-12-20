@@ -40,7 +40,6 @@ import {
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
-import SwitchField from "../../../components/rjsf/SwitchField";
 
 const { TabPane } = Tabs;
 

@@ -233,7 +233,7 @@ const Channel = ({ channel, undo, redo, onChannelUpdate, nodeTypes }) => {
      * Event handler para las acciones de teclado
      */
     useEventListener("keyup", async (event) => {
-        //Ignorar el evento
+        //Ignorar el evento si se realiza fuera del tab panel
         if (event.target.className.indexOf("ant-tabs-tabpane") === -1) {
             event.stopPropagation();
             return;

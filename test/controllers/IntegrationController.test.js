@@ -7,7 +7,12 @@ const id = "52ccca4d-110a-46d2-929c-a65892b865a8";
 const object = {
     name: "asdf",
     data: {
-        channels: [],
+        channels: [
+            {
+                id: "3",
+                nodes: [],
+            },
+        ],
     },
     enabled: true,
 };
@@ -50,7 +55,7 @@ describe("IntegrationController", async () => {
 
         await controller.listEntidad(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -69,7 +74,7 @@ describe("IntegrationController", async () => {
 
         await controller.getEntidad(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -88,7 +93,7 @@ describe("IntegrationController", async () => {
 
         await controller.saveEntidad(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -107,7 +112,7 @@ describe("IntegrationController", async () => {
 
         await controller.updateEntidad(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -127,7 +132,7 @@ describe("IntegrationController", async () => {
 
         await controller.deleteEntidad(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -146,7 +151,7 @@ describe("IntegrationController", async () => {
 
         await controller.deployIntegration(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -165,7 +170,7 @@ describe("IntegrationController", async () => {
 
         await controller.undeployIntegration(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
@@ -184,7 +189,7 @@ describe("IntegrationController", async () => {
 
         await controller.integrationChannelStatuses(request, response, fakeNext);
 
-        let {data} = response;
+        let { data } = response;
         expect(data).not.to.be.undefined;
         expect(data).to.be.an("object");
 
