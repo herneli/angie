@@ -1360,6 +1360,23 @@
         ]
       }
     },
+    "/channel/{id}/sendMessageToRoute": {
+      "post": {
+        "summary": "/channel/{id}/sendMessageToRoute",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/organization": {
       "get": {
         "summary": "/organization",
@@ -2036,6 +2053,23 @@
         "produces": [
           "application/json"
         ]
+      }
+    },
+    "/channel/{id}": {
+      "post": {
+        "summary": "/channel/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
       }
     },
     "/integration/{id}/channel/{channel}/logs": {

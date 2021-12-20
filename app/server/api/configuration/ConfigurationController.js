@@ -2,7 +2,7 @@ import { BaseController, JsonResponse } from "lisco";
 import { ConfigurationService } from "./ConfigurationService";
 
 import expressAsyncHandler from "express-async-handler";
-import { json } from "express";
+
 export class ConfigurationController extends BaseController {
     configure() {
         this.router.get(

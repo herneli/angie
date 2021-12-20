@@ -164,7 +164,7 @@ export class IntegrationService extends BaseService {
             }
         }
 
-        return response;
+        return integration;
     }
 
     async undeployIntegration(identifier) {
@@ -179,6 +179,6 @@ export class IntegrationService extends BaseService {
             channel.status = "UNDEPLOYED";
         }
 
-        return response;
+        return integration;
     }
 }

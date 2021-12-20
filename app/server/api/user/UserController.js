@@ -102,7 +102,7 @@ export class UserController extends BaseController {
                         code: e.username,
                         data: e,
                     };
-                    r = {...exists[0],...r}
+                    r = { ...exists[0], ...r };
                     let update = await bServ.update(r.id, r);
                 } else {
                     let r = {
@@ -114,7 +114,7 @@ export class UserController extends BaseController {
                     usersTosave.push(r);
                 }
             }
-            
+
             let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
             jsRes.success = false;
             jsRes.message = users;
@@ -126,15 +126,9 @@ export class UserController extends BaseController {
 
     /*
      */
-    async saveUsers(mode, body) {
+    saveUsers(mode, body) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let data = await App.keycloakAdmin.users.create(body);
-
-            jsRes.success = false;
-            jsRes.message = data;
-            return res;
+            return App.keycloakAdmin.users.create(body);;
         } catch (e) {
             console.log(e);
         }
@@ -142,17 +136,11 @@ export class UserController extends BaseController {
 
     async updateUser(mode, body, id) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
             delete body.roles;
             delete body.profile;
             delete body.organization_id;
             delete body.email_verified;
-            let data = await App.keycloakAdmin.users.update({ id: id }, body);
-            
-            jsRes.success = false;
-            jsRes.message = data;
-            return res;
+            return await App.keycloakAdmin.users.update({ id: id }, body);
         } catch (e) {
             console.log(e);
         }
@@ -162,13 +150,8 @@ export class UserController extends BaseController {
      */
     async deleteUser(id) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let data = await App.keycloakAdmin.users.del({ id: id });
+            return await App.keycloakAdmin.users.del({ id: id });
 
-            jsRes.success = false;
-            jsRes.message = data;
-            return jsRes;
         } catch (e) {
             console.log(e);
         }

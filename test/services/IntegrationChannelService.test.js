@@ -1,151 +1,190 @@
-import { expect } from 'chai';
-import { IntegrationChannelService } from '../../app/server/api/integration_channel';
+import { expect } from "chai";
+import { getTracker } from "knex-mock-client";
+import { IntegrationChannelService } from "../../app/server/api/integration_channel";
 
 const channel = {
-    "id": "1",
-    "name": "Ruta Pruebas",
-    "description": "Transformación Genérica",
-    "integration_id": "1",
-    "created_on": "YYYY-MM-DDT00:00:00.000Z",
-    "last_updated": "YYYY-MM-DDT00:00:00.000Z",
-    "version": 1,
-    "nodes": [
+    name: "Channel",
+    id: "116a6189-b3a4-42ff-a6c9-96c371e983ce",
+    created_on: "2021-12-15T10:18:35.409Z",
+    version: 7,
+    nodes: [
         {
-            "id": "1390f776-2324-46e2-ad7d-56d89ea6e1e0",
-            "type_id": "85a901c1-b22b-425e-9c5e-94b87fda528e",
-            "custom_name": "TCP-MLLP Input",
-            "links": [
+            id: "a36834f3-397d-4582-bf19-aa02203ac712",
+            type_id: "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+            position: {
+                x: 712,
+                y: 263,
+            },
+            data: {
+                label: "Log",
+                name: "debug",
+            },
+            links: [],
+        },
+        {
+            id: "3f5effce-d8c0-4f07-b011-3f4e7ac7db14",
+            type_id: "fa6b5212-a518-49f8-8867-c965473ac4d0",
+            position: {
+                x: 299,
+                y: 265,
+            },
+            data: {
+                label: "Debug",
+                channel_id: "116a6189-b3a4-42ff-a6c9-96c371e983ce",
+                channel_status: "UNDEPLOYED",
+            },
+            links: [
                 {
-                    "node_id": "eb49cd7f-7a75-434a-8dad-7767dd1b5b7e",
-                    "handle": null
+                    node_id: "a36834f3-397d-4582-bf19-aa02203ac712",
+                    handle: null,
                 },
-                {
-                    "node_id": "00577a49-a1c8-40cc-98b5-772fbca985ab",
-                    "handle": null
-                },
-                {
-                    "node_id": "c9a9ec2a-c346-4e7d-b83a-5643cd19c097",
-                    "handle": null
-                }
             ],
-            "position": {
-                "x": 135,
-                "y": 291
-            },
-            "data": {
-                "hostname": "0.0.0.0",
-                "port": 8888
-            }
         },
-        {
-            "id": "eb49cd7f-7a75-434a-8dad-7767dd1b5b7e",
-            "type_id": "35f0043438c-2805-4e36-95cb-1369a109e845",
-            "custom_name": "Switch",
-            "links": [
-                {
-                    "node_id": "37ce35c8-0ac8-44e1-941c-d07ce7fd2acf",
-                    "handle": "out0"
-                }
-            ],
-            "position": {
-                "x": 413,
-                "y": 312
-            },
-            "data": {
-                "handles": [
-                    {
-                        "id": "out0",
-                        "condition": "true",
-                        "to": [
-                            "37ce35c8-0ac8-44e1-941c-d07ce7fd2acf"
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "id": "37ce35c8-0ac8-44e1-941c-d07ce7fd2acf",
-            "type_id": "35f0048c-2805-4e36-95cb-1369a109e845",
-            "custom_name": "Terser Extractor",
-            "links": [
-                {
-                    "node_id": "c9a9ec2a-c346-4e7d-b83a-5643cd19c097",
-                    "handle": null
-                },
-                {
-                    "node_id": "321f2580-f368-4a27-941c-c445fcee344f",
-                    "handle": null
-                }
-            ],
-            "position": {
-                "x": 659,
-                "y": 314
-            },
-            "data": {
-                "terser_path": "/.ORC-2"
-            }
-        },
-        {
-            "id": "c9a9ec2a-c346-4e7d-b83a-5643cd19c097",
-            "type_id": "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
-            "custom_name": "Log",
-            "links": [],
-            "position": {
-                "x": 905,
-                "y": 170
-            },
-            "data": {
-                "name": "transformed"
-            }
-        },
-        {
-            "id": "321f2580-f368-4a27-941c-c445fcee344f",
-            "type_id": "a97136c1-68b6-4b97-b6b1-acc692289e3d",
-            "custom_name": "HTTP Output",
-            "links": [],
-            "position": {
-                "x": 974,
-                "y": 346
-            },
-            "data": {
-                "hostname": "127.0.0.1",
-                "port": 8787,
-                "query_params": {}
-            }
-        },
-        {
-            "id": "00577a49-a1c8-40cc-98b5-772fbca985ab",
-            "type_id": "a97136c1-68b6-4b97-b6b1-acc692289e3d",
-            "custom_name": "HTTP Output",
-            "links": [],
-            "position": {
-                "x": 414.4872582508458,
-                "y": 440.9731207614167
-            },
-            "data": {
-                "hostname": "127.0.0.1",
-                "port": 8788,
-                "query_params": {
-                    "synchronous": "false",
-                    "block": "false"
-                }
-            }
-        }
-    ]
-}
+    ],
+    options: {
+        trace_file: true,
+        trace_incoming_message: false,
+        trace_headers: false,
+        trace_properties: false,
+        trace_outgoing_message: false,
+    },
+    enabled: true,
+    status: "UNDEPLOYED",
+    last_updated: "2021-12-15T10:19:06.470Z",
+};
 
-describe('IntegrationChannelService', async () => {
+const config_camel_component = {
+    name: "Camel Component",
+    code: "camel_component",
+    data: {
+        code: "camel_component",
+        name: "Componentes Camel",
+        table: "integration_config",
+        id_mode: "uuid",
+        documentType: "camel_component",
+    },
+};
 
-    it('#convertChannelToCamel()', async () => {
+const camel_components = [
+    {
+        id: "a5587797-ed99-4834-b267-5fe804583da0",
+        code: "core.utils.debug",
+        data: {
+            id: "a5587797-ed99-4834-b267-5fe804583da0",
+            code: "core.utils.debug",
+            name: "Debug",
+            options: "{}",
+            xml_template:
+                '<route id="{{source}}">\n    <from uri="direct:{{source}}"/>\n    <bean ref="debugBean" method="debug" />\n    <multicast>\n        {{#each target}}\n        <to uri="direct:{{this}}"/>\n        {{/each}}\n    </multicast>\n</route>',
+        },
+    },
+    {
+        id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
+        code: "core.utils.log",
+        data: {
+            id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
+            code: "core.utils.log",
+            name: "Log",
+            options: '{"name":"string"}',
+            xml_template: '<route  id="{{source}}"> <from uri="direct:{{source}}"/> <to uri="log:{{name}}"/> </route>',
+        },
+    },
+];
+
+const config_node_type = {
+    name: "Tipos de Nodo",
+    code: "node_type",
+    data: {
+        code: "node_type",
+        name: "Tipos de Nodo",
+        table: "integration_config",
+        id_mode: "uuid",
+        documentType: "node_type",
+    },
+};
+
+const node_types = [
+    {
+        id: "fa6b5212-a518-49f8-8867-c965473ac4d0",
+        code: "core.utils.debug",
+        data: {
+            id: "fa6b5212-a518-49f8-8867-c965473ac4d0",
+            code: "core.utils.debug",
+            name: "Debug",
+            group: "Utilidades",
+            handles: "in,out",
+            defaults: "{}",
+            json_ui_schema: "{}",
+            json_data_schema:
+                '{\n    "type": "object",\n    "properties": {\n        "name": {\n            "type": "string"\n        }\n    }\n}',
+            camel_component_id: "a5587797-ed99-4834-b267-5fe804583da0",
+            react_component_type: "default",
+        },
+    },
+    {
+        id: "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+        code: "core.utils.log",
+        data: {
+            id: "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+            code: "core.utils.log",
+            name: "Log",
+            group: "Utilidades",
+            handles: "in",
+            defaults: '{\n    "name": "debug"\n}',
+            form_type: "jsonschema",
+            node_type: "node",
+            plugin_id: null,
+            description: "Output message",
+            json_ui_schema: "{}",
+            json_data_schema:
+                '{\n    "title": "Log",\n    "description": "Output message",\n    "type": "object",\n    "required": [\n        "label",\n        "name"\n    ],\n    "properties": {\n        "label": {\n            "type": "string"\n        },\n        "name": {\n            "type": "string"\n        }\n    }\n}',
+            camel_component_id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
+            form_type_plugin_id: null,
+            react_component_type: "output",
+        },
+    },
+];
+describe("IntegrationChannelService", async () => {
+    let tracker;
+
+    before(() => {
+        tracker = getTracker();
+
+        tracker.on
+            .select(({ sql, bindings }) => {
+                return sql.indexOf("config_model") !== -1 && bindings[0] === "camel_component";
+            })
+            .response([config_camel_component]);
+        tracker.on
+            .select(({ sql, bindings }) => {
+                return sql.indexOf("config_model") !== -1 && bindings[0] === "node_type";
+            })
+            .response([config_node_type]);
+        tracker.on
+            .select(({ sql, bindings }) => {
+                return sql.indexOf("integration_config") !== -1 && bindings[0] === "camel_component";
+            })
+            .response(camel_components);
+        tracker.on
+            .select(({ sql, bindings }) => {
+                return sql.indexOf("integration_config") !== -1 && bindings[0] === "node_type";
+            })
+            .response(node_types);
+    });
+
+    // afterEach(() => {
+    //     tracker.reset();
+    // });
+
+    it("#convertChannelToCamel()", async () => {
         let service = new IntegrationChannelService();
 
         let route = await service.convertChannelToCamel(channel);
 
         expect(route).not.to.be.null;
 
-        expect(route).to.be.eq('<routes  xmlns="http://camel.apache.org/schema/spring"><route> <from uri="mllp://0.0.0.0:8888"/> <multicast> <to uri="direct:eb49cd7f-7a75-434a-8dad-7767dd1b5b7e"/>  <to uri="direct:00577a49-a1c8-40cc-98b5-772fbca985ab"/>  <to uri="direct:c9a9ec2a-c346-4e7d-b83a-5643cd19c097"/> </multicast></route><route> <from uri="direct:c9a9ec2a-c346-4e7d-b83a-5643cd19c097"/> <to uri="log:transformed"/> </route><route> <from uri="direct:321f2580-f368-4a27-941c-c445fcee344f"/> <to uri="http://127.0.0.1:8787/"/> </route><route> <from uri="direct:00577a49-a1c8-40cc-98b5-772fbca985ab"/> <to uri="http://127.0.0.1:8788/?block=false&synchronous=false"/> </route></routes>')
-    })
-
-
-
-})
+        expect(route).to.be.eq(
+            '<routes xmlns="http://camel.apache.org/schema/spring"><route  id="a36834f3-397d-4582-bf19-aa02203ac712"> <from uri="direct:a36834f3-397d-4582-bf19-aa02203ac712"/> <to uri="log:debug"/> </route><route id="3f5effce-d8c0-4f07-b011-3f4e7ac7db14">\n    <from uri="direct:3f5effce-d8c0-4f07-b011-3f4e7ac7db14"/>\n    <bean ref="debugBean" method="debug" />\n    <multicast>\n        <to uri="direct:a36834f3-397d-4582-bf19-aa02203ac712"/>\n    </multicast>\n</route></routes>'
+        );
+    });
+});

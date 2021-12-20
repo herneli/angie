@@ -1341,6 +1341,23 @@
         ]
       }
     },
+    "/channel/{id}/sendMessageToRoute": {
+      "post": {
+        "summary": "/channel/{id}/sendMessageToRoute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/organization": {
       "get": {
         "summary": "/organization",
@@ -1991,6 +2008,23 @@
             }
           }
         },
+        "tags": []
+      }
+    },
+    "/channel/{id}": {
+      "post": {
+        "summary": "/channel/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
         "tags": []
       }
     },

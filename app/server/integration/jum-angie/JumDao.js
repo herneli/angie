@@ -7,6 +7,9 @@ export default class JumDao {
     }
 
     async deployRoute(id, content, options) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.post(this.jum_url + "/create", {
             id: id,
             xmlContent: content,
@@ -21,6 +24,9 @@ export default class JumDao {
     }
 
     async undeployRoute(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.delete(this.jum_url + "/undeploy/" + id);
 
         if (response.status != 200) {
@@ -30,6 +36,9 @@ export default class JumDao {
     }
 
     async startRoute(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.put(this.jum_url + "/start/" + id);
 
         if (response.status != 200) {
@@ -39,6 +48,9 @@ export default class JumDao {
     }
 
     async stopRoute(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.put(this.jum_url + "/stop/" + id);
 
         if (response.status != 200) {
@@ -48,6 +60,9 @@ export default class JumDao {
     }
 
     async getRouteStatus(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         console.log("obteniendo estado canal");
         const response = await axios.get(this.jum_url + "/get/" + id);
 
@@ -58,6 +73,9 @@ export default class JumDao {
     }
 
     async list() {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.get(this.jum_url + "/list");
 
         if (response.status != 200) {
@@ -67,6 +85,9 @@ export default class JumDao {
     }
 
     async getRouteStats(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.get(this.jum_url + "/get/" + id + "?includeStats=true");
 
         if (response.status != 200) {
@@ -76,6 +97,9 @@ export default class JumDao {
     }
 
     async getRouteLogs(id) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.get(this.jum_url + "/log/" + id);
 
         if (response.status != 200) {
@@ -85,6 +109,9 @@ export default class JumDao {
     }
 
     async sendMessageToRoute(id, endpoint, content) {
+        if (!this.jum_url) {
+            return null;
+        }
         const response = await axios.post(this.jum_url + "/sendMessageToRoute/" + id, {
             endpoint: endpoint,
             content: content,
