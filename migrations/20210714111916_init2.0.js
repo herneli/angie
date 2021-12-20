@@ -15,6 +15,8 @@ exports.up = async function (knex) {
             table.string("name").notNullable();
             table.json("data");
             table.uuid("organization_id");
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.foreign("organization_id").references("organization.id");
             table.boolean("enabled").defaultTo(true);
         });
@@ -104,6 +106,7 @@ exports.up = async function (knex) {
             table.string("code").notNullable();
             table.string("version").notNullable();
             table.string("name").notNullable();
+            table.jsonb("dependencies");
             table.boolean("modified");
             table.unique(["code", "version"]);
         });

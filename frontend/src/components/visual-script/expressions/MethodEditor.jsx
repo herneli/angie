@@ -7,6 +7,7 @@ import { createUseStyles } from "react-jss";
 import ScriptForm from "../rjsf/ScriptForm";
 import convertToExpressionSchema from "./convertToExpressionSchema";
 import getMembers from "../getMembers";
+import { usePackage } from "../../packages/PackageContext";
 
 const useStyles = createUseStyles({
     formFooter: {
@@ -20,6 +21,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
     const [formOptions, setFormOptions] = useState(null);
     const { manager } = useScriptContext();
     const classes = useStyles();
+    const packageData = usePackage();
 
     useEffect(() => {
         if (member.paramMembers && member.paramMembers.length > 0) {
@@ -149,6 +151,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
                     let members = await getMembers(manager.getLanguage(), member.type, {
                         excludeMethods: true,
                         recursive: true,
+                        packages: packageData.dependencies,
                     });
                     objectProperties = members.properties;
                     childrenObjects = { ...childrenObjects, ...members.childrenObjects };

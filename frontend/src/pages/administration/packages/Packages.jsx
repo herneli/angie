@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const { Content } = Layout;
 
-export default function Packages() {
+export default function Packages({ history }) {
     const [packages, setPackages] = useState();
     useEffect(() => {
         axios.get("/packages").then((response) => {
@@ -53,7 +53,15 @@ export default function Packages() {
             <Content>
                 <Row>
                     <Col span={24}>
-                        <Table dataSource={packages} columns={columns} size="small" bordered></Table>
+                        <Table
+                            dataSource={packages}
+                            columns={columns}
+                            size="small"
+                            bordered
+                            expandable={{
+                                expandedRowRender: (packageData) => <p>{packageData.dependencies}</p>,
+                                rowExpandable: (record) => true,
+                            }}></Table>
                     </Col>
                 </Row>
             </Content>

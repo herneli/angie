@@ -16,7 +16,6 @@ const ModelAdmin = ({ model, fixedData }) => {
         redirectTo: null,
     });
     const packageData = usePackage();
-    console.log("pack", packageData);
     useEffect(() => {
         search(model);
     }, [model]);
@@ -24,7 +23,10 @@ const ModelAdmin = ({ model, fixedData }) => {
     const search = (modelInfo, filters) => {
         let searchFilters = { ...filters };
         if (packageData) {
-            searchFilters[["package_code", "package_version"]] = { type: "in", value: packageData.dependencies };
+            searchFilters[["package_code", "package_version"]] = {
+                type: "in",
+                value: [[packageData.currentPackage.code, packageData.currentPackage.version]],
+            };
         }
 
         api.getModelInfo(model)

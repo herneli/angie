@@ -8,6 +8,7 @@ import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
 import getMembers from "../getMembers";
+import { usePackage } from "../../packages/PackageContext";
 
 export default function ExpressionMemberSelector({
     expression,
@@ -22,6 +23,7 @@ export default function ExpressionMemberSelector({
     const [methodMember, setMethodMember] = useState();
     const [filter, setFilter] = useState();
     const { manager } = useScriptContext();
+    const packageData = usePackage();
 
     useEffect(() => {
         if (open && (!membersForType || !areSameTypes(membersForType.type, getLastExpressionMember().type))) {
@@ -50,51 +52,53 @@ export default function ExpressionMemberSelector({
 
     const calculateMembers = () => {
         let lastExpressionMember = getLastExpressionMember();
-        getMembers(manager.getLanguage(), lastExpressionMember.type).then((m) => {
-            let membersLocal = [];
-            if (m.properties) {
-                m.properties.sort(memberSorter).forEach((property) => {
-                    membersLocal.push({
-                        memberType: lastExpressionMember.memberType === "variable" ? "variable" : "property",
-                        ...property,
-                    });
-                });
-            }
-            if (getLastExpressionMember().memberType === "variableContainer") {
-                Object.keys(variables).forEach((variableKey) => {
-                    membersLocal.push(variables[variableKey]);
-                });
-            }
-            // Exclude methods for a context
-            if (lastExpressionMember.memberType !== "context" && m.methods) {
-                m.methods.sort(memberSorter).forEach((method) => {
-                    // Include methods with code ended with "_setter" only for variables
-                    if (!method.code.endsWith("_setter") || lastExpressionMember.memberType === "variable") {
+        getMembers(manager.getLanguage(), lastExpressionMember.type, { packages: packageData.dependencies }).then(
+            (m) => {
+                let membersLocal = [];
+                if (m.properties) {
+                    m.properties.sort(memberSorter).forEach((property) => {
                         membersLocal.push({
-                            memberType: "method",
-                            ...method,
+                            memberType: lastExpressionMember.memberType === "variable" ? "variable" : "property",
+                            ...property,
                         });
-                    }
+                    });
+                }
+                if (getLastExpressionMember().memberType === "variableContainer") {
+                    Object.keys(variables).forEach((variableKey) => {
+                        membersLocal.push(variables[variableKey]);
+                    });
+                }
+                // Exclude methods for a context
+                if (lastExpressionMember.memberType !== "context" && m.methods) {
+                    m.methods.sort(memberSorter).forEach((method) => {
+                        // Include methods with code ended with "_setter" only for variables
+                        if (!method.code.endsWith("_setter") || lastExpressionMember.memberType === "variable") {
+                            membersLocal.push({
+                                memberType: "method",
+                                ...method,
+                            });
+                        }
+                    });
+                }
+
+                if (lastExpressionMember.memberType === "context") {
+                    membersLocal.push({
+                        memberType: "variableContainer",
+                        code: "variables",
+                        name: T.translate("visual_script.variables"),
+                        type: {
+                            type: "object",
+                            objectCode: "variables",
+                        },
+                    });
+                }
+
+                setMembersForType({
+                    type: lastExpressionMember.type,
+                    members: membersLocal,
                 });
             }
-
-            if (lastExpressionMember.memberType === "context") {
-                membersLocal.push({
-                    memberType: "variableContainer",
-                    code: "variables",
-                    name: T.translate("visual_script.variables"),
-                    type: {
-                        type: "object",
-                        objectCode: "variables",
-                    },
-                });
-            }
-
-            setMembersForType({
-                type: lastExpressionMember.type,
-                members: membersLocal,
-            });
-        });
+        );
     };
     const handleOnChangeFilter = (e) => {
         setFilter(e.target.value);

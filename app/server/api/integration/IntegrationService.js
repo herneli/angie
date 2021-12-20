@@ -24,7 +24,7 @@ export class IntegrationService extends BaseService {
         return [integration];
     }
 
-    async applyBeforeSave(action, node) {
+    async applyBeforeSave(action, node, integration) {
         switch (action) {
             case "generateCode":
                 let scriptService = new ScriptService();
@@ -51,7 +51,7 @@ export class IntegrationService extends BaseService {
                 }
                 for (const node of channel.nodes) {
                     if (node.data.beforeSave) {
-                        let completedNode = await this.applyBeforeSave(node.data.beforeSave, node);
+                        let completedNode = await this.applyBeforeSave(node.data.beforeSave, node, body);
                         nodes.push(completedNode);
                     } else {
                         nodes.push(node);
@@ -73,6 +73,8 @@ export class IntegrationService extends BaseService {
             name: integrationData.name,
             enabled: integrationData.enabled,
             organization_id: integrationData.organization_id,
+            package_code: integrationData.packageCode,
+            package_version: integrationData.packageVersion,
             data: integrationData,
         };
 
@@ -89,6 +91,8 @@ export class IntegrationService extends BaseService {
             name: integrationData.name,
             enabled: integrationData.enabled,
             organization_id: integrationData.organization_id,
+            package_code: integrationData.packageCode,
+            package_version: integrationData.packageVersion,
             data: integrationData,
         };
         const res = await super.update(id, entity);

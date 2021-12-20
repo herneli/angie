@@ -40,6 +40,7 @@ import {
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
+import { usePackage } from "../../../components/packages/PackageContext";
 
 const { TabPane } = Tabs;
 
@@ -84,13 +85,14 @@ const editTabFormSchema = {
 };
 let channelActions;
 
-const Integration = () => {
+const Integration = ({ packageUrl }) => {
     const history = useHistory();
     const integForm = useRef(null);
     const editTabFormEl = useRef(null);
 
     const { state } = useLocation();
     const { id } = useParams();
+    const packageData = usePackage();
 
     const [currentIntegration, setCurrentIntegration] = useState(null);
     const [activeTab, setActiveTab] = useState();
@@ -160,6 +162,8 @@ const Integration = () => {
                 name: "",
                 description: "",
                 created_on: moment().toISOString(),
+                packageCode: packageData.currentPackage.code,
+                packageVersion: packageData.currentPackage.version,
                 channels: [],
             });
             setEditHeader(true);
@@ -285,7 +289,7 @@ const Integration = () => {
                 if (currentIntegration.id === "new") {
                     //Redirigir al nuevo identificador
                     history.push({
-                        pathname: "/admin/integration/" + response.data.data.id,
+                        pathname: packageUrl + "/integrations/" + response.data.data.id,
                     });
                 }
                 setCurrentIntegration(response.data.data.data);

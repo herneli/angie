@@ -21,6 +21,7 @@ import {
 } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "./ChannelActions";
+import { usePackage } from "../../../components/packages/PackageContext";
 
 const useStyles = createUseStyles({
     card: {
@@ -41,10 +42,11 @@ const useStyles = createUseStyles({
 
 const channelActions = new ChannelActions();
 
-const Integrations = () => {
+const Integrations = ({ packageUrl }) => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
+    let packageData = usePackage();
 
     const [pagination, setPagination] = useState({});
 
@@ -58,7 +60,7 @@ const Integrations = () => {
 
     const startEdit = (record) => {
         history.push({
-            pathname: "/admin/integration/" + record.id,
+            pathname: packageUrl + "/integrations/" + record.id,
             state: {
                 record: record,
             },
@@ -89,6 +91,12 @@ const Integrations = () => {
             filters.limit = pagination.pageSize ? pagination.pageSize : 10;
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
+        }
+        if (packageData) {
+            filters[["package_code", "package_version"]] = {
+                type: "in",
+                value: [[packageData.currentPackage.code, packageData.currentPackage.version]],
+            };
         }
 
         if (sorts) {
@@ -381,7 +389,7 @@ const Integrations = () => {
 
     const addIntegration = () => {
         history.push({
-            pathname: "/admin/integration/new",
+            pathname: packageUrl + "/integrations/new",
             state: {
                 new: true,
                 record: {

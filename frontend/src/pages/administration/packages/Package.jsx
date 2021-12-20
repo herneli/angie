@@ -7,6 +7,8 @@ import ModelAdmin from "../../configuration/ModelAdmin";
 import axios from "axios";
 import { createUseStyles } from "react-jss";
 import PackageContextProvider from "../../../components/packages/PackageContext";
+import Integration from "../integration/Integration";
+import Integrations from "../integration/Integrations";
 const { Sider, Content, Header } = Layout;
 
 const useStyles = createUseStyles({
@@ -29,10 +31,9 @@ export default function Package({ match }) {
     if (!currentPackage) {
         return "Loading";
     }
+    const dependiencies = [[currentPackage.code, currentPackage.version], ...(currentPackage.dependencies || [])];
     return (
-        <PackageContextProvider
-            currentPackage={currentPackage}
-            dependencies={[[currentPackage.code, currentPackage.version]]}>
+        <PackageContextProvider currentPackage={currentPackage} dependencies={dependiencies}>
             <Layout>
                 <Header className={classes.header}>
                     {currentPackage.name} ({currentPackage.code}/{currentPackage.version})
@@ -40,6 +41,9 @@ export default function Package({ match }) {
                 <Layout>
                     <Sider width={200} className="adm-submenu">
                         <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
+                            <Menu.Item key="contexts">
+                                <Link to={url + "/integrations"}>{T.translate("packages.integrations")}</Link>
+                            </Menu.Item>
                             <Menu.Item key="contexts">
                                 <Link to={url + "/contexts"}>{T.translate("packages.contexts")}</Link>
                             </Menu.Item>
@@ -59,6 +63,16 @@ export default function Package({ match }) {
                             <Route path={path + "/methods"} component={() => <ModelAdmin model="script_method" />} />
                             <Route path={path + "/objects"} component={() => <ModelAdmin model="script_object" />} />
                             <Route path={path + "/contexts"} component={() => <ModelAdmin model="script_context" />} />
+                            <Route
+                                exact
+                                path={path + "/integrations"}
+                                render={({ match }) => <Integrations match={match} packageUrl={url} />}
+                            />
+                            <Route
+                                exact
+                                path={path + "/integrations/:id"}
+                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                            />
                         </Switch>
                     </Content>
                 </Layout>

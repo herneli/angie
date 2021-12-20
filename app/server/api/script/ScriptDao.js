@@ -1,21 +1,21 @@
 import { BaseKnexDao, KnexConnector } from "lisco";
-import { unpackObjectCode } from "./utils";
+import { unpackFullCode } from "./utils";
 export class ScriptDao extends BaseKnexDao {
     tableName = "script_config";
 
-    getObjectData(type, packages) {
+    getObjectData({ type, packages }) {
         let knex = KnexConnector.connection;
 
         // Select properties
         if (type.type === "object") {
-            const [packageCode, code] = unpackObjectCode(type.objectCode);
+            const [packageCode, code] = unpackFullCode(type.objectCode);
             let objectData = knex("script_config").where({
-                packageCode: packageCode,
+                package_code: packageCode,
                 document_type: "object",
                 code: code,
             });
             if (packages) {
-                objectData.whereIn([package_code, package_version], packages);
+                objectData.whereIn(["package_code", "package_version"], packages);
             }
             return objectData.first();
         } else {
@@ -23,7 +23,7 @@ export class ScriptDao extends BaseKnexDao {
         }
     }
 
-    getMethods(type, language, packages) {
+    getMethods({ type, language, packages }) {
         let knex = KnexConnector.connection;
 
         if (type.type === "void" || type.type === "boolean") {
@@ -55,19 +55,22 @@ export class ScriptDao extends BaseKnexDao {
         }
         // console.log(methods.toSQL().toNative());
         if (packages) {
-            methods.whereIn([package_code, package_version], packages);
+            methods.whereIn(["package_code", "package_version"], packages);
         }
         return methods;
     }
 
-    getScriptConfig(documentType, code) {
+    getScriptConfig(documentType, packageCode, code, packages) {
         let knex = KnexConnector.connection;
-        return knex("script_config")
-            .where({
-                document_type: documentType,
-                code: code,
-            })
-            .first();
+        let query = knex("script_config").where({
+            package_code: packageCode,
+            document_type: documentType,
+            code: code,
+        });
+        if (packages) {
+            query = query.whereIn(["package_code", "version_code"], packages);
+        }
+        return query.first();
     }
 
     saveScriptConfig(documentType, code, data) {

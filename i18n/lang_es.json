@@ -121,6 +121,7 @@
     "packages": {
         "configure": "Configurar",
         "contexts": "Contextos",
+        "integrations": "Integraciones",
         "methods": "Métodos",
         "objects": "Objetos",
         "select_package": "Seleccione un paquete"
