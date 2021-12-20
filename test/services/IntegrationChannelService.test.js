@@ -10,7 +10,7 @@ const channel = {
     nodes: [
         {
             id: "a36834f3-397d-4582-bf19-aa02203ac712",
-            type_id: "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+            type_id: "core.utils.log",
             position: {
                 x: 712,
                 y: 263,
@@ -23,7 +23,7 @@ const channel = {
         },
         {
             id: "3f5effce-d8c0-4f07-b011-3f4e7ac7db14",
-            type_id: "fa6b5212-a518-49f8-8867-c965473ac4d0",
+            type_id: "core.utils.debug",
             position: {
                 x: 299,
                 y: 265,
@@ -117,7 +117,7 @@ const node_types = [
             json_ui_schema: "{}",
             json_data_schema:
                 '{\n    "type": "object",\n    "properties": {\n        "name": {\n            "type": "string"\n        }\n    }\n}',
-            camel_component_id: "a5587797-ed99-4834-b267-5fe804583da0",
+            camel_component_id: "core.utils.debug",
             react_component_type: "default",
         },
     },
