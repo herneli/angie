@@ -903,7 +903,7 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
                         "ui:selectOptions":
-                            "/configuration/model/camel_component/data#path=data&value=id&label=data.name",
+                            "/configuration/model/camel_component/data#path=data&value=code&label=data.name",
                     },
                 },
             },

@@ -39,7 +39,7 @@ const Sidebar = ({ nodeTypes }) => {
                             key={type.id}
                             className={"dndnode " + type.data.react_component_type}
                             onDragStart={(event) =>
-                                onDragStart(event, type.id, {
+                                onDragStart(event, type.code, {
                                     label: type.data.name,
                                     ...JSON.parse(type.data.defaults),
                                 })

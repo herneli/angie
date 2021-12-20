@@ -138,7 +138,7 @@ const node_types = [
             json_ui_schema: "{}",
             json_data_schema:
                 '{\n    "title": "Log",\n    "description": "Output message",\n    "type": "object",\n    "required": [\n        "label",\n        "name"\n    ],\n    "properties": {\n        "label": {\n            "type": "string"\n        },\n        "name": {\n            "type": "string"\n        }\n    }\n}',
-            camel_component_id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
+            camel_component_id: "core.utils.log",
             form_type_plugin_id: null,
             react_component_type: "output",
         },

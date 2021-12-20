@@ -8,7 +8,7 @@
     "defaults": "{\n    \"script\": null,\n    \"beforeSave\": \"generateCode\"\n}",
     "json_ui_schema": "{\n    \"script\": {\n        \"ui:field\": \"ScriptField\",\n        \"ui:options\": {\n            \"contextCode\": \"camel_context_groovy\"\n        }\n    },\n    \"code\": {\n        \"ui:columnSize\": \"12\",\n        \"ui:widget\": \"AceEditorWidget\",\n        \"ui:mode\": \"javascript\",\n        \"ui:beautify\": true,\n        \"ui:readonly\": true,\n        \"ui:height\": \"400px\"\n    }\n}",
     "json_data_schema": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"script\": {\n            \"type\": \"object\",\n            \"title\": \"Editor de código\"\n        },\n        \"code\": {\n            \"title\": \"Codigo generado\",\n            \"type\": \"string\"\n        }\n    }\n}",
-    "camel_component_id": "ba7b3fa6-0c9b-4715-a077-23e970803e84",
+    "camel_component_id": "core.utils.visual_code",
     "react_component_type": "default"
   }
 ]

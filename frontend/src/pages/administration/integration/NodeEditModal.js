@@ -17,8 +17,8 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
      */
     useEffect(() => {
         if (selectedType && editNodeVisible) {
-            const type = lodash.find(nodeTypes, {
-                id: selectedType.type_id,
+            const type = lodash.find(nodeTypes, (el) => {
+                return el.id === selectedType.type_id || el.code === selectedType.type_id;
             });
             let jsonSchema = {};
             try {

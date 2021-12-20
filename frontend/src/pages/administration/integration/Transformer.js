@@ -35,8 +35,8 @@ class Transformer {
             }
 
             for (const node of bdModel?.nodes) {
-                const nodeType = lodash.find(this.nodeTypes, {
-                    id: node.type_id,
+                const nodeType = lodash.find(this.nodeTypes, (el) => {
+                    return el.id === node.type_id || el.code === node.type_id;
                 });
 
                 if (!nodeType) {
@@ -92,14 +92,14 @@ class Transformer {
                     source: element.id,
                 });
 
-                const nodeType = lodash.find(this.nodeTypes, {
-                    id: element.data.type_id,
+                const nodeType = lodash.find(this.nodeTypes, (el) => {
+                    return el.id === element.data.type_id || el.code === element.data.type_id;
                 });
 
                 //Element
                 const node = {
                     id: element.id,
-                    type_id: nodeType && nodeType.id,
+                    type_id: nodeType && nodeType.code,
                     custom_name: element.data.label,
                     links: connections.map((con) => ({
                         node_id: con.target,

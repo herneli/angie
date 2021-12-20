@@ -95,10 +95,12 @@ export class IntegrationChannelService {
         for (const idx in nodes) {
             const element = nodes[idx];
 
-            let type = lodash.find(node_types, { id: element.type_id });
+            let type = lodash.find(node_types, (el) => {
+                return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
+            });
             if (!type) continue;
             let camelComponent = lodash.find(camel_components, {
-                id: type.data.camel_component_id,
+                code: type.data.camel_component_id,
             });
 
             if (camelComponent.data.xml_template) {
@@ -183,11 +185,11 @@ export class IntegrationChannelService {
                 console.error(ex);
             }
         }
-        
+
         return this.channelApplyStatus(channel, remoteStatus);
     }
 
-    async channelApplyStatus(channel, remoteChannel){
+    async channelApplyStatus(channel, remoteChannel) {
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
         channel.messages_total = (remoteChannel && remoteChannel.messages_total) || 0;
         channel.messages_error = (remoteChannel && remoteChannel.messages_error) || 0;
@@ -205,8 +207,7 @@ export class IntegrationChannelService {
         return channelLogs;
     }
 
-
-    sendMessageToRoute(channel, endpoint, content){
-        return this.jumDao.sendMessageToRoute(channel, endpoint, content)
+    sendMessageToRoute(channel, endpoint, content) {
+        return this.jumDao.sendMessageToRoute(channel, endpoint, content);
     }
 }

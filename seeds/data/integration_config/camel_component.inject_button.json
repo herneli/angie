@@ -1,7 +1,7 @@
 [
   {
     "id": "a1c50628-d27b-4631-a477-c9ecccd52bd9",
-    "code": "inject_button",
+    "code": "core.utils.inject_button",
     "name": "Inject Button",
     "name_": "Generic Input CLONED",
     "options": "{\n    \"target\": \"string\",\n    \"url\": \"string\",\n    \"out_format\": \"string\"\n}",

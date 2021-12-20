@@ -1,6 +1,6 @@
 [
   {
-    "id": "565a77d0-2beb-4833-9ea9-b2333a738920",
+    "id": "a50e7aff-e302-4fd9-bfe4-31e64bc8fe02",
     "code": "core.utils.template",
     "name": "Template",
     "group": "Utilidades",
@@ -8,7 +8,7 @@
     "defaults": "{\n    \"code\": \"\"\n}",
     "json_ui_schema": "{\n    \"code\": {\n        \"ui:columnSize\": \"12\",\n        \"ui:widget\": \"AceEditorWidget\",\n        \"ui:mode\": \"json\",\n        \"ui:beautify\": true,\n        \"ui:height\": 400\n    }\n    \n}",
     "json_data_schema": "{\n    \"description\": \"Create simple JSON objects from input message.\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\",\n        \"code\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"type\": \"string\"\n        },\n        \n        \"code\": {\n            \"type\": \"string\"\n        }\n    }\n}",
-    "camel_component_id": "476ea812-7bb4-4308-b438-9a12bfcfb511",
+    "camel_component_id": "core.utils.template",
     "react_component_type": "default"
   }
 ]
