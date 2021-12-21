@@ -20,7 +20,6 @@ const AppMenu = ({ tokenLoaded }) => {
 
     useEffect(() => {
         (async () => {
-            console.log(tokenLoaded);
             if (keycloak.tokenParsed && keycloak.tokenParsed.sub) {
                 const menu = await getMenuItems();
                 setPaintedMenu(menu);
@@ -32,12 +31,7 @@ const AppMenu = ({ tokenLoaded }) => {
         setTokenState(tokenLoaded);
     }, [tokenLoaded]);
 
-    const icons = {
-        mdiAccountGroup: mdiAccountGroup,
-        mdiConnection: mdiConnection,
-        mdiPalette: mdiPalette,
-        mdiSourceBranch: mdiSourceBranch
-    };
+
     //TODO get current center (#4)
     const userPopup = keycloak && keycloak.authenticated && (
         <span>
@@ -55,27 +49,10 @@ const AppMenu = ({ tokenLoaded }) => {
     const getMenuItems = async () => {
         let menu = [];
         let itemsAuthorized = [];
-        let dataMenu = await MenuHandler.checkAllowedSections(keycloak.tokenParsed.sub);
+        let dataMenu = await MenuHandler.getMenu(keycloak.tokenParsed.sub,keycloak);
 
         if (dataMenu != null && dataMenu.length > 0 ) {
-            for (let item of dataMenu) {
-                if (keycloak && keycloak.authenticated) {
-                    itemsAuthorized.push(
-                        <Menu.Item key={item.title} icon={<Icon path={icons[item.icon]} size={0.6} />} title={item.title}>
-                            <Link to={item.value}>{T.translate(item.title)}</Link>
-                        </Menu.Item>
-                    );
-                }
-            }
-        }
-
-        //Quitar esto cuando esten las secciones bien configuradas.
-        if (itemsAuthorized.length <= 0) {
-            itemsAuthorized.push(
-                <Menu.Item key="admin" icon={<Icon path={mdiSourceBranch} size={0.6} />}>
-                    <Link to="/admin">Administration </Link>
-                </Menu.Item>
-            );
+            itemsAuthorized = dataMenu
         }
 
         return itemsAuthorized;
