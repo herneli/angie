@@ -162,8 +162,6 @@ const Integration = ({ packageUrl }) => {
                 name: "",
                 description: "",
                 created_on: moment().toISOString(),
-                packageCode: packageData.currentPackage.code,
-                packageVersion: packageData.currentPackage.version,
                 channels: [],
             });
             setEditHeader(true);
@@ -177,7 +175,12 @@ const Integration = ({ packageUrl }) => {
      *
      */
     const loadNodeTypes = async () => {
-        const response = await axios.get("/configuration/model/node_type/data");
+        let filters = {};
+        filters[["package_code", "package_version"]] = {
+            type: "in",
+            value: packageData.dependencies,
+        };
+        const response = await axios.get("/configuration/model/node_type/data", { params: { filters } });
 
         if (response?.data?.success) {
             setNodeTypes(response?.data?.data);
@@ -281,7 +284,11 @@ const Integration = ({ packageUrl }) => {
             const method = currentIntegration.id !== "new" ? "put" : "post";
             const response = await axios[method](
                 "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
-                currentIntegration
+                {
+                    ...currentIntegration,
+                    packageCode: packageData.currentPackage.code,
+                    packageVersion: packageData.currentPackage.version,
+                }
             );
 
             if (response?.data?.success) {

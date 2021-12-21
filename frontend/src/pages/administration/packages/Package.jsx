@@ -41,8 +41,14 @@ export default function Package({ match }) {
                 <Layout>
                     <Sider width={200} className="adm-submenu">
                         <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
-                            <Menu.Item key="contexts">
+                            <Menu.Item key="integrations">
                                 <Link to={url + "/integrations"}>{T.translate("packages.integrations")}</Link>
+                            </Menu.Item>
+                            <Menu.Item key="camel_components">
+                                <Link to={url + "/camel_components"}>{T.translate("packages.camel_components")}</Link>
+                            </Menu.Item>
+                            <Menu.Item key="node_types">
+                                <Link to={url + "/node_types"}>{T.translate("packages.node_types")}</Link>
                             </Menu.Item>
                             <Menu.Item key="contexts">
                                 <Link to={url + "/contexts"}>{T.translate("packages.contexts")}</Link>
@@ -60,6 +66,11 @@ export default function Package({ match }) {
                             <Route exact path={path}>
                                 Seleccione una opción
                             </Route>
+                            <Route path={path + "/node_types"} component={() => <ModelAdmin model="node_type" />} />
+                            <Route
+                                path={path + "/camel_components"}
+                                component={() => <ModelAdmin model="camel_component" />}
+                            />
                             <Route path={path + "/methods"} component={() => <ModelAdmin model="script_method" />} />
                             <Route path={path + "/objects"} component={() => <ModelAdmin model="script_object" />} />
                             <Route path={path + "/contexts"} component={() => <ModelAdmin model="script_context" />} />

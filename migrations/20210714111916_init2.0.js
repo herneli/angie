@@ -127,6 +127,8 @@ exports.up = async function (knex) {
     if (!(await knex.schema.hasTable("integration_config"))) {
         await knex.schema.createTable("integration_config", function (table) {
             table.uuid("id").primary();
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");

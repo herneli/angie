@@ -62,16 +62,16 @@ const AdminSubMenu = () => {
                     { value: "/admin/organization", title: T.translate("administration.organization") },
                 ],
             },
-            {
-                title: "Comunicaciones",
-                icon: "mdiConnection",
-                value: "/admin/comunicaciones",
-                children: [
-                    { value: "/admin/integration", title: T.translate("administration.integration") },
-                    { value: "/admin/node_type", title: T.translate("administration.node_type") },
-                    { value: "/admin/camel_component", title: T.translate("administration.camel_component") },
-                ],
-            },
+            // {
+            //     title: "Comunicaciones",
+            //     icon: "mdiConnection",
+            //     value: "/admin/comunicaciones",
+            //     children: [
+            //         { value: "/admin/integration", title: T.translate("administration.integration") },
+            //         { value: "/admin/node_type", title: T.translate("administration.node_type") },
+            //         { value: "/admin/camel_component", title: T.translate("administration.camel_component") },
+            //     ],
+            // },
         ];
 
         const resp = await checkAllowedSections();
@@ -80,9 +80,9 @@ const AdminSubMenu = () => {
             sections = resp.data.data[0].data.sections;
         }
         if (keycloak.tokenParsed.roles && keycloak.tokenParsed.roles.includes("admin")) {
-            sections.push("/admin/camel_component");
-            sections.push("/admin/node_type");
-            sections.push("/admin/integration");
+            // sections.push("/admin/camel_component");
+            // sections.push("/admin/node_type");
+            // sections.push("/admin/integration");
             sections.push("/admin/users");
             sections.push("/admin/profiles");
             sections.push("/admin/organization");
