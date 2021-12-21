@@ -1,19 +1,43 @@
 import { useKeycloak } from "@react-keycloak/web";
-import React, { useState } from "react";
-import { Menu, Button, Popover } from "antd";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Button, Popover } from "antd";
+import { mdiAccountGroup, mdiConnection, mdiPalette } from "@mdi/js";
 import { Link } from "react-router-dom";
-import AuthorizedFunction from "../components/security/AuthorizedFunction";
+import MenuHandler from "../common/MenuHandler";
 
-import T from 'i18n-react'
+import T from "i18n-react";
 
 import { mdiAccount, mdiHome, mdiLogout, mdiSourceBranch } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const AppMenu = () => {
+const AppMenu = ({ tokenLoaded }) => {
     const { keycloak } = useKeycloak();
+    const { Sider } = Layout;
+    const { SubMenu } = Menu;
     const [selected, changeSelection] = useState(null);
+    const [paintedMenu, setPaintedMenu] = useState([]);
+    const [tokenState, setTokenState] = useState();
 
+    useEffect(() => {
+        (async () => {
+            console.log(tokenLoaded);
+            if (keycloak.tokenParsed && keycloak.tokenParsed.sub) {
+                const menu = await getMenuItems();
+                setPaintedMenu(menu);
+            }
+        })();
+    }, [tokenState]);
 
+    useEffect(() => {
+        setTokenState(tokenLoaded);
+    }, [tokenLoaded]);
+
+    const icons = {
+        mdiAccountGroup: mdiAccountGroup,
+        mdiConnection: mdiConnection,
+        mdiPalette: mdiPalette,
+        mdiSourceBranch: mdiSourceBranch
+    };
     //TODO get current center (#4)
     const userPopup = keycloak && keycloak.authenticated && (
         <span>
@@ -27,6 +51,35 @@ const AppMenu = () => {
             </div>
         </span>
     );
+
+    const getMenuItems = async () => {
+        let menu = [];
+        let itemsAuthorized = [];
+        let dataMenu = await MenuHandler.checkAllowedSections(keycloak.tokenParsed.sub);
+
+        if (dataMenu != null && dataMenu.length > 0 ) {
+            for (let item of dataMenu) {
+                if (keycloak && keycloak.authenticated) {
+                    itemsAuthorized.push(
+                        <Menu.Item key={item.title} icon={<Icon path={icons[item.icon]} size={0.6} />} title={item.title}>
+                            <Link to={item.value}>{T.translate(item.title)}</Link>
+                        </Menu.Item>
+                    );
+                }
+            }
+        }
+
+        //Quitar esto cuando esten las secciones bien configuradas.
+        if (itemsAuthorized.length <= 0) {
+            itemsAuthorized.push(
+                <Menu.Item key="admin" icon={<Icon path={mdiSourceBranch} size={0.6} />}>
+                    <Link to="/admin">Administration </Link>
+                </Menu.Item>
+            );
+        }
+
+        return itemsAuthorized;
+    };
 
     //TODO translate main links
     return (
@@ -42,14 +95,8 @@ const AppMenu = () => {
                 <Menu.Item key="home" icon={<Icon path={mdiHome} size={0.6} />}>
                     <Link to="/">Home Page </Link>
                 </Menu.Item>
-                {AuthorizedFunction(["default-roles-angie"]) && (
-                    <>
-                        <Menu.Item key="admin" icon={<Icon path={mdiSourceBranch} size={0.6} />}>
-                            <Link to="/admin">Administration </Link>
-                        </Menu.Item>
 
-                    </>
-                )}
+                <>{keycloak && keycloak.authenticated && paintedMenu}</>
 
                 {keycloak && !keycloak.authenticated && (
                     <Menu.Item

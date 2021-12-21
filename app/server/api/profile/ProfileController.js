@@ -1,4 +1,4 @@
-import { App, BaseController, JsonResponse } from "lisco";
+import { App, BaseController, JsonResponse,Utils } from "lisco";
 import { ProfileService } from "./ProfileService";
 
 import expressAsyncHandler from "express-async-handler";
@@ -22,13 +22,24 @@ export class ProfileController extends BaseController {
         try {
             const serv = new UserService();
             const prof = new ProfileService();
-
+            let menu = require("../../../../config/menu.json")
+            
             let user = await serv.loadById(request.body.id);
             let jsRes = {};
+            let finalMenu = []
 
             if (user && user[0] && user[0].data && user[0].data.profile) {
                 let profile = await prof.loadById(user[0].data.profile);
-                jsRes = new JsonResponse(true, profile, null);
+                if(profile[0].data.sections.length > 1){
+                    let sectionsAvailable = profile[0].data.sections;
+                    menu.forEach((menuEntry) => {
+                        let resp = sectionsAvailable.filter((element) => element == menuEntry.value)                    
+                        if(resp.length > 0){
+                            finalMenu.push(menuEntry)
+                        }
+                    });
+                    jsRes = new JsonResponse(true, finalMenu, null);
+                }
             } else {
                 jsRes = new JsonResponse(false, null, null);
             }
@@ -39,4 +50,5 @@ export class ProfileController extends BaseController {
             next(e);
         }
     }
+
 }

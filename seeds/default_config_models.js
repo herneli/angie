@@ -2,6 +2,8 @@ exports.seed = async function (knex) {
     // Deletes ALL existing entries
     await knex("config_model").del();
 
+
+
     // Inserts seed entries
     await knex("config_model").insert([
         {
@@ -1134,26 +1136,11 @@ exports.seed = async function (knex) {
                             type: "string",
                         },
                         sections: {
+                            title: "Sections",
                             type: "array",
                             items: {
                                 type: "string",
-                                enum: [
-                                    "/admin/users",
-                                    "/admin/profiles",
-                                    "/admin/organization",
-                                    "/admin/integration",
-                                    "/admin/node_type",
-                                    "/admin/camel_component",
-                                    "/admin/config_context",
-                                    "/admin/config_method",
-                                    "/admin/config_object",
-                                    "/admin/gestion",
-                                    "/admin/comunicaciones",
-                                    "/admin/personalization",
-                                    "/admin/script/test_groovy",
-                                ],
                             },
-                            uniqueItems: true,
                         },
                     },
                 },

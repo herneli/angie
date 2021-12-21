@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import { asNumber, guessType } from "@rjsf/core/lib/utils";
-import { TreeSelect } from "antd";
+import { TreeSelect,Select } from "antd";
 import T from "i18n-react";
 import axios from "axios";
 import get from "lodash/get";
@@ -44,9 +44,11 @@ const MultipleSelectWidget = (props) => {
 
     useEffect(async () => {
         if (props.options.url) {
+            console.log(props)
             let response = await axios.get(props.options.url);
             if ((response.success = "true")) {
-                setTreeData(response.data);
+                console.log(response.data.data)
+                setTreeData(response.data.data);
             }
         }
 
@@ -60,12 +62,12 @@ const MultipleSelectWidget = (props) => {
 
     return (
         <>
-            <TreeSelect
+            <Select
                 style={{ width: "100%" }}
-                multiple
+                mode="multiple"
                 value={props.value}
                 dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                treeData={treeData}
+                options={treeData}
                 onChange={handleOnChange}
                 placeholder="Please select"
                 treeDefaultExpandAll
