@@ -106,6 +106,9 @@ export class IntegrationChannelService {
             if (camelComponent.data.xml_template) {
                 const template = Handlebars.compile(camelComponent.data.xml_template);
 
+                if (element.data.handles) {//Calcular los links de los diferentes handles para la conversion
+                    element.data.handles = this.linkHandles(element.data.handles, element.links);
+                }
                 camelStr += template({
                     source: element.id,
                     target:
@@ -117,6 +120,14 @@ export class IntegrationChannelService {
 
         return `<routes xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
     }
+
+    linkHandles = (conditions, links) => {
+        for (const condition of conditions) {
+            const link = lodash.filter(links, { handle: condition.id });
+            condition.to = lodash.map(link, "node_id") || "empty";
+        }
+        return conditions;
+    };
 
     async deployChannel(integration, channelId) {
         const channel = await this.findIntegrationChannel(integration, channelId);
