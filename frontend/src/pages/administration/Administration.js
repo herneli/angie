@@ -18,7 +18,7 @@ const Administration = ({ app }) => {
     };
     return (
         <Layout>
-            <SubMenu />
+            <SubMenu parent={"/admin"}/>
 
             <Layout>
                 <Content>
@@ -38,11 +38,10 @@ const Administration = ({ app }) => {
                             path="/admin/users"
                             render={({ match }) => <UsersConfig match={match} {...defaultProps} />}
                         />
-
                         <Route
                             exact
                             path="/admin/organization"
-                            render={({ match }) => <OrganizationConfig match={match} {...defaultProps} />}
+                            render={({ match }) => <ModelAdmin match={match} model="organization_config" />}
                         />
                         <Route
                             exact

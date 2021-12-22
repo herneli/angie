@@ -148,7 +148,9 @@ Configuraciones necesarias:
 
 **Acceso REST**  
 11. Seleccionar el cliente **admin-cli**  
-12. Habilitar el switch "Service Account Enabled" 13. Guardar, aparecerá la pestaña Service Account Roles 14. En Client Roles seleccionar `realm_management`  
+12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential'
+13. Guardar, aparecerá la pestaña Service Account Roles 
+14. 14. En Client Roles seleccionar `realm_management`  
 15. Asociar el rol `view_users` mediante el botón **Add Selected**
 
 ## Tests

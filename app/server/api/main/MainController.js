@@ -1,5 +1,6 @@
 import { App, BaseController, JsonResponse, Utils } from "lisco";
 import path from "path";
+import { ProfileController } from "../profile/ProfileController";
 
 const expressAsyncHandler = require("express-async-handler");
 
@@ -16,6 +17,9 @@ export class MainController extends BaseController {
         });
         this.router.get("/config", (request, response, next) => {
             this.config(request, response, next);
+        });
+        this.router.get("/getMenuConfiguration", (request, response, next) => {
+            this.getMenuConfiguration(request, response, next);
         });
         this.router.get("/memory", (request, response, next) => {
             this.memory(request, response, next);
@@ -67,6 +71,15 @@ export class MainController extends BaseController {
         }
 
         response.json(data);
+    }
+
+
+    getMenuConfiguration(request, response) {
+        var data = require("../../../../config/menu.json")
+        var jsRes = new JsonResponse();
+        jsRes.success = true;
+        jsRes.data = data;
+        response.json(jsRes);
     }
 
     /**
