@@ -8,9 +8,9 @@ export class ScriptDao extends BaseKnexDao {
 
         // Select properties
         if (type.type === "object") {
-            const [packageCode, code] = unpackFullCode(type.objectCode);
+            const [package_code, code] = unpackFullCode(type.objectCode);
             let objectData = knex("script_config").where({
-                package_code: packageCode,
+                package_code: package_code,
                 document_type: "object",
                 code: code,
             });
@@ -60,15 +60,15 @@ export class ScriptDao extends BaseKnexDao {
         return methods;
     }
 
-    getScriptConfig(documentType, packageCode, code, packages) {
+    getScriptConfig(documentType, package_code, code, packages) {
         let knex = KnexConnector.connection;
         let query = knex("script_config").where({
-            package_code: packageCode,
+            package_code: package_code,
             document_type: documentType,
             code: code,
         });
         if (packages) {
-            query = query.whereIn(["package_code", "version_code"], packages);
+            query = query.whereIn(["package_code", "package_version"], packages);
         }
         return query.first();
     }

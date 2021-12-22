@@ -3,11 +3,13 @@ import union from "lodash.union";
 
 export default class ScriptGeneratorBase {
     TAB_SPACES = "    ";
-    constructor(script) {
+    constructor(script, package_code, package_version) {
         this.usedMethods = {};
         this.imports = [];
         this.functionNames = [];
         this.script = script;
+        this.package_code = package_code;
+        this.package_version = package_version;
     }
 
     getCommentCode(comment) {
@@ -167,11 +169,12 @@ export default class ScriptGeneratorBase {
 
     getMethodCode = (member, expressionCode, variablePath) => {
         let functionName;
-        if (member.code in this.usedMethods) {
-            functionName = this.usedMethods[member.code].functionName;
+        let fullCode = member.package_code + "." + member.code;
+        if (fullCode in this.usedMethods) {
+            functionName = this.usedMethods[fullCode].functionName;
         } else {
             functionName = this.calculateFunctionName(member);
-            this.usedMethods[member.code] = {
+            this.usedMethods[fullCode] = {
                 functionName: functionName,
             };
         }

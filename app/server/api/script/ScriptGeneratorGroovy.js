@@ -1,9 +1,10 @@
 import { union } from "lodash";
 import ScriptGeneratorBase from "./ScriptGeneratorBase";
 import { ScriptService } from "./ScriptService";
+import { PackageService } from "../package/PackageService";
 export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
-    constructor(script) {
-        super(script);
+    constructor(script, package_code, package_version) {
+        super(script, package_code, package_version);
         this.imports.push("com.github.mustachejava.DefaultMustacheFactory");
         this.imports.push("com.github.mustachejava.Mustache");
         this.imports.push("java.io.StringReader");
@@ -78,10 +79,16 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
     }
 
     async getUsedMethodsCode() {
-        let service = new ScriptService();
-        let methodDefinitions = this.getCommentCode("Functions") + "\n";
+        let scriptService = new ScriptService();
+        let packageService = new PackageService();
 
-        for await (const method of Object.keys(this.usedMethods).map((code) => service.getMethod(code))) {
+        let methodDefinitions = this.getCommentCode("Functions") + "\n";
+        const packageData = await packageService.getPackage(this.package_code, this.package_version);
+        const dependiencies = [[packageData.code, packageData.version], ...(packageData.dependencies || [])];
+
+        for await (const method of Object.keys(this.usedMethods).map((fullCode) =>
+            scriptService.getMethod(fullCode, dependiencies)
+        )) {
             if (method.data.imports) {
                 this.imports = union(this.imports, method.data.imports);
             }
@@ -94,9 +101,10 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
                 .join("\n");
 
             // Wraps the source code with the function definition statement
+            const fullCode = method.package_code + "." + method.code;
             methodSourceCode =
                 "def " +
-                this.usedMethods[method.code].functionName +
+                this.usedMethods[fullCode].functionName +
                 "(self, options) {\n" +
                 this.TAB_SPACES +
                 "context = options.context;\n" +

@@ -67,8 +67,8 @@ export class ScriptService extends BaseService {
     }
 
     async getContext(contextCode, packages) {
-        let [packageCode, code] = unpackFullCode(contextCode);
-        return await this.dao.getScriptConfig("context", packageCode, code, packages);
+        let [package_code, code] = unpackFullCode(contextCode);
+        return await this.dao.getScriptConfig("context", package_code, code, packages);
     }
 
     async newScript(contextCode) {
@@ -87,54 +87,24 @@ export class ScriptService extends BaseService {
         };
     }
 
-    async getScript(code) {
-        let script = await this.dao.getScriptConfig("script", code);
-        if (!script) {
-            return {
-                document_type: "script",
-                code: code,
-                data: { ...(await this.newScript("context_test_groovy")), code: code },
-            };
-        } else {
-            return script;
-        }
+    async getMethod(fullCode, packages) {
+        let [package_code, code] = unpackFullCode(fullCode);
+        return await this.dao.getScriptConfig("method", package_code, code, packages);
     }
 
-    async getMethod(code) {
-        return await this.dao.getScriptConfig("method", code);
-    }
-
-    async saveScript(code, data) {
-        let saveResults = await this.dao.saveScriptConfig("script", code, data);
-        if (saveResults) {
-            return saveResults[0];
-        } else {
-            throw Error("Error saving Script");
-        }
-    }
-
-    getGenerator(script) {
+    getGenerator(script, package_code, package_version) {
         switch (script.language) {
             case "javascript":
-                return new ScriptGeneratorJavascript(script);
+                return new ScriptGeneratorJavascript(script, package_code, package_version);
             case "groovy":
-                return new ScriptGeneratorGroovy(script);
+                return new ScriptGeneratorGroovy(script, package_code, package_version);
             default:
                 throw Error("Language " + script.language + " not expected");
         }
     }
-    async generateCode(script) {
-        let generator = this.getGenerator(script);
+    async generateCode(script, package_code, package_version) {
+        let generator = this.getGenerator(script, package_code, package_version);
         let code = generator.generateCode();
-        return code;
-    }
-
-    async executeCode(scriptCode) {
-        let script = await this.dao.getScriptConfig("script", scriptCode);
-        let generator = this.getGenerator(script.data);
-
-        let code = await generator.generateCode();
-        runCode(code);
         return code;
     }
 }

@@ -286,8 +286,8 @@ const Integration = ({ packageUrl }) => {
                 "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
                 {
                     ...currentIntegration,
-                    packageCode: packageData.currentPackage.code,
-                    packageVersion: packageData.currentPackage.version,
+                    package_code: packageData.currentPackage.code,
+                    package_version: packageData.currentPackage.version,
                 }
             );
 

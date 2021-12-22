@@ -53,9 +53,11 @@ export function saveModelData(model, extendedData, packageData, overwrite = fals
     if (packageData) {
         data = {
             ...data,
-            packageCode: packageData.currentPackage.code,
-            packageVersion: packageData.currentPackage.version,
+            package_code: packageData.currentPackage.code,
+            package_version: packageData.currentPackage.version,
         };
+        delete data.packageCode;
+        delete data.packageVersion;
     }
     if (extendedData.id) {
         return axios

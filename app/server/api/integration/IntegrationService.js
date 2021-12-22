@@ -28,7 +28,12 @@ export class IntegrationService extends BaseService {
         switch (action) {
             case "generateCode":
                 let scriptService = new ScriptService();
-                let code = await scriptService.generateCode(node.data.script);
+                console.log("Integration", integration);
+                let code = await scriptService.generateCode(
+                    node.data.script,
+                    integration.package_code,
+                    integration.package_version
+                );
                 return {
                     ...node,
                     data: {
@@ -73,8 +78,8 @@ export class IntegrationService extends BaseService {
             name: integrationData.name,
             enabled: integrationData.enabled,
             organization_id: integrationData.organization_id,
-            package_code: integrationData.packageCode,
-            package_version: integrationData.packageVersion,
+            package_code: integrationData.package_code,
+            package_version: integrationData.package_version,
             data: integrationData,
         };
 
@@ -91,8 +96,8 @@ export class IntegrationService extends BaseService {
             name: integrationData.name,
             enabled: integrationData.enabled,
             organization_id: integrationData.organization_id,
-            package_code: integrationData.packageCode,
-            package_version: integrationData.packageVersion,
+            package_code: integrationData.package_code,
+            package_version: integrationData.package_version,
             data: integrationData,
         };
         const res = await super.update(id, entity);
