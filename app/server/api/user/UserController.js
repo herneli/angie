@@ -95,19 +95,19 @@ export class UserController extends BaseController {
                 e.roles = JSON.stringify(roles);
 
                 let exists = await bServ.loadById(e.id);
-                if (exists.length > 0) {
+                if (exists) {
                     let r = {
                         id: e.id,
-                        document_type: "object",
+                        document_type: "user",
                         code: e.username,
                         data: e,
                     };
-                    r = { ...exists[0], ...r };
+                    r = { ...exists, ...r };
                     let update = await bServ.update(r.id, r);
                 } else {
                     let r = {
                         id: e.id,
-                        document_type: "object",
+                        document_type: "user",
                         code: e.username,
                         data: e,
                     };
