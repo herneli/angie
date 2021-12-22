@@ -28,10 +28,10 @@ export class ProfileController extends BaseController {
             let jsRes = {};
             let finalMenu = []
 
-            if (user && user[0] && user[0].data && user[0].data.profile) {
-                let profile = await ProfServ.loadById(user[0].data.profile);
-                if(profile[0].data.sections.length > 0){
-                    let sectionsAvailable = profile[0].data.sections;
+            if (user && user.data && user.data.profile) {
+                let profile = await ProfServ.loadById(user.data.profile);
+                if(profile.data.sections.length > 0){
+                    let sectionsAvailable = profile.data.sections;
                     menu.forEach((menuEntry) => {
                         let resp = sectionsAvailable.filter((element) => element == menuEntry.value)                    
                         if(resp.length > 0){
