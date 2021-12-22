@@ -37,24 +37,6 @@ exports.up = async function (knex) {
         });
     }
 
-    if (!(await knex.schema.hasTable("historic"))) {
-        await knex.schema.createTable("historic", function (table) {
-            table.increments();
-            table.string("date", 30).notNullable();
-            table.integer("user_id");
-            table.string("action_url");
-            table.string("method");
-            table.integer("time_spent");
-        });
-    }
-    if (!(await knex.schema.hasTable("historic_data"))) {
-        await knex.schema.createTable("historic_data", function (table) {
-            table.increments();
-            table.integer("historic_id").notNullable();
-            table.json("data");
-            table.json("client_data");
-        });
-    }
 
     if (!(await knex.schema.hasTable("config_model"))) {
         await knex.schema.createTable("config_model", function (table) {

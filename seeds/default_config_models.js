@@ -688,7 +688,7 @@ exports.seed = async function (knex) {
                         relationColumn: "organization_data",
                     },
                 ],
-                documentType: "object",
+                documentType: "user",
                 listFields: [
                     {
                         title: "id",
@@ -1062,11 +1062,11 @@ exports.seed = async function (knex) {
                 name: "Organizaciones",
                 id_mode: "uuid",
                 table: "organization",
-                documentType: "object",
+                documentType: "organization",
                 listFields: [
                     {
-                        title: "id",
-                        field: "id",
+                        title: "code",
+                        field: "code",
                     },
                     {
                         title: "Nombre",
@@ -1080,8 +1080,11 @@ exports.seed = async function (knex) {
                 schema: {
                     title: "Add Organization",
                     type: "object",
-                    required: ["name", "config"],
+                    required: ["code", "name", "config"],
                     properties: {
+                        code: {
+                            type: "string",
+                        },
                         name: {
                             type: "string",
                         },
@@ -1091,7 +1094,7 @@ exports.seed = async function (knex) {
                     },
                 },
                 uiSchema: {
-                    id: {
+                    code: {
                         "ui:columnSize": "3",
                     },
                     name: {
@@ -1112,11 +1115,11 @@ exports.seed = async function (knex) {
                 name: "Perfiles",
                 table: "profile",
                 id_mode: "uuid",
-                documentType: "object",
+                documentType: "profile",
                 listFields: [
                     {
-                        title: "id",
-                        field: "id",
+                        title: "code",
+                        field: "code",
                     },
                     {
                         title: "name",
@@ -1130,8 +1133,11 @@ exports.seed = async function (knex) {
                 schema: {
                     title: "Create Profile",
                     type: "object",
-                    required: ["name"],
+                    required: ["code","name"],
                     properties: {
+                        code: {
+                            type: "string",
+                        },
                         name: {
                             type: "string",
                         },
@@ -1145,7 +1151,7 @@ exports.seed = async function (knex) {
                     },
                 },
                 uiSchema: {
-                    id: {
+                    code: {
                         "ui:columnSize": "3",
                     },
                     name: {

@@ -6,7 +6,7 @@ exports.seed = async function (knex) {
     await knex("profile").insert([
         {
             "id": "cebd44fa-5972-46b1-bc4d-76dec806ade2",
-            "document_type": "object",
+            "document_type": "profile",
             "code": "profile_config",
             "data": {"name": "Administrador", "sections": ["/admin", "/"]}
         }

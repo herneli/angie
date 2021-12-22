@@ -7,43 +7,19 @@ import axios from "axios";
 import ModelAdmin from "../../configuration/ModelAdmin";
 
 const UsersConfig = () => {
-    const [data, setData] = useState([]);
-    const [pagination, setPagination] = useState({});
-    const [paramsPagination, setParamsPagination] = useState({ limit: 10, start: 0 });
-    const [editModal, setEditModal] = useState(false);
-
-    //Paginación
-    useEffect(() => {
-        setParamsPagination({
-            limit: paramsPagination.pageSize,
-            start: paramsPagination.start * paramsPagination.pageSize,
-        });
-    }, [pagination]);
-
-    const search = async (params) => {
-        const response = await axios({
-            method: "post",
-            url: `/user/list`,
-            data: paramsPagination,
-        });
-        setData(response.data.data);
-
-        if (params?.pageSize && params?.current) {
-            setParamsPagination({ limit: params.pageSize, start: params.current });
-        }
-        setPagination({ total: response.data.total, showSizeChanger: true });
-    };
-
-    useEffect(() => {
-        search();
-    }, []);
+    const [loading, setLoading] = useState(false);
 
     const importUsers = async () => {
-        const response = await axios({
-            method: "post",
-            url: `/importUsers`,
-        });
-        search();
+        setLoading(true);
+        try {
+            await axios({
+                method: "post",
+                url: `/importUsers`,
+            });
+        } catch (ex) {
+            console.error(ex);
+        }
+        setLoading(false);
     };
 
     return (
@@ -54,7 +30,8 @@ const UsersConfig = () => {
                 </Button>
             </Popconfirm>
 
-            <ModelAdmin model="users_config" />
+            {!loading && <ModelAdmin model="users_config" />}
+            {loading && <div>Realizando importación...</div>}
         </>
     );
 };
