@@ -66,6 +66,11 @@ exports.up = async function (knex) {
             table.unique(["document_type", "code"]);
         });
     }
+
+
+    await knex.from('organization').update({document_type: 'organization'});
+    await knex.from('users').update({document_type: 'user'});
+    await knex.from('profile').update({document_type: 'profile'});
 };
 
 exports.down = async function (knex) {

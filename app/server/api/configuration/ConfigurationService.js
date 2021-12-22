@@ -74,6 +74,8 @@ export class ConfigurationService extends BaseService {
         if (!filters.sort) {
             // filters.sort = { field: "code", direction: "ascend" };
         }
+        filters[`${model.data.table}.document_type`] = model.data.documentType;
+
         let res = await super.listWithRelations(filters, start, limit, relations, selectQuery);
 
         res.data.forEach((element) => {
