@@ -121,6 +121,7 @@
     "packages": {
         "configure": "Configurar",
         "contexts": "Contextos",
+        "dependencies": "Dependencias",
         "integrations": "Integraciones",
         "methods": "Métodos",
         "node_types": "Tipos de nodo",

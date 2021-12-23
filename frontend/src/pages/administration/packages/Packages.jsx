@@ -18,6 +18,31 @@ export default function Packages({ history }) {
         return <Spin></Spin>;
     }
 
+    const renderExpandable = (packageData) => {
+        let dataSource = (packageData.dependencies || []).map((dependecy) => ({
+            code: dependecy[0],
+            version: dependecy[1],
+        }));
+        return (
+            <Row style={{ margin: "10px" }}>
+                <Col span={12}>
+                    <Table
+                        bordered
+                        size="small"
+                        columns={[
+                            ,
+                            { title: "Pakcage", key: "code", dataIndex: "code" },
+                            { title: "Version", key: "version", dataIndex: "version" },
+                        ]}
+                        dataSource={dataSource}
+                        title={() => T.translate("packages.dependencies")}
+                        pagination={false}
+                    />
+                </Col>
+            </Row>
+        );
+    };
+
     const columns = [
         {
             title: "Id",
@@ -59,7 +84,7 @@ export default function Packages({ history }) {
                             size="small"
                             bordered
                             expandable={{
-                                expandedRowRender: (packageData) => <p>{packageData.dependencies}</p>,
+                                expandedRowRender: renderExpandable,
                                 rowExpandable: (record) => true,
                             }}></Table>
                     </Col>
