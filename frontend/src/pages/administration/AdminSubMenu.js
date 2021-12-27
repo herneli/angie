@@ -23,7 +23,7 @@ const AdminSubMenu = (props) => {
     };
 
     const getSubMenu = async () => {
-        if (props.parent) {
+        if (props.parent && keycloak &&  keycloak.tokenParsed && keycloak.tokenParsed.sub) {
             let data =  await MenuHandler.drawSubMenu(props.parent,null,keycloak.tokenParsed.sub)
             setPaintedMenu(data)
         }

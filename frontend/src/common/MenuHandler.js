@@ -14,37 +14,41 @@ export default class MenuHandler {
     };
 
     static drawSubMenu = async (item, menuLoaded, id) => {
-        let submenu = [];
-        let menu = [];
-        menu = await this.checkAllowedSections(id);
+        try {
+             let submenu = [];
+             let menu = [];
+             menu = await this.checkAllowedSections(id);
 
-        if (menu && menu.length > 0) {
-            let menuObject = menu.filter((element) => element.value == item);
-            menuObject.forEach((menuEntry) => {
-                if (menuEntry.children) {
-                    menuEntry.children.forEach((item) => {
-                        let fmenu = [];
-                        if (item.children && item.children.length > 0) {
-                            item.children.forEach((childMenu) => {
-                                fmenu.push(this.drawItem(childMenu));
-                            });
-                            if (fmenu.length > 0) {
-                                submenu.push(
-                                    <SubMenu key={item.title} icon={<Icon size={1} />} title={item.title}>
-                                        {fmenu}
-                                    </SubMenu>
-                                );
-                            }
-                        } else {
-                            submenu.push(this.drawItem(item));
-                        }
-                    });
-                }
-            });
-            return submenu;
-        }
-
+             if (menu && menu.length > 0) {
+                 let menuObject = menu.filter((element) => element.value == item);
+                 menuObject.forEach((menuEntry) => {
+                     if (menuEntry.children) {
+                         menuEntry.children.forEach((item) => {
+                             let fmenu = [];
+                             if (item.children && item.children.length > 0) {
+                                 item.children.forEach((childMenu) => {
+                                     fmenu.push(this.drawItem(childMenu));
+                                 });
+                                 if (fmenu.length > 0) {
+                                     submenu.push(
+                                         <SubMenu key={item.title} icon={<Icon size={1} />} title={item.title}>
+                                             {fmenu}
+                                         </SubMenu>
+                                     );
+                                 }
+                             } else {
+                                 submenu.push(this.drawItem(item));
+                             }
+                         });
+                     }
+                 });
+                 return submenu;
+             }
         return [];
+        } catch (error) {
+            console.log(error)
+        }
+       
     };
 
     static drawItem = (item) => {
@@ -54,6 +58,15 @@ export default class MenuHandler {
             </Menu.Item>
         );
     };
+
+    static async hasRealmRoleForPath(id, path) {
+        const data = await axios.post("/isPathAvailable", { id: id, path: path });
+        if (data.status === 200) {
+            return data.data.data;
+        } else {
+            return [];
+        }
+    }
 
     static async getMenu(id, keycloak) {
         let itemsAuthorized = [];
@@ -71,14 +84,15 @@ export default class MenuHandler {
                     );
                 }
             }
-        }  
-        
+        }
+
         return itemsAuthorized;
     }
 
     static async checkAllowedSections(id) {
         try {
-            const data = await axios.post("profile/permissions", { id: id });
+            const data = await axios.post("/getAllowedSectionBasedOnRole", { id: id });
+     
             if (data.status === 200) {
                 return data.data.data;
             } else {

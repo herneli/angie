@@ -11,7 +11,7 @@ import { IntegrationChannelController } from "./app/server/api/integration_chann
 import { OrganizationController } from "./app/server/api/organization";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
-import { ProfileController } from "./app/server/api/profile/ProfileController";
+import { SectionController } from "./app/server/api/section/SectionController";
 
 import { contentSecurityPolicy } from "helmet";
 
@@ -80,7 +80,7 @@ module.exports = async () => {
         new OrganizationController(),
         new ConfigurationController(),
         new ScriptController(),
-        new ProfileController(),
+        new SectionController(),
     ];
 
     const directives = {
@@ -110,8 +110,15 @@ module.exports = async () => {
 
     //Arrancar la aplicacion
     await App.start();
-
     App.server.on("listening", () => {
         console.log("Server Ready to Serve 😄");
-    });
+
+
+        console.log("Import Users From Keycloak");
+
+        App.events.emit("config_import_users");
+
+        console.log("Import Process has being completed.");
+
+    }); 
 };

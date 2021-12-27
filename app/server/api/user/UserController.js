@@ -38,6 +38,10 @@ export class UserController extends BaseController {
             this.updateUser(data.model, data.body, data.id);
         });
 
+        App.events.on("config_import_users", () => {
+            this.importUsers(null, null, null);
+        });
+        
         return this.router;
     }
 
@@ -100,7 +104,7 @@ export class UserController extends BaseController {
                         id: e.id,
                         document_type: "user",
                         code: e.username,
-                        data: e,
+                        data: { ...exists.data, ...e },
                     };
                     r = { ...exists, ...r };
                     let update = await bServ.update(r.id, r);
@@ -116,10 +120,11 @@ export class UserController extends BaseController {
             }
 
             let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
-            jsRes.success = false;
-            jsRes.message = users;
-            response.json(jsRes);
+            jsRes.success = false
+            jsRes.message = users
+            response ? response.json(jsRes) : null;
         } catch (e) {
+            console.log("Error on keycloak user imports")
             next(e);
         }
     }

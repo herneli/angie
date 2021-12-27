@@ -119,6 +119,7 @@
         "users": "Usuarios",
         "profiles": "Perfiles",
         "organization": "Organizaciones",
+        "sections": "Secciones",
         "integration": "Integraciones",
         "node_type": "Tipos Nodos ",
         "camel_component": "Componentes Camel",

@@ -52,7 +52,6 @@ class App extends Component {
         console.log("onKeycloakTokens", tokens);
         localStorage.setItem("tokenJWT", tokens.token);
         if(tokens.idToken != undefined){
-            console.log("loaded")
             this.setState({
                 tokenLoaded: true,
             });

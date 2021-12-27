@@ -1,24 +1,29 @@
 import { Layout } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router";
 import { PrivateRoute } from "../../components/security/PrivateRoute";
 import SubMenu from "./AdminSubMenu";
+import { Redirect } from 'react-router-dom';
 
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import Script from "../../pages/script/Script";
 import UsersConfig from "./Users/UsersConfig";
 import Integration from "./integration/Integration";
 import Integrations from "./integration/Integrations";
-import OrganizationConfig from "./organization/OrganizationConfig";
+import MenuHandler from "../../common/MenuHandler";
+import { useKeycloak } from "@react-keycloak/web";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
+    const { keycloak } = useKeycloak();
+    let allowed;
     const defaultProps = {
         app: app,
     };
+
     return (
         <Layout>
-            <SubMenu parent={"/admin"}/>
+            <SubMenu parent={"/admin"} />
 
             <Layout>
                 <Content>
@@ -33,6 +38,7 @@ const Administration = ({ app }) => {
                             path="/admin/integration/:id"
                             render={({ match }) => <Integration match={match} {...defaultProps} />}
                         />
+
                         <Route
                             exact
                             path="/admin/users"
@@ -45,8 +51,8 @@ const Administration = ({ app }) => {
                         />
                         <Route
                             exact
-                            path="/admin/profiles"
-                            render={({ match }) => <ModelAdmin match={match} model="profile_config" />}
+                            path="/admin/sections"
+                            render={({ match }) => <ModelAdmin match={match} model="section_config" />}
                         />
 
                         {/* <Route
@@ -63,6 +69,7 @@ const Administration = ({ app }) => {
                         <PrivateRoute
                             roles={["default-roles-angie"]}
                             path="/admin/node_type"
+                            allowed={false}
                             component={() => <ModelAdmin model="node_type" />}
                             {...defaultProps}
                         />

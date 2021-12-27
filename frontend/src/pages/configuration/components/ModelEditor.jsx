@@ -4,6 +4,7 @@ import Form from "@rjsf/antd";
 import { Button, Row, Space } from "antd";
 import T from "i18n-react";
 import { useEffect } from "react";
+import axios from "axios";
 import formConfig from "../../../components/rjsf";
 
 const useStyles = createUseStyles({
@@ -33,10 +34,38 @@ export default function ModelEditor({
         window.scrollTo(0, 0);
     }, []);
 
+    useEffect(() => {
+        async function asyncloadEnum() {
+            await loadEnum(uiSchema,schema)
+        }
+        schema = asyncloadEnum()
+
+    }, [schema]);
+
     const handleOnSave = (event) => {
         onSave(event.formData);
         onCancel();
     };
+
+    //Encargado de cargar los enum si esta especificado el ""ui:url" actualmente solo funciona en la creación
+    const loadEnum = async (uiSchema,schema) => {
+        if(uiSchema){
+            Object.values(uiSchema).forEach(async (uiSchemaItem) => {
+                
+                if (uiSchemaItem && uiSchemaItem["ui:url"]) {
+                    let response = await axios.get(uiSchemaItem["ui:url"]);
+                    if ((response.success = "true")) {
+                        let enumOpts = response.data.data.map((item) => item.name);
+                        schema.properties["roles"].items.enum = enumOpts;
+                    }
+                }
+            });
+            return schema;
+        }else{
+            return schema;
+        }
+    };
+
     return (
         <div className={classes.tableWrapper}>
             <Button onClick={onCancel}>

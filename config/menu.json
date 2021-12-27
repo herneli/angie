@@ -19,7 +19,7 @@
         "value": "/admin/gestion",
         "children": [
             { "value": "/admin/users", "title": "administration.users" },
-            { "value": "/admin/profiles", "title": "administration.profiles" },
+            { "value": "/admin/sections", "title": "administration.sections" },
             { "value": "/admin/organization", "title": "administration.organization" }
         ]
     },
