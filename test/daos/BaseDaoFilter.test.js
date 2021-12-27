@@ -243,4 +243,20 @@ describe("parseFiltersObject (BaseDao)", () => {
         expect(result.query.wildcard).to.have.property("field");
         expect(result.query.wildcard.field).to.be.equal("*A*");
     });
+
+    it("Query_string", async () => {
+        const result = await elm.parseFiltersObject(
+            {
+                field: { type: "query_string", value: "field:value" },
+            },
+            10,
+            1
+        );
+
+        expect(result.query).to.have.property("bool");
+        expect(result.query.bool).to.have.property("filter");
+        expect(result.query.bool.filter).to.have.property("query_string");
+        expect(result.query.bool.filter.query_string).to.have.property("query");
+        expect(result.query.bool.filter.query_string.query).to.be.equal("field:value");
+    });
 });

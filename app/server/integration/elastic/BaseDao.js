@@ -142,6 +142,9 @@ export default class BaseDao {
                             body.query("range", index, { lte: element.end });
                         }
                         break;
+                    case "query_string":
+                        body.andFilter("query_string", "query", element.value);
+                        break;
                     // case "jsonb":
                     //     break;
                     case "greater":
