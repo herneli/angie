@@ -1,16 +1,14 @@
-
-import bodybuilder from 'bodybuilder'
-import ElasticConnector from './ElasticConnector';
+import bodybuilder from "bodybuilder";
+import ElasticConnector from "./ElasticConnector";
 
 //TODO improve, test and refactor!
 export default class BaseDao {
-    tableName = ''
-    documentType = ''
+    tableName = "";
+    documentType = "";
 
     constructor() {
         //ElasticConnector
     }
-
 
     count(filter) {
         if (!filter) {
@@ -41,7 +39,8 @@ export default class BaseDao {
         if (limit) {
             params.size = limit;
         }
-        if (filter.withoutSource) { //Parametro utilizado para que las querys no lleven el source
+        if (filter.withoutSource) {
+            //Parametro utilizado para que las querys no lleven el source
             delete filter.withoutSource;
             params._source = false;
         }
@@ -71,18 +70,18 @@ export default class BaseDao {
             type: this.documentType,
             version: true,
             body: {
-                "from": 0,
-                "size": 1,
-                "query": {
-                    "bool": {
-                        "filter": {
-                            "term": {
-                                "_id": identifier
-                            }
-                        }
-                    }
+                from: 0,
+                size: 1,
+                query: {
+                    bool: {
+                        filter: {
+                            term: {
+                                _id: identifier,
+                            },
+                        },
+                    },
                 },
-            }
+            },
         });
         const data = response.body;
         if (data.hits.total === 0) {
@@ -94,13 +93,12 @@ export default class BaseDao {
         return order;
     }
 
-
     remove(identifier) {
         return ElasticConnector.getConnection().delete({
             index: this.tableName,
             type: this.documentType,
             refresh: true,
-            id: identifier
+            id: identifier,
         });
     }
 
@@ -119,164 +117,106 @@ export default class BaseDao {
     createAlias(index, name, writable) {
         return ElasticConnector.getConnection().indices.updateAliases({
             body: {
-                "actions": [
-                    { "add": { "index": index, "alias": name, "is_write_index": writable } }
-                ]
-            }
+                actions: [{ add: { index: index, alias: name, is_write_index: writable } }],
+            },
         });
     }
 
-
     parseFiltersObject(filter, size, from) {
-        //TODO refactor!
-        const res = {};
-        var body = new bodybuilder();
-        delete filter._dc;
-        for (var idx in filter) {
+        const body = new bodybuilder();
 
-            var elm = filter[idx];
-            if (elm === "" || idx === 'sort') continue;
-            var type = idx.substring(idx.length - 1);
-            if (type === 'F' || type === 'T') { //Las fechas en rango vendran como claveF o claveT
-                if (!res.range) {
-                    res.range = {};
-                }
-                idx = idx.substring(0, idx.length - 1);
-                switch (type) {
-                    case 'F':
-                        if (!res.range[idx]) {
-                            res.range[idx] = {};
+        for (let index in filter) {
+            const element = filter[index];
+            if (typeof element === "object") {
+                switch (element.type) {
+                    //TODO: Añadir más opciones
+                    case "date":
+                    case "between":
+                        if (element.start && element.end) {
+                            body.query("range", index, { gte: element.start, lte: element.end });
                         }
-                        res.range[idx].gte = elm;
-                        break;
-                    case 'T':
-                        if (!res.range[idx]) {
-                            res.range[idx] = {};
+                        if (element.start && !element.end) {
+                            body.query("range", index, { gte: element.start });
                         }
-                        res.range[idx].lte = elm;
+                        if (!element.start && element.end) {
+                            body.query("range", index, { lte: element.end });
+                        }
                         break;
+                    // case "jsonb":
+                    //     break;
+                    case "greater":
+                        body.query("range", index, { gt: element.value });
+                        break;
+                    case "greaterEq":
+                        body.query("range", index, { gte: element.value });
+                        break;
+                    case "less":
+                        body.query("range", index, { lt: element.value });
+                        break;
+                    case "lessEq":
+                        body.query("range", index, { lte: element.value });
+                        break;
+                    case "exists":
+                    case "notnull":
+                        body.query("exists", index, element.value);
+                        break;
+                    case "notExists":
+                        body.notQuery("exists", index, element.value);
+                        break;
+                    case "exact":
+                        body.filter("term", index, element.value);
+                        break;
+                    case "in":
+                    case "terms":
+                        if (element.value && Array.isArray(element.value)) {
+                            body.filter("terms", index, element.value.join().toLowerCase().split(","));
+                        } else if (element.value && element.toLowerCase) {
+                            body.filter("terms", index, [element.value.toLowerCase()]);
+                        } else if (element.value) {
+                            body.filter("terms", index, [element.value]);
+                        }
+                        break;
+                    case "termsi":
+                        Array.isArray(element.value)
+                            ? body.filter("terms", index, element.value.join().split(","))
+                            : body.filter("terms", index, [element.value]);
+                        break;
+
+                    case "not":
+                        body.notFilter("term", index, element.value);
+                        break;
+                    case "like":
+                    case "wildcard":
+                        body.query("wildcard", index, "*" + element.value.toLowerCase() + "*");
+                        break;
+                    case "likeI":
+                        body.query("wildcard", index, "*" + element.value + "*");
+                        break;
+                    //  case "null":
+                    //TODO: Revisar null_value
+                    //
+                    //     break;
                 }
             } else {
-                var idxArr = idx.split("##");
-                idx = idxArr[0];
-                var filterType = "";
-                if (idxArr.length > 1) {
-                    filterType = idxArr[1];
-                }
-                if (!filterType && idx == 'patient_fullname') {
-                    filterType = 'wildcard';
-                }
-
-                switch (filterType) {
-                    case 'query_string':
-                        body.andFilter('query_string', idx, elm);
-                        break;
-                    case 'exist':
-                        if (elm && elm != "null") {
-                            body.filter('exists', idx);
-                        } else {
-                            body.notFilter('exists', idx);
-                        }
-                        break;
-                    case 'multiOr':
-                        for (var i in elm) {
-                            var item = elm[i];
-                            body.orFilter('match', idx, item);
-                        }
-                        break;
-                    case 'multiTerm':
-                        for (var i in elm) {
-                            var item = elm[i];
-                            body.orFilter('match', idx, item);
-                        }
-                        break;
-                    case 'terms':
-                        if (elm && Array.isArray(elm)) {
-                            body.filter('terms', idx, elm.join().toLowerCase().split(','));
-                        } else if (elm && elm.toLowerCase) {
-                            body.filter('terms', idx, [elm.toLowerCase()]);
-                        } else if (elm) {
-                            body.filter('terms', idx, [elm]);
-                        }
-                        break;
-                    //Como terms pero ignorando el case change
-                    case 'termsi':
-                        Array.isArray(elm) ? body.filter('terms', idx, elm.join().split(',')) : body.filter('terms', idx, [elm]);
-                        break;
-                    case 'wildcard':
-                        //Se filtra la propiedad not analized (widget)
-                        body.query('wildcard', idx, "*" + elm.toLowerCase() + "*");
-                        break;
-                    case 'orGroup':
-                        body.andFilter('bool', function (orGroup) {
-                            if (Array.isArray(elm)) {
-                                for (var i in elm) {
-                                    var item = elm[i];
-                                    orGroup.orFilter('match', idx, item);
-                                }
-                            } else {
-                                orGroup.orFilter('match', idx, elm);
-                            }
-                            return orGroup;
-                        });
-                        break;
-                    case 'andGroup':
-                        body.andFilter('bool', function (orGroup) {
-                            for (var i in elm) {
-                                var item = elm[i];
-                                orGroup.orFilter('match', idx, item);
-                            }
-                            return orGroup;
-                        });
-                        break;
-                    case 'orGroupMulti':
-                        body.andFilter('bool', function (orGroup) {
-                            if (Array.isArray(elm)) {
-                                for (var i in elm) {
-                                    var item = elm[i];
-                                    orGroup.orFilter('match', Object.keys(item)[0], item[Object.keys(item)[0]]);
-                                    orGroup.orFilter('multi_match', 'fields', [Object.keys(item)[1]], { 'query': item[Object.keys(item)[1]] });
-                                }
-                            } else {
-                                orGroup.orFilter('match', idx, elm);
-                            }
-                            return orGroup;
-                        });
-                        break;
-                    case "term":
-                        body.filter('term', idx, elm);
-                        break;
-                    default:
-                        body.filter('match', idx, elm);
-
-                }
+                //Si el valor no es un objeto se hace una comparación del campo con el valor
+                body.filter("term", index, element);
             }
         }
-        //Se recorren todos los rangos y se añaden a la query
-        if (Object.keys(res).length > 0 &&
-            Object.keys(res.range).length > 0) {
-            for (var key in res.range) {
-                body.filter('range', key, res.range[key]);
-            }
-        }
-        var result = body.size(size).from(from).build('v2');
+        const result = body.size(size).from(from).build("v2");
         return result;
     }
-
 
     parseSorts(sorts) {
         const result = [];
         let parsedSorts = sorts;
         try {
             parsedSorts = JSON.parse(sorts);
-        } catch (e) {
-
-        }
+        } catch (e) {}
         for (const idx in parsedSorts) {
             const elm = parsedSorts[idx];
             let obj = {};
             obj[elm.property] = {
-                order: elm.direction.toLowerCase()
+                order: elm.direction.toLowerCase(),
             };
             result.push(obj);
         }
@@ -290,34 +230,39 @@ export default class BaseDao {
             type: this.documentType ? this.documentType : data.type,
             refresh: true,
             id: id,
-            body: data
+            body: data,
         });
     }
 
     updateDocument(tableName, documentType, id, data, version) {
-
         return ElasticConnector.getConnection().update({
             index: tableName,
             type: documentType,
             refresh: true,
             id: id,
-            _source: 'true',
+            _source: "true",
             //version: version,
             retry_on_conflict: 3,
             body: {
-                doc: data
-            }
+                doc: data,
+            },
         });
     }
 
     async addOrUpdateDocumentNoMerge(id, data) {
-        if (!id) return callback('Id cannot be undefined');
+        if (!id) return callback("Id cannot be undefined");
 
         try {
-            const indexedData = await this.get(id)
-            return this.updateDocument(self.tableName ? self.tableName : indexedData._index, self.documentType ? self.documentType : indexedData._type, id, data, indexedData._version);
+            const indexedData = await this.get(id);
+            return this.updateDocument(
+                self.tableName ? self.tableName : indexedData._index,
+                self.documentType ? self.documentType : indexedData._type,
+                id,
+                data,
+                indexedData._version
+            );
         } catch (err) {
-            if (err && err.displayName == 'NotFound') {
+            if (err && err.displayName == "NotFound") {
                 return this.addDocument(id, data);
             }
 
@@ -325,4 +270,3 @@ export default class BaseDao {
         }
     }
 }
-
