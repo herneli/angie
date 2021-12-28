@@ -9,18 +9,10 @@ import T from "i18n-react";
 import { useHistory } from "react-router";
 import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
-import {
-    mdiContentCopy,
-    mdiDelete,
-    mdiDownload,
-    mdiPencil,
-    mdiPlayCircle,
-    mdiPlus,
-    mdiStopCircle,
-    mdiUpload,
-} from "@mdi/js";
+import { mdiCancel, mdiCheck, mdiContentCopy, mdiDelete, mdiDownload, mdiPencil, mdiPlus, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "./ChannelActions";
+import { usePackage } from "../../../components/packages/PackageContext";
 
 const useStyles = createUseStyles({
     card: {
@@ -39,12 +31,13 @@ const useStyles = createUseStyles({
     },
 });
 
-const channelActions = new ChannelActions();
+// const channelActions = new ChannelActions();
 
-const Integrations = () => {
+const Integrations = ({ packageUrl }) => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
+    let packageData = usePackage();
 
     const [pagination, setPagination] = useState({});
 
@@ -58,7 +51,7 @@ const Integrations = () => {
 
     const startEdit = (record) => {
         history.push({
-            pathname: "/admin/integration/" + record.id,
+            pathname: packageUrl + "/integrations/" + record.id,
             state: {
                 record: record,
             },
@@ -89,6 +82,12 @@ const Integrations = () => {
             filters.limit = pagination.pageSize ? pagination.pageSize : 10;
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
+        }
+        if (packageData) {
+            filters[["package_code", "package_version"]] = {
+                type: "in",
+                value: [[packageData.currentPackage.code, packageData.currentPackage.version]],
+            };
         }
 
         if (sorts) {
@@ -214,7 +213,7 @@ const Integrations = () => {
         });
         return (
             <Space size="middle">
-                {record.status === "Started" && (
+                {/* {record.enabled && record.status === "Started" && (
                     <Popconfirm
                         title={T.translate("common.question")}
                         onConfirm={async () => {
@@ -235,7 +234,7 @@ const Integrations = () => {
                         />
                     </Popconfirm>
                 )}
-                {record.status !== "Started" && (
+                {record.enabled && record.status !== "Started" && (
                     <Button
                         key="deploy"
                         type="text"
@@ -252,7 +251,7 @@ const Integrations = () => {
                             />
                         }
                     />
-                )}
+                )} */}
             </Space>
         );
     };
@@ -324,13 +323,28 @@ const Integrations = () => {
             align: "center",
             width: 60,
             render: (text, record) => {
-                if (record.channels) return;
+                if (!record.channels)
+                    return (
+                        <div>
+                            {!record.enabled && (
+                                <Icon path={mdiCancel} size={0.6} color="red" title={T.translate("common.disabled")} />
+                            )}
+                            {record?.enabled && (
+                                <Icon path={mdiCheck} size={0.6} color="green" title={T.translate("common.enabled")} />
+                            )}
+                        </div>
+                    );
                 return (
                     <div>
-                        {!record.enabled && <span>DISABLED</span>}
-                        {record.enabled && text === "Started" && <span title={text}>🟢</span>}
+                        {!record?.deployment_config?.enabled && (
+                            <Icon path={mdiCancel} size={0.6} color="red" title={T.translate("common.disabled")} />
+                        )}
+                        {record?.deployment_config?.enabled && (
+                            <Icon path={mdiCheck} size={0.6} color="green" title={T.translate("common.enabled")} />
+                        )}
+                        {/* {record.enabled && text === "Started" && <span title={text}>🟢</span>}
                         {record.enabled && text === "UNDEPLOYED" && <span title={text}>🔴</span>}
-                        {record.enabled && text === "Stopped" && <span title={text}>🟠</span>}
+                        {record.enabled && text === "Stopped" && <span title={text}>🟠</span>} */}
                     </div>
                 );
             },
@@ -344,36 +358,36 @@ const Integrations = () => {
                 return text;
             },
         },
-        {
-            title: T.translate("integrations.columns.messages_sent"),
-            dataIndex: "messages_sent",
-            key: "messages_sent",
-            width: 100,
-            render: (text, record) => {
-                if (record.channels) return;
-                return text;
-            },
-        },
-        {
-            title: T.translate("integrations.columns.messages_error"),
-            dataIndex: "messages_error",
-            key: "messages_error",
-            width: 100,
-            render: (text, record) => {
-                if (record.channels) return;
-                return text;
-            },
-        },
-        {
-            title: T.translate("integrations.columns.messages_total"),
-            dataIndex: "messages_total",
-            key: "messages_total",
-            width: 100,
-            render: (text, record) => {
-                if (record.channels) return;
-                return text;
-            },
-        },
+        // {
+        //     title: T.translate("integrations.columns.messages_sent"),
+        //     dataIndex: "messages_sent",
+        //     key: "messages_sent",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
+        // {
+        //     title: T.translate("integrations.columns.messages_error"),
+        //     dataIndex: "messages_error",
+        //     key: "messages_error",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
+        // {
+        //     title: T.translate("integrations.columns.messages_total"),
+        //     dataIndex: "messages_total",
+        //     key: "messages_total",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
         {
             title: T.translate("integrations.columns.last_updated"),
             dataIndex: "last_updated",
@@ -401,7 +415,7 @@ const Integrations = () => {
 
     const addIntegration = () => {
         history.push({
-            pathname: "/admin/integration/new",
+            pathname: packageUrl + "/integrations/new",
             state: {
                 new: true,
                 record: {

@@ -6,7 +6,8 @@ export default class JumDao {
         this.jum_url = App.settings.getConfigValue("core:jum:url");
     }
 
-    async deployRoute(id, content, options) {
+    async deployChannel(id, content, options) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -23,7 +24,8 @@ export default class JumDao {
         return response.data;
     }
 
-    async undeployRoute(id) {
+    async undeployChannel(id) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -36,6 +38,7 @@ export default class JumDao {
     }
 
     async startRoute(id) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -48,6 +51,7 @@ export default class JumDao {
     }
 
     async stopRoute(id) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -60,10 +64,10 @@ export default class JumDao {
     }
 
     async getRouteStatus(id) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
-        console.log("obteniendo estado canal");
         const response = await axios.get(this.jum_url + "/get/" + id);
 
         if (response.status != 200) {
@@ -73,6 +77,7 @@ export default class JumDao {
     }
 
     async list() {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -97,6 +102,7 @@ export default class JumDao {
     }
 
     async getRouteLogs(id) {
+        console.log('Este metodo esta "deprecated"')
         if (!this.jum_url) {
             return null;
         }
@@ -109,6 +115,8 @@ export default class JumDao {
     }
 
     async sendMessageToRoute(id, endpoint, content) {
+        console.log('Este metodo esta "deprecated"')
+        
         if (!this.jum_url) {
             return null;
         }
@@ -123,5 +131,4 @@ export default class JumDao {
         return response.data;
     }
 
-    getRouteStats(id) {}
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "add80922-0ba9-4658-b576-5ef8d20f527f",
+    "code": "admin",
+    "icon": "mdiSourceBranch",
+    "roles": [
+      "admin"
+    ],
+    "title": "Administracion",
+    "value": "/admin"
+  },
+  {
+    "code": "packages",
+    "icon": "mdiPackageVariantClosed",
+    "roles": [
+      "admin"
+    ],
+    "title": "Packages",
+    "value": "/packages",
+    "id": "86f72d47-8845-4cda-9583-d8200b592862"
+  }
+]

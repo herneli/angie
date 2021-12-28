@@ -9,6 +9,7 @@ import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
 import { IntegrationChannelController } from "./app/server/api/integration_channel";
 import { OrganizationController } from "./app/server/api/organization";
+import { PackageController } from "./app/server/api/package";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
 import { SectionController } from "./app/server/api/section/SectionController";
@@ -16,6 +17,7 @@ import { SectionController } from "./app/server/api/section/SectionController";
 import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
+import { JUMAgentController } from "./app/server/api/jum_agents";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -80,6 +82,8 @@ module.exports = async () => {
         new OrganizationController(),
         new ConfigurationController(),
         new ScriptController(),
+        new PackageController(),
+        new JUMAgentController(),
         new SectionController(),
     ];
 

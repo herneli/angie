@@ -22,7 +22,17 @@ Generar las claves de privadas:
 > node .\execute.js --generateKeys
 ```
 
-Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`. **Es importante no perder estas claves ya que se utilizan para la encriptación de ciertas cadenas en la aplicación y sin ellas no podrán ser desencriptadas.**
+Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`. 
+> **Es importante no perder estas claves ya que se utilizan para la encriptación de ciertas cadenas en la aplicación y sin ellas no podrán ser desencriptadas.**
+
+
+Generar secret para JUM-Agents:
+
+```
+> node .\execute.js --jumSecret
+```
+
+Establecer la clave generada anteriormente en `JUM_AGENTS_SECRET` dentro del archivo `.env`.
 
 ## Docker Environment
 
@@ -57,6 +67,8 @@ processors=2 # Makes the WSL 2 VM use two virtual processors
 ```
 
 Con 3 Gb es suficiente para los contenedores actuales.
+
+> Despues de aplicar esta configuración es necesario reiniciar.
 
 ## Ejecutando la aplicación
 
@@ -111,6 +123,15 @@ Para crear nuevos archivos:
 > node knex-cli.js seed:make seed_name
 ```
 
+Dentro del sistema de seeds se ha creado un seed especial `default_data_load` encargado de cargar archivos JSON de la carpeta `seeds/data`.
+
+Este sistema utiliza un sistema en el que:
+- Cada carpeta dentro de `data` indica la tabla
+- Cada archivo json ha de llamarse con el siguiente patrón: 
+  `document_type[.xxxx].json`
+
+> Para mas información acceder al archivo `default_data_load` en el que se explica en profundidad.
+
 ### Compilación
 
 Para la generación de los distribuibles, es necesario ejecutar
@@ -153,6 +174,10 @@ Configuraciones necesarias:
 14. 14. En Client Roles seleccionar `realm_management`  
 15. Asociar el rol `view_users` mediante el botón **Add Selected**
 
+
+**Roles**
+16. Crear un Rol: 'admin' a nivel de Realm
+17. Asignar el usuario de la aplicación a dicho rol
 ## Tests
 
 La realización de tests se realiza utilizando la librería **mocha**, los ficheros se almacenan en la carpeta test
@@ -172,3 +197,11 @@ Se puede consultar en: http://localhost:3105/api-docs
 TODO
 
 **TODO** Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
+
+
+## Información Desarrollo
+
+El proyecto ha sido desarrollado utilizando el [Framework Lisco](http://github.com/landra-sistemas/lisco).
+
+En su repositorio se puede encontrar información al respecto.
+

@@ -48,4 +48,9 @@ before(async function () {
         on: () => {},
         emit: () => {},
     };
+    App.server = {
+        app: {
+            io: null,
+        },
+    };
 });

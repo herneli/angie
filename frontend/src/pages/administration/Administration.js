@@ -28,7 +28,7 @@ const Administration = ({ app }) => {
             <Layout>
                 <Content>
                     <Switch>
-                        <Route
+                        {/* <Route
                             exact
                             path="/admin/integration"
                             render={({ match }) => <Integrations match={match} {...defaultProps} />}
@@ -37,8 +37,7 @@ const Administration = ({ app }) => {
                             exact
                             path="/admin/integration/:id"
                             render={({ match }) => <Integration match={match} {...defaultProps} />}
-                        />
-
+                        /> */}
                         <Route
                             exact
                             path="/admin/users"
@@ -66,7 +65,7 @@ const Administration = ({ app }) => {
                             )}
                         /> */}
 
-                        <PrivateRoute
+                        {/* <PrivateRoute
                             roles={["default-roles-angie"]}
                             path="/admin/node_type"
                             allowed={false}
@@ -78,32 +77,7 @@ const Administration = ({ app }) => {
                             path="/admin/camel_component"
                             component={() => <ModelAdmin model="camel_component" />}
                             {...defaultProps}
-                        />
-
-                        <PrivateRoute
-                            roles={["default-roles-angie"]}
-                            path="/admin/config_method"
-                            component={() => <ModelAdmin model="script_method" />}
-                            {...defaultProps}
-                        />
-                        <PrivateRoute
-                            roles={["default-roles-angie"]}
-                            path="/admin/config_object"
-                            component={() => <ModelAdmin model="script_object" fixedData={{ customGroup: "" }} />}
-                            {...defaultProps}
-                        />
-                        <PrivateRoute
-                            roles={["default-roles-angie"]}
-                            path="/admin/config_context"
-                            component={() => <ModelAdmin model="script_context" />}
-                            {...defaultProps}
-                        />
-                        <PrivateRoute
-                            roles={["default-roles-angie"]}
-                            path="/admin/script/:code"
-                            component={Script}
-                            {...defaultProps}
-                        />
+                        /> */}
                     </Switch>
                 </Content>
             </Layout>

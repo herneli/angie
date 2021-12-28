@@ -40,6 +40,7 @@ import {
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
+import { usePackage } from "../../../components/packages/PackageContext";
 
 const { TabPane } = Tabs;
 
@@ -52,11 +53,21 @@ const integrationFormSchema = {
                 title: "Nombre",
                 type: "string",
             },
-            enabled: {
-                title: "Activo",
-                type: "boolean",
-                enum: [true, false],
-                enumNames: ["Si", "No"],
+            deployment_config: {
+                type: "object",
+                title: "",
+                properties: {
+                    organization_id: {
+                        type: "string",
+                        title: "Organización",
+                    },
+                    enabled: {
+                        title: "Activo",
+                        type: "boolean",
+                        enum: [true, false],
+                        enumNames: ["Si", "No"],
+                    },
+                },
             },
             description: {
                 title: "Descripción",
@@ -66,7 +77,14 @@ const integrationFormSchema = {
     },
     uiSchema: {
         name: { "ui:columnSize": 8 },
-        enabled: { "ui:columnSize": 4, "ui:widget": "select" },
+        deployment_config: {
+            organization_id: {
+                "ui:columnSize": "6",
+                "ui:widget": "SelectRemoteWidget",
+                "ui:selectOptions": "/configuration/model/organization_config/data#path=data&value=id&label=data.name",
+            },
+            enabled: { "ui:columnSize": 4, "ui:widget": "select" },
+        },
         description: { "ui:widget": "textarea" },
     },
 };
@@ -138,13 +156,14 @@ const editTabFormSchema = {
 };
 let channelActions;
 
-const Integration = () => {
+const Integration = ({ packageUrl }) => {
     const history = useHistory();
     const integForm = useRef(null);
     const editTabFormEl = useRef(null);
 
     const { state } = useLocation();
-    const { id } = useParams();
+    const { id, channel } = useParams();
+    const packageData = usePackage();
 
     const [currentIntegration, setCurrentIntegration] = useState(null);
     const [activeTab, setActiveTab] = useState();
@@ -161,6 +180,15 @@ const Integration = () => {
     useEffect(() => {
         loadNodeTypes();
     }, []);
+
+    /**
+     *
+     */
+    useEffect(() => {
+        if (channel) {
+            setTimeout(() => setActiveTab(channel), 300);
+        }
+    }, [channel]);
 
     /**
      * Interval para ir actualizando en tiempo real el estado de los canales
@@ -227,7 +255,12 @@ const Integration = () => {
      *
      */
     const loadNodeTypes = async () => {
-        const response = await axios.get("/configuration/model/node_type/data");
+        let filters = {};
+        filters[["package_code", "package_version"]] = {
+            type: "in",
+            value: packageData.dependencies,
+        };
+        const response = await axios.get("/configuration/model/node_type/data", { params: { filters } });
 
         if (response?.data?.success) {
             setNodeTypes(response?.data?.data);
@@ -332,7 +365,11 @@ const Integration = () => {
             const method = currentIntegration.id !== "new" ? "put" : "post";
             const response = await axios[method](
                 "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
-                currentIntegration
+                {
+                    ...currentIntegration,
+                    package_code: packageData.currentPackage.code,
+                    package_version: packageData.currentPackage.version,
+                }
             );
 
             if (response?.data?.success) {
@@ -340,7 +377,7 @@ const Integration = () => {
                 if (currentIntegration.id === "new") {
                     //Redirigir al nuevo identificador
                     history.push({
-                        pathname: "/admin/integration/" + response.data.data.id,
+                        pathname: packageUrl + "/integrations/" + response.data.data.id,
                     });
                 }
                 setCurrentIntegration(response.data.data.data);
@@ -634,7 +671,7 @@ const Integration = () => {
     };
 
     const drawIntegrationStatus = (integ) => {
-        if (integ?.enabled) {
+        if (integ?.deployment_config?.enabled) {
             return <Tag color="green">{T.translate("common.enabled")}</Tag>;
         }
         return <Tag color="red">{T.translate("common.disabled")}</Tag>;

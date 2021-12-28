@@ -32,7 +32,6 @@ const ButtonNode = (node) => {
     return (
         <div
             style={{
-                background: "white",
                 minHeight: 18,
             }}>
             <Handle type="source" position="right" isConnectable={isConnectable} />

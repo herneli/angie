@@ -86,6 +86,7 @@
     padding: 10px;
     text-align: center;
     width: 150px;
+    background-color: #fff;
 }
 
 .dndflow .react-flow__edge-path {

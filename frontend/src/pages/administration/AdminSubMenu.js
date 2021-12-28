@@ -1,31 +1,32 @@
-import { mdiAccountGroup, mdiConnection, mdiPalette } from "@mdi/js";
-import Icon from "@mdi/react";
 import { Layout, Menu } from "antd";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useKeycloak } from "@react-keycloak/web";
-import SubMenu from "antd/lib/menu/SubMenu";
-import T from "i18n-react";
 import MenuHandler from "../../common/MenuHandler";
 
-const AdminSubMenu = (props) => {
+const submenu = {
+    title: "Gestión",
+    icon: "mdiAccountGroup",
+    value: "/admin/gestion",
+    children: [
+        { value: "/admin/users", icon: "mdiAccount", title: "administration.users" },
+        { value: "/admin/sections", icon: "mdiLock", title: "administration.sections" },
+        {
+            value: "/admin/organization",
+            icon: "mdiOfficeBuilding",
+            title: "administration.organization",
+        },
+    ],
+};
+
+const AdminSubMenu = ({ parent }) => {
     const { Sider } = Layout;
-    const { SubMenu } = Menu;
     const { keycloak } = useKeycloak();
-    const [menu, setMenu] = useState([]);
     const [paintedMenu, setPaintedMenu] = useState([]);
 
-    const icons = {
-        mdiAccountGroup: mdiAccountGroup,
-        mdiConnection: mdiConnection,
-        mdiPalette: mdiPalette,
-    };
-
     const getSubMenu = async () => {
-        if (props.parent && keycloak &&  keycloak.tokenParsed && keycloak.tokenParsed.sub) {
-            let data =  await MenuHandler.drawSubMenu(props.parent,null,keycloak.tokenParsed.sub)
-            setPaintedMenu(data)
+        if (parent && keycloak && keycloak.tokenParsed && keycloak.tokenParsed.sub) {
+            let data = await MenuHandler.drawSubMenu({ children: [submenu] }, null, keycloak.tokenParsed.sub);
+            setPaintedMenu(data);
         }
     };
 

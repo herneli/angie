@@ -79,9 +79,9 @@ export default class ScriptManager {
         return this.language;
     }
 
-    getMembers(type, options) {
-        return getMembers(this.getLanguage(), type, options);
-    }
+    // getMembers(type, options) {
+    //     return getMembers(this.getLanguage(), type, options);
+    // }
 
     getStatementDOMId(statement) {
         return "statement-" + statement.id;

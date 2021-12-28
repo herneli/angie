@@ -1,5 +1,6 @@
 {
   "definitions": {},
+  "host": "localhost:3105",
   "info": {
     "title": "angie",
     "version": "1.0.0",
@@ -50,7 +51,26 @@
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "number",
+                  "example": 10
+                },
+                "start": {
+                  "type": "number",
+                  "example": 0
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -78,13 +98,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /user/list</pre>\n</body>\n</html>\n"
+            }
           }
         },
         "tags": [
           "user"
         ],
         "produces": [
-          "application/json"
+          "application/json",
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     },
@@ -1233,52 +1269,6 @@
         ]
       }
     },
-    "/integration/{id}/channel/{channel}/statistics": {
-      "get": {
-        "summary": "/integration/{id}/channel/{channel}/statistics",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "channel",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      },
-      "post": {
-        "summary": "/integration/{id}/channel/{channel}/statistics",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "channel",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "integration"
-        ]
-      }
-    },
     "/integration/{id}/channel/{channel}/log": {
       "get": {
         "summary": "/integration/{id}/channel/{channel}/log",
@@ -1868,61 +1858,6 @@
         ]
       }
     },
-    "/script/code/{code}": {
-      "get": {
-        "summary": "/script/code/{code}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "script"
-        ]
-      },
-      "post": {
-        "summary": "/script/code/{code}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "script"
-        ]
-      }
-    },
-    "/script/code/{code}/generate": {
-      "get": {
-        "summary": "/script/code/{code}/generate",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": [
-          "script"
-        ]
-      }
-    },
     "/script/code/{code}/execute": {
       "get": {
         "summary": "/script/code/{code}/execute",
@@ -1940,6 +1875,509 @@
         "tags": [
           "script"
         ]
+      }
+    },
+    "/packages": {
+      "get": {
+        "summary": "/packages",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {},
+                  "example": [
+                    null
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "0"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "304": {},
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "select count(\"id\") as \"total\" from \"package\" - relation \"package\" does not exist"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "summary": "/packages",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/list": {
+      "post": {
+        "summary": "/packages/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/{id}": {
+      "get": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent": {
+      "get": {
+        "summary": "/jum_agent",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/jum_agent",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/list": {
+      "post": {
+        "summary": "/jum_agent/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "joined_date": {
+                        "type": "string"
+                      },
+                      "approved": {
+                        "type": "boolean"
+                      },
+                      "approved_date": {
+                        "type": "null"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "meta": {
+                        "type": "object",
+                        "properties": {
+                          "ip": {
+                            "type": "string"
+                          },
+                          "platform": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": "e9cbba1d-88b1-461f-94a9-7f4e426ead3d",
+                      "joined_date": "2021-12-22T11:45:31.808Z",
+                      "approved": false,
+                      "approved_date": null,
+                      "name": "JUM1",
+                      "status": "online",
+                      "meta": {
+                        "ip": "::ffff:127.0.0.1",
+                        "platform": "Windows 10"
+                      }
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "IntegrationChannelService is not defined"
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/jum_agent/{id}": {
+      "get": {
+        "summary": "/jum_agent/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/jum_agent/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/jum_agent/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/{id}/approve": {
+      "put": {
+        "summary": "/jum_agent/{id}/approve",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/{id}/log": {
+      "get": {
+        "summary": "/jum_agent/{id}/log",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/section": {
+      "get": {
+        "summary": "/section",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/section",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/section/list": {
+      "post": {
+        "summary": "/section/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/section/{id}": {
+      "get": {
+        "summary": "/section/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/section/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/section/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/section/{role}/check_allowed": {
+      "post": {
+        "summary": "/section/{role}/check_allowed",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/section/{role}/path_allowed": {
+      "post": {
+        "summary": "/section/{role}/path_allowed",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/getRoles": {
+      "get": {
+        "summary": "/getRoles",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/getMenuConfiguration": {
+      "get": {
+        "summary": "/getMenuConfiguration",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "configuration"
+        ]
+      }
+    },
+    "/getAllowedSectionBasedOnRole": {
+      "post": {
+        "summary": "/getAllowedSectionBasedOnRole",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/isPathAvailable": {
+      "post": {
+        "summary": "/isPathAvailable",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
       }
     },
     "/profile": {
@@ -2055,6 +2493,124 @@
         ]
       }
     },
+    "/script/code/{code}": {
+      "get": {
+        "summary": "/script/code/{code}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      },
+      "post": {
+        "summary": "/script/code/{code}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/script/code/{code}/generate": {
+      "get": {
+        "summary": "/script/code/{code}/generate",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "script"
+        ]
+      }
+    },
+    "/jum_agent/{id}/toggle_approval": {
+      "put": {
+        "summary": "/jum_agent/{id}/toggle_approval",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/integration/{id}/channel/{channel}/statistics": {
+      "get": {
+        "summary": "/integration/{id}/channel/{channel}/statistics",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      },
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/statistics",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
     "/channel/{id}": {
       "post": {
         "summary": "/channel/{id}",
@@ -2095,6 +2651,16 @@
           "integration"
         ]
       }
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "authorization": {
+      "name": "authorization",
+      "in": "header",
+      "type": "apiKey"
     }
   },
   "swagger": "2.0",

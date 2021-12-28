@@ -1,0 +1,18 @@
+import { Utils, BaseService } from "lisco";
+import { PackageDao } from "./PackageDao";
+
+export class PackageService extends BaseService {
+    constructor() {
+        super(PackageDao);
+    }
+    async getPackage(code, version) {
+        return await this.dao.getPackage(code, version);
+    }
+
+    /**
+     * Obtencion de un elemento mediante su identificador
+     */
+     loadById(id) {
+        return this.dao.loadByCode(id);
+    }
+}

@@ -33,10 +33,7 @@
         "type": "object",
         "required": ["code", "name", "complexityLevel", "language", "parentType"],
         "properties": {
-            "code": {
-                "title": "Código",
-                "type": "string"
-            },
+            "code": { "title": "Código", "type": "string", "pattern": "^[a-zA-Z_$][a-zA-Z_$0-9]*$" },
             "name": {
                 "title": "Nombre",
                 "type": "string"
@@ -358,14 +355,14 @@
             "ui:columnSize": "6",
             "ui:withBorder": true,
             "objectCode": {
-                "ui:widget": "SelectRemoteWidget",
-                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                "ui:widget": "SelectRemoteWithPackageWidget",
+                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
-                    "ui:widget": "SelectRemoteWidget",
-                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    "ui:widget": "SelectRemoteWithPackageWidget",
+                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                 }
             }
         },
@@ -373,14 +370,14 @@
             "ui:columnSize": "6",
             "ui:withBorder": true,
             "objectCode": {
-                "ui:widget": "SelectRemoteWidget",
-                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                "ui:widget": "SelectRemoteWithPackageWidget",
+                "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
             },
             "items": {
                 "ui:withBorder": true,
                 "objectCode": {
-                    "ui:widget": "SelectRemoteWidget",
-                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                    "ui:widget": "SelectRemoteWithPackageWidget",
+                    "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                 }
             }
         },
@@ -426,14 +423,14 @@
                     "ui:columnSize": "12",
                     "ui:withBorder": true,
                     "objectCode": {
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                        "ui:widget": "SelectRemoteWithPackageWidget",
+                        "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                     },
                     "items": {
                         "ui:withBorder": true,
                         "objectCode": {
-                            "ui:widget": "SelectRemoteWidget",
-                            "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=code&label=data.name"
+                            "ui:widget": "SelectRemoteWithPackageWidget",
+                            "ui:selectOptions": "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name"
                         }
                     }
                 },

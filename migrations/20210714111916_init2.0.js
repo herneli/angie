@@ -37,7 +37,6 @@ exports.up = async function (knex) {
         });
     }
 
-
     if (!(await knex.schema.hasTable("config_model"))) {
         await knex.schema.createTable("config_model", function (table) {
             table.increments();
@@ -67,10 +66,9 @@ exports.up = async function (knex) {
         });
     }
 
-
-    await knex.from('organization').update({document_type: 'organization'});
-    await knex.from('users').update({document_type: 'user'});
-    await knex.from('profile').update({document_type: 'profile'});
+    await knex.from("organization").update({ document_type: "organization" });
+    await knex.from("users").update({ document_type: "user" });
+    await knex.from("profile").update({ document_type: "profile" });
 };
 
 exports.down = async function (knex) {

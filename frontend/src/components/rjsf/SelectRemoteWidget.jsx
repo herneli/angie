@@ -19,7 +19,7 @@ const processValue = (schema, value) => {
     if (value === "") {
         return undefined;
     } else if (type === "array" && items && nums.has(items.type)) {
-        console.log(value.map(asNumber))
+        console.log(value.map(asNumber));
         return value.map(asNumber);
     } else if (type === "boolean") {
         return value === "true";
@@ -40,8 +40,8 @@ const processValue = (schema, value) => {
     return value;
 };
 
-function getselectOptions(url, returnPath) {
-    return axios.get(url).then((response) => {
+function getselectOptions(url, filters, returnPath) {
+    return axios.get(url, { params: { filters: filters } }).then((response) => {
         if (!response || !response.data) {
             return [];
         }
@@ -55,7 +55,7 @@ function getselectOptions(url, returnPath) {
 export default class SelectRemoteWidget extends Component {
     state = { options: [] };
     componentDidMount() {
-        let { selectOptions } = this.props.options;
+        let { selectOptions, filters = null } = this.props.options;
         let valueField = "code";
         let labelField = "name";
         let path = null;
@@ -73,7 +73,7 @@ export default class SelectRemoteWidget extends Component {
                 labelField = config.label;
             }
         }
-        getselectOptions(url, path).then((entries) => {
+        getselectOptions(url, filters, path).then((entries) => {
             let options = entries.map((entry) => ({
                 value: get(entry, valueField),
                 label: get(entry, labelField) + " (" + get(entry, valueField) + ")",
@@ -82,11 +82,10 @@ export default class SelectRemoteWidget extends Component {
 
             this.setState({ ...this.state, options: options });
         });
-
     }
 
     handleOnChange = (value) => {
-        console.log(this.props)
+        console.log(this.props);
         this.props.onChange(processValue(this.props.schema, value));
     };
     handleOnBlur = (selectedValue) => {

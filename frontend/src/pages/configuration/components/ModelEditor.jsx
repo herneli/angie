@@ -22,13 +22,7 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function ModelEditor({
-    data,
-    schema,
-    uiSchema,
-    onCancel,
-    onSave,
-}) {
+export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave }) {
     const classes = useStyles();
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -44,7 +38,6 @@ export default function ModelEditor({
 
     const handleOnSave = (event) => {
         onSave(event.formData);
-        onCancel();
     };
 
     //Encargado de cargar los enum si esta especificado el ""ui:url" actualmente solo funciona en la creación
@@ -68,33 +61,24 @@ export default function ModelEditor({
 
     return (
         <div className={classes.tableWrapper}>
-            <Button onClick={onCancel}>
-                {T.translate("configuration.return")}
-            </Button>
-                <Form
-                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                    widgets={formConfig.widgets}
-                    schema={schema}
-                    uiSchema={uiSchema}
-                    formData={data}
-                    onSubmit={handleOnSave}
-                >
-                    <Row justify="end">
-                        <Space>
-                            <Button onClick={onCancel}>
-                                {T.translate("configuration.return")}
-                            </Button>
-                            <Button
-                                className={classes.rightActions}
-                                htmlType="submit"
-                                type="primary"
-                            >
-                                {T.translate("configuration.save")}
-                            </Button>
-                        </Space>
-                    </Row>
-                </Form>
+            <Button onClick={onCancel}>{T.translate("configuration.return")}</Button>
+            <Form
+                ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+                widgets={formConfig.widgets}
+                schema={schema}
+                uiSchema={uiSchema}
+                formData={data}
+                onSubmit={handleOnSave}>
+                <Row justify="end">
+                    <Space>
+                        <Button onClick={onCancel}>{T.translate("configuration.return")}</Button>
+                        <Button className={classes.rightActions} htmlType="submit" type="primary">
+                            {T.translate("configuration.save")}
+                        </Button>
+                    </Space>
+                </Row>
+            </Form>
         </div>
     );
 }

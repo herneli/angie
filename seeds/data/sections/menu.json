@@ -1,0 +1,33 @@
+[
+    {
+        "id": "51cacf54-eb49-4912-b856-c6a68b14dae1",
+        "code": "menu",
+        "menu": [
+            {
+                "title": "Integraciones",
+                "icon": "mdiSourceBranch",
+                "value": "/deployed/integrations"
+            },
+            {
+                "title": "Dashboard",
+                "icon": "mdiSourceBranch",
+                "value": "/dashboard"
+            },
+            {
+                "title": "Agents",
+                "icon": "mdiMonitor",
+                "value": "/agents"
+            },
+            {
+                "title": "Administracion",
+                "icon": "mdiSourceBranch",
+                "value": "/admin"
+            },
+            {
+                "title": "Packages",
+                "icon": "mdiPackageVariantClosed",
+                "value": "/packages"
+            }
+        ]
+    }
+]

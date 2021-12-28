@@ -75,6 +75,13 @@
             "message": "Existen cambios pendientes, si continúa sus cambios se perderán, ¿Esta Seguro?"
         }
     },
+    "agents": {
+        "columns": {
+            "name": "Nombre",
+            "status": "Estado",
+            "approved": "Aprobado"
+        }
+    },
     "integrations": {
         "integration_form_title": "Integración: {name}",
         "integration_edit_title": "Editando elemento",
@@ -127,6 +134,17 @@
         "config_method": "Métodos",
         "config_object": "Objetos",
         "test_groovy": "Script"
+    },
+    "packages": {
+        "configure": "Configurar",
+        "contexts": "Contextos",
+        "dependencies": "Dependencias",
+        "integrations": "Integraciones",
+        "methods": "Métodos",
+        "node_types": "Tipos de nodo",
+        "camel_components": "Componentes camel",
+        "objects": "Objetos",
+        "select_package": "Seleccione un paquete"
     },
     "configuration": {
         "actions": "Acciones",

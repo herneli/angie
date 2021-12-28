@@ -168,13 +168,11 @@ describe("IntegrationController", async () => {
         const response = new fakeResponse();
         const request = new fakeRequest("POST", { id });
 
-        await controller.undeployIntegration(request, response, fakeNext);
-
-        let { data } = response;
-        expect(data).not.to.be.undefined;
-        expect(data).to.be.an("object");
-
-        expect(data.success).to.be.true;
+        try {
+            await controller.undeployIntegration(request, response, fakeNext);
+        } catch (ex) {
+            expect(ex.message).to.be.eq("Agent not found!");
+        }
     });
 
     it("#statuses()", async () => {

@@ -45,6 +45,11 @@ export default function ModelTable({
             }));
             
             columns.push({
+                title: "packageCode",
+                key: "packageCode",
+                dataIndex: "packageCode",
+            });
+            columns.push({
                 title: T.translate("configuration.actions"),
                 key: "_actions",
                 fixed: "right",
@@ -284,11 +289,6 @@ export default function ModelTable({
                 rowKey={"id"}
                 sort
                 onChange={search}
-                // onRow={(record, index) => {
-                //     return {
-                //         onClick: () => handleOnRowClick(record),
-                //     };
-                // }}
                 bordered
                 size="small"
             />
