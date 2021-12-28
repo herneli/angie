@@ -4,6 +4,7 @@ import { IntegrationController } from "../../app/server/api/integration/Integrat
 import { fakeNext, fakeRequest, fakeResponse } from "./express-test-utils";
 
 const id = "52ccca4d-110a-46d2-929c-a65892b865a8";
+const channel_id = "52ccca4d-110a-46d2-929c-a65829b865a8";
 const object = {
     name: "asdf",
     data: {
@@ -22,7 +23,18 @@ const filter = {
         value: "asdf",
     },
 };
-
+const channel = {
+    id: channel_id,
+    nodes: [],
+};
+const config_model = {
+    data: {
+        table: "test",
+        documentType: "test",
+    },
+    name: "test",
+    code: "asdf",
+};
 describe("IntegrationController", async () => {
     let tracker;
 
@@ -144,12 +156,17 @@ describe("IntegrationController", async () => {
         controller.configure();
         expect(controller).not.to.be.null;
 
+        tracker.on.select("select count").response([{ total: 1 }]);
+        tracker.on.select('select * from "config_model').response([{ id, ...config_model }]);
+        tracker.on.select('select * from "test').response([{ id, ...channel }]);
         tracker.on.select(' from "integration').response([{ id, ...object }]);
+        tracker.on.update("integration").response([{ id, ...object }]);
 
         const response = new fakeResponse();
         const request = new fakeRequest("POST", { id });
-
-        await controller.deployIntegration(request, response, fakeNext);
+        await controller.deployIntegration(request, response, (ex) => {
+            expect(ex.message).to.be.eq("no_agent_available");
+        });
 
         let { data } = response;
         expect(data).not.to.be.undefined;
@@ -164,6 +181,7 @@ describe("IntegrationController", async () => {
         expect(controller).not.to.be.null;
 
         tracker.on.select(' from "integration').response([{ id, ...object }]);
+        tracker.on.update("integration").response([{ id, ...object }]);
 
         const response = new fakeResponse();
         const request = new fakeRequest("POST", { id });

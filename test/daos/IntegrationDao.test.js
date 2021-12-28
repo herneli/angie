@@ -42,7 +42,7 @@ describe("IntegrationDao", () => {
     it("#loadAllData()", async () => {
         const elm = new IntegrationDao();
         tracker.on
-            .select('select "integration".* from "integration"')
+            .select('from "integration"')
             .response([{ id: id, ...object }]);
 
         let result = await elm.loadAllData(0, 1000);

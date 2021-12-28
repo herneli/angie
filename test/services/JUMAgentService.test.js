@@ -527,7 +527,7 @@ describe("JUMAgentService", () => {
                     expect(response).not.to.be.undefined;
                     expect(response).not.to.be.null;
 
-                    expect(response).to.be.eq("LOG!");
+                    expect(response).to.be.eq("----  undefined  ---- \n\n LOG!");
 
                     client.close();
                     await Utils.sleep(200);
@@ -571,7 +571,7 @@ describe("JUMAgentService", () => {
                     const service = new JUMAgentService();
                     await service.deployChannel(channel, "");
 
-                    await Utils.sleep(100);
+                    await Utils.sleep(200);
 
                     const response = await service.sendMessageToRoute(channel, "direct://test", "test");
 
