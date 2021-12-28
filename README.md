@@ -22,9 +22,9 @@ Generar las claves de privadas:
 > node .\execute.js --generateKeys
 ```
 
-Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`. 
-> **Es importante no perder estas claves ya que se utilizan para la encriptación de ciertas cadenas en la aplicación y sin ellas no podrán ser desencriptadas.**
+Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`.
 
+> **Es importante no perder estas claves ya que se utilizan para la encriptación de ciertas cadenas en la aplicación y sin ellas no podrán ser desencriptadas.**
 
 Generar secret para JUM-Agents:
 
@@ -56,10 +56,10 @@ Los puertos en los que se encuentra, por defecto, cada componente son:
 
 _**Nota:** en determinados entornos el script de `dbinit/01-init.sh` de postgre no funciona correctamente. En entornos Linux/Mac es necesario dar permisos (chmod 777) y en windows cambiar el tipo de salto de línea a LF._
 
-
 ### Optimización
 
 Es importante, en windows, activar WSL2 para mejorar el rendimiento de Docker. Adicionalmente, para evitar que consuma demasiada ram se puede crear un archivo `.wslconfig` en `C:\Users\[user]` con el siguiente contenido:
+
 ```
 [wsl2]
 memory=3GB   # Limits VM memory in WSL 2 up to 3GB
@@ -126,9 +126,10 @@ Para crear nuevos archivos:
 Dentro del sistema de seeds se ha creado un seed especial `default_data_load` encargado de cargar archivos JSON de la carpeta `seeds/data`.
 
 Este sistema utiliza un sistema en el que:
-- Cada carpeta dentro de `data` indica la tabla
-- Cada archivo json ha de llamarse con el siguiente patrón: 
-  `document_type[.xxxx].json`
+
+-   Cada carpeta dentro de `data` indica la tabla
+-   Cada archivo json ha de llamarse con el siguiente patrón:
+    `document_type[.xxxx].json`
 
 > Para mas información acceder al archivo `default_data_load` en el que se explica en profundidad.
 
@@ -169,15 +170,11 @@ Configuraciones necesarias:
 
 **Acceso REST**  
 11. Seleccionar el cliente **admin-cli**  
-12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential'
-13. Guardar, aparecerá la pestaña Service Account Roles 
-14. 14. En Client Roles seleccionar `realm_management`  
+12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential' 13. Guardar, aparecerá la pestaña Service Account Roles 14. 14. En Client Roles seleccionar `realm_management`  
 15. Asociar el rol `view_users` mediante el botón **Add Selected**
 
+**Roles** 16. Crear un Rol: 'admin' a nivel de Realm 17. Asignar el usuario de la aplicación a dicho rol
 
-**Roles**
-16. Crear un Rol: 'admin' a nivel de Realm
-17. Asignar el usuario de la aplicación a dicho rol
 ## Tests
 
 La realización de tests se realiza utilizando la librería **mocha**, los ficheros se almacenan en la carpeta test
@@ -198,10 +195,16 @@ TODO
 
 **TODO** Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
 
-
 ## Información Desarrollo
 
 El proyecto ha sido desarrollado utilizando el [Framework Lisco](http://github.com/landra-sistemas/lisco).
 
 En su repositorio se puede encontrar información al respecto.
 
+# Conexión con JUM-Angie
+
+El sistema se conecta a JUM-Angie mediante `socketio`. Para habilitar la conexión es necesario haber generado el secret en el primer punto.
+
+Desde JUM-Angie es importante configurar en el parámetro `roche.angie.socketio.secret` el mismo valor.
+
+Para mas información de la conexión ver el Readme del otro proyecto.

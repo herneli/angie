@@ -31,6 +31,17 @@ exports.up = async function (knex) {
         });
     }
 
+    if (!(await knex.schema.hasTable("package"))) {
+        await knex.schema.createTable("package", function (table) {
+            table.increments();
+            table.string("code").notNullable();
+            table.string("version").notNullable();
+            table.string("name").notNullable();
+            table.boolean("modified");
+            table.unique(["code", "version"]);
+        });
+    }
+
     if (!(await knex.schema.hasTable("integration_deployment"))) {
         await knex.schema.createTable("integration_deployment", function (table) {
             table.uuid("id").primary();
@@ -54,7 +65,7 @@ exports.up = async function (knex) {
         });
     }
 
-    if ((await knex.schema.hasTable("profile"))) {
+    if (await knex.schema.hasTable("profile")) {
         await knex.schema.dropTable("profile");
     }
     if (!(await knex.schema.hasTable("sections"))) {

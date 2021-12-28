@@ -186,7 +186,7 @@ export class IntegrationService extends BaseService {
         }
 
         for (const channel of integration.data.channels) {
-            const response = await this.agentService.performUndeploy(channel);
+            const response = await this.channelService.performUndeploy(channel);
             console.log(response);
             channel.status = "UNDEPLOYED";
         }

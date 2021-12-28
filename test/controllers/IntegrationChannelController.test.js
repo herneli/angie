@@ -95,13 +95,14 @@ describe("IntegrationChannelController", async () => {
         tracker.on.select("select count").response([{ total: 1 }]);
         tracker.on.select('select * from "config_model').response([{ id, ...config_model }]);
         tracker.on.select('select * from "test').response([{ id, ...channel }]);
+        tracker.on.update("integration").response([{ id, ...integration }]);
 
         const response = new fakeResponse();
         const request = new fakeRequest("POST", { id, channel: channel_id });
         try {
             await controller.deployChannel(request, response, fakeNext);
         } catch (ex) {
-            expect(ex.message).to.be.eq("No agent available");
+            expect(ex.message).to.be.eq("no_agent_available");
         }
     });
 
