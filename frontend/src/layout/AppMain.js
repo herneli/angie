@@ -41,7 +41,7 @@ const AppMain = ({ app, location }) => {
             <PrivateRoute
                 roles={["default-roles-angie"]}
                 exact
-                path="/deployed/integrations"
+                path="/integrations/deployed"
                 component={DeployedIntegrations}
                 {...defaultProps}
             />

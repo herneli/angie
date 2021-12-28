@@ -85,7 +85,7 @@ export default class MenuHandler {
                 if (keycloak && keycloak.authenticated) {
                     itemsAuthorized.push(
                         <Menu.Item
-                            key={item.title}
+                            key={`/${item.key}`}
                             icon={<Icon path={this.icons[item.icon]} size={0.6} />}
                             title={item.title}>
                             <Link to={item.value}>{T.translate(item.title)}</Link>

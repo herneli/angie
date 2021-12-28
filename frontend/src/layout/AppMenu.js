@@ -1,7 +1,7 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, Button, Popover } from "antd";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import MenuHandler from "../common/MenuHandler";
 
 import T from "i18n-react";
@@ -11,8 +11,16 @@ import Icon from "@mdi/react";
 
 const AppMenu = ({ tokenLoaded }) => {
     const { keycloak } = useKeycloak();
+    const { pathname } = useLocation();
     const [selected, changeSelection] = useState(null);
     const [paintedMenu, setPaintedMenu] = useState([]);
+
+    useEffect(() => {
+        //Se utiliza la propiedad key del menu para identificar la seleccion en función de la url
+        const splitted = pathname.split("/");
+
+        changeSelection(`/${splitted[1]}`);
+    }, [pathname]);
 
     useEffect(() => {
         (async () => {
@@ -69,8 +77,8 @@ const AppMenu = ({ tokenLoaded }) => {
             <div className="logo">
                 <img alt="logo" src={process.env.PUBLIC_URL + "/logo512.png"} />
             </div>
-            <Menu onClick={(e) => changeSelection(e.key)} selectedKeys={[selected]} mode="horizontal">
-                <Menu.Item key="home" icon={<Icon path={mdiHome} size={0.6} />}>
+            <Menu selectedKeys={[selected]} mode="horizontal">
+                <Menu.Item key="/" icon={<Icon path={mdiHome} size={0.6} />}>
                     <Link to="/">Home Page </Link>
                 </Menu.Item>
 

@@ -4,26 +4,31 @@
         "code": "menu",
         "menu": [
             {
+                "key": "integrations",
                 "title": "Integraciones",
                 "icon": "mdiSourceBranch",
-                "value": "/deployed/integrations"
+                "value": "/integrations/deployed"
             },
             {
+                "key": "dashboard",
                 "title": "Dashboard",
                 "icon": "mdiSourceBranch",
                 "value": "/dashboard"
             },
             {
+                "key": "agents",
                 "title": "Agents",
                 "icon": "mdiMonitor",
                 "value": "/agents"
             },
             {
+                "key": "admin",
                 "title": "Administracion",
                 "icon": "mdiSourceBranch",
                 "value": "/admin"
             },
             {
+                "key": "packages",
                 "title": "Packages",
                 "icon": "mdiPackageVariantClosed",
                 "value": "/packages"

@@ -2348,8 +2348,33 @@
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "115d97ca-f9a4-404f-8eca-54bf4cd83fe3"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /getAllowedSectionBasedOnRole</pre>\n</body>\n</html>\n"
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -2365,7 +2390,13 @@
         },
         "tags": [],
         "produces": [
-          "application/json"
+          "application/json",
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     },
@@ -2375,9 +2406,47 @@
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
-        "responses": {},
-        "tags": []
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "115d97ca-f9a4-404f-8eca-54bf4cd83fe3"
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/admin"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /isPathAvailable</pre>\n</body>\n</html>\n"
+            }
+          }
+        },
+        "tags": [],
+        "security": [
+          {
+            "authorization": []
+          }
+        ],
+        "produces": [
+          "text/html"
+        ]
       }
     },
     "/profile": {
