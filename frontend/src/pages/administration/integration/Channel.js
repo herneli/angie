@@ -17,13 +17,14 @@ import useEventListener from "../../../common/useEventListener";
 import { Dropdown, Menu } from "antd";
 import Icon from "@mdi/react";
 import { mdiClipboard, mdiCogs, mdiContentCopy, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
+import ChannelContextProvider from "../../../components/channels/ChannelContext";
 
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
     ButtonNode: ButtonNode,
 };
 
-const Channel = ({ channel, undo, redo, onChannelUpdate, nodeTypes }) => {
+const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeTypes }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState(undefined);
@@ -161,7 +162,6 @@ const Channel = ({ channel, undo, redo, onChannelUpdate, nodeTypes }) => {
 
         let newNodes = newChannel.nodes.map((node) => {
             let newData = lodash.find(newNodeList, { id: node.id });
-            console.log(newData);
             if (newData) {
                 node = { ...node, ...newData };
                 node.data.handles = generateHandleIds(node.data.handles);
@@ -403,70 +403,72 @@ const Channel = ({ channel, undo, redo, onChannelUpdate, nodeTypes }) => {
     return (
         <div>
             <div className="dndflow">
-                <ReactFlowProvider>
-                    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                        <Dropdown overlay={contextMenu()} trigger={["contextMenu"]}>
-                            <ReactFlow
-                                elements={elements}
-                                onConnect={onConnect}
-                                onElementsRemove={onElementsRemove}
-                                onLoad={onLoad}
-                                onDrop={onDrop}
-                                nodeTypes={customNodes}
-                                deleteKeyCode={46}
-                                multiSelectionKeyCode={17}
-                                onDragOver={onDragOver}
-                                onSelectionDragStop={(event, nodes) => onMultiNodeEditEnd(nodes)}
-                                onPaneContextMenu={() => changeSelectedNodes([])}
-                                onNodeContextMenu={(event, node) => {
-                                    if (selectedNodes == null || selectedNodes?.length < 2) {
-                                        console.log("setting");
-                                        changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
-                                    }
-                                }}
-                                onEdgeContextMenu={(event, node) => {
-                                    if (selectedNodes == null || selectedNodes?.length < 2) {
-                                        console.log("setting");
-                                        changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
-                                    }
-                                }}
-                                onNodeDragStop={(event, node) => {
-                                    if (selectedNodes != null && selectedNodes?.length > 1) {
-                                        onMultiNodeEditEnd(
-                                            lodash.filter(
-                                                reactFlowInstance.getElements(),
-                                                (el) => el.id && lodash.find(selectedNodes, { id: el.id })
-                                            )
-                                        );
-                                        //Actualmente hay un bug y la selección multiple con Control no funciona del todo bien
-                                        //De ahí que se haga la busqueda en los elements de la seleccion y notificar de la modificación de los mismos.
-                                        //https://github.com/wbkd/react-flow/issues/1314
-                                    } else {
-                                        onNodeEditEnd(node.id, {
-                                            position: node.position,
-                                            data: node.data,
-                                        });
-                                    }
-                                }}
-                                onNodeDoubleClick={(event, node) => startEditing(node.id)}
-                                onSelectionChange={(elements) => changeSelectedNodes(elements)}>
-                                <Controls />
-                                <MiniMap />
-                                <Background />
-                            </ReactFlow>
-                        </Dropdown>
-                    </div>
+                <ChannelContextProvider currentChannel={channel} currentStatus={channelStatus}>
+                    <ReactFlowProvider>
+                        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                            <Dropdown overlay={contextMenu()} trigger={["contextMenu"]}>
+                                <ReactFlow
+                                    elements={elements}
+                                    onConnect={onConnect}
+                                    onElementsRemove={onElementsRemove}
+                                    onLoad={onLoad}
+                                    onDrop={onDrop}
+                                    nodeTypes={customNodes}
+                                    deleteKeyCode={46}
+                                    multiSelectionKeyCode={17}
+                                    onDragOver={onDragOver}
+                                    onSelectionDragStop={(event, nodes) => onMultiNodeEditEnd(nodes)}
+                                    onPaneContextMenu={() => changeSelectedNodes([])}
+                                    onNodeContextMenu={(event, node) => {
+                                        if (selectedNodes == null || selectedNodes?.length < 2) {
+                                            console.log("setting");
+                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                        }
+                                    }}
+                                    onEdgeContextMenu={(event, node) => {
+                                        if (selectedNodes == null || selectedNodes?.length < 2) {
+                                            console.log("setting");
+                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                        }
+                                    }}
+                                    onNodeDragStop={(event, node) => {
+                                        if (selectedNodes != null && selectedNodes?.length > 1) {
+                                            onMultiNodeEditEnd(
+                                                lodash.filter(
+                                                    reactFlowInstance.getElements(),
+                                                    (el) => el.id && lodash.find(selectedNodes, { id: el.id })
+                                                )
+                                            );
+                                            //Actualmente hay un bug y la selección multiple con Control no funciona del todo bien
+                                            //De ahí que se haga la busqueda en los elements de la seleccion y notificar de la modificación de los mismos.
+                                            //https://github.com/wbkd/react-flow/issues/1314
+                                        } else {
+                                            onNodeEditEnd(node.id, {
+                                                position: node.position,
+                                                data: node.data,
+                                            });
+                                        }
+                                    }}
+                                    onNodeDoubleClick={(event, node) => startEditing(node.id)}
+                                    onSelectionChange={(elements) => changeSelectedNodes(elements)}>
+                                    <Controls />
+                                    <MiniMap />
+                                    <Background />
+                                </ReactFlow>
+                            </Dropdown>
+                        </div>
 
-                    <Sidebar nodeTypes={nodeTypes} />
+                        <Sidebar nodeTypes={nodeTypes} />
 
-                    <NodeEditModal
-                        selectedType={selectedType}
-                        nodeTypes={nodeTypes}
-                        editNodeVisible={editNodeVisible}
-                        onEditCancel={() => setEditNodeVisible(false)}
-                        onNodeEditEnd={onNodeEditEnd}
-                    />
-                </ReactFlowProvider>
+                        <NodeEditModal
+                            selectedType={selectedType}
+                            nodeTypes={nodeTypes}
+                            editNodeVisible={editNodeVisible}
+                            onEditCancel={() => setEditNodeVisible(false)}
+                            onNodeEditEnd={onNodeEditEnd}
+                        />
+                    </ReactFlowProvider>
+                </ChannelContextProvider>
             </div>
         </div>
     );

@@ -38,7 +38,8 @@
             "load": "Cargar",
             "finish": "Finalizar",
             "add_selection": "Seleccionar/Deseleccionar todas",
-            "resend": "Reenviar"
+            "resend": "Reenviar",
+            "confirm": "Confirmar"
         },
         "messages": {
             "saved": {
@@ -83,6 +84,9 @@
         }
     },
     "integrations": {
+        "button": {
+            "confirmSave": "Confirmar y Guardar"
+        },
         "integration_form_title": "Integración: {name}",
         "integration_edit_title": "Editando elemento",
         "columns": {

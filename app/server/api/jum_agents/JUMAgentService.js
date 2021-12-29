@@ -432,6 +432,18 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
+     * Establece el estado de un canal en un running agent
+     * @param {*} agentId
+     * @param {*} channelId
+     */
+    setAgentChannelStatus(agentId, channelId, status) {
+        const currentAgent = this.getRunningAgent(agentId);
+
+        const channel = lodash.find(currentAgent.channels, { id: channelId });
+        channel.status = status;
+    }
+
+    /**
      * Obtiene un agente para la realización de un despliegue
      *
      * @param {*} channel
@@ -510,15 +522,20 @@ export class JUMAgentService extends BaseService {
      * @param {*} channelId
      * @returns
      */
-    getChannelCurrentState(channelId) {
-        for (const idx in App.agents) {
-            const elm = App.agents[idx];
-            const chann = lodash.find(elm.channels, { id: channelId });
-
-            if (chann) {
-                return chann.status;
-            }
+    async getChannelCurrentState(channelId) {
+        let currentAgent
+        try {
+            currentAgent = this.getChannelCurrentAgent(channelId);
+        } catch (ex) {
+            return null;
         }
+
+        const response = await this.sendCommand(currentAgent, "/channel/status", channelId);
+        if (response.success) {
+            this.setAgentChannelStatus(currentAgent, channelId, response.data);
+            return response.data;
+        }
+        throw null;
     }
 
     /**

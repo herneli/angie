@@ -1,0 +1,12 @@
+[
+  {
+    "id": "3593d819-6e52-48c1-a185-7f3dff6cb370",
+    "code": "core.utils.json_mapper",
+    "name": "JSON Mapper",
+    "name_": "Template CLONED",
+    "options": "{\n    \"source\": \"string\",\n    \"target\": \"string\",\n    \"code\": \"string\"\n}",
+    "package_code": "angie.core",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{{jsonStringSafe code}}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
+    "package_version": "1.0.0"
+  }
+]

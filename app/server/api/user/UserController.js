@@ -39,9 +39,9 @@ export class UserController extends BaseController {
         });
 
         App.events.on("config_import_users", () => {
-            this.importUsers(null, null, null);
+            this.importUsers(null, null, null);//!FIXME Error!
         });
-        
+
         return this.router;
     }
 
@@ -82,7 +82,7 @@ export class UserController extends BaseController {
                 let roles = await App.keycloakAdmin.users.listRoleMappings({
                     id: e.id,
                 });
-                roles.pop;
+                roles.pop; //!! FIXME  ??? esto que es?
                 let groups = await App.keycloakAdmin.users.listGroups({
                     id: e.id,
                 });
@@ -120,11 +120,11 @@ export class UserController extends BaseController {
             }
 
             let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
-            jsRes.success = false
-            jsRes.message = users
-            response ? response.json(jsRes) : null;
+            jsRes.success = false;
+            jsRes.message = users;
+            response.json(jsRes);
         } catch (e) {
-            console.log("Error on keycloak user imports")
+            console.log("Error on keycloak user imports");
             next(e);
         }
     }
@@ -133,7 +133,7 @@ export class UserController extends BaseController {
      */
     saveUsers(mode, body) {
         try {
-            return App.keycloakAdmin.users.create(body);;
+            return App.keycloakAdmin.users.create(body);
         } catch (e) {
             console.log(e);
         }
@@ -156,7 +156,6 @@ export class UserController extends BaseController {
     async deleteUser(id) {
         try {
             return await App.keycloakAdmin.users.del({ id: id });
-
         } catch (e) {
             console.log(e);
         }

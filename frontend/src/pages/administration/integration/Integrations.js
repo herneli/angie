@@ -239,7 +239,7 @@ const Integrations = ({ packageUrl }) => {
                         key="deploy"
                         type="text"
                         onClick={async () => {
-                            await channelActions.deployChannel(integration.id, record.id, false);
+                            await channelActions.deployChannel(integration.id, record.id);
                             await search();
                         }}
                         icon={

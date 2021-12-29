@@ -21,37 +21,65 @@ export class IntegrationDao extends BaseKnexDao {
             object.data.last_updated = moment().toISOString();
         }
 
-        if (object.deployment_config) {
-            await this.updateDeployment(object.id, object.deployment_config);
+        const config = object.deployment_config;
+
+        if (config) {
+            await this.updateDeployment(object.id, config);
         }
-        delete object.deployment_config;
-        
-        return super.save(object);
+
+        const [obj] = await super.save(lodash.omit(object, ["deployment_config"]));
+        obj.data.deployment_config = config;
+        return [obj];
     }
 
     //Overwrite
     async update(id, object) {
         object.data.last_updated = moment().toISOString();
+        const config = object.deployment_config;
 
-        if (object.deployment_config) {
-            await this.updateDeployment(object.id, object.deployment_config);
+        if (config) {
+            await this.updateDeployment(object.id, config);
         }
-        delete object.deployment_config;
 
-        return super.update(id, object);
+        const [obj] = await super.update(id, lodash.omit(object, ["deployment_config"]));
+        obj.data.deployment_config = config;
+        return [obj];
+    }
+
+    async loadById(objectId) {
+        const RELATION_TABLE = this.deploymentTable;
+        const columns = [
+            `${this.tableName}.*`,
+            KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
+        ];
+
+        const data = await KnexConnector.connection
+            .columns(columns)
+            .from(this.tableName)
+            .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
+            .where("integration.id", objectId)
+            .groupBy("integration.id");
+
+        if (data && data[0]) {
+            return data[0];
+        }
+        return null;
     }
 
     //Overwrite
     loadAllData(start, limit) {
         const RELATION_TABLE = this.deploymentTable;
-        const columns = [`${this.tableName}.*`, KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`)];
+        const columns = [
+            `${this.tableName}.*`,
+            KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
+        ];
 
         return KnexConnector.connection
             .columns(columns)
             .from(this.tableName)
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .limit(limit || 10000)
-            .groupBy('integration.id')
+            .groupBy("integration.id")
             .offset(start);
     }
 
@@ -63,7 +91,10 @@ export class IntegrationDao extends BaseKnexDao {
         }
 
         const RELATION_TABLE = this.deploymentTable;
-        const columns = [`${this.tableName}.*`, KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`)];
+        const columns = [
+            `${this.tableName}.*`,
+            KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
+        ];
 
         return KnexConnector.connection
             .columns(columns)
@@ -73,7 +104,7 @@ export class IntegrationDao extends BaseKnexDao {
             )
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .orderByRaw(sorts)
-            .groupBy('integration.id')
+            .groupBy("integration.id")
             .limit(limit)
             .offset(start);
     }
@@ -87,10 +118,15 @@ export class IntegrationDao extends BaseKnexDao {
     async updateDeployment(id, object) {
         const data = await KnexConnector.connection.from(this.deploymentTable).where("id", id);
 
+        object.last_deployment_date = moment().toISOString();
+
         if (data && data[0]) {
             return KnexConnector.connection.from(this.deploymentTable).where("id", id).update(object).returning("*");
         } else {
-            return KnexConnector.connection.from(this.tabdeploymentTableleName).insert(object).returning("*");
+            return KnexConnector.connection
+                .from(this.deploymentTable)
+                .insert({ ...object, id: id })
+                .returning("*");
         }
     }
 }

@@ -20,7 +20,7 @@ export class IntegrationService extends BaseService {
 
         if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
-                const channelState = this.agentService.getChannelCurrentState(channel.id);
+                const channelState = await this.agentService.getChannelCurrentState(channel.id);
                 channel = this.channelService.channelApplyStatus(channel, channelState);
             }
         }
@@ -135,7 +135,7 @@ export class IntegrationService extends BaseService {
 
             if (integration.data.channels) {
                 for (let channel of integration.data.channels) {
-                    const channelState = this.agentService.getChannelCurrentState(channel.id);
+                    const channelState = await this.agentService.getChannelCurrentState(channel.id);
                     channel = await this.channelService.channelApplyStatus(channel, channelState);
                 }
             }

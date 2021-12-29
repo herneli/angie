@@ -4,14 +4,15 @@ import axios from "axios";
 import T from "i18n-react";
 
 import { Handle } from "react-flow-renderer";
+import { useCurrentChannel } from "../../../../components/channels/ChannelContext";
 
-async function callApi(node) {
+async function callApi(node, currentChannel) {
     const { data } = node;
     //TODO: conocer el estado del canal antes de realizar la petición
     // if (data.channel_status === "STARTED") {
     //TODO: Revisar notificaciones
     try {
-        await axios.post(`/channel/${data.channel_id}/${data.url}`, {
+        await axios.post(`/channel/${currentChannel.id}/${data.url}`, {
             endpoint: `direct://${node.id}`,
             content: "",
         });
@@ -28,6 +29,8 @@ async function callApi(node) {
 }
 
 const ButtonNode = (node) => {
+    const { currentChannel } = useCurrentChannel();
+
     const { data, isConnectable } = node;
     return (
         <div
@@ -47,7 +50,7 @@ const ButtonNode = (node) => {
                 <Button
                     onClick={(e) => {
                         if (data.url) {
-                            callApi(node);
+                            callApi(node, currentChannel);
                         }
                     }}
                     onDoubleClick={(e) => {
