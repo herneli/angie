@@ -196,7 +196,7 @@ export class IntegrationChannelService {
             const link = lodash.filter(links, { handle: handle.id });
             handle.to = lodash.map(link, "node_id") || "empty";
         }
-        return conditions;
+        return handles;
     };
 
     /**
