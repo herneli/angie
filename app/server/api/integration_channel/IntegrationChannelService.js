@@ -61,7 +61,7 @@ export class IntegrationChannelService {
             if (Array.isArray(inputData)) {
                 data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
             }
-            return new Handlebars.SafeString(!lodash.isEmpty(inputData) ? "?" + queryString.stringify(data) : "");
+            return new Handlebars.SafeString(!lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : "");
         });
 
         this.dao = new IntegrationDao();
@@ -158,6 +158,7 @@ export class IntegrationChannelService {
             let type = lodash.find(node_types, (el) => {
                 return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
             });
+            if (type.data.handles === "none") continue;
             if (!type) continue;
             let camelComponent = lodash.find(camel_components, {
                 code: type.data.camel_component_id,
