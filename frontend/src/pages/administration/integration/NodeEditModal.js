@@ -89,6 +89,8 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
                     schema={formData.schema}
                     formData={formData.data}
                     uiSchema={formData.uiSchema}
+                    liveOmit={formData.schema.liveOmit ? formData.schema.liveOmit : false}
+                    omitExtraData={formData.schema.omitExtraData ? formData.schema.omitExtraData : false}
                     widgets={formConfig.widgets}
                     fields={formConfig.fields}
                     onChange={(e) => setFormData({ ...formData, data: e.formData })}

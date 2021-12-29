@@ -1,0 +1,20 @@
+[
+    {
+        "id": "45476a5a-edf1-4d0c-ae67-8bd3ac1c0931",
+        "code": "core.file.input",
+        "name": "File Input",
+        "options": "{\n    \"out_format\": \"string\",\n    \"directory\": \"string\",\n    \"type\": \"string\",\n    \"query_params\": \"array\"\n}",
+        "package_code": "package_jorge",
+        "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"{{type}}:{{directory}}{{querystring query_params}}\"/>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
+        "package_version": "1"
+    },
+    {
+        "id": "b932804f-f946-46f8-9ab1-4ed3c13b0794",
+        "code": "core.file.output",
+        "name": "File Output",
+        "options": "{\n    \"out_format\": \"string\",\n    \"directory\": \"string\",\n    \"type\": \"string\",\n    \"query_params\": \"array\",\n    \"allowNullBody\": \"boolean\",\n    \"action_after_processing\": \"string\"\n}",
+        "package_code": "package_jorge",
+        "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <to uri=\"{{type}}://{{directory}}{{querystring query_params}}{{allowNullBody}}\"/>\n</route>",
+        "package_version": "1"
+    }
+]
