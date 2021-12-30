@@ -661,10 +661,10 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "users_config",
-            name: "users_config",
+            code: "users",
+            name: "users",
             data: {
-                code: "users_config",
+                code: "users",
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
@@ -747,7 +747,7 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
                         "ui:selectOptions":
-                            "/configuration/model/organization_config/data#path=data&value=id&label=data.name",
+                            "/configuration/model/organization/data#path=data&value=id&label=data.name",
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",
@@ -1042,10 +1042,10 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "organization_config",
-            name: "organization_config",
+            code: "organization",
+            name: "organization",
             data: {
-                code: "organization_config",
+                code: "organization",
                 name: "Organizaciones",
                 id_mode: "uuid",
                 table: "organization",
@@ -1095,10 +1095,10 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "section_config",
-            name: "section_config",
+            code: "sections",
+            name: "sections",
             data: {
-                code: "sections_config",
+                code: "sections",
                 name: "Sections",
                 table: "sections",
                 id_mode: "uuid",

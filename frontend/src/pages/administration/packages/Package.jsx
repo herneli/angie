@@ -14,6 +14,8 @@ const { Sider, Content, Header } = Layout;
 const useStyles = createUseStyles({
     header: {
         backgroundColor: "white",
+        height: 40,
+        lineHeight: "40px"
     },
 });
 

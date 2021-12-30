@@ -16,9 +16,8 @@ Handlebars.registerHelper("querystring", function (inputData) {
 class Transformer {
     nodeTypes = [];
 
-    static async init() {
-        const response = await axios.get("/configuration/model/node_type/data");
-        this.nodeTypes = response?.data?.data;
+    static async init(nodeTypes) {
+        this.nodeTypes = nodeTypes;
     }
 
     static transformFromBd(bdModel) {
@@ -47,7 +46,7 @@ class Transformer {
                     position: node.position,
                     data: {
                         label: node.custom_name,
-                        ...node.data
+                        ...node.data,
                     },
                     type: nodeType.data.react_component_type,
                     sourcePosition: "right",

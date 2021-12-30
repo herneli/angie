@@ -46,12 +46,12 @@ const Administration = ({ app }) => {
                         <Route
                             exact
                             path="/admin/organization"
-                            render={({ match }) => <ModelAdmin match={match} model="organization_config" />}
+                            render={({ match }) => <ModelAdmin match={match} model="organization" />}
                         />
                         <Route
                             exact
                             path="/admin/sections"
-                            render={({ match }) => <ModelAdmin match={match} model="section_config" />}
+                            render={({ match }) => <ModelAdmin match={match} model="sections" />}
                         />
 
                         {/* <Route

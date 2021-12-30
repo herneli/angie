@@ -88,6 +88,7 @@
             "confirmSave": "Confirmar y Guardar"
         },
         "integration_form_title": "Integración: {name}",
+        "integration_form_subtitle": "Organización: {name}",
         "integration_edit_title": "Editando elemento",
         "columns": {
             "name": "Nombre",

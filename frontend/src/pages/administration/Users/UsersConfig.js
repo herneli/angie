@@ -30,7 +30,7 @@ const UsersConfig = () => {
                 </Button>
             </Popconfirm>
 
-            {!loading && <ModelAdmin model="users_config" />}
+            {!loading && <ModelAdmin model="users" />}
             {loading && <div>Realizando importación...</div>}
         </>
     );
