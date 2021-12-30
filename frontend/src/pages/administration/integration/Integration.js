@@ -2,7 +2,7 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
+import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Typography } from "antd";
 
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
@@ -41,6 +41,7 @@ import {
     mdiPlayCircle,
     mdiBug,
     mdiTextLong,
+    mdiSourceBranchPlus,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -85,7 +86,7 @@ const integrationFormSchema = {
             organization_id: {
                 "ui:columnSize": "6",
                 "ui:widget": "SelectRemoteWidget",
-                "ui:selectOptions": "/configuration/model/organization_config/data#path=data&value=id&label=data.name",
+                "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
             },
             enabled: { "ui:columnSize": 4, "ui:widget": "select" },
         },
@@ -178,19 +179,23 @@ const Integration = ({ packageUrl }) => {
     const [editingTab, setEditingTab] = useState({});
     const [editTabVisible, setEditTabVisible] = useState(false);
 
+    const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
     const [nodeTypes, setNodeTypes] = useState([]);
+    const [organizations, setOrganizations] = useState([]);
 
     useEffect(() => {
         loadNodeTypes();
+        loadOrganizations();
     }, []);
 
     /**
      * Interval para ir actualizando en tiempo real el estado de los canales
      */
     useInterval(() => {
-        loadChannelStatus(currentIntegration);
+        if (!editHeader) loadChannelStatus(currentIntegration);
     }, 30 * 1000);
 
     /**
@@ -206,7 +211,6 @@ const Integration = ({ packageUrl }) => {
     useEffect(() => {
         if (currentIntegration) {
             setChannels(currentIntegration.channels);
-            setChannelStatus(lodash.mapValues(lodash.keyBy(currentIntegration.channels, "id"), "status"));
         }
     }, [currentIntegration]);
 
@@ -217,9 +221,9 @@ const Integration = ({ packageUrl }) => {
         setCurrentIntegration(null); //Resetear primero
         setChannels([]);
 
-        await Transformer.init();
         if (state && state.record) {
             setCurrentIntegration(state.record);
+            setChannelStatus(lodash.mapValues(lodash.keyBy(state.record.channels, "id"), "status"));
             if (channel) {
                 setActiveTab(channel);
             } else {
@@ -246,7 +250,7 @@ const Integration = ({ packageUrl }) => {
     };
 
     /**
-     *
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
     const loadNodeTypes = async () => {
         let filters = {};
@@ -258,9 +262,36 @@ const Integration = ({ packageUrl }) => {
 
         if (response?.data?.success) {
             setNodeTypes(response?.data?.data);
+
+            await Transformer.init(response?.data?.data);
         } else {
             console.error(response.data);
         }
+    };
+
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadOrganizations = async () => {
+        const response = await axios.get("/configuration/model/organization/data");
+
+        if (response?.data?.success) {
+            setOrganizations(response?.data?.data);
+        } else {
+            console.error(response.data);
+        }
+    };
+
+    /**
+     * Obtiene una organización en base a su id
+     * @param {*} id
+     * @returns
+     */
+    const getOrganizationById = (id) => {
+        if (!id) return null;
+        const org = lodash.find(organizations, { id: id });
+        if (!org) return null;
+        return { ...org, ...org.data };
     };
 
     /**
@@ -268,12 +299,15 @@ const Integration = ({ packageUrl }) => {
      * @param {*} identifier
      */
     const fetchIntegration = async (identifier) => {
+        setPendingChanges(false);
         try {
             const response = await axios.get("/integration/" + identifier);
 
             if (response?.data?.data) {
                 let { data: integration } = response.data.data;
                 setCurrentIntegration(integration);
+                setChannelStatus(lodash.mapValues(lodash.keyBy(integration.channels, "id"), "status"));
+
                 setEditHistory([{ ...integration }]);
                 if (channel) {
                     setActiveTab(channel);
@@ -374,7 +408,7 @@ const Integration = ({ packageUrl }) => {
         channel.enabled = !channel.enabled;
         if (!channel.enabled && channel.status === "Started") {
             const resp = await channelActions.undeployChannel(currentIntegration.id, channel.id);
-            onStatusUpdate(resp.id, resp.status);
+            if (resp) onStatusUpdate(resp.id, resp.status);
         }
 
         setTimeout(() => {
@@ -410,7 +444,7 @@ const Integration = ({ packageUrl }) => {
         onIntegrationChange(newIntegration);
 
         if (event.forceSave) {
-            saveIntegration();
+            setTimeout(saveIntegration, 200);
         }
     };
 
@@ -538,7 +572,7 @@ const Integration = ({ packageUrl }) => {
                     title={T.translate("common.question")}
                     onConfirm={async () => {
                         const modifiedChannel = await channelActions.undeployChannel(currentIntegration.id, activeTab);
-                        onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                        if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
                     }}>
                     <Button
                         icon={
@@ -564,8 +598,14 @@ const Integration = ({ packageUrl }) => {
                             });
                         }
 
+                        if (!currentIntegration?.deployment_config?.enabled) {
+                            return notification.error({
+                                message: "Integración deshabilitada",
+                                description: "Active la integración para poder desplegar sus canales.",
+                            });
+                        }
                         const modifiedChannel = await channelActions.deployChannel(currentIntegration.id, activeTab);
-                        onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                        if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
                     }}
                     icon={
                         <Icon
@@ -768,6 +808,12 @@ const Integration = ({ packageUrl }) => {
         return <Tag color="red">{T.translate("common.disabled")}</Tag>;
     };
 
+    const descriptionEllipsis = (description) => {
+        if (!description) return "";
+        const splitted = description.split("\n");
+        return splitted[0].substring(0, 200);
+    };
+
     return (
         <div>
             {!editHeader && (
@@ -775,14 +821,19 @@ const Integration = ({ packageUrl }) => {
                     <PageHeader
                         ghost={false}
                         title={T.translate("integrations.integration_form_title", { name: currentIntegration?.name })}
-                        subTitle={currentIntegration?.description}
+                        subTitle={T.translate("integrations.integration_form_subtitle", {
+                            name: getOrganizationById(currentIntegration?.deployment_config?.organization_id)?.name,
+                        })}
                         tags={drawIntegrationStatus(currentIntegration)}
+                        avatar={{ icon: <Icon path={mdiSourceBranchPlus} size={0.7} /> }}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
                                 {T.translate("common.button.edit")}
                             </Button>,
 
-                            <Popconfirm title={T.translate("common.question")} onConfirm={() => loadIntegration()}>
+                            <Popconfirm
+                                title={T.translate("common.question")}
+                                onConfirm={() => fetchIntegration(currentIntegration.id)}>
                                 <Button key="cancel" danger>
                                     {T.translate("common.button.cancel")}
                                 </Button>
@@ -792,8 +843,22 @@ const Integration = ({ packageUrl }) => {
                                     {T.translate("common.button.save")}
                                 </Button>
                             </Popconfirm>,
-                        ]}
-                    />
+                        ]}>
+                        <div>
+                            <Typography.Paragraph style={{ whiteSpace: "pre-wrap" }} type="secondary">
+                                {descriptionExpanded && currentIntegration?.description}
+                                {!descriptionExpanded && descriptionEllipsis(currentIntegration?.description) + "..."}
+                                {!descriptionExpanded && (
+                                    <Typography.Link onClick={() => setDescriptionExpanded(true)}> mas</Typography.Link>
+                                )}
+                                {descriptionExpanded && (
+                                    <Typography.Link onClick={() => setDescriptionExpanded(false)}>
+                                        <br /> menos
+                                    </Typography.Link>
+                                )}
+                            </Typography.Paragraph>
+                        </div>
+                    </PageHeader>
                 </div>
             )}
             {editHeader && (

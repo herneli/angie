@@ -1,5 +1,5 @@
 {
-    "code": "users_config",
+    "code": "users",
     "name": "Usuarios",
     "table": "users",
     "id_mode":"uuid",
@@ -68,7 +68,7 @@
             "ui:columnSize": "6",
             "ui:widget": "SelectRemoteWidget",
             "ui:multiple": true,
-            "ui:selectOptions": "/configuration/model/organization_config/data#path=data&value=id&label=data.name"
+            "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name"
         },
         "profile": {
             "ui:columnSize": "3",

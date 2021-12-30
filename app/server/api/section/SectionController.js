@@ -77,7 +77,7 @@ export class SectionController extends BaseController {
 
             let userRoles = await App.keycloakAdmin.users.listRoleMappings({ id: id });
             let menu = await sectServ.getMenu();
-            let sections = await ConfServ.list("section_config", "", "", "");
+            let sections = await ConfServ.list("sections", "", "", "");
 
             let allowedSections = [];
             let finalMenu = [];
@@ -117,7 +117,7 @@ export class SectionController extends BaseController {
         const path = request.body.path;
 
         let userRoles = await App.keycloakAdmin.users.listRoleMappings({ id: id });
-        let sections = await ConfServ.list("section_config", "", "", "");
+        let sections = await ConfServ.list("sections", "", "", "");
 
         let allowedSections = [];
 

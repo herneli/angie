@@ -28,13 +28,13 @@ export class UserController extends BaseController {
         );
 
         //listen on events to update Keycloak data
-        App.events.on("config_deleted_users_config", (id) => {
+        App.events.on("config_deleted_users", (id) => {
             this.deleteUser(id.id);
         });
-        App.events.on("config_saved_users_config", (data) => {
+        App.events.on("config_saved_users", (data) => {
             this.saveUsers(data.model, data.body);
         });
-        App.events.on("config_updated_users_config", (data) => {
+        App.events.on("config_updated_users", (data) => {
             this.updateUser(data.model, data.body, data.id);
         });
 
