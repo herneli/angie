@@ -46,6 +46,8 @@ import {
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
 import { usePackage } from "../../../components/packages/PackageContext";
+import EllipsisParagraph from "../../../components/text/EllipsisParagraph";
+import IconButton from "../../../components/button/IconButton";
 
 const { TabPane } = Tabs;
 
@@ -178,8 +180,6 @@ const Integration = ({ packageUrl }) => {
     const [pendingChanges, setPendingChanges] = useState(false);
     const [editingTab, setEditingTab] = useState({});
     const [editTabVisible, setEditTabVisible] = useState(false);
-
-    const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
@@ -444,7 +444,7 @@ const Integration = ({ packageUrl }) => {
         onIntegrationChange(newIntegration);
 
         if (event.forceSave) {
-            setTimeout(saveIntegration, 200);
+            setTimeout(saveIntegration, 300);
         }
     };
 
@@ -574,21 +574,19 @@ const Integration = ({ packageUrl }) => {
                         const modifiedChannel = await channelActions.undeployChannel(currentIntegration.id, activeTab);
                         if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
                     }}>
-                    <Button
-                        icon={
-                            <Icon
-                                path={mdiStopCircle}
-                                size={0.6}
-                                color="red"
-                                title={T.translate("integrations.channel.button.undeploy")}
-                            />
-                        }
+                    <IconButton
+                        icon={{
+                            path: mdiStopCircle,
+                            color: "red",
+                            size: 0.6,
+                            title: T.translate("integrations.channel.button.undeploy"),
+                        }}
                     />
                 </Popconfirm>
             );
         } else if (activeChannel.enabled) {
             buttons.push(
-                <Button
+                <IconButton
                     key="deploy"
                     onClick={async () => {
                         if (pendingChanges) {
@@ -607,14 +605,11 @@ const Integration = ({ packageUrl }) => {
                         const modifiedChannel = await channelActions.deployChannel(currentIntegration.id, activeTab);
                         if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
                     }}
-                    icon={
-                        <Icon
-                            path={mdiPlayCircle}
-                            color="green"
-                            size={0.6}
-                            title={T.translate("integrations.channel.button.deploy")}
-                        />
-                    }
+                    icon={{
+                        path: mdiPlayCircle,
+                        color: "green",
+                        size: 0.6,
+                    }}
                 />
             );
         }
@@ -625,54 +620,48 @@ const Integration = ({ packageUrl }) => {
                     key="disable"
                     title={T.translate("common.question")}
                     onConfirm={() => toggleEnabledChannel(activeTab)}>
-                    <Button
-                        icon={
-                            <Icon
-                                path={mdiCloseCircleOutline}
-                                size={0.6}
-                                title={T.translate("common.button.disable")}
-                            />
-                        }
+                    <IconButton
+                        icon={{ path: mdiCloseCircleOutline, size: 0.6, title: T.translate("common.button.disable") }}
                     />
                 </Popconfirm>
             );
         } else {
             buttons.push(
-                <Button
+                <IconButton
                     key="enable"
                     onClick={() => toggleEnabledChannel(activeTab)}
-                    icon={<Icon path={mdiCheckOutline} size={0.6} title={T.translate("common.button.enable")} />}
+                    icon={{ path: mdiCheckOutline, size: 0.6, title: T.translate("common.button.enable") }}
                 />
             );
         }
         return [
-            <Button
+            <IconButton
                 key="log"
-                onClick={() => showChannelLog()}
-                icon={<Icon path={mdiTextLong} size={0.6} title={T.translate("common.button.debug")} />}
+                onClick={() => channelActions.showChannelLog(currentIntegration.id, activeTab)}
+                icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.debug") }}
             />,
-            <Button
+            <IconButton
                 key="debug"
                 onClick={() => showChannelDebug()}
-                icon={<Icon path={mdiBug} size={0.6} title={T.translate("common.button.debug")} />}
+                icon={{ path: mdiBug, size: 0.6, title: T.translate("common.button.debug") }}
             />,
             ...buttons,
-            <Button
+            <IconButton
                 key="edit"
                 onClick={() => startEditingTab()}
-                icon={<Icon path={mdiPencil} size={0.6} title={T.translate("common.button.edit")} />}
+                icon={{ path: mdiPencil, size: 0.6, title: T.translate("common.button.edit") }}
             />,
-            <Button
+            <IconButton
                 key="undo"
                 disabled={!editHistory[currentHistoryIndex - 1]}
                 onClick={() => undo()}
-                icon={<Icon path={mdiUndo} size={0.6} title={T.translate("common.button.undo")} />}
+                icon={{ path: mdiUndo, size: 0.6, title: T.translate("common.button.undo") }}
             />,
-            <Button
+            <IconButton
                 key="redo"
                 disabled={!editHistory[currentHistoryIndex + 1]}
                 onClick={() => redo()}
-                icon={<Icon path={mdiRedo} size={0.6} title={T.translate("common.button.redo")} />}
+                icon={{ path: mdiRedo, size: 0.6, title: T.translate("common.button.redo") }}
             />,
         ];
     };
@@ -731,36 +720,6 @@ const Integration = ({ packageUrl }) => {
     };
 
     /**
-     * Muestra la ventana de debug
-     */
-    const showChannelLog = async () => {
-        if (activeTab) {
-            const response = await axios.get(`/integration/${currentIntegration.id}/channel/${activeTab}/log`);
-
-            Modal.info({
-                title: "Log Channel",
-                width: "60vw",
-                closable: true,
-                centered: true,
-                content: (
-                    <div>
-                        <AceEditor
-                            setOptions={{
-                                useWorker: false,
-                            }}
-                            width="100%"
-                            value={response.data.data}
-                            name="chann.log"
-                            theme="github"
-                        />
-                    </div>
-                ),
-                onOk() {},
-            });
-        }
-    };
-
-    /**
      * Método encargado de pintar los iconos de estado de cada uno de los canales (pestañas)
      */
     const renderChannelStatus = (channel, status) => {
@@ -808,10 +767,11 @@ const Integration = ({ packageUrl }) => {
         return <Tag color="red">{T.translate("common.disabled")}</Tag>;
     };
 
-    const descriptionEllipsis = (description) => {
-        if (!description) return "";
-        const splitted = description.split("\n");
-        return splitted[0].substring(0, 200);
+    const renderOrganization = (item) => {
+        const org = getOrganizationById(item?.deployment_config?.organization_id);
+        return T.translate("integrations.integration_form_subtitle", {
+            name: org?.name || "-",
+        });
     };
 
     return (
@@ -821,10 +781,10 @@ const Integration = ({ packageUrl }) => {
                     <PageHeader
                         ghost={false}
                         title={T.translate("integrations.integration_form_title", { name: currentIntegration?.name })}
-                        subTitle={T.translate("integrations.integration_form_subtitle", {
-                            name: getOrganizationById(currentIntegration?.deployment_config?.organization_id)?.name,
-                        })}
-                        tags={drawIntegrationStatus(currentIntegration)}
+                        tags={[
+                            <Tag>{renderOrganization(currentIntegration)}</Tag>,
+                            drawIntegrationStatus(currentIntegration),
+                        ]}
                         avatar={{ icon: <Icon path={mdiSourceBranchPlus} size={0.7} /> }}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
@@ -845,18 +805,7 @@ const Integration = ({ packageUrl }) => {
                             </Popconfirm>,
                         ]}>
                         <div>
-                            <Typography.Paragraph style={{ whiteSpace: "pre-wrap" }} type="secondary">
-                                {descriptionExpanded && currentIntegration?.description}
-                                {!descriptionExpanded && descriptionEllipsis(currentIntegration?.description) + "..."}
-                                {!descriptionExpanded && (
-                                    <Typography.Link onClick={() => setDescriptionExpanded(true)}> mas</Typography.Link>
-                                )}
-                                {descriptionExpanded && (
-                                    <Typography.Link onClick={() => setDescriptionExpanded(false)}>
-                                        <br /> menos
-                                    </Typography.Link>
-                                )}
-                            </Typography.Paragraph>
+                            <EllipsisParagraph text={currentIntegration?.description} maxChars={100} />
                         </div>
                     </PageHeader>
                 </div>

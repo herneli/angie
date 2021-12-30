@@ -68,7 +68,9 @@ export default function Packages({ history }) {
             title: "Acciones",
             key: "actions",
             render: (text, record) => {
-                return <Link to={"packages/" + record.code}>{T.translate("packages.configure")}</Link>;
+                return (
+                    <Link to={`/packages/${record.code}@${record.version}`}>{T.translate("packages.configure")}</Link>
+                );
             },
         },
     ];

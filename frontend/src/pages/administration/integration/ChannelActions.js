@@ -1,11 +1,41 @@
 
 import axios from "axios";
+import AceEditor from "react-ace";
 
-import { notification } from "antd";
+import { Modal, notification } from "antd";
 
 class ChannelActions {
 
-    
+    /**
+     * Muestra la ventana de debug
+     */
+     showChannelLog = async (integrationId, channelId) => {
+        if (channelId) {
+            const response = await axios.get(`/integration/${integrationId}/channel/${channelId}/log`);
+
+            Modal.info({
+                title: "Log Channel",
+                width: "60vw",
+                closable: true,
+                centered: true,
+                content: (
+                    <div>
+                        <AceEditor
+                            setOptions={{
+                                useWorker: false,
+                            }}
+                            width="100%"
+                            value={response.data.data}
+                            name="chann.log"
+                            theme="github"
+                        />
+                    </div>
+                ),
+                onOk() {},
+            });
+        }
+    };
+
     deployChannel = async (integration, identifier) => {
         try {
             const response = await axios.post(`/integration/${integration}/channel/${identifier}/deploy`);

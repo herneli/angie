@@ -143,7 +143,7 @@ const Agents = () => {
                     <div>
                         <b>{record.integration.name}</b> {"->"}{" "}
                         <Link
-                            to={`/packages/${record.integration.package_code}/integrations/${record.integration.id}/${record.id}`}>
+                            to={`/packages/${record.integration.package_code}@${record.integration.package_version}/integrations/${record.integration.id}/${record.id}`}>
                             {text}
                         </Link>
                     </div>

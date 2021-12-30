@@ -5,6 +5,7 @@ import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
 import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload, mdiPencil } from "@mdi/js";
 import Icon from "@mdi/react";
+import Utils from "../../../common/Utils";
 const { Search } = Input;
 
 const useStyles = createUseStyles({
@@ -203,12 +204,17 @@ export default function ModelTable({
         let filters = {};
 
         if (searchValue && Object.keys(searchValue).length > 0) {
-            filters = {
-                "data::text": {
-                    type: "jsonb",
-                    value: searchValue,
-                },
-            };
+            if (searchValue.indexOf(":") !== -1) {
+                filters = Utils.getFiltersByPairs(searchValue);
+            } else {
+                filters = {
+                    "data::text": {
+                        type: "jsonb",
+                        value: searchValue,
+                    },
+                };
+            }
+            
         }
 
         if (params?.pageSize && params?.current) {

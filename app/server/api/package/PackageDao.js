@@ -14,8 +14,12 @@ export class PackageDao extends BaseKnexDao {
     }
 
     async loadByCode(objectId) {
+        const id = objectId.split('@')
         let knex = KnexConnector.connection;
-        const data = await knex.from(this.tableName).where('code', objectId);
+        const data = await knex.from(this.tableName).where({
+            'code': id[0],
+            'version': id[1]
+        });
 
         if (data && data[0]) {
             return data[0];

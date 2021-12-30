@@ -13,6 +13,7 @@ import { mdiCancel, mdiCheck, mdiContentCopy, mdiDelete, mdiDownload, mdiPencil,
 import { createUseStyles } from "react-jss";
 import ChannelActions from "./ChannelActions";
 import { usePackage } from "../../../components/packages/PackageContext";
+import Utils from "../../../common/Utils";
 
 const useStyles = createUseStyles({
     card: {
@@ -429,39 +430,17 @@ const Integrations = ({ packageUrl }) => {
         });
     };
 
-    const getFiltersByPairs = (str) => {
-        const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
-        let m;
-
-        let data = {};
-        while ((m = regex.exec(str)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            let { key, value } = m.groups;
-            if (key) {
-                data[key] = {
-                    type: "likeI",
-                    value: `%${value}%`,
-                };
-            }
-        }
-        return data;
-    };
-
+    
     const onSearch = (value) => {
-        // if (value.indexOf(":") !== -1) {
-        //     return search(null, getFiltersByPairs(value));
-        // }
-        if (value) {
-            search(null, {
-                "integration.data::text": {
-                    type: "jsonb",
-                    value: value,
-                },
-            });
+        if (value.indexOf(":") !== -1) {
+            return search(null, Utils.getFiltersByPairs(value));
         }
+        search(null, {
+            "integration.data::text": {
+                type: "jsonb",
+                value: value,
+            },
+        });
     };
 
     return (
