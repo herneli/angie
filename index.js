@@ -8,6 +8,7 @@ import { keycloakAdmin } from "./config/keycloak-admin-client-config";
 import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
 import { IntegrationChannelController } from "./app/server/api/integration_channel";
+import { MessageController } from "./app/server/api/messages";
 import { OrganizationController } from "./app/server/api/organization";
 import { PackageController } from "./app/server/api/package";
 import { ScriptController } from "./app/server/api/script";
@@ -85,6 +86,7 @@ module.exports = async () => {
         new PackageController(),
         new JUMAgentController(),
         new SectionController(),
+        new MessageController(),
     ];
 
     const directives = {
@@ -117,12 +119,10 @@ module.exports = async () => {
     App.server.on("listening", () => {
         console.log("Server Ready to Serve 😄");
 
-
         console.log("Import Users From Keycloak");
 
         App.events.emit("config_import_users");
 
         console.log("Import Process has being completed.");
-
-    }); 
+    });
 };
