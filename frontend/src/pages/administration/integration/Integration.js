@@ -211,7 +211,6 @@ const Integration = ({ packageUrl }) => {
     useEffect(() => {
         if (currentIntegration) {
             setChannels(currentIntegration.channels);
-            setChannelStatus(lodash.mapValues(lodash.keyBy(currentIntegration.channels, "id"), "status"));
         }
     }, [currentIntegration]);
 
@@ -224,6 +223,7 @@ const Integration = ({ packageUrl }) => {
 
         if (state && state.record) {
             setCurrentIntegration(state.record);
+            setChannelStatus(lodash.mapValues(lodash.keyBy(state.record.channels, "id"), "status"));
             if (channel) {
                 setActiveTab(channel);
             } else {
@@ -299,12 +299,15 @@ const Integration = ({ packageUrl }) => {
      * @param {*} identifier
      */
     const fetchIntegration = async (identifier) => {
+        setPendingChanges(false);
         try {
             const response = await axios.get("/integration/" + identifier);
 
             if (response?.data?.data) {
                 let { data: integration } = response.data.data;
                 setCurrentIntegration(integration);
+                setChannelStatus(lodash.mapValues(lodash.keyBy(integration.channels, "id"), "status"));
+
                 setEditHistory([{ ...integration }]);
                 if (channel) {
                     setActiveTab(channel);
@@ -822,7 +825,7 @@ const Integration = ({ packageUrl }) => {
                             name: getOrganizationById(currentIntegration?.deployment_config?.organization_id)?.name,
                         })}
                         tags={drawIntegrationStatus(currentIntegration)}
-                        avatar={{icon: <Icon path={mdiSourceBranchPlus} size={0.7} />}}
+                        avatar={{ icon: <Icon path={mdiSourceBranchPlus} size={0.7} /> }}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
                                 {T.translate("common.button.edit")}
