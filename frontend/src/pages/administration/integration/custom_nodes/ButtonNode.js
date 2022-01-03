@@ -6,30 +6,30 @@ import T from "i18n-react";
 import { Handle } from "react-flow-renderer";
 import { useCurrentChannel } from "../../../../components/channels/ChannelContext";
 
-async function callApi(node, currentChannel) {
+async function callApi(node, currentChannel, channelStatus) {
     const { data } = node;
-    //TODO: conocer el estado del canal antes de realizar la petición
-    // if (data.channel_status === "STARTED") {
-    //TODO: Revisar notificaciones
-    try {
-        await axios.post(`/channel/${currentChannel.id}/${data.url}`, {
-            endpoint: `direct://${node.id}`,
-            content: "",
-        });
-        message.success(T.translate("common.success"));
-    } catch (error) {
-        notification.error({
-            message: T.translate("common.messages.error.title"),
-            description: T.translate("common.messages.error.description", { error: error }),
-        });
+
+    if (channelStatus.toUpperCase() === "STARTED") {
+        try {
+            await axios.post(`/channel/${currentChannel.id}/${data.url}`, {
+                endpoint: `direct://${node.id}`,
+                content: "",
+            });
+            message.success(T.translate("common.success"));
+        } catch (error) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: error }),
+            });
+        }
+    } else {
+        //Todo: Traducción de esta notificación
+        message.warn("Es necesario desplegar el canal para poder realizar esta acción.");
     }
-    // } else {
-    //     message.warn("Es necesario desplegar el canal para poder realizar esta acción.");
-    // }
 }
 
 const ButtonNode = (node) => {
-    const { currentChannel } = useCurrentChannel();
+    const { currentChannel, currentStatus } = useCurrentChannel();
 
     const { data, isConnectable } = node;
     return (
@@ -50,7 +50,7 @@ const ButtonNode = (node) => {
                 <Button
                     onClick={(e) => {
                         if (data.url) {
-                            callApi(node, currentChannel);
+                            callApi(node, currentChannel, currentStatus);
                         }
                     }}
                     onDoubleClick={(e) => {
