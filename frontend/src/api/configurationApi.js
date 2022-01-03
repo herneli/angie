@@ -24,10 +24,10 @@ export function getModelInfo(model) {
     });
 }
 
-export function getModelDataList(model, filters, relations, selectQuery) {
+export function getModelDataList(model, filters) {
     return axios
         .get("/configuration/model/" + model + "/data", {
-            params: { filters: filters, relations: relations, selectQuery: selectQuery },
+            params: { filters: filters },
         })
         .then((response) => {
             let ObjectMap = response.data.data.map((modelData) => frontendModelData(modelData));

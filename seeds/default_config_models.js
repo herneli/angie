@@ -2,8 +2,6 @@ exports.seed = async function (knex) {
     // Deletes ALL existing entries
     await knex("config_model").del();
 
-
-
     // Inserts seed entries
     await knex("config_model").insert([
         {
@@ -668,22 +666,22 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery: "users.*,o.data as organization_data",
+                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                group_by: "users.id",
                 relation_schema: [
                     {
                         type: "LEFT JOIN",
-                        tabletoJoin: "organization as o",
-                        column1: "(users.data->>'organization_id')::text",
-                        column2: " text(o.id)",
-                        relationColumn: "organization_data",
-                    }
+                        with_table: "organization",
+                        on_condition: "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
+                        relation_column: "organization_data"
+                    },
                 ],
                 documentType: "user",
                 listFields: [
-                    {
-                        title: "id",
-                        field: "id",
-                    },
+                    // {
+                    //     title: "id",
+                    //     field: "id",
+                    // },
                     {
                         title: "username",
                         field: "username",
@@ -694,19 +692,19 @@ exports.seed = async function (knex) {
                     },
                     {
                         title: "roles",
-                        field: ["role_data", "name"],
+                        field: ["roles"],
                     },
                     {
                         title: "Organization",
-                        field: ["organization_data", "name"],
+                        field: ["organization_data"],
                     },
                     {
-                        title: "created_time_stamp",
-                        field: "created_time_stamp",
+                        title: "created_timestamp",
+                        field: "created_timestamp",
                     },
                 ],
                 schema: {
-                    title: "Add User",
+                    title: "",
                     type: "object",
                     required: ["username"],
                     properties: {
@@ -721,33 +719,35 @@ exports.seed = async function (knex) {
                             title: "Roles",
                         },
                         organization_id: {
-                            type: "string",
+                            type: "array",
                             title: "Organization",
+                            items: {
+                                type: "string",
+                                enum: [],
+                            },
+                            uniqueItems: true,
                         },
                     },
                 },
                 uiSchema: {
-                    id: {
-                        "ui:columnSize": "3",
-                    },
                     username: {
+                        "ui:readonly": true,
                         "ui:columnSize": "3",
                     },
 
                     email: {
+                        "ui:readonly": true,
                         "ui:columnSize": "3",
                     },
                     roles: {
+                        "ui:readonly": true,
                         "ui:columnSize": "6",
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions":
-                            "/getRoles/#path=data&value=id&label=name",
                     },
                     organization_id: {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions":
-                            "/configuration/model/organization/data#path=data&value=id&label=data.name",
+                        "ui:mode": "multiple",
+                        "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",
@@ -1108,16 +1108,16 @@ exports.seed = async function (knex) {
                         title: "code",
                         field: "code",
                     },
+                    // {
+                    //     title: "title",
+                    //     field: "title",
+                    // },
+                    // {
+                    //     title: "icon",
+                    //     field: "icon",
+                    // },
                     {
-                        title: "title",
-                        field: "title",
-                    },
-                    {
-                        title: "icon",
-                        field: "icon",
-                    },
-                    {
-                        title: "value",
+                        title: "Ruta",
                         field: "value",
                     },
                     {
@@ -1126,20 +1126,20 @@ exports.seed = async function (knex) {
                     },
                 ],
                 schema: {
-                    title: "Create Profile",
                     type: "object",
-                    required: ["code","value"],
+                    required: ["code", "value"],
                     properties: {
                         code: {
                             type: "string",
                         },
-                        title: {
-                            type: "string",
-                        },
-                        icon: {
-                            type: "string",
-                        },
+                        // title: {
+                        //     type: "string",
+                        // },
+                        // icon: {
+                        //     type: "string",
+                        // },
                         value: {
+                            title: "Ruta",
                             type: "string",
                         },
                         roles: {
@@ -1147,10 +1147,9 @@ exports.seed = async function (knex) {
                             type: "array",
                             items: {
                                 type: "string",
-                                enum:[
-                                    "/default"
-                                ],
+                                enum: [],
                             },
+                            uniqueItems: true,
                         },
                         // childrens: {
                         //     title: "SubMenu",
@@ -1173,34 +1172,34 @@ exports.seed = async function (knex) {
                         //             value: {
                         //                 type: "string",
                         //             },
-                                    // "childrens": {
-                                    //     "title": "Opciones",
-                                    //     "type": "array",
-                                    //     "items": {
-                                    //         "type": "object",
-                                    //         "properties": {
-                                    //             "code": {
-                                    //                 "type": "string",
-                                    //                 "title": "Código"
-                                    //             },
-                                    //             "title": {
-                                    //                 title: "Nombre",
-                                    //                 type: "string",
-                                    //             },
-                                    //             "icon": {
-                                    //                 type: "string",
-                                    //             },
-                                    //             "value": {
-                                    //                 type: "string",
-                                    //             },
-                                    //         },
-                                    //         "required": ["code"]
-                                    //     }
-                                    // }
-                    //             }
-                    //         },
-                    //     }
-                    }
+                        // "childrens": {
+                        //     "title": "Opciones",
+                        //     "type": "array",
+                        //     "items": {
+                        //         "type": "object",
+                        //         "properties": {
+                        //             "code": {
+                        //                 "type": "string",
+                        //                 "title": "Código"
+                        //             },
+                        //             "title": {
+                        //                 title: "Nombre",
+                        //                 type: "string",
+                        //             },
+                        //             "icon": {
+                        //                 type: "string",
+                        //             },
+                        //             "value": {
+                        //                 type: "string",
+                        //             },
+                        //         },
+                        //         "required": ["code"]
+                        //     }
+                        // }
+                        //             }
+                        //         },
+                        //     }
+                    },
                 },
                 uiSchema: {
                     code: {
@@ -1216,9 +1215,10 @@ exports.seed = async function (knex) {
                         type: "string",
                     },
                     roles: {
-                        "ui:ArrayFieldTemplate": null,
-                        "ui:columnSize": "3",
-                        "ui:url": "/getRoles/#path=data&value=id&label=name",
+                        "ui:columnSize": "6",
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:mode": "multiple",
+                        "ui:selectOptions": "/getRoles/#path=data&value=name&label=name",
                     },
                     // "childrens": {
                     //     "ui:options": {
@@ -1253,10 +1253,10 @@ exports.seed = async function (knex) {
                     //                 "value": {
                     //                     "ui:columnSize": "4"
                     //                 }
-                                    
+
                     //             }
                     //         }
-                        // }
+                    // }
                     // }
                 },
             },

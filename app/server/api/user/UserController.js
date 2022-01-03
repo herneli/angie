@@ -29,17 +29,18 @@ export class UserController extends BaseController {
 
         //listen on events to update Keycloak data
         App.events.on("config_deleted_users", (id) => {
-            this.deleteUser(id.id);
+            // this.deleteUser(id.id);
         });
         App.events.on("config_saved_users", (data) => {
-            this.saveUsers(data.model, data.body);
+            // this.saveUsers(data.model, data.body);
         });
         App.events.on("config_updated_users", (data) => {
-            this.updateUser(data.model, data.body, data.id);
+            // this.updateUser(data.model, data.body, data.id);
         });
 
-        App.events.on("config_import_users", () => {
-            this.importUsers(null, null, null);//!FIXME Error!
+        App.events.on("config_import_users", async () => {
+            const service = new UserService();
+            await service.importKeycloakUsers();
         });
 
         return this.router;
@@ -74,57 +75,13 @@ export class UserController extends BaseController {
      */
     async importUsers(request, response, next) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let usersTosave = [];
-            let users = App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : [];
-            for await (let e of users) {
-                let roles = await App.keycloakAdmin.users.listRoleMappings({
-                    id: e.id,
-                });
-                roles.pop; //!! FIXME  ??? esto que es?
-                let groups = await App.keycloakAdmin.users.listGroups({
-                    id: e.id,
-                });
-                delete e.totp;
-                delete e.disableableCredentialTypes;
-                delete e.requiredActions;
-                delete e.notBefore;
-                delete e.access;
-                delete e.firstName;
-                e.created_time_stamp = e.createdTimeStamp;
-                delete e.createdTimestamp;
-                e.email_verified = e.emailVerified;
-                delete e.emailVerified;
-                e.roles = JSON.stringify(roles);
+            const service = new UserService();
 
-                let exists = await bServ.loadById(e.id);
-                if (exists) {
-                    let r = {
-                        id: e.id,
-                        document_type: "user",
-                        code: e.username,
-                        data: { ...exists.data, ...e },
-                    };
-                    r = { ...exists, ...r };
-                    let update = await bServ.update(r.id, r);
-                } else {
-                    let r = {
-                        id: e.id,
-                        document_type: "user",
-                        code: e.username,
-                        data: e,
-                    };
-                    usersTosave.push(r);
-                }
-            }
+            await service.importKeycloakUsers();
 
-            let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
-            jsRes.success = false;
-            jsRes.message = users;
-            response.json(jsRes);
+            const jsRes = new JsonResponse(true);
+            response.status(200).json(jsRes);
         } catch (e) {
-            console.log("Error on keycloak user imports");
             next(e);
         }
     }

@@ -44,12 +44,12 @@ export default function ModelTable({
                 dataIndex: field.field,
                 sorter: true,
             }));
-            
-            columns.push({
-                title: "packageCode",
-                key: "packageCode",
-                dataIndex: "packageCode",
-            });
+
+            // columns.push({
+            //     title: "packageCode",
+            //     key: "packageCode",
+            //     dataIndex: "packageCode",
+            // });
             columns.push({
                 title: T.translate("configuration.actions"),
                 key: "_actions",
@@ -57,14 +57,14 @@ export default function ModelTable({
                 width: 180,
                 render: (text, record) => (
                     <Row justify="center">
-                        {record.editable !== false &&
-                        <Button
-                            icon={<Icon path={mdiPencil} className={classes.icon} />}
-                            type="text"
-                            title={T.translate("common.button.edit")}
-                            onClick={(e) => handleOnRowClick(record)}
-                        />
-                        }
+                        {record.editable !== false && (
+                            <Button
+                                icon={<Icon path={mdiPencil} className={classes.icon} />}
+                                type="text"
+                                title={T.translate("common.button.edit")}
+                                onClick={(e) => handleOnRowClick(record)}
+                            />
+                        )}
 
                         <Popconfirm
                             title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
@@ -81,17 +81,17 @@ export default function ModelTable({
                             title={T.translate("common.button.download")}
                             onClick={(e) => handleOnDownloadModel(e, record)}
                         />
-                        {record.editable !== false &&
-                        <Popconfirm
-                            title={T.translate("configuration.do_you_want_to_delete_the_item")}
-                            onConfirm={(e) => handleOnDeleteModel(e, record)}>
-                            <Button
-                                icon={<Icon path={mdiDelete} className={classes.icon} />}
-                                type="text"
-                                title={T.translate("common.button.delete")}
-                            />
-                        </Popconfirm>
-                        }
+                        {record.editable !== false && (
+                            <Popconfirm
+                                title={T.translate("configuration.do_you_want_to_delete_the_item")}
+                                onConfirm={(e) => handleOnDeleteModel(e, record)}>
+                                <Button
+                                    icon={<Icon path={mdiDelete} className={classes.icon} />}
+                                    type="text"
+                                    title={T.translate("common.button.delete")}
+                                />
+                            </Popconfirm>
+                        )}
                     </Row>
                 ),
             });
@@ -100,8 +100,8 @@ export default function ModelTable({
             return null;
         }
     };
-    const [importItems, ] = useState();
-    const [searchString, ] = useState();
+    const [importItems] = useState();
+    const [searchString] = useState();
     const [pagination, setPagination] = useState({});
 
     const classes = useStyles();
@@ -214,7 +214,6 @@ export default function ModelTable({
                     },
                 };
             }
-            
         }
 
         if (params?.pageSize && params?.current) {
