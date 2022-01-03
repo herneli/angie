@@ -9,7 +9,8 @@ export default function ChannelContextProvider({ currentChannel: channel, curren
 
     useEffect(() => {
         setCurrentStatus(status);
-    }, [status]);
+        setCurrentChannel(channel);
+    }, [status, channel]);
 
     return <ChannelContext.Provider value={{ currentChannel, currentStatus }}>{children}</ChannelContext.Provider>;
 }
