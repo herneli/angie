@@ -112,6 +112,7 @@
 
 .react-flow__node-CommentNode {
     border-color: #7a7423;
+    background-color: #fffebc !important;
 }
 
 .react-flow__node.selected {
