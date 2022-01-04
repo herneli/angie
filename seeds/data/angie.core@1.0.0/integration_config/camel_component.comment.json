@@ -1,0 +1,11 @@
+[
+  {
+    "id": "bb7ad089-361d-476f-823e-0b07d7500526",
+    "code": "core.utils.comment",
+    "name": "Comment",
+    "options": "{\n    \"label\": \"string\"\n}",
+    "package_code": "angie.core",
+    "xml_template": "",
+    "package_version": "1.0.0"
+  }
+]
