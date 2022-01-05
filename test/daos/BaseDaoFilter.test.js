@@ -259,4 +259,10 @@ describe("parseFiltersObject (BaseDao)", () => {
         expect(result.query.bool.filter.query_string).to.have.property("query");
         expect(result.query.bool.filter.query_string.query).to.be.equal("field:value");
     });
+
+    it("Empty filter", async () => {
+        const result = await elm.parseFiltersObject({}, 10, 1);
+
+        expect(result).to.not.have.property("query");
+    });
 });
