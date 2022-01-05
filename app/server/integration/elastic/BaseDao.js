@@ -60,7 +60,7 @@ export default class BaseDao {
             }
             params.body.sort = this.parseSorts(filter.sort);
         }
-        global.esstats.searchCount++;
+        // global.esstats.searchCount++;
         return this.search(params);
     }
 
@@ -205,7 +205,8 @@ export default class BaseDao {
                 body.filter("term", index, element);
             }
         }
-        const result = body.size(size).from(from).build("v2");
+        // const result = body.size(size).from(from).build("v2");
+        const result = body.build("v2");
         return result;
     }
 
