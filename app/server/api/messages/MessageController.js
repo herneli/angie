@@ -1,9 +1,10 @@
-import { BaseController, JsonResponse } from "lisco";
-
+import { BaseController } from "lisco";
+import { MessageService } from ".";
 import expressAsyncHandler from "express-async-handler";
-import axios from "axios";
 
 export class MessageController extends BaseController {
+    dao = new MessageService();
+
     configure() {
         this.router.get(
             `/messages/:channel`,
@@ -12,17 +13,30 @@ export class MessageController extends BaseController {
             })
         );
 
+        /*   // Obtiene  el número de mensajes del canal indicado
+        this.router.get(
+            `/messages/:channel/count`,
+            expressAsyncHandler((request, response, next) => {
+                this.getChannelMessageCount(request, response, next);
+            })
+        ); */
+
         return this.router;
     }
 
     async getChannelMessages(req, res, next) {
         const channel = req.params.channel;
-        //TODO: "No hardcodear URL Elastic"
+
         try {
-            const elasticResponse = await axios.get(`http://localhost:3103/stats_${channel}/_search`);
-            res.json(elasticResponse.data);
+            const data = await this.dao.getChannelMessages(channel, 10, 1);
+            console.log(data.body);
+            res.json(data.body);
         } catch (e) {
-            next(e);
+            if (e.body.status === 404) {
+                res.json({});
+            } else {
+                next(e);
+            }
         }
     }
 }
