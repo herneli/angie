@@ -6,7 +6,15 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import { createUseStyles } from "react-jss";
-import { mdiCancel, mdiCheck, mdiCheckCircleOutline, mdiCloseCircleOutline, mdiTextLong, mdiTrashCan } from "@mdi/js";
+import {
+    mdiCancel,
+    mdiCheck,
+    mdiCheckCircleOutline,
+    mdiCloseCircleOutline,
+    mdiReload,
+    mdiTextLong,
+    mdiTrashCan,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 
 import AceEditor from "react-ace";
@@ -75,6 +83,18 @@ const Agents = () => {
             });
         }
         setLoading(false);
+    };
+
+    const forceStatusReload = async (agent) => {
+        try {
+            await axios.post(`/jum_agent/${agent.id}/forceReload`);
+            await search();
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
     };
 
     useEffect(() => {
@@ -208,6 +228,18 @@ const Agents = () => {
                                         path={mdiTextLong}
                                         className={classes.icon}
                                         title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+                            <Button
+                                key="log"
+                                type="text"
+                                onClick={() => forceStatusReload(record)}
+                                icon={
+                                    <Icon
+                                        path={mdiReload}
+                                        className={classes.icon}
+                                        title={T.translate("common.button.reload")}
                                     />
                                 }
                             />

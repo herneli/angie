@@ -83,6 +83,23 @@
             "approved": "Aprobado"
         }
     },
+    "deployed_integrations": {
+        "integration_form_subtitle": "Organización: {name}",
+        "channel": {
+            "button": {
+                "deploy": "Desplegar",
+                "undeploy": "Replegar"
+            },
+            "started": "En Ejecución",
+            "stoped": "Detenido",
+            "undeployed": "Sin Desplegar"
+        },
+        "agent_actions": {
+            "title": "Acciones Agente",
+            "move": "Mover canal",
+            "any_available": "Cualquiera Disponible"
+        }
+    },
     "integrations": {
         "button": {
             "confirmSave": "Confirmar y Guardar"

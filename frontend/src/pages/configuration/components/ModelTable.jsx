@@ -205,7 +205,7 @@ export default function ModelTable({
 
         if (searchValue && Object.keys(searchValue).length > 0) {
             if (searchValue.indexOf(":") !== -1) {
-                filters = Utils.getFiltersByPairs(searchValue);
+                filters = Utils.getFiltersByPairs((key) => (`data->>'${key}'`), searchValue);
             } else {
                 filters = {
                     "data::text": {

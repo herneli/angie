@@ -28,6 +28,7 @@
     "folder-hash": "^4.0.1",
     "glob": "^7.1.7",
     "handlebars": "^4.7.7",
+    "helmet": "^5.0.0",
     "http-rabbitmq-manager": "0.0.5",
     "jsonpath": "^1.1.1",
     "jsreport-core": "^2.10.1",

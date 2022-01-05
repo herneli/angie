@@ -11,9 +11,9 @@ import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
 import { mdiCancel, mdiCheck, mdiContentCopy, mdiDelete, mdiDownload, mdiPencil, mdiPlus, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
-import ChannelActions from "./ChannelActions";
 import { usePackage } from "../../../components/packages/PackageContext";
 import Utils from "../../../common/Utils";
+import { Link } from "react-router-dom";
 
 const useStyles = createUseStyles({
     card: {
@@ -53,20 +53,15 @@ const Integrations = ({ packageUrl }) => {
     const startEdit = (record) => {
         history.push({
             pathname: packageUrl + "/integrations/" + record.id,
-            state: {
-                record: record,
-            },
         });
     };
 
     const onElementDelete = async (record) => {
         setLoading(true);
         try {
-            const response = await axios.delete(`/integration/${record.id}`);
+            await axios.delete(`/integration/${record.id}`);
 
-            if (response?.data?.success) {
-                search();
-            }
+            setTimeout(search, 200);
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -300,9 +295,20 @@ const Integrations = ({ packageUrl }) => {
             ellipsis: true,
             sorter: true,
             render: (text, record) => {
-                if (record.channels) return <b>{text}</b>;
+                if (record.channels)
+                    return (
+                        <Link to={`${packageUrl}/integrations/${record.id}`}>
+                            <b>{record.name}</b>
+                        </Link>
+                    );
 
-                return text;
+                let int = lodash.find(dataSource, (int) => {
+                    let chann = lodash.find(int.channels, { id: record.id });
+                    if (chann != null) {
+                        return int;
+                    }
+                });
+                return <Link to={`${packageUrl}/integrations/${int.id}/${record.id}`}>{text}</Link>;
             },
         },
         {
@@ -430,10 +436,9 @@ const Integrations = ({ packageUrl }) => {
         });
     };
 
-    
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
-            return search(null, Utils.getFiltersByPairs(value));
+            return search(null, Utils.getFiltersByPairs((key) => (`data->>'${key}'`), value));
         }
         search(null, {
             "integration.data::text": {

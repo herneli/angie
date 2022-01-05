@@ -15,6 +15,18 @@ export class IntegrationChannelController extends BaseController {
             })
         );
         this.router.post(
+            `/integration/:id/channel/:channel/move/`,
+            expressAsyncHandler((request, response, next) => {
+                this.moveChannel(request, response, next);
+            })
+        );
+        this.router.post(
+            `/integration/:id/channel/:channel/move/:agent`,
+            expressAsyncHandler((request, response, next) => {
+                this.moveChannel(request, response, next);
+            })
+        );
+        this.router.post(
             `/integration/:id/channel/:channel/undeploy`,
             expressAsyncHandler((request, response, next) => {
                 this.undeployChannel(request, response, next);
@@ -58,6 +70,22 @@ export class IntegrationChannelController extends BaseController {
             let channel = request.params.channel;
 
             let res = await service.deployChannel(integration, channel);
+            let jsRes = new JsonResponse(true, res, null, 1);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async moveChannel(request, response, next) {
+        try {
+            let service = new IntegrationChannelService();
+            let integration = request.params.id;
+            let channel = request.params.channel;
+            let currentAgent = request.params.agent;
+
+            let res = await service.moveChannel(integration, channel, currentAgent);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());

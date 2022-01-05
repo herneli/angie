@@ -1,7 +1,5 @@
 export default class Utils {
-
-
-    static getFiltersByPairs = (str) => {
+    static getFiltersByPairs = (filterKey, str) => {
         const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
         let m;
 
@@ -13,7 +11,7 @@ export default class Utils {
             }
             let { key, value } = m.groups;
             if (key) {
-                data[`data->>'${key}'`] = {
+                data[filterKey(key)] = {
                     type: "jsonb",
                     value: `%${value}%`,
                 };
@@ -21,7 +19,4 @@ export default class Utils {
         }
         return data;
     };
-
 }
-
-

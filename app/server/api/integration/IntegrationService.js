@@ -15,13 +15,14 @@ export class IntegrationService extends BaseService {
     //Overwrite
     async loadById(id) {
         const integration = await super.loadById(id);
-        
+
         integration.data.deployment_config = integration.deployment_config;
 
         if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
-                const channelState = await this.agentService.getChannelCurrentState(channel.id);
-                channel = this.channelService.channelApplyStatus(channel, channelState);
+                const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);
+                channel = await this.channelService.channelApplyStatus(channel, channelState);
+                channel.agent = currentAgent;
             }
         }
         return integration;
@@ -135,8 +136,9 @@ export class IntegrationService extends BaseService {
 
             if (integration.data.channels) {
                 for (let channel of integration.data.channels) {
-                    const channelState = await this.agentService.getChannelCurrentState(channel.id);
+                    const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);
                     channel = await this.channelService.channelApplyStatus(channel, channelState);
+                    channel.agent = currentAgent;
                 }
             }
         }
@@ -151,7 +153,7 @@ export class IntegrationService extends BaseService {
         }
 
         let response = {};
-        
+
         for (let channel of integration.data.channels) {
             response[channel.id] = channel.status;
         }

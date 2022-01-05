@@ -761,6 +761,31 @@
     "/integration/list": {
       "post": {
         "summary": "/integration/list",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "field": {
+                        "type": "string",
+                        "example": "name"
+                      },
+                      "direction": {
+                        "type": "string",
+                        "example": "ascend"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1030,6 +1055,292 @@
                     }
                   }
                 }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "created_on": {
+                                "type": "string"
+                              },
+                              "channels": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "created_on": {
+                                      "type": "string"
+                                    },
+                                    "version": {
+                                      "type": "number"
+                                    },
+                                    "nodes": {
+                                      "type": "array",
+                                      "properties": {
+                                        "list": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {
+                                                "type": "string"
+                                              },
+                                              "type_id": {
+                                                "type": "string"
+                                              },
+                                              "custom_name": {
+                                                "type": "string"
+                                              },
+                                              "links": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "node_id": {
+                                                      "type": "string"
+                                                    },
+                                                    "handle": {
+                                                      "nullable": true
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "position": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "x": {
+                                                    "type": "number"
+                                                  },
+                                                  "y": {
+                                                    "type": "number"
+                                                  }
+                                                }
+                                              },
+                                              "data": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "protocol": {
+                                                    "type": "string"
+                                                  },
+                                                  "hostname": {
+                                                    "type": "string"
+                                                  },
+                                                  "path": {
+                                                    "type": "string"
+                                                  },
+                                                  "port": {
+                                                    "type": "number"
+                                                  },
+                                                  "name": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "required": [
+                                              "id",
+                                              "type_id",
+                                              "custom_name",
+                                              "links",
+                                              "position",
+                                              "data"
+                                            ]
+                                          }
+                                        }
+                                      },
+                                      "items": {}
+                                    },
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    },
+                                    "last_updated": {
+                                      "type": "string"
+                                    },
+                                    "message_count": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "id",
+                                    "created_on",
+                                    "version",
+                                    "nodes",
+                                    "enabled",
+                                    "status",
+                                    "message_count"
+                                  ]
+                                }
+                              },
+                              "last_updated": {
+                                "type": "string"
+                              },
+                              "enabled": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "organization_id": {
+                            "nullable": true
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "id": "8cf46387-37c5-4f38-ac34-3fc90389adef",
+                          "name": "Test",
+                          "data": {
+                            "id": "8cf46387-37c5-4f38-ac34-3fc90389adef",
+                            "name": "Test",
+                            "description": "asdfasdfasdfasdf",
+                            "created_on": "2021-11-11T09:31:01.081Z",
+                            "channels": [
+                              {
+                                "name": "Channel",
+                                "id": "bf1149b6-150d-4e21-83a6-8a12114d8de0",
+                                "created_on": "2021-11-11T16:34:16.408Z",
+                                "version": 3,
+                                "nodes": {
+                                  "list": [
+                                    {
+                                      "id": "c8914a7e-24d6-4072-8572-8f170f8ae8b0",
+                                      "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                      "custom_name": "HTTP Input",
+                                      "links": [
+                                        {
+                                          "node_id": "5230e0a1-b0f0-481f-b491-7fefd774ae12",
+                                          "handle": null
+                                        }
+                                      ],
+                                      "position": {
+                                        "x": 191,
+                                        "y": 92
+                                      },
+                                      "data": {
+                                        "protocol": "jetty:http",
+                                        "hostname": "0.0.0.0",
+                                        "path": "",
+                                        "port": 8888
+                                      }
+                                    },
+                                    {
+                                      "id": "5230e0a1-b0f0-481f-b491-7fefd774ae12",
+                                      "type_id": "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+                                      "custom_name": "Log",
+                                      "links": [],
+                                      "position": {
+                                        "x": 525,
+                                        "y": 176
+                                      },
+                                      "data": {
+                                        "name": "debug"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "enabled": true,
+                                "status": "UNDEPLOYED",
+                                "last_updated": "2021-11-11T16:34:23.384Z",
+                                "message_count": 0
+                              },
+                              {
+                                "name": "Channel",
+                                "id": "7ba17693-8937-4be8-948c-b57c5f4f382b",
+                                "created_on": "2021-11-12T07:42:25.774Z",
+                                "version": 0,
+                                "nodes": [],
+                                "enabled": true,
+                                "status": "UNDEPLOYED",
+                                "message_count": 0
+                              },
+                              {
+                                "name": "Channel",
+                                "id": "3966e0db-6116-4ac5-bab4-8e171b5c4092",
+                                "created_on": "2021-11-12T07:42:26.555Z",
+                                "version": 0,
+                                "nodes": [],
+                                "enabled": true,
+                                "status": "UNDEPLOYED",
+                                "message_count": 0
+                              }
+                            ],
+                            "last_updated": "2021-11-12T07:42:28.951Z",
+                            "enabled": true
+                          },
+                          "organization_id": null,
+                          "enabled": true
+                        }
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /integration/list</pre>\n</body>\n</html>\n"
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /integration/list</pre>\n</body>\n</html>\n"
+                }
               }
             }
           },
@@ -1050,12 +1361,32 @@
                     }
                   }
                 }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "select \"integration\".* from \"integration\" left join \"organization\" on \"integration\".\"organization_id\" = \"organization\".\"id\" order by data->>'description' ASC limit $1 - column reference \"data\" is ambiguous"
+                    }
+                  }
+                }
               }
             }
           }
         },
         "tags": [
           "integration"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     },
@@ -1183,6 +1514,68 @@
           },
           {
             "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/move/": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/move/",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
+        ]
+      }
+    },
+    "/integration/{id}/channel/{channel}/move/{agent}": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/move/{agent}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agent",
             "in": "path",
             "required": true,
             "schema": {
@@ -2001,7 +2394,1497 @@
     "/jum_agent": {
       "get": {
         "summary": "/jum_agent",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "joined_date": {
+                            "type": "string"
+                          },
+                          "approved": {
+                            "type": "boolean"
+                          },
+                          "approved_date": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "meta": {
+                            "type": "object",
+                            "properties": {
+                              "platform": {
+                                "type": "string"
+                              },
+                              "rest_api_port": {
+                                "type": "string"
+                              },
+                              "ip": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "agentId": {
+                                  "type": "string"
+                                },
+                                "status": {
+                                  "type": "object",
+                                  "properties": {
+                                    "routes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "EndpointUri": {
+                                            "type": "string"
+                                          },
+                                          "CamelManagementName": {
+                                            "type": "string"
+                                          },
+                                          "State": {
+                                            "type": "string"
+                                          },
+                                          "RouteId": {
+                                            "type": "string"
+                                          },
+                                          "ID": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "EndpointUri",
+                                          "CamelManagementName",
+                                          "State",
+                                          "RouteId",
+                                          "ID"
+                                        ]
+                                      }
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "messages_total": {
+                                      "type": "number"
+                                    },
+                                    "messages_error": {
+                                      "type": "number"
+                                    },
+                                    "uptime": {
+                                      "type": "string"
+                                    },
+                                    "messages_sent": {
+                                      "type": "number"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "integration": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "data": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
+                                          "type": "string"
+                                        },
+                                        "created_on": {
+                                          "type": "string"
+                                        },
+                                        "channels": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "options": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "trace_file": {
+                                                    "type": "boolean"
+                                                  },
+                                                  "trace_incoming_message": {
+                                                    "type": "boolean"
+                                                  },
+                                                  "trace_headers": {
+                                                    "type": "boolean"
+                                                  },
+                                                  "trace_properties": {
+                                                    "type": "boolean"
+                                                  },
+                                                  "trace_outgoing_message": {
+                                                    "type": "boolean"
+                                                  }
+                                                }
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "id": {
+                                                "type": "string"
+                                              },
+                                              "created_on": {
+                                                "type": "string"
+                                              },
+                                              "version": {
+                                                "type": "number"
+                                              },
+                                              "nodes": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "id": {
+                                                      "type": "string"
+                                                    },
+                                                    "type_id": {
+                                                      "type": "string"
+                                                    },
+                                                    "position": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "x": {
+                                                          "type": "number"
+                                                        },
+                                                        "y": {
+                                                          "type": "number"
+                                                        }
+                                                      }
+                                                    },
+                                                    "data": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "label": {
+                                                          "type": "string"
+                                                        },
+                                                        "query_params": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "code": {
+                                                                "type": "string"
+                                                              },
+                                                              "value": {
+                                                                "type": "string"
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "code",
+                                                              "value"
+                                                            ]
+                                                          }
+                                                        },
+                                                        "channel_id": {
+                                                          "type": "string"
+                                                        },
+                                                        "channel_status": {
+                                                          "type": "string"
+                                                        },
+                                                        "out_format": {
+                                                          "type": "string"
+                                                        },
+                                                        "protocol": {
+                                                          "type": "string"
+                                                        },
+                                                        "hostname": {
+                                                          "type": "string"
+                                                        },
+                                                        "path": {
+                                                          "type": "string"
+                                                        },
+                                                        "port": {
+                                                          "type": "number"
+                                                        },
+                                                        "count": {
+                                                          "type": "number"
+                                                        },
+                                                        "handles": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "id": {
+                                                                "type": "string"
+                                                              },
+                                                              "to": {
+                                                                "type": "string"
+                                                              },
+                                                              "title": {
+                                                                "type": "string"
+                                                              },
+                                                              "color": {
+                                                                "type": "string"
+                                                              },
+                                                              "condition": {
+                                                                "type": "string"
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "id",
+                                                              "to",
+                                                              "title",
+                                                              "color",
+                                                              "condition"
+                                                            ]
+                                                          }
+                                                        },
+                                                        "name": {
+                                                          "type": "string"
+                                                        },
+                                                        "language": {
+                                                          "type": "string"
+                                                        },
+                                                        "buttonLabel": {
+                                                          "type": "string"
+                                                        },
+                                                        "code": {
+                                                          "properties": {
+                                                            "code": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "oneOf": [
+                                                            {
+                                                              "type": "object"
+                                                            },
+                                                            {
+                                                              "type": "string"
+                                                            }
+                                                          ]
+                                                        },
+                                                        "url": {
+                                                          "type": "string"
+                                                        }
+                                                      }
+                                                    },
+                                                    "links": {
+                                                      "type": "array",
+                                                      "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "node_id": {
+                                                            "type": "string"
+                                                          },
+                                                          "handle": {
+                                                            "nullable": true,
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "node_id",
+                                                          "handle"
+                                                        ]
+                                                      }
+                                                    },
+                                                    "custom_name": {
+                                                      "type": "string"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "id",
+                                                    "type_id",
+                                                    "position",
+                                                    "data",
+                                                    "links",
+                                                    "custom_name"
+                                                  ]
+                                                }
+                                              },
+                                              "enabled": {
+                                                "type": "boolean"
+                                              },
+                                              "status": {
+                                                "type": "string"
+                                              },
+                                              "last_updated": {
+                                                "type": "string"
+                                              },
+                                              "messages_total": {
+                                                "type": "number"
+                                              },
+                                              "messages_error": {
+                                                "type": "number"
+                                              },
+                                              "messages_sent": {
+                                                "type": "number"
+                                              },
+                                              "last_deployed_route": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "options",
+                                              "name",
+                                              "id",
+                                              "created_on",
+                                              "version",
+                                              "nodes",
+                                              "enabled",
+                                              "status",
+                                              "last_updated",
+                                              "messages_total",
+                                              "messages_error",
+                                              "messages_sent",
+                                              "last_deployed_route"
+                                            ]
+                                          }
+                                        },
+                                        "enabled": {
+                                          "type": "boolean"
+                                        },
+                                        "last_updated": {
+                                          "type": "string"
+                                        },
+                                        "package_code": {
+                                          "type": "string"
+                                        },
+                                        "package_version": {
+                                          "type": "string"
+                                        },
+                                        "deployment_config": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string"
+                                            },
+                                            "last_deployment_date": {
+                                              "type": "string"
+                                            },
+                                            "deployment_config": {
+                                              "nullable": true
+                                            },
+                                            "organization_id": {
+                                              "type": "string"
+                                            },
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "package_code": {
+                                      "type": "string"
+                                    },
+                                    "package_version": {
+                                      "type": "string"
+                                    },
+                                    "deployment_config": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "last_deployment_date": {
+                                          "type": "string"
+                                        },
+                                        "deployment_config": {
+                                          "nullable": true
+                                        },
+                                        "organization_id": {
+                                          "type": "string"
+                                        },
+                                        "enabled": {
+                                          "type": "boolean"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "agentId",
+                                "status",
+                                "integration"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "joined_date",
+                          "approved",
+                          "approved_date",
+                          "name",
+                          "status",
+                          "meta",
+                          "channels"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": "e9cbba1d-88b1-461f-94a9-7f4e426ead3d",
+                          "joined_date": "2021-12-30T09:23:29.972Z",
+                          "approved": true,
+                          "approved_date": "2021-12-30T09:24:07.950Z",
+                          "name": "JUM1",
+                          "status": "online",
+                          "meta": {
+                            "platform": "Windows 10",
+                            "rest_api_port": "6100"
+                          },
+                          "channels": [
+                            {
+                              "id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                              "name": "valid_unicorn",
+                              "agentId": "e9cbba1d-88b1-461f-94a9-7f4e426ead3d",
+                              "status": {
+                                "routes": [
+                                  {
+                                    "EndpointUri": "jetty:http://0.0.0.0:7875",
+                                    "CamelManagementName": "valid_unicorn",
+                                    "State": "Started",
+                                    "RouteId": "bd213531-9b94-4fd6-8ca1-98e41455d7ce",
+                                    "ID": "9ebe6344-fe79-4508-8376-3be18fba9f63"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://870c5c87-8125-4d71-8c25-403dda526184",
+                                    "CamelManagementName": "valid_unicorn",
+                                    "State": "Started",
+                                    "RouteId": "870c5c87-8125-4d71-8c25-403dda526184",
+                                    "ID": "9ebe6344-fe79-4508-8376-3be18fba9f63"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://98b99a7b-2626-43e3-9904-19796fc38758",
+                                    "CamelManagementName": "valid_unicorn",
+                                    "State": "Started",
+                                    "RouteId": "98b99a7b-2626-43e3-9904-19796fc38758",
+                                    "ID": "9ebe6344-fe79-4508-8376-3be18fba9f63"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://14513aa1-c541-47fd-92d8-cb554a4851c7",
+                                    "CamelManagementName": "valid_unicorn",
+                                    "State": "Started",
+                                    "RouteId": "14513aa1-c541-47fd-92d8-cb554a4851c7",
+                                    "ID": "9ebe6344-fe79-4508-8376-3be18fba9f63"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                    "CamelManagementName": "valid_unicorn",
+                                    "State": "Started",
+                                    "RouteId": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                    "ID": "9ebe6344-fe79-4508-8376-3be18fba9f63"
+                                  }
+                                ],
+                                "name": "valid_unicorn",
+                                "id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                "messages_total": 0,
+                                "messages_error": 0,
+                                "uptime": "5m7s",
+                                "messages_sent": 0,
+                                "status": "Started"
+                              },
+                              "integration": {
+                                "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                "name": "Tests Iago",
+                                "data": {
+                                  "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                  "name": "Tests Iago",
+                                  "description": "Integración de prueba para revisar el funcionamiento de la pantalla.\n\nAquí podrían poner una lista de versiones:\n\n- 30/12/2021-iago.s: Nuevos canales!",
+                                  "created_on": "2021-11-25T10:19:40.003Z",
+                                  "channels": [
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "unlikely_parrot",
+                                      "id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                      "created_on": "2021-12-22T09:39:45.570Z",
+                                      "version": 20,
+                                      "nodes": [
+                                        {
+                                          "id": "2bc3e8e2-c4f3-4dca-bf9a-63bc49dee835",
+                                          "type_id": "connections.http.input",
+                                          "position": {
+                                            "x": 110,
+                                            "y": 135
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "query_params": [
+                                              {
+                                                "code": "param1",
+                                                "value": "A"
+                                              }
+                                            ],
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "out_format": "json",
+                                            "protocol": "jetty:http",
+                                            "hostname": "localhost",
+                                            "path": "/angie/test",
+                                            "port": 8888
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                              "handle": null
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                          "type_id": "core.flow.loop",
+                                          "position": {
+                                            "x": 436,
+                                            "y": 135
+                                          },
+                                          "data": {
+                                            "label": "Loop",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "count": 5,
+                                            "handles": [
+                                              {
+                                                "id": "out0",
+                                                "to": "",
+                                                "title": "Iteraciones",
+                                                "color": "blue"
+                                              },
+                                              {
+                                                "id": "out1",
+                                                "to": "",
+                                                "title": "Fin búcle",
+                                                "color": "red"
+                                              }
+                                            ]
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                              "handle": "out0"
+                                            },
+                                            {
+                                              "node_id": "f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                              "handle": "out1"
+                                            },
+                                            {
+                                              "node_id": "09de703b-a24f-45f4-a6af-943e8f26c190",
+                                              "handle": "out0"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 958,
+                                            "y": 161
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                          "type_id": "connections.http.output",
+                                          "position": {
+                                            "x": 720.48,
+                                            "y": 300.97400000000005
+                                          },
+                                          "data": {
+                                            "label": "HTTP Output",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "query_params": [
+                                              {
+                                                "code": "param2",
+                                                "value": "B"
+                                              }
+                                            ],
+                                            "protocol": "http",
+                                            "hostname": "2dc860a4-35db-433d-96c7-815c8ea7fa34.mock.pstmn.io",
+                                            "path": "/user",
+                                            "port": 443
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "09de703b-a24f-45f4-a6af-943e8f26c190",
+                                          "type_id": "core.flow.switch",
+                                          "position": {
+                                            "x": 652,
+                                            "y": 65
+                                          },
+                                          "data": {
+                                            "handles": [
+                                              {
+                                                "id": "out0",
+                                                "condition": "false",
+                                                "to": ""
+                                              },
+                                              {
+                                                "id": "out1",
+                                                "condition": "true"
+                                              }
+                                            ],
+                                            "label": "Switch",
+                                            "channel_id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                            "channel_status": "UNDEPLOYED",
+                                            "language": "simple"
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "c5694a25-8526-4931-b982-463371c24103",
+                                              "handle": "out0"
+                                            },
+                                            {
+                                              "node_id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                              "handle": "out1"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "c5694a25-8526-4931-b982-463371c24103",
+                                          "type_id": "core.utils.debug",
+                                          "position": {
+                                            "x": 914,
+                                            "y": 32
+                                          },
+                                          "data": {
+                                            "label": "Debug",
+                                            "channel_id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                            "channel_status": "UNDEPLOYED"
+                                          },
+                                          "links": []
+                                        }
+                                      ],
+                                      "enabled": true,
+                                      "status": "Started",
+                                      "last_updated": "2021-12-30T07:33:46.335Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"2bc3e8e2-c4f3-4dca-bf9a-63bc49dee835\">\n    <from uri=\"jetty:http://localhost:8888/angie/test?param1%3DA\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:806ac04f-1e43-4ccc-98ae-61ee71f6993b\"/>\n    </multicast>\n</route><route  id=\"806ac04f-1e43-4ccc-98ae-61ee71f6993b\">\n    <from uri=\"direct:806ac04f-1e43-4ccc-98ae-61ee71f6993b\"/>\n    <loop copy=\"true\">\n        <constant>\n            5\n        </constant>\n        <multicast>\n            <to uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"/>\n            <to uri=\"direct:09de703b-a24f-45f4-a6af-943e8f26c190\"/>\n        </multicast>\n    </loop>\n    <multicast>\n        <to uri=\"direct:f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"/>\n    </multicast>\n</route><route  id=\"a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"> <from uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"/> <to uri=\"log:debug\"/> </route><route  id=\"f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"> <from uri=\"direct:f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"/> <to uri=\"http://2dc860a4-35db-433d-96c7-815c8ea7fa34.mock.pstmn.io:443/user?param2%3DB\"/> </route><route  id=\"09de703b-a24f-45f4-a6af-943e8f26c190\">\n    <from uri=\"direct:09de703b-a24f-45f4-a6af-943e8f26c190\" />\n    <choice>\n        <when>\n            <simple>\n                false\n            </simple>\n            <multicast>\n                <to uri=\"direct:c5694a25-8526-4931-b982-463371c24103\" />\n            </multicast>\n        </when>\n        <when>\n            <simple>\n                true\n            </simple>\n            <multicast>\n                <to uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\" />\n            </multicast>\n        </when>\n    </choice>\n</route><route id=\"c5694a25-8526-4931-b982-463371c24103\">\n    <from uri=\"direct:c5694a25-8526-4931-b982-463371c24103\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        <to uri=\"direct:empty\"/>\n    </multicast>\n</route></routes>"
+                                    },
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "valid_unicorn",
+                                      "id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                      "created_on": "2021-12-29T11:19:27.094Z",
+                                      "version": 30,
+                                      "nodes": [
+                                        {
+                                          "id": "bd213531-9b94-4fd6-8ca1-98e41455d7ce",
+                                          "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                          "custom_name": "HTTP Input",
+                                          "links": [
+                                            {
+                                              "node_id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 223,
+                                            "y": 143
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "protocol": "jetty:http",
+                                            "hostname": "0.0.0.0",
+                                            "path": "",
+                                            "port": 7875,
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "870c5c87-8125-4d71-8c25-403dda526184",
+                                          "type_id": "61a6b078-f7a2-4f0d-978b-c9c36e136d58",
+                                          "custom_name": "Inyectar Mensaje",
+                                          "links": [
+                                            {
+                                              "node_id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 233,
+                                            "y": 230
+                                          },
+                                          "data": {
+                                            "label": "Inyectar Mensaje",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "Started",
+                                            "buttonLabel": "Enviar",
+                                            "code": "{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}",
+                                            "url": "sendMessageToRoute",
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "98b99a7b-2626-43e3-9904-19796fc38758",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 969,
+                                            "y": 319
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "Started",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "14513aa1-c541-47fd-92d8-cb554a4851c7",
+                                          "type_id": "core.utils.template",
+                                          "position": {
+                                            "x": 686,
+                                            "y": 368
+                                          },
+                                          "data": {
+                                            "label": "Template",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "UNDEPLOYED",
+                                            "code": "{\n    \"code\": \"${body['id']}\",\n    \"value\": \"${body['id2']}\"\n}"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                          "type_id": "core.utils.json_mapper",
+                                          "position": {
+                                            "x": 670,
+                                            "y": 171
+                                          },
+                                          "data": {
+                                            "code": {
+                                              "code": "${body['id']}",
+                                              "value": "${body['id2']}"
+                                            },
+                                            "label": "JSON Mapper"
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "98b99a7b-2626-43e3-9904-19796fc38758",
+                                              "handle": null
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "enabled": true,
+                                      "status": "Started",
+                                      "last_updated": "2021-12-30T10:15:38.291Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"bd213531-9b94-4fd6-8ca1-98e41455d7ce\">\n    <from uri=\"jetty:http://0.0.0.0:7875\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    </multicast>\n</route><route  id=\"870c5c87-8125-4d71-8c25-403dda526184\">\n    <from uri=\"direct:870c5c87-8125-4d71-8c25-403dda526184\"/>\n    <setBody>\n        <simple>\n<![CDATA[{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}]]>\n        </simple>\n    </setBody>\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    </multicast>\n</route><route  id=\"98b99a7b-2626-43e3-9904-19796fc38758\"> <from uri=\"direct:98b99a7b-2626-43e3-9904-19796fc38758\"/> <to uri=\"log:debug\"/> </route><route  id=\"14513aa1-c541-47fd-92d8-cb554a4851c7\">\n    <from uri=\"direct:14513aa1-c541-47fd-92d8-cb554a4851c7\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{\n    \"code\": \"${body['id']}\",\n    \"value\": \"${body['id2']}\"\n}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:empty\"/>\n    </multicast>\n</route><route  id=\"7c520e85-c4ab-4841-ae54-7920460f2bdd\">\n    <from uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{\"code\":\"${body['id']}\",\"value\":\"${body['id2']}\"}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:98b99a7b-2626-43e3-9904-19796fc38758\"/>\n    </multicast>\n</route></routes>"
+                                    },
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "smoggy_marlin",
+                                      "id": "e46b2624-4bce-49f3-8d83-83febc4b9ea4",
+                                      "created_on": "2021-12-29T11:48:35.245Z",
+                                      "version": 4,
+                                      "nodes": [
+                                        {
+                                          "id": "1a194ee5-cad8-4451-859f-beb74ae98726",
+                                          "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                          "custom_name": "HTTP Input",
+                                          "links": [
+                                            {
+                                              "node_id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 183,
+                                            "y": 220
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "protocol": "jetty:http",
+                                            "hostname": "0.0.0.0",
+                                            "path": "",
+                                            "port": 7877,
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                          "type_id": "a50e7aff-e302-4fd9-bfe4-31e64bc8fe02",
+                                          "custom_name": "JSON Mapper",
+                                          "links": [
+                                            {
+                                              "node_id": "521d3e0d-2a69-4adf-a857-138fb30863d7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 496,
+                                            "y": 298
+                                          },
+                                          "data": {
+                                            "label": "JSON Mapper",
+                                            "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                            "channel_status": "UNDEPLOYED",
+                                            "code": {
+                                              "code": "${body['id']}",
+                                              "value": "${body['id2']}"
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "id": "2e0a1349-95b7-4b67-84cc-b520f883dd7e",
+                                          "type_id": "61a6b078-f7a2-4f0d-978b-c9c36e136d58",
+                                          "custom_name": "Inyectar Mensaje",
+                                          "links": [
+                                            {
+                                              "node_id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 253,
+                                            "y": 408
+                                          },
+                                          "data": {
+                                            "label": "Inyectar Mensaje",
+                                            "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                            "channel_status": "Started",
+                                            "buttonLabel": "Enviar",
+                                            "code": "{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}",
+                                            "url": "sendMessageToRoute",
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "521d3e0d-2a69-4adf-a857-138fb30863d7",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 816,
+                                            "y": 382
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        }
+                                      ],
+                                      "enabled": false,
+                                      "status": "UNDEPLOYED",
+                                      "last_updated": "2021-12-30T10:02:44.680Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"1a194ee5-cad8-4451-859f-beb74ae98726\">\n    <from uri=\"jetty:http://0.0.0.0:7877\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    </multicast>\n</route><route  id=\"645e9d20-f93a-4f5f-89f3-4f42415c30c7\">\n    <from uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[[object Object]]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:521d3e0d-2a69-4adf-a857-138fb30863d7\"/>\n    </multicast>\n</route><route  id=\"2e0a1349-95b7-4b67-84cc-b520f883dd7e\">\n    <from uri=\"direct:2e0a1349-95b7-4b67-84cc-b520f883dd7e\"/>\n    <setBody>\n        <simple>\n<![CDATA[{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}]]>\n        </simple>\n    </setBody>\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    </multicast>\n</route><route  id=\"521d3e0d-2a69-4adf-a857-138fb30863d7\"> <from uri=\"direct:521d3e0d-2a69-4adf-a857-138fb30863d7\"/> <to uri=\"log:debug\"/> </route></routes>"
+                                    }
+                                  ],
+                                  "enabled": true,
+                                  "last_updated": "2022-01-03T11:40:03.573Z",
+                                  "package_code": "angie.core",
+                                  "package_version": "1.0.0",
+                                  "deployment_config": {
+                                    "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                    "last_deployment_date": "2022-01-03T11:40:03.576Z",
+                                    "deployment_config": null,
+                                    "organization_id": "da5c4c54-343c-4b19-a1d8-d6fbabe30016",
+                                    "enabled": true
+                                  }
+                                },
+                                "package_code": "angie.core",
+                                "package_version": "1.0.0",
+                                "deployment_config": {
+                                  "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                  "last_deployment_date": "2022-01-03T11:40:03.576Z",
+                                  "deployment_config": null,
+                                  "organization_id": "da5c4c54-343c-4b19-a1d8-d6fbabe30016",
+                                  "enabled": true
+                                }
+                              }
+                            },
+                            {
+                              "id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                              "name": "unlikely_parrot",
+                              "agentId": "e9cbba1d-88b1-461f-94a9-7f4e426ead3d",
+                              "status": {
+                                "routes": [
+                                  {
+                                    "EndpointUri": "jetty:http://localhost:8888/angie/test?param1=A",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "2bc3e8e2-c4f3-4dca-bf9a-63bc49dee835",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://09de703b-a24f-45f4-a6af-943e8f26c190",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "09de703b-a24f-45f4-a6af-943e8f26c190",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  },
+                                  {
+                                    "EndpointUri": "direct://c5694a25-8526-4931-b982-463371c24103",
+                                    "CamelManagementName": "unlikely_parrot",
+                                    "State": "Started",
+                                    "RouteId": "c5694a25-8526-4931-b982-463371c24103",
+                                    "ID": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6"
+                                  }
+                                ],
+                                "name": "unlikely_parrot",
+                                "id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                "messages_total": 0,
+                                "messages_error": 0,
+                                "uptime": "54s613ms",
+                                "messages_sent": 0,
+                                "status": "Started"
+                              },
+                              "integration": {
+                                "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                "name": "Tests Iago",
+                                "data": {
+                                  "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                  "name": "Tests Iago",
+                                  "description": "Integración de prueba para revisar el funcionamiento de la pantalla.\n\nAquí podrían poner una lista de versiones:\n\n- 30/12/2021-iago.s: Nuevos canales!",
+                                  "created_on": "2021-11-25T10:19:40.003Z",
+                                  "channels": [
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "unlikely_parrot",
+                                      "id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                      "created_on": "2021-12-22T09:39:45.570Z",
+                                      "version": 20,
+                                      "nodes": [
+                                        {
+                                          "id": "2bc3e8e2-c4f3-4dca-bf9a-63bc49dee835",
+                                          "type_id": "connections.http.input",
+                                          "position": {
+                                            "x": 110,
+                                            "y": 135
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "query_params": [
+                                              {
+                                                "code": "param1",
+                                                "value": "A"
+                                              }
+                                            ],
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "out_format": "json",
+                                            "protocol": "jetty:http",
+                                            "hostname": "localhost",
+                                            "path": "/angie/test",
+                                            "port": 8888
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                              "handle": null
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "806ac04f-1e43-4ccc-98ae-61ee71f6993b",
+                                          "type_id": "core.flow.loop",
+                                          "position": {
+                                            "x": 436,
+                                            "y": 135
+                                          },
+                                          "data": {
+                                            "label": "Loop",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "count": 5,
+                                            "handles": [
+                                              {
+                                                "id": "out0",
+                                                "to": "",
+                                                "title": "Iteraciones",
+                                                "color": "blue"
+                                              },
+                                              {
+                                                "id": "out1",
+                                                "to": "",
+                                                "title": "Fin búcle",
+                                                "color": "red"
+                                              }
+                                            ]
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                              "handle": "out0"
+                                            },
+                                            {
+                                              "node_id": "f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                              "handle": "out1"
+                                            },
+                                            {
+                                              "node_id": "09de703b-a24f-45f4-a6af-943e8f26c190",
+                                              "handle": "out0"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 958,
+                                            "y": 161
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "f97499fc-fd63-4b6f-a819-9730f6dbd6e0",
+                                          "type_id": "connections.http.output",
+                                          "position": {
+                                            "x": 720.48,
+                                            "y": 300.97400000000005
+                                          },
+                                          "data": {
+                                            "label": "HTTP Output",
+                                            "channel_id": "97d4503e-f608-45f4-9c88-d4f5f1f06793",
+                                            "channel_status": "UNDEPLOYED",
+                                            "query_params": [
+                                              {
+                                                "code": "param2",
+                                                "value": "B"
+                                              }
+                                            ],
+                                            "protocol": "http",
+                                            "hostname": "2dc860a4-35db-433d-96c7-815c8ea7fa34.mock.pstmn.io",
+                                            "path": "/user",
+                                            "port": 443
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "09de703b-a24f-45f4-a6af-943e8f26c190",
+                                          "type_id": "core.flow.switch",
+                                          "position": {
+                                            "x": 652,
+                                            "y": 65
+                                          },
+                                          "data": {
+                                            "handles": [
+                                              {
+                                                "id": "out0",
+                                                "condition": "false",
+                                                "to": ""
+                                              },
+                                              {
+                                                "id": "out1",
+                                                "condition": "true"
+                                              }
+                                            ],
+                                            "label": "Switch",
+                                            "channel_id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                            "channel_status": "UNDEPLOYED",
+                                            "language": "simple"
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "c5694a25-8526-4931-b982-463371c24103",
+                                              "handle": "out0"
+                                            },
+                                            {
+                                              "node_id": "a3148ea2-0f8d-4928-ba16-5cf6886a6a88",
+                                              "handle": "out1"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "c5694a25-8526-4931-b982-463371c24103",
+                                          "type_id": "core.utils.debug",
+                                          "position": {
+                                            "x": 914,
+                                            "y": 32
+                                          },
+                                          "data": {
+                                            "label": "Debug",
+                                            "channel_id": "1fe99fbf-14dd-45e3-a154-867ce80aa6b6",
+                                            "channel_status": "UNDEPLOYED"
+                                          },
+                                          "links": []
+                                        }
+                                      ],
+                                      "enabled": true,
+                                      "status": "Started",
+                                      "last_updated": "2021-12-30T07:33:46.335Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"2bc3e8e2-c4f3-4dca-bf9a-63bc49dee835\">\n    <from uri=\"jetty:http://localhost:8888/angie/test?param1%3DA\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:806ac04f-1e43-4ccc-98ae-61ee71f6993b\"/>\n    </multicast>\n</route><route  id=\"806ac04f-1e43-4ccc-98ae-61ee71f6993b\">\n    <from uri=\"direct:806ac04f-1e43-4ccc-98ae-61ee71f6993b\"/>\n    <loop copy=\"true\">\n        <constant>\n            5\n        </constant>\n        <multicast>\n            <to uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"/>\n            <to uri=\"direct:09de703b-a24f-45f4-a6af-943e8f26c190\"/>\n        </multicast>\n    </loop>\n    <multicast>\n        <to uri=\"direct:f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"/>\n    </multicast>\n</route><route  id=\"a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"> <from uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\"/> <to uri=\"log:debug\"/> </route><route  id=\"f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"> <from uri=\"direct:f97499fc-fd63-4b6f-a819-9730f6dbd6e0\"/> <to uri=\"http://2dc860a4-35db-433d-96c7-815c8ea7fa34.mock.pstmn.io:443/user?param2%3DB\"/> </route><route  id=\"09de703b-a24f-45f4-a6af-943e8f26c190\">\n    <from uri=\"direct:09de703b-a24f-45f4-a6af-943e8f26c190\" />\n    <choice>\n        <when>\n            <simple>\n                false\n            </simple>\n            <multicast>\n                <to uri=\"direct:c5694a25-8526-4931-b982-463371c24103\" />\n            </multicast>\n        </when>\n        <when>\n            <simple>\n                true\n            </simple>\n            <multicast>\n                <to uri=\"direct:a3148ea2-0f8d-4928-ba16-5cf6886a6a88\" />\n            </multicast>\n        </when>\n    </choice>\n</route><route id=\"c5694a25-8526-4931-b982-463371c24103\">\n    <from uri=\"direct:c5694a25-8526-4931-b982-463371c24103\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        <to uri=\"direct:empty\"/>\n    </multicast>\n</route></routes>"
+                                    },
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "valid_unicorn",
+                                      "id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                      "created_on": "2021-12-29T11:19:27.094Z",
+                                      "version": 30,
+                                      "nodes": [
+                                        {
+                                          "id": "bd213531-9b94-4fd6-8ca1-98e41455d7ce",
+                                          "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                          "custom_name": "HTTP Input",
+                                          "links": [
+                                            {
+                                              "node_id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 223,
+                                            "y": 143
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "protocol": "jetty:http",
+                                            "hostname": "0.0.0.0",
+                                            "path": "",
+                                            "port": 7875,
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "870c5c87-8125-4d71-8c25-403dda526184",
+                                          "type_id": "61a6b078-f7a2-4f0d-978b-c9c36e136d58",
+                                          "custom_name": "Inyectar Mensaje",
+                                          "links": [
+                                            {
+                                              "node_id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 233,
+                                            "y": 230
+                                          },
+                                          "data": {
+                                            "label": "Inyectar Mensaje",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "Started",
+                                            "buttonLabel": "Enviar",
+                                            "code": "{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}",
+                                            "url": "sendMessageToRoute",
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "98b99a7b-2626-43e3-9904-19796fc38758",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 969,
+                                            "y": 319
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "Started",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "14513aa1-c541-47fd-92d8-cb554a4851c7",
+                                          "type_id": "core.utils.template",
+                                          "position": {
+                                            "x": 686,
+                                            "y": 368
+                                          },
+                                          "data": {
+                                            "label": "Template",
+                                            "channel_id": "9ebe6344-fe79-4508-8376-3be18fba9f63",
+                                            "channel_status": "UNDEPLOYED",
+                                            "code": "{\n    \"code\": \"${body['id']}\",\n    \"value\": \"${body['id2']}\"\n}"
+                                          },
+                                          "links": []
+                                        },
+                                        {
+                                          "id": "7c520e85-c4ab-4841-ae54-7920460f2bdd",
+                                          "type_id": "core.utils.json_mapper",
+                                          "position": {
+                                            "x": 670,
+                                            "y": 171
+                                          },
+                                          "data": {
+                                            "code": {
+                                              "code": "${body['id']}",
+                                              "value": "${body['id2']}"
+                                            },
+                                            "label": "JSON Mapper"
+                                          },
+                                          "links": [
+                                            {
+                                              "node_id": "98b99a7b-2626-43e3-9904-19796fc38758",
+                                              "handle": null
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "enabled": true,
+                                      "status": "Started",
+                                      "last_updated": "2021-12-30T10:15:38.291Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"bd213531-9b94-4fd6-8ca1-98e41455d7ce\">\n    <from uri=\"jetty:http://0.0.0.0:7875\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    </multicast>\n</route><route  id=\"870c5c87-8125-4d71-8c25-403dda526184\">\n    <from uri=\"direct:870c5c87-8125-4d71-8c25-403dda526184\"/>\n    <setBody>\n        <simple>\n<![CDATA[{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}]]>\n        </simple>\n    </setBody>\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    </multicast>\n</route><route  id=\"98b99a7b-2626-43e3-9904-19796fc38758\"> <from uri=\"direct:98b99a7b-2626-43e3-9904-19796fc38758\"/> <to uri=\"log:debug\"/> </route><route  id=\"14513aa1-c541-47fd-92d8-cb554a4851c7\">\n    <from uri=\"direct:14513aa1-c541-47fd-92d8-cb554a4851c7\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{\n    \"code\": \"${body['id']}\",\n    \"value\": \"${body['id2']}\"\n}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:empty\"/>\n    </multicast>\n</route><route  id=\"7c520e85-c4ab-4841-ae54-7920460f2bdd\">\n    <from uri=\"direct:7c520e85-c4ab-4841-ae54-7920460f2bdd\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{\"code\":\"${body['id']}\",\"value\":\"${body['id2']}\"}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:98b99a7b-2626-43e3-9904-19796fc38758\"/>\n    </multicast>\n</route></routes>"
+                                    },
+                                    {
+                                      "options": {
+                                        "trace_file": true,
+                                        "trace_incoming_message": false,
+                                        "trace_headers": false,
+                                        "trace_properties": false,
+                                        "trace_outgoing_message": false
+                                      },
+                                      "name": "smoggy_marlin",
+                                      "id": "e46b2624-4bce-49f3-8d83-83febc4b9ea4",
+                                      "created_on": "2021-12-29T11:48:35.245Z",
+                                      "version": 4,
+                                      "nodes": [
+                                        {
+                                          "id": "1a194ee5-cad8-4451-859f-beb74ae98726",
+                                          "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                          "custom_name": "HTTP Input",
+                                          "links": [
+                                            {
+                                              "node_id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 183,
+                                            "y": 220
+                                          },
+                                          "data": {
+                                            "label": "HTTP Input",
+                                            "protocol": "jetty:http",
+                                            "hostname": "0.0.0.0",
+                                            "path": "",
+                                            "port": 7877,
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                          "type_id": "a50e7aff-e302-4fd9-bfe4-31e64bc8fe02",
+                                          "custom_name": "JSON Mapper",
+                                          "links": [
+                                            {
+                                              "node_id": "521d3e0d-2a69-4adf-a857-138fb30863d7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 496,
+                                            "y": 298
+                                          },
+                                          "data": {
+                                            "label": "JSON Mapper",
+                                            "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                            "channel_status": "UNDEPLOYED",
+                                            "code": {
+                                              "code": "${body['id']}",
+                                              "value": "${body['id2']}"
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "id": "2e0a1349-95b7-4b67-84cc-b520f883dd7e",
+                                          "type_id": "61a6b078-f7a2-4f0d-978b-c9c36e136d58",
+                                          "custom_name": "Inyectar Mensaje",
+                                          "links": [
+                                            {
+                                              "node_id": "645e9d20-f93a-4f5f-89f3-4f42415c30c7",
+                                              "handle": null
+                                            }
+                                          ],
+                                          "position": {
+                                            "x": 253,
+                                            "y": 408
+                                          },
+                                          "data": {
+                                            "label": "Inyectar Mensaje",
+                                            "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                            "channel_status": "Started",
+                                            "buttonLabel": "Enviar",
+                                            "code": "{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}",
+                                            "url": "sendMessageToRoute",
+                                            "out_format": "json"
+                                          }
+                                        },
+                                        {
+                                          "id": "521d3e0d-2a69-4adf-a857-138fb30863d7",
+                                          "type_id": "core.utils.log",
+                                          "position": {
+                                            "x": 816,
+                                            "y": 382
+                                          },
+                                          "data": {
+                                            "label": "Log",
+                                            "name": "debug"
+                                          },
+                                          "links": []
+                                        }
+                                      ],
+                                      "enabled": false,
+                                      "status": "UNDEPLOYED",
+                                      "last_updated": "2021-12-30T10:02:44.680Z",
+                                      "messages_total": 0,
+                                      "messages_error": 0,
+                                      "messages_sent": 0,
+                                      "last_deployed_route": "<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"1a194ee5-cad8-4451-859f-beb74ae98726\">\n    <from uri=\"jetty:http://0.0.0.0:7877\"/>\n    \n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    </multicast>\n</route><route  id=\"645e9d20-f93a-4f5f-89f3-4f42415c30c7\">\n    <from uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[[object Object]]]>\n        </simple>\n    </setBody>\n    <multicast>\n        <to uri=\"direct:521d3e0d-2a69-4adf-a857-138fb30863d7\"/>\n    </multicast>\n</route><route  id=\"2e0a1349-95b7-4b67-84cc-b520f883dd7e\">\n    <from uri=\"direct:2e0a1349-95b7-4b67-84cc-b520f883dd7e\"/>\n    <setBody>\n        <simple>\n<![CDATA[{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}]]>\n        </simple>\n    </setBody>\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    <multicast>\n        <to uri=\"direct:645e9d20-f93a-4f5f-89f3-4f42415c30c7\"/>\n    </multicast>\n</route><route  id=\"521d3e0d-2a69-4adf-a857-138fb30863d7\"> <from uri=\"direct:521d3e0d-2a69-4adf-a857-138fb30863d7\"/> <to uri=\"log:debug\"/> </route></routes>"
+                                    }
+                                  ],
+                                  "enabled": true,
+                                  "last_updated": "2022-01-03T11:40:03.573Z",
+                                  "package_code": "angie.core",
+                                  "package_version": "1.0.0",
+                                  "deployment_config": {
+                                    "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                    "last_deployment_date": "2022-01-03T11:40:03.576Z",
+                                    "deployment_config": null,
+                                    "organization_id": "da5c4c54-343c-4b19-a1d8-d6fbabe30016",
+                                    "enabled": true
+                                  }
+                                },
+                                "package_code": "angie.core",
+                                "package_version": "1.0.0",
+                                "deployment_config": {
+                                  "id": "eb4850e6-f0ae-4302-9c5b-5cc9ec99dee4",
+                                  "last_deployment_date": "2022-01-03T11:40:03.576Z",
+                                  "deployment_config": null,
+                                  "organization_id": "da5c4c54-343c-4b19-a1d8-d6fbabe30016",
+                                  "enabled": true
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "string",
+                      "example": "2"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -2177,6 +4060,23 @@
         "tags": []
       }
     },
+    "/jum_agent/{id}/forceReload": {
+      "post": {
+        "summary": "/jum_agent/{id}/forceReload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/jum_agent/{id}/log": {
       "get": {
         "summary": "/jum_agent/{id}/log",
@@ -2307,6 +4207,58 @@
         "responses": {},
         "tags": [
           "configuration"
+        ]
+      }
+    },
+    "/messages/{channel}": {
+      "get": {
+        "summary": "/messages/{channel}",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/integration/{id}/channel/{channel}/move/from/{agent}": {
+      "post": {
+        "summary": "/integration/{id}/channel/{channel}/move/from/{agent}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agent",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "integration"
         ]
       }
     },

@@ -4,12 +4,12 @@ import { Menu } from "antd";
 import T from "i18n-react";
 import {
     mdiSourceBranch,
-    mdiMonitor,
     mdiPackageVariantClosed,
     mdiAccountGroup,
     mdiAccount,
     mdiLock,
     mdiOfficeBuilding,
+    mdiDatabaseOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ export default class MenuHandler {
         mdiLock: mdiLock,
         mdiOfficeBuilding: mdiOfficeBuilding,
         mdiSourceBranch: mdiSourceBranch,
-        mdiMonitor: mdiMonitor,
+        mdiDatabaseOutline: mdiDatabaseOutline,
         mdiPackageVariantClosed: mdiPackageVariantClosed,
     };
 

@@ -18,7 +18,7 @@
             {
                 "key": "agents",
                 "title": "Agents",
-                "icon": "mdiMonitor",
+                "icon": "mdiDatabaseOutline",
                 "value": "/agents"
             },
             {

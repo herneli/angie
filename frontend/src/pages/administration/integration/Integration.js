@@ -221,20 +221,7 @@ const Integration = ({ packageUrl }) => {
         setCurrentIntegration(null); //Resetear primero
         setChannels([]);
 
-        if (state && state.record) {
-            setCurrentIntegration(state.record);
-            setChannelStatus(lodash.mapValues(lodash.keyBy(state.record.channels, "id"), "status"));
-            if (channel) {
-                setActiveTab(channel);
-            } else {
-                setActiveTab(state.record && state.record.channels[0] && state.record.channels[0].id);
-            }
-            setEditHistory([{ ...state.record }]);
-
-            if (state.new) {
-                setEditHeader(true);
-            }
-        } else if (id === "new") {
+        if (id === "new") {
             setCurrentIntegration({
                 id: "new",
                 name: "",
@@ -444,7 +431,8 @@ const Integration = ({ packageUrl }) => {
         onIntegrationChange(newIntegration);
 
         if (event.forceSave) {
-            setTimeout(saveIntegration, 300);
+            
+            saveIntegration(newIntegration);
         }
     };
 
@@ -463,13 +451,13 @@ const Integration = ({ packageUrl }) => {
     /**
      * Método que envía al servidor los cambios en memoria
      */
-    const saveIntegration = async () => {
+    const saveIntegration = async (integration) => {
         try {
-            const method = currentIntegration.id !== "new" ? "put" : "post";
+            const method = integration.id !== "new" ? "put" : "post";
             const response = await axios[method](
-                "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
+                "/integration" + (integration.id !== "new" ? `/${integration.id}` : ""),
                 {
-                    ...currentIntegration,
+                    ...integration,
                     package_code: packageData.currentPackage.code,
                     package_version: packageData.currentPackage.version,
                 }
@@ -477,7 +465,7 @@ const Integration = ({ packageUrl }) => {
 
             if (response?.data?.success) {
                 setPendingChanges(false);
-                if (currentIntegration.id === "new") {
+                if (integration.id === "new") {
                     //Redirigir al nuevo identificador
                     history.push({
                         pathname: packageUrl + "/integrations/" + response.data.data.id,
@@ -637,7 +625,9 @@ const Integration = ({ packageUrl }) => {
         return [
             <IconButton
                 key="log"
-                onClick={() => channelActions.showChannelLog(currentIntegration.id, activeTab)}
+                onClick={() =>
+                    channelActions.showChannelLog(currentIntegration.id, activeTab, activeChannel?.agent?.id)
+                }
                 icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.debug") }}
             />,
             <IconButton
@@ -798,7 +788,7 @@ const Integration = ({ packageUrl }) => {
                                     {T.translate("common.button.cancel")}
                                 </Button>
                             </Popconfirm>,
-                            <Popconfirm title={T.translate("common.question")} onConfirm={() => saveIntegration()}>
+                            <Popconfirm title={T.translate("common.question")} onConfirm={() => saveIntegration(currentIntegration)}>
                                 <Button key="enable" type="primary">
                                     {T.translate("common.button.save")}
                                 </Button>

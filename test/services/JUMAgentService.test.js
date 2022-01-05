@@ -3,11 +3,12 @@ import { getTracker } from "knex-mock-client";
 
 import { createServer } from "http";
 import { io as Client } from "socket.io-client";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { App, Utils } from "lisco";
 import { JUMAgent, JUMAgentService } from "../../app/server/api/jum_agents";
 
 import { v4 as uuid_v4 } from "uuid";
+import ManualActions from "../../app/server/api/jum_agents/ManualActions";
 
 const secret = process.env.JUM_AGENTS_SECRET;
 
@@ -16,6 +17,51 @@ let PORT;
 const channel = {
     id: "d9d69b3f-0b5a-4379-9122-1f3436ddbd14",
     nodes: [],
+};
+
+const configureQueryOnce = (tracker, id, approved, status, client) => {
+    //Responder a las querys de agentes con el socket conectado
+    tracker.on
+        .select('select * from "jum_agent"')
+        .responseOnce([{ id, approved: approved, status: status, last_socket_id: client && client.id }]);
+};
+const configureOnlineCheck = (tracker, id, approved, status, client) => {
+    tracker.on
+        .select(({ sql }) => {
+            return sql.indexOf('"status" =') !== -1 && sql.indexOf('and "id"') !== -1;
+        })
+        .responseOnce(id && { id, approved: approved, status: status, last_socket_id: client && client.id });
+};
+
+const configurePreConnection = async (tracker, id) => {
+    //Responder a la query de "isRunning" como offline
+    configureOnlineCheck(tracker, null);
+    //Obtener la lista una primera vez
+    configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE);
+
+    await Utils.sleep(100);
+};
+
+const configureAfterConnection = async (tracker, id, approved, status, client, once) => {
+    //Una vez conectado, responder como online
+    configureOnlineCheck(tracker, id, approved, status, client);
+
+    if (once === true) {
+        //Responder a las querys de agentes con el socket conectado
+        configureQueryOnce(tracker, id, approved, status, client);
+    } else {
+        //Responder a las querys de agentes con el socket conectado
+        tracker.on
+            .select('select * from "jum_agent"')
+            .response([{ id, approved: approved, status: status, last_socket_id: client && client.id }]);
+    }
+
+    await Utils.sleep(100);
+};
+
+const configureCache = (tracker) => {
+    tracker.on.update("cache").response({ key: "", data: true });
+    tracker.on.select('from "cache" where "key').response({ key: "", data: true });
 };
 
 describe("JUMAgentService", () => {
@@ -27,6 +73,7 @@ describe("JUMAgentService", () => {
             auth: {
                 token: overrideToken || secret,
             },
+            transports: ["websocket"],
             query: {
                 id: id,
                 name: "JUM1",
@@ -40,7 +87,7 @@ describe("JUMAgentService", () => {
 
         //Crear server dinámico para el test
         const httpServer = createServer();
-        App.server.app.io = new Server(httpServer);
+        App.server.app.io = new Server(httpServer, { transports: ["websocket"] });
         httpServer.listen(async () => {
             PORT = httpServer.address().port;
 
@@ -51,7 +98,7 @@ describe("JUMAgentService", () => {
                     .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
 
                 const service = new JUMAgentService();
-                await service.listenForAgents();
+                await service.listenForAgents(App.server.app.io);
 
                 tracker.reset();
                 await Utils.sleep(200);
@@ -63,7 +110,7 @@ describe("JUMAgentService", () => {
         });
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         tracker.reset();
     });
 
@@ -119,10 +166,8 @@ describe("JUMAgentService", () => {
     });
 
     it("#agentConnection||Approved", async () => {
-        tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -131,13 +176,16 @@ describe("JUMAgentService", () => {
                 console.log(arg);
             });
             client.on("connect", async () => {
-                await Utils.sleep(100);
+                await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
                 try {
-                    expect(App.agents).not.to.be.null;
-                    expect(App.agents).not.to.be.empty;
-                    expect(App.agents[id]).not.to.be.null;
-                    expect(App.agents[id].agent.status).to.be.eq(JUMAgent.STATUS_ONLINE);
+                    const service = new JUMAgentService();
+
+                    const agents = await service.getRunningAgents();
+                    expect(agents).not.to.be.null;
+                    expect(agents).not.to.be.empty;
+                    expect(agents[0]).not.to.be.null;
+                    expect(agents[0].status).to.be.eq(JUMAgent.STATUS_ONLINE);
 
                     client.close();
                     await Utils.sleep(200);
@@ -151,21 +199,24 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||NotApproved", async () => {
         tracker.on.update("jum_agent").response([]);
-        tracker.on.select('select * from "jum_agent').response([]);
         tracker.on.insert("jum_agent").response([{ id, approved: false, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
-                await Utils.sleep(100);
+                await configureAfterConnection(tracker, id, false, JUMAgent.STATUS_ONLINE, client);
 
                 try {
-                    expect(App.agents).not.to.be.null;
-                    expect(App.agents).not.to.be.empty;
-                    expect(App.agents[id]).not.to.be.null;
-                    expect(App.agents[id].agent.status).to.be.eq(JUMAgent.STATUS_ONLINE);
-                    expect(App.agents[id].agent.approved).to.be.false;
+                    const service = new JUMAgentService();
+                    const agents = await service.getRunningAgents();
+                    expect(agents).not.to.be.null;
+                    expect(agents).not.to.be.empty;
+                    expect(agents[0]).not.to.be.null;
+                    expect(agents[0].status).to.be.eq(JUMAgent.STATUS_ONLINE);
+                    expect(agents[0].approved).to.be.false;
 
                     client.close();
                     await Utils.sleep(200);
@@ -187,8 +238,10 @@ describe("JUMAgentService", () => {
         return new Promise((resolve, reject) => {
             client.on("connect_error", async (err) => {
                 try {
-                    expect(App.agents).not.to.be.null;
-                    expect(App.agents).to.be.empty;
+                    const service = new JUMAgentService();
+                    const agents = await service.getRunningAgents();
+                    expect(agents).not.to.be.null;
+                    expect(agents).to.be.empty;
 
                     expect(err).to.be.an("Error");
                     expect(err.message).to.eq("not_authorized");
@@ -207,9 +260,8 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||CommandFromServer", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -226,38 +278,41 @@ describe("JUMAgentService", () => {
                 return callback("ok");
             });
 
-            try {
-                await Utils.sleep(200);
+            client.on("connect", async () => {
+                try {
+                    await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
-                const service = new JUMAgentService();
-                await service.sendCommand(id, "custom", {
-                    test: "test",
-                });
-            } catch (ex) {
-                reject(ex);
-            }
+                    const service = new JUMAgentService();
+                    await service.sendCommand(id, "custom", {
+                        test: "test",
+                    });
+                } catch (ex) {
+                    reject(ex);
+                }
+            });
         });
     }).timeout(10000);
 
     it("#agentConnection||ClientCommand", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
                 try {
+                    await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
+
                     console.log("Emitting");
-                    client.emit("/channel/started", "A", "B", async (result) => {
+                    client.emit("/master/ping", "hello", async (result) => {
                         try {
                             console.log(result);
                             expect(result).to.be.eq("OK");
 
                             client.close();
-                            await Utils.sleep(300);
+                            await Utils.sleep(200);
                             resolve();
                         } catch (ex) {
                             reject(ex);
@@ -272,23 +327,24 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||UnapprovedClientCommand", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: false, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: false, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
                 try {
+                    await configureAfterConnection(tracker, id, false, JUMAgent.STATUS_ONLINE, client);
+
                     console.log("Emitting");
-                    client.emit("/channel/started", "A", "B", async (result) => {
+                    client.emit("/master/ping", "A", async (result) => {
                         try {
                             console.log(result);
                             expect(result).to.be.eq("agent_not_approved");
 
                             client.close();
-                            await Utils.sleep(300);
+                            await Utils.sleep(200);
 
                             resolve();
                         } catch (ex) {
@@ -304,27 +360,40 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||ClientDisconnection", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
-                await Utils.sleep(100);
+                await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client, true);
 
+                //Otra comprobacion de estado
+                configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
+
+                await Utils.sleep(100);
                 try {
-                    expect(App.agents).not.to.be.null;
-                    expect(App.agents).not.to.be.empty;
-                    expect(App.agents[id]).not.to.be.null;
-                    expect(App.agents[id].agent.status).to.be.eq(JUMAgent.STATUS_ONLINE);
+                    const service = new JUMAgentService();
+                    //Responder a las querys de agentes con el socket conectado
+                    configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
+                    configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
+
+                    let agents = await service.getRunningAgents();
+                    expect(agents).not.to.be.null;
+                    expect(agents).not.to.be.empty;
+                    expect(agents[0]).not.to.be.null;
+                    expect(agents[0].status).to.be.eq(JUMAgent.STATUS_ONLINE);
 
                     client.close();
-                    await Utils.sleep(300);
+                    await Utils.sleep(200);
 
-                    expect(App.agents).to.be.empty;
-                    expect(App.agents[id]).to.be.undefined;
+                    //Responder a las querys de agentes con el socket conectado
+                    tracker.on.select('select * from "jum_agent"').responseOnce([]);
+
+                    agents = await service.getRunningAgents();
+                    expect(agents).to.be.empty;
+                    expect(agents[0]).to.be.undefined;
                     resolve();
                 } catch (ex) {
                     reject(ex);
@@ -334,44 +403,56 @@ describe("JUMAgentService", () => {
     }).timeout(10000);
 
     it("#agentConnection||ApproveClient", async () => {
-        tracker.on.update("jum_agent").response([{ id, approved: false, status: JUMAgent.STATUS_OFFLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: false, status: JUMAgent.STATUS_OFFLINE }]);
+        tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
+
+        client.on("/agent/status", async (callback) => {
+            callback({ success: true, data: null });
+        });
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
                 try {
+                    await configureAfterConnection(tracker, id, false, JUMAgent.STATUS_ONLINE, client, true);
+
+                    configureQueryOnce(tracker, id, false, JUMAgent.STATUS_ONLINE, client);
+
+                    await Utils.sleep(100);
                     console.log("Emitting");
-                    client.emit("/channel/started", "", { test: "test" }, async (result) => {
+                    client.emit("/master/ping", "Test", async (result) => {
                         try {
                             console.log(result);
                             expect(result).to.be.eq("agent_not_approved");
+
+                            configureQueryOnce(tracker, id, false, JUMAgent.STATUS_ONLINE, client);
 
                             await Utils.sleep(100);
 
                             const service = new JUMAgentService();
 
-                            service.approveAgent(id);
+                            configureOnlineCheck(tracker, id, false, JUMAgent.STATUS_ONLINE, client);
+                            configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
+                            await service.approveAgent(id);
+
+                            configureOnlineCheck(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
+                            configureQueryOnce(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
                             await Utils.sleep(200);
 
-                            client.emit("/channel/started", "", { test: "test" }, async (result) => {
-                                console.log(result);
-                                expect(result).to.be.eq("OK");
+                            const agent = await service.loadById(id);
 
-                                client.close();
-                                await Utils.sleep(200);
+                            expect(agent).not.to.be.undefined;
 
-                                resolve();
-                            });
+                            resolve();
                         } catch (ex) {
+                            console.error(ex);
                             reject(ex);
                         }
                     });
                 } catch (ex) {
+                    console.error(ex);
                     reject(ex);
                 }
             });
@@ -380,16 +461,15 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||getCandidate", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
         return new Promise((resolve, reject) => {
             client.on("connect", async () => {
                 try {
-                    await Utils.sleep(300);
+                    await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
                     const service = new JUMAgentService();
                     const agent = await service.getFreeAgent(channel);
@@ -410,9 +490,8 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||deployChannel", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        configureCache(tracker);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -425,10 +504,11 @@ describe("JUMAgentService", () => {
             });
             client.on("connect", async () => {
                 try {
-                    await Utils.sleep(100);
+                    await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
                     const service = new JUMAgentService();
-                    const response = await service.deployChannel(channel, "");
+                    const candidate = await service.getFreeAgent(channel);
+                    const response = await service.deployChannel(channel, "", candidate);
 
                     expect(response).not.to.be.undefined;
                     expect(response).not.to.be.null;
@@ -447,9 +527,8 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||undeployChannel", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        configureCache(tracker);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -468,12 +547,26 @@ describe("JUMAgentService", () => {
             });
             client.on("connect", async () => {
                 try {
+                    configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client, true);
+
+                    //Responder a las querys de agentes con el socket conectado
+                    tracker.on.select('select * from "jum_agent"').response([
+                        {
+                            id,
+                            approved: true,
+                            status: JUMAgent.STATUS_ONLINE,
+                            last_socket_id: client && client.id,
+                            current_channels: { list: [channel] },
+                        },
+                    ]);
+
                     await Utils.sleep(100);
 
                     const service = new JUMAgentService();
-                    await service.deployChannel(channel, "");
+                    const candidate = await service.getFreeAgent(channel);
+                    const res = await service.deployChannel(channel, "", candidate);
 
-                    await Utils.sleep(100);
+                    await Utils.sleep(200);
 
                     const response = await service.undeployChannel(channel);
 
@@ -493,9 +586,8 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||channelLogs", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        configureCache(tracker);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -515,10 +607,11 @@ describe("JUMAgentService", () => {
             });
             client.on("connect", async () => {
                 try {
-                    await Utils.sleep(100);
+                    await configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client);
 
                     const service = new JUMAgentService();
-                    await service.deployChannel(channel, "");
+                    const candidate = await service.getFreeAgent(channel);
+                    const res = await service.deployChannel(channel, "", candidate);
 
                     await Utils.sleep(100);
 
@@ -527,7 +620,7 @@ describe("JUMAgentService", () => {
                     expect(response).not.to.be.undefined;
                     expect(response).not.to.be.null;
 
-                    expect(response).to.be.eq("----  undefined  ---- \n\n LOG!");
+                    expect(response).to.be.an("array");
 
                     client.close();
                     await Utils.sleep(200);
@@ -541,9 +634,8 @@ describe("JUMAgentService", () => {
 
     it("#agentConnection||sendMessageToRoute", async () => {
         tracker.on.update("jum_agent").response([{ id, approved: true, status: JUMAgent.STATUS_ONLINE }]);
-        tracker.on
-            .select('select * from "jum_agent')
-            .response([{ id, approved: true, status: JUMAgent.STATUS_OFFLINE }]);
+        configureCache(tracker);
+        await configurePreConnection(tracker, id);
 
         const client = connectClient();
 
@@ -566,10 +658,23 @@ describe("JUMAgentService", () => {
             });
             client.on("connect", async () => {
                 try {
+                    configureAfterConnection(tracker, id, true, JUMAgent.STATUS_ONLINE, client, true);
+
+                    //Responder a las querys de agentes con el socket conectado
+                    tracker.on.select('select * from "jum_agent"').response([
+                        {
+                            id,
+                            approved: true,
+                            status: JUMAgent.STATUS_ONLINE,
+                            last_socket_id: client && client.id,
+                            current_channels: { list: [channel] },
+                        },
+                    ]);
                     await Utils.sleep(100);
 
                     const service = new JUMAgentService();
-                    await service.deployChannel(channel, "");
+                    const candidate = await service.getFreeAgent(channel);
+                    const res = await service.deployChannel(channel, "", candidate);
 
                     await Utils.sleep(200);
 

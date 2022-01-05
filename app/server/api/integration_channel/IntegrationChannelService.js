@@ -61,7 +61,9 @@ export class IntegrationChannelService {
             if (Array.isArray(inputData)) {
                 data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
             }
-            return new Handlebars.SafeString(!lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : "");
+            return new Handlebars.SafeString(
+                !lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : ""
+            );
         });
 
         this.dao = new IntegrationDao();
@@ -115,6 +117,26 @@ export class IntegrationChannelService {
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return integration;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Busca un canal mediante su identificador
+     * 
+     * @param {*} channelId
+     * @returns
+     */
+    async getChannelById(channelId) {
+        const integrations = await this.dao.loadAllData();
+
+        for (const integration of integrations) {
+            integration.data.deployment_config = integration.deployment_config;
+
+            const found = lodash.find(integration.data.channels, { id: channelId });
+            if (found) {
+                return found;
             }
         }
         return null;
@@ -201,6 +223,25 @@ export class IntegrationChannelService {
     };
 
     /**
+     *
+     * @param {*} integrationId
+     * @param {*} channelId
+     * @param {*} toAgentId
+     * @returns
+     */
+    async moveChannel(integrationId, channelId, toAgentId) {
+        const channel = await this.findIntegrationChannel(integrationId, channelId);
+
+        if (!toAgentId) {
+            const response = await this.agentService.assignChannelToAnotherAgent(channel);
+            return this.channelApplyStatus(channel, response);
+        }
+
+        const response = await this.agentService.assignChannelToSpecificAgent(channel, toAgentId);
+        return this.channelApplyStatus(channel, response);
+    }
+
+    /**
      * Despliega un canal en base a los identificadores de integración y canal.
      *
      * @param {*} integrationId
@@ -242,7 +283,8 @@ export class IntegrationChannelService {
         //Save deployed route (snapshot)
         await this.saveChannelDeployedRoute(channel.id, camelRoute);
 
-        const response = await this.agentService.deployChannel(channel, camelRoute);
+        const candidate = await this.agentService.getFreeAgent(channel);
+        const response = await this.agentService.deployChannel(channel, camelRoute, candidate);
 
         return this.channelApplyStatus(channel, response);
     }
@@ -255,9 +297,8 @@ export class IntegrationChannelService {
      */
     async removeChannelDeployedRoute(channelId) {
         const integration = await this.getIntegrationByChannel(channelId);
-        
+
         for (let bdChann of integration.data.channels) {
-            
             if (bdChann.id === channelId) {
                 bdChann.last_deployed_route = null;
             }
@@ -321,11 +362,11 @@ export class IntegrationChannelService {
      * @returns
      */
     async channelObjStatus(channel) {
-        let remoteStatus;
+        let channelState;
         try {
-            if (!remoteStatus) {
+            if (!channelState) {
                 //Si no se proporciona uno se realiza la llamada para obtenerlo.
-                remoteStatus = await this.agentService.getChannelCurrentState(channel.id);
+                ({ channelState } = await this.agentService.getChannelCurrentState(channel.id));
             }
         } catch (ex) {
             if (ex.response && ex.response.status == 404) {
@@ -336,7 +377,7 @@ export class IntegrationChannelService {
             }
         }
 
-        return this.channelApplyStatus(channel, remoteStatus);
+        return this.channelApplyStatus(channel, channelState);
     }
 
     /**

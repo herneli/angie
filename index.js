@@ -18,7 +18,8 @@ import { SectionController } from "./app/server/api/section/SectionController";
 import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
-import { JUMAgentController } from "./app/server/api/jum_agents";
+import { JUMAgentController, JUMAgentService } from "./app/server/api/jum_agents";
+import Cache from "./app/server/common/Cache";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -110,19 +111,24 @@ module.exports = async () => {
     });
 
     App.executeOnlyMain = async () => {
+        //Start agentListening
+        const service = new JUMAgentService();
+        await service.listenForAgents(App.server.app.io);
+
         //Acciones a ejecutar sobre el mainWorker
         console.log("MainThread");
-    };
-
-    //Arrancar la aplicacion
-    await App.start();
-    App.server.on("listening", () => {
-        console.log("Server Ready to Serve 😄");
-
         console.log("Import Users From Keycloak");
 
         App.events.emit("config_import_users");
 
         console.log("Import Process has being completed.");
+    };
+
+    await Cache.resetAll();
+
+    //Arrancar la aplicacion
+    await App.start();
+    App.server.on("listening", () => {
+        console.log("Server Ready to Serve 😄");
     });
 };

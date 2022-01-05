@@ -6,14 +6,17 @@ export class JUMAgentController extends BaseController {
     configure() {
         super.configure("jum_agent", { service: JUMAgentService });
 
-        //Start agentListening
-        const service = new JUMAgentService();
-        service.listenForAgents();
 
         this.router.put(
             "/jum_agent/:id/approve",
             expressAsyncHandler((req, res, next) => {
                 this.approveAgent(req, res, next);
+            })
+        );
+        this.router.post(
+            "/jum_agent/:id/forceReload",
+            expressAsyncHandler((req, res, next) => {
+                this.forceReload(req, res, next);
             })
         );
         this.router.get(
@@ -24,6 +27,19 @@ export class JUMAgentController extends BaseController {
         );
 
         return this.router;
+    }
+
+    async forceReload(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            const agent = await service.loadById(request.params.id);
+
+            await service.loadAgentStatus(agent);
+
+            response.json(new JsonResponse(true));
+        } catch (ex) {
+            next(ex);
+        }
     }
 
     async approveAgent(request, response, next) {

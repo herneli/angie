@@ -56,12 +56,36 @@ exports.up = async function (knex) {
     if (!(await knex.schema.hasTable("jum_agent"))) {
         await knex.schema.createTable("jum_agent", function (table) {
             table.uuid("id").primary();
-            table.string("joined_date");
+            table.string("joined_date", 40);
             table.boolean("approved").notNullable();
-            table.string("approved_date");
+            table.string("approved_date", 40);
             table.string("name").notNullable();
             table.string("status");
             table.jsonb("meta");
+        });
+    } else {
+        if (!(await knex.schema.hasColumn("jum_agent", "last_socket_id"))) {
+            await knex.schema.alterTable("jum_agent", function (table) {
+                table.string("last_socket_id").notNullable().defaultTo("");
+                table.jsonb("current_channels");
+            });
+        }
+        if (!(await knex.schema.hasColumn("jum_agent", "current_channels"))) {
+            await knex.schema.alterTable("jum_agent", function (table) {
+                table.jsonb("current_channels");
+            });
+        }
+        if (!(await knex.schema.hasColumn("jum_agent", "last_online_date"))) {
+            await knex.schema.alterTable("jum_agent", function (table) {
+                table.string("last_online_date", 40);
+            });
+        }
+    }
+
+    if (!(await knex.schema.hasTable("cache"))) {
+        await knex.schema.createTable("cache", function (table) {
+            table.string("key").primary();
+            table.jsonb("data");
         });
     }
 

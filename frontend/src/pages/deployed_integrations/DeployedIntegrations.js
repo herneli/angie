@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, List, notification, Popconfirm, Row, Space, Layout, Avatar, Tag, Badge } from "antd";
+import {
+    Col,
+    Input,
+    List,
+    notification,
+    Popconfirm,
+    Row,
+    Space,
+    Layout,
+    Avatar,
+    Tag,
+    Badge,
+    Popover,
+    Select,
+} from "antd";
 import axios from "axios";
 import moment from "moment";
 import lodash from "lodash";
@@ -7,13 +21,21 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import { mdiCancel, mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong } from "@mdi/js";
+import {
+    mdiCancel,
+    mdiDatabaseArrowRightOutline,
+    mdiPlayCircle,
+    mdiSourceBranchPlus,
+    mdiStopCircle,
+    mdiTextLong,
+} from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link } from "react-router-dom";
 import EllipsisParagraph from "../../components/text/EllipsisParagraph";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
+import AgentInfo from "./AgentInfo";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -41,11 +63,14 @@ const useStyles = createUseStyles({
         marginTop: 14,
         paddingLeft: 30,
         textAlign: "right",
-        width: 300,
-        borderLeft: "1px solid #f0f0f0",
+        width: "100%",
+        // borderLeft: "1px solid #f0f0f0",
     },
     channelName: {
         width: 160,
+    },
+    channelVersion: {
+        width: 30,
     },
 });
 
@@ -55,6 +80,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
     let [dataSource, setDataSource] = useState([]);
     let [loading, setLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
+    const [agents, setAgents] = useState([]);
 
     const [pagination, setPagination] = useState({});
 
@@ -62,6 +88,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
     const initialize = async () => {
         await loadOrganizations();
+        await loadAgents();
         await search();
     };
     /**
@@ -158,7 +185,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
                                 className: classes.icon,
                                 color: "red",
                             }}
-                            title={T.translate("integrations.channel.button.undeploy")}
+                            title={T.translate("deployed_integrations.channel.button.undeploy")}
                         />
                     </Popconfirm>
                 )}
@@ -175,14 +202,14 @@ const DeployedIntegrations = ({ packageUrl }) => {
                                 color: "green",
                                 className: classes.icon,
                             }}
-                            title={T.translate("integrations.channel.button.deploy")}
+                            title={T.translate("deployed_integrations.channel.button.deploy")}
                         />
                     </span>
                 )}
 
                 <IconButton
                     key="log"
-                    onClick={() => channelActions.showChannelLog(integration.id, record.id)}
+                    onClick={() => channelActions.showChannelLog(integration.id, record.id, record?.agent?.id)}
                     icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.log") }}
                 />
             </Space>
@@ -210,9 +237,10 @@ const DeployedIntegrations = ({ packageUrl }) => {
     const drawChannelStatus = (record) => {
         return (
             <div>
-                {!record.enabled && (
-                    <Icon path={mdiCancel} size={0.6} color="red" title={T.translate("common.disabled")} />
-                )}
+                {/* {!record.enabled && (
+                    <Icon path={mdiCancel} size={0.8} color="red" title={T.translate("common.disabled")} />
+                )} */}
+                {!record.enabled && <span title={record.status}>🚫</span>}
                 {record.enabled && record.status === "Started" && <span title={record.status}>🟢</span>}
                 {record.enabled && record.status === "UNDEPLOYED" && <span title={record.status}>🔴</span>}
                 {record.enabled && record.status === "Stopped" && <span title={record.status}>🟠</span>}
@@ -222,7 +250,10 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
-            return search(null, Utils.getFiltersByPairs(value));
+            return search(
+                null,
+                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
+            );
         }
         search(null, {
             "integration.data::text": {
@@ -240,6 +271,19 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
         if (response?.data?.success) {
             setOrganizations(response?.data?.data);
+        } else {
+            console.error(response.data);
+        }
+    };
+
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadAgents = async () => {
+        const response = await axios.get("/jum_agent");
+
+        if (response?.data?.success) {
+            setAgents(response?.data?.data);
         } else {
             console.error(response.data);
         }
@@ -265,7 +309,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
      */
     const renderOrganization = (item) => {
         const org = getOrganizationById(item?.deployment_config?.organization_id);
-        return T.translate("integrations.integration_form_subtitle", {
+        return T.translate("deployed_integrations.integration_form_subtitle", {
             name: org?.name || "-",
         });
     };
@@ -308,6 +352,39 @@ const DeployedIntegrations = ({ packageUrl }) => {
         );
     };
 
+    const getAgentInfo = (integration, channel, agent) => {
+        //TODO filter agents based on channel options
+        const content = (
+            <Space>
+                <IconButton
+                    key="log"
+                    title={T.translate("deployed_integrations.agent_actions.move_to_another")}
+                    onClick={async () => {
+                        await channelActions.deployToAnotherAgent(integration.id, channel.id);
+                        await search();
+                    }}
+                    icon={{
+                        path: mdiDatabaseArrowRightOutline,
+                        size: 0.6,
+                        title: T.translate("deployed_integrations.agent_actions.move_to_another"),
+                    }}
+                />
+
+                <Select>
+                    {agents.map((agent) => (
+                        <Select.Option key={agent.id}>{agent.name}</Select.Option>
+                    ))}
+                </Select>
+            </Space>
+        );
+        return (
+            <Popover content={content} title={T.translate("deployed_integrations.agent_actions.title")} trigger="click">
+                <Tag color={"gold"} style={{ cursor: "pointer" }}>
+                    {agent?.name}
+                </Tag>
+            </Popover>
+        );
+    };
     /**
      * Metodo encargado de pintar un canal
      * @param {*} int
@@ -319,7 +396,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
             <List.Item
                 key={chann.id}
                 actions={[
-                    <span>v{chann.version}</span>,
+                    <div className={classes.channelVersion}>v{chann.version}</div>,
                     <span>{moment(chann.last_updated).format("DD/MM/YYYY HH:mm:ss")}</span>,
                     <Badge showZero count={chann.messages_sent} style={{ backgroundColor: "green" }} />,
                     <Badge showZero count={chann.messages_error} />,
@@ -330,6 +407,15 @@ const DeployedIntegrations = ({ packageUrl }) => {
                             backgroundColor: "#2db7f5",
                         }}
                     />,
+                    chann?.agent?.name && (
+                        <AgentInfo
+                            integration={int}
+                            channel={chann}
+                            currentAgent={chann?.agent}
+                            agents={agents}
+                            onActionEnd={search}
+                        />
+                    ),
                 ]}
                 extra={<div className={classes.channelActions}>{drawChannelActionButtons(int, chann)}</div>}>
                 <Space>
