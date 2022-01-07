@@ -1,17 +1,11 @@
 import { Utils, BaseService } from "lisco";
+import { PackageDao } from "./PackageDao";
 import { PackageVersionDao } from "./PackageVersionDao";
 import simpleGit from "simple-git";
 import fs from "fs";
 import path from "path";
 import { compare as compareVersions } from "compare-versions";
-
-const remoteRepository = "git@github.com:hernaj34/angie-repository.git";
 const repositoryPath = process.cwd() + path.sep + "angie-repository";
-const angieFilePath = repositoryPath + path.sep + "angie.json";
-const gitOptions = {
-    baseDir: repositoryPath,
-    binary: "git",
-};
 
 const packageComponent = [
     {
@@ -41,60 +35,46 @@ export class PackageVersionService extends BaseService {
         return await this.dao.getPackageVersion(code, version);
     }
 
-    async updateRemote(id) {
-        let packageData = await this.dao.loadById(id);
-        if (packageData) {
-            packageData = packageData[0];
+    async updateRemote(code, version) {
+        const packageDao = new PackageDao();
+        let packageVersion = await this.dao.getPackageVersion(code, version);
+        if (packageVersion) {
+            packageVersion.packageData = await packageDao.getPackage(code);
         }
-        await this.syncronizeAngieRepository(packageData);
+        await this.syncronizeAngieRepository(packageVersion);
         return true;
     }
 
-    async syncronizeAngieRepository(packageData) {
-        if (fs.existsSync(repositoryPath)) {
-            fs.rmSync(repositoryPath, { recursive: true });
+    async syncronizeAngieRepository(packageVersion) {
+        let packagePath = repositoryPath + path.sep + packageVersion.code;
+        const gitOptions = {
+            baseDir: packagePath,
+            binary: "git",
+        };
+        if (fs.existsSync(packagePath)) {
+            fs.rmSync(packagePath, { recursive: true });
         }
-        fs.mkdirSync(repositoryPath);
+        fs.mkdirSync(packagePath, { recursive: true });
         const git = simpleGit(gitOptions);
-        await git.clone(remoteRepository, repositoryPath);
-        await git.pull();
+        await git.clone(packageVersion.packageData.remote, packagePath);
+        await git.branch(["-M", packageVersion.version]);
 
-        let angieFile = fs.readFileSync(angieFilePath);
-        let angieConfig = JSON.parse(angieFile);
+        await this.generatePackageComponents(packageVersion, packagePath, git);
 
-        if (angieConfig.packages[packageData.code]) {
-            let angiePackage = angieConfig.packages[packageData.code];
-            if (!angiePackage.versions.includes(packageData.version)) {
-                angiePackage.versions.push(packageData.version);
-                if (compareVersions(angiePackage.latest, packageData.version, "<=")) {
-                    angiePackage.latest = packageData.version;
-                }
-            }
-        } else {
-            angieConfig.packages[packageData.code] = {
-                versions: [packageData.version],
-                latest: packageData.version,
-            };
-        }
-        fs.writeFileSync(angieFilePath, JSON.stringify(angieConfig, null, 4));
-        await git.add(angieFilePath);
-
-        await this.generatePackageComponents(packageData, git);
-
-        await git.commit("Update package: " + packageData.code + "-" + packageData.version);
-        await git.push("origin");
+        await git.commit("Update package: " + packageVersion.code + "-" + packageVersion.version);
+        await git.push(["-u", "origin", packageVersion.version]);
     }
 
-    async generatePackageComponents(packageData, git) {
-        let packagePath = repositoryPath + path.sep + packageData.code + path.sep + packageData.version;
-        let gitPath = packageData.code + "/" + packageData.version;
+    async generatePackageComponents(packageData, packagePath, git) {
+        let gitPath = "docs";
         await git.raw("rm", "-r", "--ignore-unmatch", gitPath);
-        fs.rmSync(packagePath, { recursive: true, force: true });
-        fs.mkdirSync(packagePath, { recursive: true });
+        fs.rmSync(packagePath + path.sep + "docs", { recursive: true, force: true });
+        fs.mkdirSync(packagePath + path.sep + "docs", { recursive: true });
         for (const component of packageComponent) {
             if (component.document_types) {
                 for (const documentType of component.document_types) {
-                    let documentTypePath = packagePath + path.sep + component.table + path.sep + documentType;
+                    let documentTypePath =
+                        packagePath + path.sep + "docs" + path.sep + component.table + path.sep + documentType;
                     fs.mkdirSync(documentTypePath, { recursive: true });
                     let documents = await this.dao.getDocumentTypeItems(component.table, documentType);
                     for (const document of documents) {
@@ -104,7 +84,7 @@ export class PackageVersionService extends BaseService {
                     }
                 }
             } else {
-                let documentTablePath = packagePath + path.sep + component.table;
+                let documentTablePath = packagePath + path.sep + "docs" + path.sep + component.table;
                 fs.mkdirSync(documentTablePath, { recursive: true });
                 let documents = await this.dao.getTableItems(component.table);
 

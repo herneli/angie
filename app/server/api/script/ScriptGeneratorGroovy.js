@@ -2,6 +2,7 @@ import { union } from "lodash";
 import ScriptGeneratorBase from "./ScriptGeneratorBase";
 import { ScriptService } from "./ScriptService";
 import { PackageService } from "../package/PackageService";
+import { PackageVersionService } from "../package/PackageVersionService";
 export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
     constructor(script, package_code, package_version) {
         super(script, package_code, package_version);
@@ -80,11 +81,11 @@ export default class ScriptGeneratorGroovy extends ScriptGeneratorBase {
 
     async getUsedMethodsCode() {
         let scriptService = new ScriptService();
-        let packageService = new PackageService();
+        let packageVersionService = new PackageVersionService();
 
         let methodDefinitions = this.getCommentCode("Functions") + "\n";
-        const packageData = await packageService.getPackage(this.package_code, this.package_version);
-        const dependiencies = [[packageData.code, packageData.version], ...(packageData.dependencies || [])];
+        const packageVersion = await packageVersionService.getPackageVersion(this.package_code, this.package_version);
+        const dependiencies = [[packageVersion.code, packageVersion.version], ...(packageVersion.dependencies || [])];
 
         for await (const method of Object.keys(this.usedMethods).map((fullCode) =>
             scriptService.getMethod(fullCode, dependiencies)

@@ -30,6 +30,12 @@ export class PackageController extends BaseController {
                 this.getPackageVersion(req, res, next);
             })
         );
+        this.router.get(
+            "/packages/:package_code/versions/:version_code/update_remote",
+            expressAsyncHandler((req, res, next) => {
+                this.versionUpdateRemote(req, res, next);
+            })
+        );
         return this.router;
     }
 
@@ -55,5 +61,11 @@ export class PackageController extends BaseController {
         let service = new PackageVersionService();
         let packageVersion = await service.getPackageVersion(req.params.package_code, req.params.version_code);
         res.json(new JsonResponse(true, packageVersion));
+    }
+
+    async versionUpdateRemote(req, res, next) {
+        let service = new PackageVersionService();
+        let updateResponse = service.updateRemote(req.params.package_code, req.params.version_code);
+        res.json(new JsonResponse(true, updateResponse));
     }
 }

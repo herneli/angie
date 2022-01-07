@@ -29,15 +29,4 @@ export class PackageDao extends BaseKnexDao {
             return { ...packageData, versions: packageVersions };
         }
     }
-
-    async getDocumentTypeItems(table, documentType) {
-        let knex = KnexConnector.connection;
-        return await knex(table).where({
-            document_type: documentType,
-        });
-    }
-    async getTableItems(table) {
-        let knex = KnexConnector.connection;
-        return await knex(table);
-    }
 }
