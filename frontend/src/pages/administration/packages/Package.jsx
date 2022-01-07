@@ -21,9 +21,11 @@ export default function Package({ match }) {
     const [currentPackage, setCurrentPackage] = useState();
     const classes = useStyles();
     useEffect(() => {
-        axios.get("/packages/" + match.params.packageId).then((response) => {
-            setCurrentPackage(response.data.data[0]);
-        });
+        axios
+            .get("/packages/" + match.params.packageCode + "/versions/" + match.params.packageVersion)
+            .then((response) => {
+                setCurrentPackage(response.data.data);
+            });
     }, [match]);
 
     let { path, url } = useRouteMatch();

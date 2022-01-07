@@ -32,7 +32,7 @@ const AppMain = ({ app, location }) => {
             />
             <PrivateRoute
                 roles={["default-roles-angie"]}
-                path="/packages/:packageId"
+                path="/packages/:packageCode/versions/:packageVersion"
                 component={Package}
                 {...defaultProps}
             />

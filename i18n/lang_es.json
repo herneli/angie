@@ -127,7 +127,8 @@
         "node_types": "Tipos de nodo",
         "camel_components": "Componentes camel",
         "objects": "Objetos",
-        "select_package": "Seleccione un paquete"
+        "select_package": "Seleccione un paquete",
+        "versions": "Versiones"
     },
     "configuration": {
         "actions": "Acciones",

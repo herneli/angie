@@ -6,15 +6,7 @@ import AuthorizedFunction from "../components/security/AuthorizedFunction";
 
 import T from "i18n-react";
 
-import {
-    mdiAccount,
-    mdiHome,
-    mdiLogout,
-    mdiPackage,
-    mdiPackageVariant,
-    mdiPackageVariantClosed,
-    mdiSourceBranch,
-} from "@mdi/js";
+import { mdiAccount, mdiHome, mdiLogout, mdiPackageVariantClosed, mdiSourceBranch } from "@mdi/js";
 import Icon from "@mdi/react";
 
 const AppMenu = () => {
