@@ -37,8 +37,10 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
+     * Envía un comando a un agente con los parametros pasados
      *
      * @param {*} agentId
+     * @param {*} [...] any
      * @returns
      */
     async sendCommand(agentId) {
@@ -79,10 +81,13 @@ export class JUMAgentService extends BaseService {
         await JUMAgentSocketActions.disconnectSocket(socketId);
     }
 
+    /**
+     * Envia un mensaje con los parametros pasados a todos los agentes conectados
+     *
+     * @returns
+     */
     async sendToAll() {
         let args = [...arguments];
-
-
         return JUMAgentSocketActions.sendToAll(...args);
     }
 
@@ -93,6 +98,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
+     * Obtiene una lista con todos los agentes actualmente en ejecución
      *
      * @returns
      */
@@ -101,9 +107,10 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
+     * Comprueba si un agente esta en ejecución actualmente
      *
      * @param {*} id
-     * @returns
+     * @returns boolean
      */
     isRunning(id) {
         return this.dao.isRunning(id);
@@ -239,7 +246,8 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Método que marca un agent como approved o unapproved en base al estado actual
+     * Método que marca un agent como approved y solicita su estado
+     *
      * @param {*} id
      * @returns
      */
@@ -586,6 +594,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
+     * Metodo que detiene todos los canales desplegados en un agente
      *
      * @param {*} agent
      */
@@ -596,7 +605,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     *  Redistribuye los canales del agente a otros agentes
+     * Redistribuye los canales del agente a otros agentes
      *
      * @param {*} agentId
      */

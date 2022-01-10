@@ -47,6 +47,9 @@ class JUMAgentSocketActions {
     }
 
     /**
+     * Emite el evento de desconexión de un agente para forzar la desconexión de su socket.
+     *
+     * El evento se captura por el nodo master (el único que ejecuta el método de escucha)
      *
      * @returns
      */
@@ -59,7 +62,9 @@ class JUMAgentSocketActions {
     }
 
     /**
+     * Emite un comando en un agente concreto (el primer parametro será el identificador del agente)
      *
+     * El evento se captura por el nodo master (el único que ejecuta el método de escucha)
      */
     async sendCommand() {
         let args = [...arguments];
@@ -72,7 +77,9 @@ class JUMAgentSocketActions {
     }
 
     /**
+     * Emite un comando a todos los agentes
      *
+     * El evento se captura por el nodo master (el único que ejecuta el método de escucha)
      */
     async sendToAll() {
         let args = [...arguments];
@@ -86,12 +93,12 @@ class JUMAgentSocketActions {
 
     /**
      * Método que activa una escucha sobre un comando
+     *
      * @param {*} agentId
      * @param {*} commandName
      * @param {*} func
      */
     async listenCommand(socket, commandName, func) {
-        const self = this;
         try {
             socket.off(commandName);
         } catch (ex) {}
