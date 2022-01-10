@@ -35,8 +35,18 @@ exports.up = async function (knex) {
         await knex.schema.createTable("package", function (table) {
             table.increments();
             table.string("code").notNullable();
-            table.string("version").notNullable();
             table.string("name").notNullable();
+            table.string("remote");
+            table.unique(["code"]);
+        });
+    }
+
+    if (!(await knex.schema.hasTable("package_version"))) {
+        await knex.schema.createTable("package_version", function (table) {
+            table.increments();
+            table.string("code").notNullable();
+            table.string("version").notNullable();
+            table.jsonb("dependencies");
             table.boolean("modified");
             table.unique(["code", "version"]);
         });
@@ -102,4 +112,12 @@ exports.up = async function (knex) {
     }
 };
 
-exports.down = async function (knex) {};
+exports.down = async function (knex) {
+    
+    if (await knex.schema.hasTable("package")) {
+        await knex.schema.dropTable("package");
+    }
+    if (await knex.schema.hasTable("package_version")) {
+        await knex.schema.dropTable("package_version");
+    }
+};

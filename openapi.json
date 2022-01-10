@@ -2038,56 +2038,76 @@
         "tags": []
       }
     },
-    "/packages/list": {
-      "post": {
-        "summary": "/packages/list",
+    "/packages/{package_code}": {
+      "get": {
+        "summary": "/packages/{package_code}",
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "package_code",
+            "in": "path",
+            "required": true
+          }
+        ],
         "responses": {},
         "tags": []
       }
     },
-    "/packages/{id}": {
+    "/packages/{package_code}/versions": {
       "get": {
-        "summary": "/packages/{id}",
+        "summary": "/packages/{package_code}/versions",
         "consumes": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
             "in": "path",
             "required": true
           }
         ],
         "responses": {},
         "tags": []
-      },
-      "put": {
-        "summary": "/packages/{id}",
+      }
+    },
+    "/packages/{package_code}/versions/{version_code}": {
+      "get": {
+        "summary": "/packages/{package_code}/versions/{version_code}",
         "consumes": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "version_code",
             "in": "path",
             "required": true
           }
         ],
         "responses": {},
         "tags": []
-      },
-      "delete": {
-        "summary": "/packages/{id}",
+      }
+    },
+    "/packages/{package_code}/versions/{version_code}/update_remote": {
+      "get": {
+        "summary": "/packages/{package_code}/versions/{version_code}/update_remote",
         "consumes": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "version_code",
             "in": "path",
             "required": true
           }
@@ -3946,6 +3966,64 @@
         "parameters": [
           {
             "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/list": {
+      "post": {
+        "summary": "/packages/list",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/{id}": {
+      "get": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/packages/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true
           }

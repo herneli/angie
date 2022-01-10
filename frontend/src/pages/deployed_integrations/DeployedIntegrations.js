@@ -110,7 +110,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
     const showMessages = (record, integration) => {
         history.push({
-            pathname: `/packages/${integration.package_code}@${integration.package_version}/messages/${record.id}`,
+            pathname: `/packages/${integration.package_code}/versions/${integration.package_version}/messages/${record.id}`,
         });
     };
 
@@ -341,7 +341,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
                 <List.Item.Meta
                     avatar={<Avatar icon={<Icon path={mdiSourceBranchPlus} size={0.7} />} />}
                     title={
-                        <Link to={`/packages/${item.package_code}@${item.package_version}/integrations/${item.id}`}>
+                        <Link to={`/packages/${item.package_code}/versions/${item.package_version}/integrations/${item.id}`}>
                             {item.name}
                         </Link>
                     }
@@ -429,7 +429,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
                     {drawChannelStatus(chann)}
                     <div className={classes.channelName}>
                         <Link
-                            to={`/packages/${int.package_code}@${int.package_version}/integrations/${int.id}/${chann.id}`}>
+                            to={`/packages/${int.package_code}/versions/${int.package_version}/integrations/${int.id}/${chann.id}`}>
                             {chann.name}
                         </Link>
                     </div>

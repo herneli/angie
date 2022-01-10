@@ -48,26 +48,7 @@ exports.up = async function (knex) {
         });
     }
 
-    if (!(await knex.schema.hasTable("package"))) {
-        await knex.schema.createTable("package", function (table) {
-            table.increments();
-            table.string("code").notNullable();
-            table.string("name").notNullable();
-            table.string("remote");
-            table.unique(["code"]);
-        });
-    }
-
-    if (!(await knex.schema.hasTable("package_version"))) {
-        await knex.schema.createTable("package_version", function (table) {
-            table.increments();
-            table.string("code").notNullable();
-            table.string("version").notNullable();
-            table.jsonb("dependencies");
-            table.boolean("modified");
-            table.unique(["code", "version"]);
-        });
-    }
+    
 
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
@@ -139,12 +120,6 @@ exports.down = async function (knex) {
 
     if (await knex.schema.hasTable("script_config")) {
         await knex.schema.dropTable("script_config");
-    }
-    if (await knex.schema.hasTable("package")) {
-        await knex.schema.dropTable("package");
-    }
-    if (await knex.schema.hasTable("package_version")) {
-        await knex.schema.dropTable("package_version");
     }
     if (await knex.schema.hasTable("integration_config")) {
         await knex.schema.dropTable("integration_config");

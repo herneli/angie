@@ -2337,19 +2337,29 @@
         "tags": []
       }
     },
-    "/packages/list": {
-      "post": {
-        "summary": "/packages/list",
+    "/packages/{package_code}": {
+      "get": {
+        "summary": "/packages/{package_code}",
+        "parameters": [
+          {
+            "name": "package_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {},
         "tags": []
       }
     },
-    "/packages/{id}": {
+    "/packages/{package_code}/versions": {
       "get": {
-        "summary": "/packages/{id}",
+        "summary": "/packages/{package_code}/versions",
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
             "in": "path",
             "required": true,
             "schema": {
@@ -2359,12 +2369,22 @@
         ],
         "responses": {},
         "tags": []
-      },
-      "put": {
-        "summary": "/packages/{id}",
+      }
+    },
+    "/packages/{package_code}/versions/{version_code}": {
+      "get": {
+        "summary": "/packages/{package_code}/versions/{version_code}",
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version_code",
             "in": "path",
             "required": true,
             "schema": {
@@ -2374,12 +2394,22 @@
         ],
         "responses": {},
         "tags": []
-      },
-      "delete": {
-        "summary": "/packages/{id}",
+      }
+    },
+    "/packages/{package_code}/versions/{version_code}/update_remote": {
+      "get": {
+        "summary": "/packages/{package_code}/versions/{version_code}/update_remote",
         "parameters": [
           {
-            "name": "id",
+            "name": "package_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version_code",
             "in": "path",
             "required": true,
             "schema": {
@@ -4216,6 +4246,60 @@
         "parameters": [
           {
             "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/list": {
+      "post": {
+        "summary": "/packages/list",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/packages/{id}": {
+      "get": {
+        "summary": "/packages/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/packages/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/packages/{id}",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
