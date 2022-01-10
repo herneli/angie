@@ -3,6 +3,8 @@ const path = require("path");
 
 const base = path.resolve(path.join(__dirname, "data"));
 
+const alreadyDeleted = {};
+
 //Lee el directorio data. La estructura del mismo será:
 // data
 //Opción 1;
@@ -24,7 +26,10 @@ const base = path.resolve(path.join(__dirname, "data"));
 const readTableFolder = async (knex, basedir, table, package_code, package_version) => {
     console.log("-- " + table);
 
-    await knex(table).del(); //Borrar la tabla
+    if (!alreadyDeleted[table]) {
+        await knex(table).del(); //Borrar la tabla
+        alreadyDeleted[table] = true;
+    }
 
     let files = await fs.readdir(path.join(basedir, table));
     for (const file_name of files) {
@@ -75,6 +80,18 @@ const readDirFolders = async (path) => {
 
 const createPackage = async (knex, package_code, package_version) => {
     const table = "package";
+
+    const exists = await knex(table).where({ code: package_code }).first();
+
+    if (!exists) {
+        await knex(table).insert({ code: package_code });
+    }
+
+    await createVersion(knex, package_code, package_version);
+};
+
+const createVersion = async (knex, package_code, package_version) => {
+    const table = "package_version";
 
     const exists = await knex(table).where({ code: package_code, version: package_version }).first();
 
