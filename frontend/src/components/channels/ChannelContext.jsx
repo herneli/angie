@@ -1,14 +1,18 @@
 import React, { useState, useContext } from "react";
+import { useEffect } from "react";
 
 const ChannelContext = React.createContext();
 
-export default function ChannelContextProvider({ currentChannel, currentStatus, children }) {
-    const [state, setState] = useState({
-        currentChannel,
-        currentStatus,
-    });
+export default function ChannelContextProvider({ currentChannel: channel, currentStatus: status, children }) {
+    const [currentChannel, setCurrentChannel] = useState(channel);
+    const [currentStatus, setCurrentStatus] = useState(status);
 
-    return <ChannelContext.Provider value={state}>{children}</ChannelContext.Provider>;
+    useEffect(() => {
+        setCurrentStatus(status);
+        setCurrentChannel(channel);
+    }, [status, channel]);
+
+    return <ChannelContext.Provider value={{ currentChannel, currentStatus }}>{children}</ChannelContext.Provider>;
 }
 
 /**

@@ -4,6 +4,7 @@ import ReactFlow, { ReactFlowProvider, Controls, MiniMap, Background } from "rea
 import Sidebar from "./Sidebar";
 import MultiTargetNode from "./custom_nodes/MultiTargetNode";
 import ButtonNode from "./custom_nodes/ButtonNode";
+import CommentNode from "./custom_nodes/CommentNode";
 import Transformer from "./Transformer";
 
 import T from "i18n-react";
@@ -22,6 +23,7 @@ import ChannelContextProvider from "../../../components/channels/ChannelContext"
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
     ButtonNode: ButtonNode,
+    CommentNode: CommentNode,
 };
 
 const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeTypes }) => {

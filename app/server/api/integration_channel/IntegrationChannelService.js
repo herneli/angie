@@ -180,8 +180,8 @@ export class IntegrationChannelService {
             let type = lodash.find(node_types, (el) => {
                 return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
             });
-            if (type.data.handles === "none") continue;
             if (!type) continue;
+            if (type.data.handles === "none") continue;
             let camelComponent = lodash.find(camel_components, {
                 code: type.data.camel_component_id,
             });

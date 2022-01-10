@@ -21,17 +21,10 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import {
-    mdiCancel,
-    mdiDatabaseArrowRightOutline,
-    mdiPlayCircle,
-    mdiSourceBranchPlus,
-    mdiStopCircle,
-    mdiTextLong,
-} from "@mdi/js";
+import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiDatabaseArrowRightOutline } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import EllipsisParagraph from "../../components/text/EllipsisParagraph";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
@@ -77,14 +70,14 @@ const useStyles = createUseStyles({
 const channelActions = new ChannelActions();
 
 const DeployedIntegrations = ({ packageUrl }) => {
-    let [dataSource, setDataSource] = useState([]);
-    let [loading, setLoading] = useState(false);
+    const classes = useStyles();
+    const history = useHistory();
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
     const [agents, setAgents] = useState([]);
 
     const [pagination, setPagination] = useState({});
-
-    const classes = useStyles();
 
     const initialize = async () => {
         await loadOrganizations();
@@ -114,6 +107,12 @@ const DeployedIntegrations = ({ packageUrl }) => {
             },
         });
     }, [dataSource]);
+
+    const showMessages = (record, integration) => {
+        history.push({
+            pathname: `/packages/${integration.package_code}@${integration.package_version}/messages/${record.id}`,
+        });
+    };
 
     /**
      * Realiza la busqueda teniendo en cuenta la paginacion y los filtros
@@ -211,6 +210,14 @@ const DeployedIntegrations = ({ packageUrl }) => {
                     key="log"
                     onClick={() => channelActions.showChannelLog(integration.id, record.id, record?.agent?.id)}
                     icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.log") }}
+                />
+                <IconButton
+                    key="messages"
+                    onClick={() => {
+                        showMessages(record, integration);
+                        console.log("showMessages");
+                    }}
+                    icon={{ path: mdiMessage, size: 0.6, title: "Mensajes" }}
                 />
             </Space>
         );
