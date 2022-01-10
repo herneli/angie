@@ -25,9 +25,11 @@ export default function Package({ match }) {
     const [currentPackage, setCurrentPackage] = useState();
     const classes = useStyles();
     useEffect(() => {
-        axios.get("/packages/" + match.params.packageId).then((response) => {
-            setCurrentPackage(response.data.data);
-        });
+        axios
+            .get("/packages/" + match.params.packageCode + "/versions/" + match.params.packageVersion)
+            .then((response) => {
+                setCurrentPackage(response.data.data);
+            });
     }, [match]);
 
     let { path, url } = useRouteMatch();
@@ -65,7 +67,7 @@ export default function Package({ match }) {
                             </Menu.Item>
                         </Menu>
                     </Sider>
-                    <Content className="packageContent">
+                    <Content>
                         <Switch>
                             <Route exact path={path}>
                                 Seleccione una opción

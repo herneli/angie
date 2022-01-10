@@ -15,6 +15,8 @@ exports.up = async function (knex) {
             table.string("name").notNullable();
             table.json("data");
             table.uuid("organization_id");
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.foreign("organization_id").references("organization.id");
             table.boolean("enabled").defaultTo(true);
         });
@@ -46,19 +48,44 @@ exports.up = async function (knex) {
         });
     }
 
+    if (!(await knex.schema.hasTable("package"))) {
+        await knex.schema.createTable("package", function (table) {
+            table.increments();
+            table.string("code").notNullable();
+            table.string("name").notNullable();
+            table.string("remote");
+            table.unique(["code"]);
+        });
+    }
+
+    if (!(await knex.schema.hasTable("package_version"))) {
+        await knex.schema.createTable("package_version", function (table) {
+            table.increments();
+            table.string("code").notNullable();
+            table.string("version").notNullable();
+            table.jsonb("dependencies");
+            table.boolean("modified");
+            table.unique(["code", "version"]);
+        });
+    }
+
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
             table.increments();
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["document_type", "code"]);
+            table.unique(["package_code", "package_version", "document_type", "code"]);
         });
     }
 
     if (!(await knex.schema.hasTable("integration_config"))) {
         await knex.schema.createTable("integration_config", function (table) {
             table.uuid("id").primary();
+            table.string("package_code").notNullable();
+            table.string("package_version").notNullable();
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
@@ -112,6 +139,12 @@ exports.down = async function (knex) {
 
     if (await knex.schema.hasTable("script_config")) {
         await knex.schema.dropTable("script_config");
+    }
+    if (await knex.schema.hasTable("package")) {
+        await knex.schema.dropTable("package");
+    }
+    if (await knex.schema.hasTable("package_version")) {
+        await knex.schema.dropTable("package_version");
     }
     if (await knex.schema.hasTable("integration_config")) {
         await knex.schema.dropTable("integration_config");

@@ -1,29 +1,32 @@
 import { BaseKnexDao, KnexConnector } from "lisco";
+import { PackageVersionService } from "./PackageVersionService";
 
 export class PackageDao extends BaseKnexDao {
     tableName = "package";
 
-    async getPackage(code, version) {
+    async getPackageList() {
         let knex = KnexConnector.connection;
-        return await knex("package")
-            .where({
-                code: code,
-                version: version,
-            })
-            .first();
+        let packageList = await knex("package");
+        let packageVersionService = new PackageVersionService();
+        let newPackageList = [];
+        for (const packageData of packageList) {
+            let packageVersions = await packageVersionService.getPackageVersionList(packageData.code);
+            newPackageList.push({ ...packageData, versions: packageVersions });
+        }
+        return newPackageList;
     }
 
-    async loadByCode(objectId) {
-        const id = objectId.split('@')
+    async getPackage(code) {
         let knex = KnexConnector.connection;
-        const data = await knex.from(this.tableName).where({
-            'code': id[0],
-            'version': id[1]
-        });
-
-        if (data && data[0]) {
-            return data[0];
+        let packageData = await knex("package")
+            .where({
+                code: code,
+            })
+            .first();
+        if (packageData) {
+            let packageVersionService = new PackageVersionService();
+            let packageVersions = await packageVersionService.getPackageVersionList(packageData.code);
+            return { ...packageData, versions: packageVersions };
         }
-        return null;
     }
 }

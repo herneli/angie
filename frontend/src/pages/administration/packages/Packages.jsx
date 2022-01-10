@@ -19,23 +19,28 @@ export default function Packages({ history }) {
     }
 
     const renderExpandable = (packageData) => {
-        let dataSource = (packageData.dependencies || []).map((dependecy) => ({
-            code: dependecy[0],
-            version: dependecy[1],
-        }));
+        let extendedColumns = [
+            { title: "Version", key: "version", dataIndex: "version" },
+            {
+                title: "Acciones",
+                key: "actions",
+                render: (text, record) => {
+                    return (
+                        <Link to={"packages/" + record.code + "/versions/" + record.version}>
+                            {T.translate("packages.configure")}
+                        </Link>
+                    );
+                },
+            },
+        ];
         return (
             <Row style={{ margin: "10px" }}>
                 <Col span={12}>
                     <Table
                         bordered
                         size="small"
-                        columns={[
-                            ,
-                            { title: "Pakcage", key: "code", dataIndex: "code" },
-                            { title: "Version", key: "version", dataIndex: "version" },
-                        ]}
-                        dataSource={dataSource}
-                        title={() => T.translate("packages.dependencies")}
+                        columns={extendedColumns}
+                        dataSource={packageData.versions}
                         pagination={false}
                     />
                 </Col>
@@ -63,15 +68,6 @@ export default function Packages({ history }) {
             title: "Version",
             dataIndex: "version",
             key: "version",
-        },
-        {
-            title: "Acciones",
-            key: "actions",
-            render: (text, record) => {
-                return (
-                    <Link to={`/packages/${record.code}@${record.version}`}>{T.translate("packages.configure")}</Link>
-                );
-            },
         },
     ];
 

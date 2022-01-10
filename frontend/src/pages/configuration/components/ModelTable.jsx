@@ -51,6 +51,11 @@ export default function ModelTable({
             //     dataIndex: "packageCode",
             // });
             columns.push({
+                title: "packageCode",
+                key: "packageCode",
+                dataIndex: "packageCode",
+            });
+            columns.push({
                 title: T.translate("configuration.actions"),
                 key: "_actions",
                 fixed: "right",

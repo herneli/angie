@@ -73,12 +73,12 @@ export class ConfigurationController extends BaseController {
         try {
             let service = new ConfigurationService();
             let filters = request && request.query && request.query.filters ? JSON.parse(request.query.filters) : {};
-
             let dependencies =
                 request && request.query && request.query.dependencies ? JSON.parse(request.query.dependencies) : null;
+            let modelList = [];
 
-                
-            let modelList = await service.list(request.params.code, filters, filters.start, filters.limit);
+            
+            modelList = await service.list(request.params.code, filters, filters.start, filters.limit);
 
             modelList = {
                 ...modelList,

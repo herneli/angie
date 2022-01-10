@@ -1,4 +1,4 @@
-import { Utils, BaseService } from "lisco";
+import { BaseService } from "lisco";
 import { PackageDao } from "./PackageDao";
 
 export class PackageService extends BaseService {
@@ -14,5 +14,11 @@ export class PackageService extends BaseService {
      */
      loadById(id) {
         return this.dao.loadByCode(id);
+     }
+    async getPackageList() {
+        return await this.dao.getPackageList();
+    }
+    async getPackage(code) {
+        return await this.dao.getPackage(code);
     }
 }
