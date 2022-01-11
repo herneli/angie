@@ -18,7 +18,7 @@ import { SectionController } from "./app/server/api/section/SectionController";
 import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
-import { JUMAgentController, JUMAgentService } from "./app/server/api/jum_agents";
+import { JUMAgentController, JUMAgentMaster, JUMAgentService } from "./app/server/api/jum_agents";
 import Cache from "./app/server/common/Cache";
 
 module.exports = async () => {
@@ -112,8 +112,7 @@ module.exports = async () => {
 
     App.executeOnlyMain = async () => {
         //Start agentListening
-        const service = new JUMAgentService();
-        await service.listenForAgents(App.server.app.io);
+        await JUMAgentMaster.listenForAgents(App.server.app.io);
 
         //Acciones a ejecutar sobre el mainWorker
         console.log("MainThread");

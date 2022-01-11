@@ -34,7 +34,6 @@ import {
     mdiStop,
     mdiUndo,
     mdiRedo,
-    mdiPencil,
     mdiCloseCircleOutline,
     mdiCheckOutline,
     mdiStopCircle,
@@ -42,12 +41,14 @@ import {
     mdiBug,
     mdiTextLong,
     mdiSourceBranchPlus,
+    mdiCogs,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
 import { usePackage } from "../../../components/packages/PackageContext";
 import EllipsisParagraph from "../../../components/text/EllipsisParagraph";
 import IconButton from "../../../components/button/IconButton";
+import ChannelOptions from "./ChannelOptions";
 
 const { TabPane } = Tabs;
 
@@ -95,78 +96,12 @@ const integrationFormSchema = {
         description: { "ui:widget": "textarea" },
     },
 };
-const editTabFormSchema = {
-    schema: {
-        type: "object",
-        required: ["name"],
-        properties: {
-            name: {
-                title: "Nombre",
-                type: "string",
-            },
-            options: {
-                title: "Opciones",
-                description: "Configura diferentes opciones de comportamiento a nivel del canal.",
-                type: "object",
-                properties: {
-                    trace_file: {
-                        title: "Traza Completa (Archivo log)",
-                        type: "boolean",
-                    },
-                    trace_incoming_message: {
-                        title: "Almacenar Mensaje Recibido (Elastic)",
-                        type: "boolean",
-                    },
-                    trace_headers: {
-                        title: "Almacenar Cabeceras (Elastic)",
-                        type: "boolean",
-                    },
-                    trace_properties: {
-                        title: "Almacenar Propiedades (Elastic)",
-                        type: "boolean",
-                    },
-                    trace_outgoing_message: {
-                        title: "Almacenar Mensaje Salida (Elastic)",
-                        type: "boolean",
-                    },
-                },
-            },
-        },
-    },
-    uiSchema: {
-        name: {
-            "ui:columnSize": "8",
-        },
-        options: {
-            trace_file: {
-                "ui:widget": "checkbox",
-                "ui:columnSize": "4",
-            },
-            trace_incoming_message: {
-                "ui:widget": "checkbox",
-                "ui:columnSize": "4",
-            },
-            trace_headers: {
-                "ui:widget": "checkbox",
-                "ui:columnSize": "4",
-            },
-            trace_properties: {
-                "ui:widget": "checkbox",
-                "ui:columnSize": "4",
-            },
-            trace_outgoing_message: {
-                "ui:widget": "checkbox",
-                "ui:columnSize": "4",
-            },
-        },
-    },
-};
+
 let channelActions = new ChannelActions();
 
 const Integration = ({ packageUrl }) => {
     const history = useHistory();
     const integForm = useRef(null);
-    const editTabFormEl = useRef(null);
 
     const { state } = useLocation();
     const { id, channel } = useParams();
@@ -178,8 +113,8 @@ const Integration = ({ packageUrl }) => {
     const [channelStatuses, setChannelStatus] = useState({});
     const [editHeader, setEditHeader] = useState(false);
     const [pendingChanges, setPendingChanges] = useState(false);
-    const [editingTab, setEditingTab] = useState({});
-    const [editTabVisible, setEditTabVisible] = useState(false);
+    const [editingChannel, setEditingChannel] = useState({});
+    const [editingChannelVisible, setEditingChannelVisible] = useState(false);
 
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
@@ -431,7 +366,6 @@ const Integration = ({ packageUrl }) => {
         onIntegrationChange(newIntegration);
 
         if (event.forceSave) {
-            
             saveIntegration(newIntegration);
         }
     };
@@ -507,7 +441,7 @@ const Integration = ({ packageUrl }) => {
             newChannels = channels.map((chn) => {
                 if (chn.id === channel.id) {
                     channel.last_updated = moment().toISOString();
-                    channel.version += 1; //TODO mejorar?
+                    channel.version += 1; //TODO mejorar versionado canales
                     chn = channel;
                 }
                 return chn;
@@ -638,8 +572,8 @@ const Integration = ({ packageUrl }) => {
             ...buttons,
             <IconButton
                 key="edit"
-                onClick={() => startEditingTab()}
-                icon={{ path: mdiPencil, size: 0.6, title: T.translate("common.button.edit") }}
+                onClick={() => startEditingChannel()}
+                icon={{ path: mdiCogs, size: 0.6, title: T.translate("common.button.edit") }}
             />,
             <IconButton
                 key="undo"
@@ -732,22 +666,22 @@ const Integration = ({ packageUrl }) => {
             );
     };
 
-    const startEditingTab = () => {
+    const startEditingChannel = () => {
         const channel = lodash.find(channels, { id: activeTab });
         if (channel) {
-            setEditTabVisible(true);
-            setEditingTab(channel);
+            setEditingChannelVisible(true);
+            setEditingChannel(channel);
         }
     };
 
     const editTabOk = ({ formData }) => {
         onChannelUpdate(formData);
-        setEditTabVisible(false);
+        setEditingChannelVisible(false);
     };
 
     const editTabCancel = () => {
-        setEditTabVisible(false);
-        setEditingTab({});
+        setEditingChannelVisible(false);
+        setEditingChannel({});
     };
 
     const drawIntegrationStatus = (integ) => {
@@ -788,7 +722,9 @@ const Integration = ({ packageUrl }) => {
                                     {T.translate("common.button.cancel")}
                                 </Button>
                             </Popconfirm>,
-                            <Popconfirm title={T.translate("common.question")} onConfirm={() => saveIntegration(currentIntegration)}>
+                            <Popconfirm
+                                title={T.translate("common.question")}
+                                onConfirm={() => saveIntegration(currentIntegration)}>
                                 <Button key="enable" type="primary">
                                     {T.translate("common.button.save")}
                                 </Button>
@@ -892,45 +828,7 @@ const Integration = ({ packageUrl }) => {
                 ))}
             </Tabs>
 
-            <Modal
-                width={800}
-                title={T.translate("integrations.channel.edit_title")}
-                visible={editTabVisible}
-                onOk={editTabOk}
-                onCancel={editTabCancel}
-                footer={[
-                    <Button key="cancel" type="dashed" onClick={() => editTabCancel()}>
-                        {T.translate("common.button.cancel")}
-                    </Button>,
-                    <Button
-                        key="accept"
-                        type="primary"
-                        onClick={(e) => {
-                            //Forzar el submit del FORM simulando el evento
-                            editTabFormEl.current.onSubmit({
-                                target: null,
-                                currentTarget: null,
-                                preventDefault: () => true,
-                                persist: () => true,
-                            });
-                        }}>
-                        {T.translate("common.button.accept")}
-                    </Button>,
-                ]}>
-                <Form
-                    ref={editTabFormEl}
-                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                    schema={editTabFormSchema.schema}
-                    formData={editingTab}
-                    uiSchema={editTabFormSchema.uiSchema}
-                    widgets={formConfig.widgets}
-                    onChange={(e) => setEditingTab(e.formData)}
-                    onSubmit={(e) => editTabOk(e)}
-                    onError={(e) => console.log(e)}>
-                    <></>
-                </Form>
-            </Modal>
+            {editingChannelVisible && <ChannelOptions visible={editingChannelVisible} onOk={editTabOk} onCancel={editTabCancel} channel={editingChannel} />}
 
             <PreventTransitionPrompt
                 when={pendingChanges}

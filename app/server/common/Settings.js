@@ -15,16 +15,14 @@ export default class Settings {
      * @returns {Settings}
      */
     load() {
-        var baseRaw = fs.readFileSync(
-            path.resolve(process.cwd(), this.baseCfgFileName),
-            "utf8"
-        );
+        var baseRaw = fs.readFileSync(path.resolve(process.cwd(), this.baseCfgFileName), "utf8");
         this.baseSettings = JSON.parse(baseRaw);
 
         nconf.file(path.resolve(process.cwd(), this.cfgFileName));
 
         nconf.defaults({
-            "core.keycloak": { //Default from .env
+            "core.keycloak": {
+                //Default from .env
                 url: process.env.KEYCLOAK_URL,
                 realm: process.env.KEYCLOAK_REALM,
                 "front-client": process.env.KEYCLOAK_FRONT_CLI,
@@ -81,21 +79,6 @@ export default class Settings {
             }
             if (callback) callback(null);
         });
-    }
-
-    /**
-     * Comprueba que existe el archivo especial para activar el debug
-     */
-    checkDebug(callback) {
-        fs.readFile(
-            path.resolve(path.dirname(require.main.filename), ".debug"),
-            "utf8",
-            function (err, data) {
-                if (err) return callback(false);
-
-                if (data && data === "true") return callback(true);
-            }
-        );
     }
 
     //TODO cargar las settings de la base de datos

@@ -61,6 +61,12 @@ exports.up = async function (knex) {
             table.foreign("organization_id").references("organization.id");
             table.boolean("enabled").defaultTo(true);
         });
+    } else {
+        if (!(await knex.schema.hasColumn("integration_deployment", "channel_config"))) {
+            await knex.schema.alterTable("integration_deployment", function (table) {
+                table.jsonb("channel_config");
+            });
+        }
     }
 
     if (!(await knex.schema.hasTable("jum_agent"))) {
@@ -114,10 +120,10 @@ exports.up = async function (knex) {
 
 exports.down = async function (knex) {
     
-    if (await knex.schema.hasTable("package")) {
-        await knex.schema.dropTable("package");
-    }
-    if (await knex.schema.hasTable("package_version")) {
-        await knex.schema.dropTable("package_version");
-    }
+    // if (await knex.schema.hasTable("package")) {
+    //     await knex.schema.dropTable("package");
+    // }
+    // if (await knex.schema.hasTable("package_version")) {
+    //     await knex.schema.dropTable("package_version");
+    // }
 };

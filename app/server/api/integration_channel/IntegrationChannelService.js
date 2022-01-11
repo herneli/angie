@@ -92,8 +92,6 @@ export class IntegrationChannelService {
         const integrations = await this.dao.loadAllData();
 
         for (const integration of integrations) {
-            integration.data.deployment_config = integration.deployment_config;
-
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return found;
@@ -112,8 +110,6 @@ export class IntegrationChannelService {
         const integrations = await this.dao.loadAllData();
 
         for (const integration of integrations) {
-            integration.data.deployment_config = integration.deployment_config;
-
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return integration;
@@ -124,7 +120,7 @@ export class IntegrationChannelService {
 
     /**
      * Busca un canal mediante su identificador
-     * 
+     *
      * @param {*} channelId
      * @returns
      */
@@ -132,8 +128,6 @@ export class IntegrationChannelService {
         const integrations = await this.dao.loadAllData();
 
         for (const integration of integrations) {
-            integration.data.deployment_config = integration.deployment_config;
-
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return found;
@@ -392,6 +386,7 @@ export class IntegrationChannelService {
         channel.messages_total = (remoteChannel && remoteChannel.messages_total) || 0;
         channel.messages_error = (remoteChannel && remoteChannel.messages_error) || 0;
         channel.messages_sent = (remoteChannel && remoteChannel.messages_sent) || 0;
+        //TODO extract counters from ES
         return channel;
     }
 

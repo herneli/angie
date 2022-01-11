@@ -4,6 +4,8 @@ import { IntegrationDao } from "./IntegrationDao";
 import { ScriptService } from "../script/ScriptService";
 
 import { JUMAgentService } from "../jum_agents";
+
+import lodash from "lodash";
 export class IntegrationService extends BaseService {
     constructor() {
         super(IntegrationDao);
@@ -15,8 +17,6 @@ export class IntegrationService extends BaseService {
     //Overwrite
     async loadById(id) {
         const integration = await super.loadById(id);
-
-        integration.data.deployment_config = integration.deployment_config;
 
         if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
@@ -50,11 +50,27 @@ export class IntegrationService extends BaseService {
         }
     }
 
+    computeChannelsDeploymentConfig(integration) {
+        if (!integration.deployment_config) {
+            integration.deployment_config = {};
+        }
+        integration.deployment_config.channel_config = lodash.mapValues(
+            lodash.keyBy(integration.channels, "id"),
+            "deployment_options"
+        );
+    }
+
     async completeBeforeSave(body) {
         let completedChannels = [];
         if (body.channels) {
+            this.computeChannelsDeploymentConfig(body);
+
             for (const channel of body.channels) {
                 let nodes = [];
+                delete channel.deployment_options; //Una vez aplicada la configuracion de despliegue sobre los canales, se limpia para no guardarla en bd.
+                delete channel.agent; //Antes de guardar los canales se limpia su agente para evitar almacenar información redundante
+                delete channel.options; //!FIXME: Propiedad obsoleta Quitar en el futuro
+
                 if (channel.nodes) {
                     if (channel.nodes.list) {
                         channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
@@ -132,8 +148,6 @@ export class IntegrationService extends BaseService {
         let { data, total } = await super.list(filters, start, limit);
 
         for (const integration of data) {
-            integration.data.deployment_config = integration.deployment_config;
-
             if (integration.data.channels) {
                 for (let channel of integration.data.channels) {
                     const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);

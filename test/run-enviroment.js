@@ -1,4 +1,4 @@
-const { App, KnexConnector } = require("lisco");
+const { App, KnexConnector, EventHandler } = require("lisco");
 const { Settings, Utils } = require("../app/server/common");
 const { MockClient } = require("knex-mock-client");
 
@@ -44,10 +44,7 @@ before(async function () {
             del: () => ({}),
         },
     };
-    App.events = {
-        on: () => {},
-        emit: () => {},
-    };
+    App.events = new EventHandler(App);
     App.server = {
         app: {
             io: null,

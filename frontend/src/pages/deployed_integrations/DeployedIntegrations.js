@@ -359,39 +359,6 @@ const DeployedIntegrations = ({ packageUrl }) => {
         );
     };
 
-    const getAgentInfo = (integration, channel, agent) => {
-        //TODO filter agents based on channel options
-        const content = (
-            <Space>
-                <IconButton
-                    key="log"
-                    title={T.translate("deployed_integrations.agent_actions.move_to_another")}
-                    onClick={async () => {
-                        await channelActions.deployToAnotherAgent(integration.id, channel.id);
-                        await search();
-                    }}
-                    icon={{
-                        path: mdiDatabaseArrowRightOutline,
-                        size: 0.6,
-                        title: T.translate("deployed_integrations.agent_actions.move_to_another"),
-                    }}
-                />
-
-                <Select>
-                    {agents.map((agent) => (
-                        <Select.Option key={agent.id}>{agent.name}</Select.Option>
-                    ))}
-                </Select>
-            </Space>
-        );
-        return (
-            <Popover content={content} title={T.translate("deployed_integrations.agent_actions.title")} trigger="click">
-                <Tag color={"gold"} style={{ cursor: "pointer" }}>
-                    {agent?.name}
-                </Tag>
-            </Popover>
-        );
-    };
     /**
      * Metodo encargado de pintar un canal
      * @param {*} int

@@ -28,8 +28,8 @@ export class IntegrationDao extends BaseKnexDao {
         }
 
         const [obj] = await super.save(lodash.omit(object, ["deployment_config"]));
-        obj.data.deployment_config = config;
-        return [obj];
+        obj.deployment_config = config;
+        return this.applyIntegrationDeployment([obj]);
     }
 
     //Overwrite
@@ -42,8 +42,8 @@ export class IntegrationDao extends BaseKnexDao {
         }
 
         const [obj] = await super.update(id, lodash.omit(object, ["deployment_config"]));
-        obj.data.deployment_config = config;
-        return [obj];
+        obj.deployment_config = config;
+        return this.applyIntegrationDeployment([obj]);
     }
 
     async loadById(objectId) {
@@ -53,34 +53,44 @@ export class IntegrationDao extends BaseKnexDao {
             KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
         ];
 
-        const data = await KnexConnector.connection
+        let res = await KnexConnector.connection
             .columns(columns)
             .from(this.tableName)
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .where("integration.id", objectId)
             .groupBy("integration.id");
 
-        if (data && data[0]) {
-            return data[0];
+        res = this.applyIntegrationDeployment(res);
+        if (res && res[0]) {
+            return res[0];
         }
         return null;
     }
 
+    async delete(objectId) {
+        await super.delete(objectId);
+
+        //Eliminar también la configuración de despliegues.
+        await KnexConnector.connection.from(this.deploymentTable).where("id", objectId).delete();
+    }
+
     //Overwrite
-    loadAllData(start, limit) {
+    async loadAllData(start, limit) {
         const RELATION_TABLE = this.deploymentTable;
         const columns = [
             `${this.tableName}.*`,
             KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
         ];
 
-        return KnexConnector.connection
+        const res = await KnexConnector.connection
             .columns(columns)
             .from(this.tableName)
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .limit(limit || 10000)
             .groupBy("integration.id")
             .offset(start);
+
+        return this.applyIntegrationDeployment(res);
     }
 
     //Overwrite
@@ -96,7 +106,7 @@ export class IntegrationDao extends BaseKnexDao {
             KnexConnector.connection.raw(`json_agg(${RELATION_TABLE})->0 as deployment_config`),
         ];
 
-        return KnexConnector.connection
+        const res = await KnexConnector.connection
             .columns(columns)
             .from(this.tableName)
             .where((builder) =>
@@ -107,6 +117,8 @@ export class IntegrationDao extends BaseKnexDao {
             .groupBy("integration.id")
             .limit(limit)
             .offset(start);
+
+        return this.applyIntegrationDeployment(res);
     }
 
     /**
@@ -128,5 +140,23 @@ export class IntegrationDao extends BaseKnexDao {
                 .insert({ ...object, id: id })
                 .returning("*");
         }
+    }
+
+    /**
+     * Metodo que devuelve a la integracion y sus canales los datos de despliegue "locales"
+     * @param {*} integrations
+     * @returns
+     */
+    applyIntegrationDeployment(integrations) {
+        for (const integ of integrations) {
+            integ.data.deployment_config = integ.deployment_config;
+            if (integ.data.channels && integ.deployment_config) {
+                for (const chann of integ.data.channels) {
+                    chann.deployment_options =
+                        integ.deployment_config.channel_config && integ.deployment_config.channel_config[chann.id];
+                }
+            }
+        }
+        return integrations;
     }
 }

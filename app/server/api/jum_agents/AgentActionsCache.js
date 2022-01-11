@@ -1,7 +1,7 @@
 import { App } from "lisco";
 import Cache from "../../common/Cache";
 
-class ManualActions {
+class AgentActionsCache {
     
 
     /**
@@ -36,4 +36,4 @@ class ManualActions {
     }
 }
 
-export default new ManualActions();
+export default new AgentActionsCache();

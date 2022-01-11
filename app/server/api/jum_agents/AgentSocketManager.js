@@ -1,11 +1,9 @@
-import { JUMAgentService } from ".";
 import lodash from "lodash";
 import { App } from "lisco";
 
-class JUMAgentSocketActions {
+class AgentSocketManager {
     constructor() {
-        this.service = new JUMAgentService();
-        this.private = new JUMAgentSocketPrivateMethods();
+        this.private = new AgentSocketManagerPrivate();
     }
     /**
      * Estos eventos se escuchan desde el nodo padre para permitir acceder a los hijos a la lista de sockets
@@ -15,9 +13,9 @@ class JUMAgentSocketActions {
      *
      * @param {*} io
      */
-    configureSocketEvents() {
+    configureMasterSocketEvents() {
         App.events.on("agent-disconnect", async (msg, callback) => {
-            console.log("Disconnecting socket on Master");
+            // console.log("Disconnecting socket on Master");
             try {
                 await this.private.disconnectSocket(msg.socketId);
                 if (callback) return callback({ success: true });
@@ -27,7 +25,7 @@ class JUMAgentSocketActions {
         });
 
         App.events.on("agent-sendCommand", async (msg, callback) => {
-            console.log("Sending socket command on Master");
+            // console.log("Sending socket command on Master");
             try {
                 const response = await this.private.sendCommand(...msg.args);
                 if (callback) return callback(response);
@@ -36,7 +34,7 @@ class JUMAgentSocketActions {
             }
         });
         App.events.on("agent-sendToAll", async (msg, callback) => {
-            console.log("Broadcasting command on Master");
+            // console.log("Broadcasting command on Master");
             try {
                 const response = await this.private.sendToAll(...msg.args);
                 if (callback) return callback(response);
@@ -115,7 +113,7 @@ class JUMAgentSocketActions {
  * Clase con métodos privados a los que no se deberá de acceder externamente.
  *
  */
-class JUMAgentSocketPrivateMethods {
+class AgentSocketManagerPrivate {
     /**
      * Get connected socket via its id
      *
@@ -171,6 +169,8 @@ class JUMAgentSocketPrivateMethods {
         const socket = await this.getSocket(socketId);
 
         return new Promise((resolve, reject) => {
+            if (!socket) return reject("socket_not_connected");
+
             try {
                 args.push((data) => {
                     if (data.error) {
@@ -234,4 +234,4 @@ class JUMAgentSocketPrivateMethods {
     }
 }
 
-export default new JUMAgentSocketActions();
+export default new AgentSocketManager();

@@ -1,12 +1,12 @@
-import { BaseService, App } from "lisco";
+import { BaseService } from "lisco";
 import moment from "moment";
 import { JUMAgent, JUMAgentDao } from ".";
 import { IntegrationChannelService } from "../integration_channel";
 
-import ManualActions from "./ManualActions";
+import AgentActionsCache from "./AgentActionsCache";
 
 import lodash from "lodash";
-import { JUMAgentSocketActions } from "./";
+import { AgentSocketManager } from "./";
 
 const status_pick_keys = ["status", "messages_sent", "messages_error", "messages_total", "uptime"];
 export class JUMAgentService extends BaseService {
@@ -53,7 +53,7 @@ export class JUMAgentService extends BaseService {
         if (!agent.approved) {
             throw new Error("agent_not_approved");
         }
-        return JUMAgentSocketActions.sendCommand(agent.last_socket_id, ...args);
+        return AgentSocketManager.sendCommand(agent.last_socket_id, ...args);
     }
 
     /**
@@ -61,7 +61,7 @@ export class JUMAgentService extends BaseService {
      *
      * @param {*} id
      */
-    async disconnectAgent(agentId) {
+    async disconnectAgent(agentId, redistribute) {
         if (!(await this.isRunning(agentId))) {
             console.log("already_disconnected");
             return;
@@ -69,7 +69,9 @@ export class JUMAgentService extends BaseService {
         const agent = await this.loadById(agentId);
         const socketId = agent.last_socket_id;
 
-        await this.redistributeAgentChannels(agentId);
+        if (redistribute) {
+            await this.redistributeAgentChannels(agent);
+        }
 
         agent.status = JUMAgent.STATUS_OFFLINE;
         agent.last_socket_id = "";
@@ -78,7 +80,7 @@ export class JUMAgentService extends BaseService {
         //Actualizar con el estado del elemento
         await this.update(agentId, agent);
 
-        await JUMAgentSocketActions.disconnectSocket(socketId);
+        await AgentSocketManager.disconnectSocket(socketId);
     }
 
     /**
@@ -88,12 +90,12 @@ export class JUMAgentService extends BaseService {
      */
     async sendToAll() {
         let args = [...arguments];
-        return JUMAgentSocketActions.sendToAll(...args);
+        return AgentSocketManager.sendToAll(...args);
     }
 
     //Override
     async delete(id) {
-        await this.disconnectAgent(id);
+        await this.disconnectAgent(id, true);
         return super.delete(id);
     }
 
@@ -150,9 +152,9 @@ export class JUMAgentService extends BaseService {
      * @returns
      */
     async createAgentIfNotExists(id, socket) {
-        let agent = await this.dao.loadById(id);
+        let agent = await this.loadById(id);
         if (!agent) {
-            [agent] = await this.dao.save({
+            [agent] = await this.save({
                 id: id,
                 approved: false,
                 joined_date: moment().toISOString(),
@@ -187,65 +189,6 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Metodo encargado de la lógica principal de conexión para los agentes
-     */
-    async listenForAgents(io) {
-        //Resetear al inicio todos los agents marcándolos como offline
-        await this.releaseAll();
-        JUMAgentSocketActions.configureSocketEvents();
-
-        //Middleware para trazar las incoming connections
-        io.use((socket, next) => {
-            let agentId = socket.handshake.query.id;
-
-            console.log(`Received connection from ${agentId}@${socket.id}`);
-            next();
-        });
-        //Middleware para la validación del token
-        io.use((socket, next) => this.validateToken(socket, next));
-
-        //Evento desencadenado en cada conexion de un nuevo agent
-        io.on("connection", async (socket) => {
-            let agentId = socket.handshake.query.id;
-            try {
-                let agent = await this.createAgentIfNotExists(agentId, socket);
-                if (await this.isRunning(agent.id)) {
-                    console.log("Already running");
-                    socket.emit("messages", "Agent already online");
-                    return socket.disconnect();
-                }
-                console.log("Agent connected: " + agent.id);
-                //On disconnect
-                socket.on("disconnect", async (reason) => {
-                    console.log("Agent disconnected! -> " + agent.id);
-                    console.log(reason);
-
-                    await this.disconnectAgent(agent.id);
-                });
-
-                //Se pone como Online
-                agent.status = JUMAgent.STATUS_ONLINE;
-                agent.last_socket_id = socket.id;
-                agent.last_online_date = moment().toISOString();
-                agent.current_channels = { list: [] };
-
-                //Actualizar con la nueva info.
-                await this.dao.update(agent.id, agent);
-
-                socket.emit("messages", "Connected!");
-                //Configurar los elementos a escuchar.
-                this.configureJUMEvents(socket);
-
-                await this.loadAgentStatus(agent);
-            } catch (ex) {
-                console.error(ex);
-                socket.emit("messages", "An error ocurred.");
-                this.disconnectAgent(agentId);
-            }
-        });
-    }
-
-    /**
      * Método que marca un agent como approved y solicita su estado
      *
      * @param {*} id
@@ -258,7 +201,7 @@ export class JUMAgentService extends BaseService {
             agent.approved_date = moment().toISOString();
         }
 
-        const newAgent = await this.dao.update(agent.id, agent);
+        const newAgent = await this.update(agent.id, agent);
 
         await this.loadAgentStatus(agent);
 
@@ -280,62 +223,6 @@ export class JUMAgentService extends BaseService {
             if (calback) return callback("agent_not_approved");
         }
         return true;
-    }
-
-    /**
-     * Eventos desencadenados al realizar acciones sobre los canales.
-     *
-     * Este método solo puede ser desencadenado desde el nodo master en caso de esta en modo cluster.
-     *
-     * @param {*} agentId
-     */
-    configureJUMEvents(socket) {
-        //TODO more events and implementations
-        JUMAgentSocketActions.listenCommand(socket, "/master/ping", (agentId, channelId, callback) => {
-            console.log("Received on server");
-            return callback && callback("OK");
-        });
-        JUMAgentSocketActions.listenCommand(socket, "/channel/failure", (agentId, channelId, callback) => {
-            console.log("Received on server");
-            return callback && callback("OK");
-        });
-        JUMAgentSocketActions.listenCommand(socket, "/channel/started", async (agentId, channelId, callback) => {
-            //Ignoramos aquellos desplegados de forma manual
-            if (!(await ManualActions.isTrue("deploy", channelId))) {
-                console.log(`Started ${channelId} on ${agentId} by itself.`);
-                //TODO check if channel running in another?
-
-                //Recargar los estados de ese agente para sincronia
-                await this.loadAgentStatus(receivedFrom);
-            } else {
-                //Una vez desencadenado el evento de despliegue sobre ese canal se quita la marca de despliegue
-                await ManualActions.resetAction("deploy", channelId);
-            }
-
-            return callback && callback("OK");
-        });
-        JUMAgentSocketActions.listenCommand(socket, "/channel/stopped", async (agentId, channelId, callback) => {
-            if (!(await ManualActions.isTrue("undeploy", channelId))) {
-                console.error(`Channel ${channelId} stopped unexpectedly.`);
-                //Obtener el agent en el que se esperaba que estuviese desplegado
-                const currentAgent = await this.getChannelCurrentAgent(channelId);
-
-                //Desmarcarlo como "running" en el agente actual
-                await this.removeChannelFromCurrentAgents(channelId);
-
-                const channelService = new IntegrationChannelService();
-                const channel = await channelService.getChannelById(channelId);
-                //TODO check if channel may be redeployed
-                console.log("Redeploying");
-                //Obtener un candidato nuevo y desplegarlo en el
-                const candidate = await this.getFreeAgent(channel, [currentAgent.id]);
-                await this.deployChannel(channel, channel.last_deployed_route, candidate);
-            } else {
-                //Una vez desencadenado el evento de despliegue sobre ese canal se quita la marca de despliegue
-                await ManualActions.resetAction("undeploy", channelId);
-            }
-            return callback && callback("OK");
-        });
     }
 
     /**
@@ -362,7 +249,7 @@ export class JUMAgentService extends BaseService {
 
             agent.current_channels = { list: ids };
 
-            await this.dao.update(agent.id, agent);
+            await this.update(agent.id, agent);
         }
     }
 
@@ -377,7 +264,7 @@ export class JUMAgentService extends BaseService {
         const channel = lodash.find(agent.current_channels.list, { id: channelId });
         channel.status = lodash.pick(status, status_pick_keys);
 
-        await this.dao.update(agentId, agent);
+        await this.update(agentId, agent);
     }
 
     /**
@@ -390,13 +277,20 @@ export class JUMAgentService extends BaseService {
         let agents = await this.getRunningAgents();
 
         //Filtrar en base a los nodos asignados del canal
-        if (channel.agent_assign_mode && channel.agent_assign_mode !== "auto") {
+        if (channel.deployment_options && channel.deployment_options.agent_assign_mode !== "auto") {
             agents = lodash.filter(agents, (elm) => {
-                if (Array.isArray(channel.agent_assign_mode)) {
-                    return channel.agent_assign_mode.indexOf(elm.id) !== -1;
+                if (Array.isArray(channel.deployment_options.assigned_agent)) {
+                    return channel.deployment_options.assigned_agent.indexOf(elm.id) !== -1;
                 }
-                return elm.id === channel.agent_assign_mode;
+                return elm.id === channel.deployment_options.assigned_agent;
             });
+            //Errores específicos
+            if (agents.length === 0 && specificAgents !== null) {
+                throw new Error("specified_agent_not_selectable");
+            }
+            if (agents.length === 0) {
+                throw new Error("fixed_agents_unavailable");
+            }
         }
 
         //Poder ignorar determinados agentes, util para redistribuir excluyendo ciertos elementos.
@@ -497,7 +391,7 @@ export class JUMAgentService extends BaseService {
             list: lodash.filter(currentAgent.current_channels.list, (el) => el.id !== channelId),
         };
 
-        await this.dao.update(currentAgent.id, currentAgent);
+        await this.update(currentAgent.id, currentAgent);
 
         return currentAgent;
     }
@@ -511,12 +405,12 @@ export class JUMAgentService extends BaseService {
      * @returns
      */
     async deployChannel(channel, route, candidate) {
-        await ManualActions.setAction("deploy", channel.id);
+        await AgentActionsCache.setAction("deploy", channel.id);
         const response = await this.sendCommand(candidate, "/channel/deploy", {
             id: channel.id,
             name: channel.name,
             xmlContent: route,
-            options: channel.options || {},
+            options: channel.deployment_options || {},
         });
 
         if (response.success) {
@@ -529,7 +423,7 @@ export class JUMAgentService extends BaseService {
                 name: channel.name,
                 status: lodash.pick(response.data, status_pick_keys),
             });
-            await this.dao.update(candidate, agent);
+            await this.update(candidate, agent);
             return response.data;
         }
         throw new Error(response.data);
@@ -544,10 +438,11 @@ export class JUMAgentService extends BaseService {
     async undeployChannel(channel) {
         const currentAgent = await this.getChannelCurrentAgent(channel.id);
 
-        await ManualActions.setAction("undeploy", channel.id);
+        await AgentActionsCache.setAction("undeploy", channel.id);
         const response = await this.sendCommand(currentAgent.id, "/channel/undeploy", channel.id);
 
-        if (response.success) {
+        //Si se ha detenido o el socket ya no se encuentra disponible, se elimina del agente.
+        if (response.success || response.data === "socket_not_connected") {
             await this.removeChannelFromCurrentAgents(channel.id);
             return response.data;
         }
@@ -605,28 +500,28 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Redistribuye los canales del agente a otros agentes
+     * Redistribuye los canales del agente a otros agentes (Tiene en cuenta la configuracion de deployment y de restart)
      *
      * @param {*} agentId
      */
-    async redistributeAgentChannels(agentId) {
-        const agent = await this.loadById(agentId);
-
+    async redistributeAgentChannels(agent) {
         const channelService = new IntegrationChannelService();
 
         for (const deplChann of agent.current_channels.list) {
             const channel = await channelService.getChannelById(deplChann.id);
-            //TODO check channel deployment config
+            const policy = channel.deployment_options && channel.deployment_options.restart_policy;
 
             await this.undeployChannel(channel);
 
-            const candidate = await this.getFreeAgent(channel, [agent.id]);
-            await this.deployChannel(channel, channel.last_deployed_route, candidate);
+            if (policy === "any_agent") {
+                const candidate = await this.getFreeAgent(channel, [agent.id]);
+                await this.deployChannel(channel, channel.last_deployed_route, candidate);
+            }
         }
     }
 
     /**
-     * Redespliega un canal en un agente diferente al actual
+     * Redespliega un canal en un agente diferente al actual (Tiene en cuenta la configuracion de deployment)
      *
      * @param {*} channelId
      */
@@ -640,7 +535,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Utiliza la propiedad agent_assign_mode para especificar el agente en el que desplegar el canal.
+     * Despliega el canal en un agente concreto (Tiene en cuenta la configuracion de deployment)
      *
      * @param {*} channel
      * @param {*} agentId

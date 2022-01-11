@@ -13,9 +13,13 @@ const AgentInfo = ({ integration, channel, currentAgent, agents, onActionEnd }) 
     const content = (
         <Space>
             <Select style={{ width: 150 }} onChange={setSelectedAgent}>
-                <Select.Option key={"any"}>{T.translate("deployed_integrations.agent_actions.any_available")}</Select.Option>
+                <Select.Option key={"any"}>
+                    {T.translate("deployed_integrations.agent_actions.any_available")}
+                </Select.Option>
                 {agents.map((agent) => (
-                    <Select.Option key={agent.id}>{agent.name}</Select.Option>
+                    <Select.Option key={agent.id} disabled={currentAgent.id === agent.id || agent.status !== "online"}>
+                        {agent.name}
+                    </Select.Option>
                 ))}
             </Select>
 
