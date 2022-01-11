@@ -182,7 +182,7 @@ const Integrations = ({ packageUrl }) => {
     const handleUploadTable = () => {
         uploadJsonFile()
             .then((importItems) => {
-                const promises = importItems.map((item) => saveIntegration({ ...item, id: null }, false));
+                const promises = importItems.map((item) => saveIntegration({ ...item, id: null }));
                 Promise.all(promises).then((values) => {
                     message.success(T.translate("configuration.end_of_loading_json_file"));
                     search();

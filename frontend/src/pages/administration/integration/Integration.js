@@ -800,7 +800,7 @@ const Integration = ({ packageUrl }) => {
 
             <Tabs
                 tabBarExtraContent={
-                    <Space size="small">{channels && activeTab && drawStatusButtons(channels, activeTab)}</Space>
+                    <Space size="small">{channels && activeTab && drawStatusButtons()}</Space>
                 }
                 type="editable-card"
                 onChange={(activeKey) => setActiveTab(activeKey) && console.log("wii")}
