@@ -9,6 +9,7 @@ import Administration from "../pages/administration/Administration";
 import Package from "../pages/administration/packages/Package";
 import Agents from "../pages/agents/Agents";
 import DeployedIntegrations from "../pages/deployed_integrations/DeployedIntegrations";
+import Message from "../pages/administration/message/Message";
 
 const AppMain = ({ app, location }) => {
     const { initialized } = useKeycloak();
@@ -25,6 +26,13 @@ const AppMain = ({ app, location }) => {
         <Switch>
             <Route exact path="/" render={({ match }) => <Home match={match} {...defaultProps} />} />
             <PrivateRoute roles={["default-roles-angie"]} path="/admin" component={Administration} {...defaultProps} />
+            <PrivateRoute
+                roles={["default-roles-angie"]}
+                exact
+                path="/packages/:packageCode/versions/:packageVersion/messages/:channel_id"
+                component={Message}
+                {...defaultProps}
+            />
             <PrivateRoute
                 roles={["default-roles-angie"]}
                 exact
