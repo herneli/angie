@@ -11,7 +11,6 @@ import { useParams } from "react-router";
 import Icon from "@mdi/react";
 import { mdiDownload, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
-import { usePackage } from "../../../components/packages/PackageContext";
 
 const useStyles = createUseStyles({
     card: {
@@ -37,18 +36,12 @@ const Message = ({ packageUrl }, props) => {
     // const [dataSourceKeys, setDataSourceKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({});
-    let packageData = usePackage();
     const params = useParams();
     const channel = params.channel_id;
 
     useEffect(() => {
         search();
     }, []);
-
-    useEffect(() => {
-        setPagination({ total: dataSource.total, showSizeChanger: true });
-        // search();
-    }, [dataSource]);
 
     const classes = useStyles();
 
@@ -60,12 +53,6 @@ const Message = ({ packageUrl }, props) => {
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
         }
-        if (packageData) {
-            filters[["package_code", "package_version"]] = {
-                type: "in",
-                value: [[packageData.currentPackage.code, packageData.currentPackage.version]],
-            };
-        }
 
         if (sorts) {
             filters.sort = Object.keys(sorts).length !== 0 && {
@@ -75,7 +62,7 @@ const Message = ({ packageUrl }, props) => {
         }
 
         try {
-            const channelResponse = await axios.get(`/messages/${channel}`, filters);
+            const channelResponse = await axios.post(`/messages/${channel}`, filters);
             // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
             if (
                 channelResponse &&
@@ -84,15 +71,12 @@ const Message = ({ packageUrl }, props) => {
                 channelResponse.data.hits.hits
             ) {
                 const messages = channelResponse.data.hits.hits;
-
+                setPagination({ ...pagination, total: channelResponse.data.hits.total.value });
                 setDataSource(lodash.map(lodash.map(messages, "_source")));
                 // setDataSourceKeys(lodash.map(messages, "_source"));
                 // setDataSource(response.data.hits.hits);
-            } else {
-                console.log("nope");
             }
         } catch (ex) {
-            console.log(ex);
             notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
@@ -311,7 +295,6 @@ const Message = ({ packageUrl }, props) => {
             });
         }
     };
-
     return (
         <div>
             <Row className={classes.card}>

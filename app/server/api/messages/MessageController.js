@@ -6,7 +6,7 @@ export class MessageController extends BaseController {
     dao = new MessageService();
 
     configure() {
-        this.router.get(
+        this.router.post(
             `/messages/:channel`,
             expressAsyncHandler((request, response, next) => {
                 this.getChannelMessages(request, response, next);
@@ -26,10 +26,10 @@ export class MessageController extends BaseController {
 
     async getChannelMessages(req, res, next) {
         const channel = req.params.channel;
+        const filters = req.body;
 
         try {
-            const data = await this.dao.getChannelMessages(channel, 10, 1);
-            console.log(data.body);
+            const data = await this.dao.getChannelMessages(channel, filters);
             res.json(data.body);
         } catch (e) {
             if (e.body.status === 404) {
