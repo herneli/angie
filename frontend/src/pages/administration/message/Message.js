@@ -11,6 +11,7 @@ import { useParams } from "react-router";
 import Icon from "@mdi/react";
 import { mdiDownload, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
+import { Content } from "antd/lib/layout/layout";
 
 const useStyles = createUseStyles({
     card: {
@@ -296,7 +297,7 @@ const Message = ({ packageUrl }, props) => {
         }
     };
     return (
-        <div>
+        <Content>
             <Row className={classes.card}>
                 <Col flex={1}>
                     <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
@@ -336,7 +337,7 @@ const Message = ({ packageUrl }, props) => {
                     // expandable={{ expandedRowKeys: dataSourceKeys }}
                 />
             )}
-        </div>
+        </Content>
     );
 };
 
