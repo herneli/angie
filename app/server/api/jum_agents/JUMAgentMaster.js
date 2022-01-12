@@ -82,7 +82,7 @@ class JUMAgentMaster {
                 await this.service.loadAgentStatus(agent);
 
                 //Esperar para que si mas de un agente se reconectan a la vez, de tiempo a que todo este sincronizado.
-                await Utils.sleep(500);
+                await Utils.sleep(((agent.options && agent.options.autostart_delay) || 5) * 1000);
 
                 //Redesplegar canales detenidos
                 await this.service.redeployNotRunningChannels(agent);

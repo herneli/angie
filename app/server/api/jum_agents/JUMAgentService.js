@@ -572,11 +572,13 @@ export class JUMAgentService extends BaseService {
 
         for (const channel of channels) {
             try {
-                //TODO actualizar el estado del canal para estar seguros de que no se ha desplegado en otro agente
-                
                 if (channel.status !== "Started") {
-                    //Obtener un candidato nuevo y desplegarlo en el
-                    await this.redeployChannel(channel, null, [agent.id]);
+                    //Obtener de nuevo el estado para asegurarse (Evitar redesplegarlo si otro agente se ha adelantado)
+                    const updatedChannel = await channelService.channelObjStatus(channel);
+                    if (updatedChannel.status !== "Started") {
+                        //Obtener un candidato nuevo y desplegarlo en el
+                        await this.redeployChannel(channel, null, [agent.id]);
+                    }
                 }
             } catch (ex) {
                 console.error(ex);

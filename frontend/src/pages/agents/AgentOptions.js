@@ -17,6 +17,15 @@ const editTabFormSchema = {
                 type: "object",
                 required: ["reconnect_timeout"],
                 properties: {
+                    autostart_delay: {
+                        title: "Retardo Auto Arranque Canales",
+                        type: "number",
+                        default: 5,
+                    },
+                    spacer_delay: {
+                        type: "null",
+                        title: " ",
+                    },
                     redistribute_on_lost: {
                         title: "Redistribuir canales si se pierde la conexión",
                         type: "boolean",
@@ -32,6 +41,12 @@ const editTabFormSchema = {
     },
     uiSchema: {
         options: {
+            autostart_delay: {
+                "ui:columnSize": "4",
+            },
+            spacer_delay: {
+                "ui:columnSize": "8",
+            },
             redistribute_on_lost: {
                 "ui:widget": "checkbox",
                 "ui:columnSize": "8",
@@ -50,6 +65,9 @@ const AgentOptions = ({ visible, onOk, onCancel, agent }) => {
 
     useEffect(() => {
         if (visible) {
+            if (!agent.options) {
+                agent.options = {};
+            }
             setEditingData(agent);
         }
     }, [visible]);

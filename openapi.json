@@ -3958,6 +3958,21 @@
       }
     },
     "/messages/{channel}": {
+      "post": {
+        "summary": "/messages/{channel}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
       "get": {
         "summary": "/messages/{channel}",
         "consumes": [

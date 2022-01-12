@@ -1,19 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-    Col,
-    Input,
-    List,
-    notification,
-    Popconfirm,
-    Row,
-    Space,
-    Layout,
-    Avatar,
-    Tag,
-    Badge,
-    Popover,
-    Select,
-} from "antd";
+import { Col, Input, List, notification, Popconfirm, Row, Space, Layout, Avatar, Tag, Badge } from "antd";
 import axios from "axios";
 import moment from "moment";
 import lodash from "lodash";
@@ -21,7 +7,7 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiDatabaseArrowRightOutline } from "@mdi/js";
+import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiRefresh } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link, useHistory } from "react-router-dom";
@@ -341,7 +327,8 @@ const DeployedIntegrations = ({ packageUrl }) => {
                 <List.Item.Meta
                     avatar={<Avatar icon={<Icon path={mdiSourceBranchPlus} size={0.7} />} />}
                     title={
-                        <Link to={`/packages/${item.package_code}/versions/${item.package_version}/integrations/${item.id}`}>
+                        <Link
+                            to={`/packages/${item.package_code}/versions/${item.package_version}/integrations/${item.id}`}>
                             {item.name}
                         </Link>
                     }
@@ -408,8 +395,21 @@ const DeployedIntegrations = ({ packageUrl }) => {
     return (
         <Content className={"deployedIntegrations"}>
             <Row className={classes.card}>
-                <Col flex={1}>
+                <Col flex={4}>
                     <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
+                </Col>
+                <Col flex={1}>
+                    <Row justify="end">
+                        <IconButton
+                            key="undeploy"
+                            onClick={() => search()}
+                            icon={{
+                                path: mdiRefresh,
+                                size: 0.7,
+                            }}
+                            title={T.translate("common.button.reload")}
+                        />
+                    </Row>
                 </Col>
             </Row>
 

@@ -4241,6 +4241,21 @@
       }
     },
     "/messages/{channel}": {
+      "post": {
+        "summary": "/messages/{channel}",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
       "get": {
         "summary": "/messages/{channel}",
         "parameters": [
