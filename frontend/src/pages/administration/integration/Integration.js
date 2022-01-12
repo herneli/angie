@@ -2,7 +2,9 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
+import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Typography } from "antd";
+
+import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
 import { useHistory } from "react-router";
 
@@ -21,6 +23,8 @@ import Channel from "./Channel";
 import Transformer from "./Transformer";
 import ChannelActions from "./ChannelActions";
 
+import { v4 as uuid_v4 } from "uuid";
+
 import formConfig from "../../../components/rjsf";
 import Icon from "@mdi/react";
 import {
@@ -30,17 +34,21 @@ import {
     mdiStop,
     mdiUndo,
     mdiRedo,
-    mdiPencil,
     mdiCloseCircleOutline,
     mdiCheckOutline,
     mdiStopCircle,
     mdiPlayCircle,
     mdiBug,
     mdiTextLong,
+    mdiSourceBranchPlus,
+    mdiCogs,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
 import { usePackage } from "../../../components/packages/PackageContext";
+import EllipsisParagraph from "../../../components/text/EllipsisParagraph";
+import IconButton from "../../../components/button/IconButton";
+import ChannelOptions from "./ChannelOptions";
 
 const { TabPane } = Tabs;
 
@@ -53,11 +61,21 @@ const integrationFormSchema = {
                 title: "Nombre",
                 type: "string",
             },
-            enabled: {
-                title: "Activo",
-                type: "boolean",
-                enum: [true, false],
-                enumNames: ["Si", "No"],
+            deployment_config: {
+                type: "object",
+                title: "",
+                properties: {
+                    organization_id: {
+                        type: "string",
+                        title: "Organización",
+                    },
+                    enabled: {
+                        title: "Activo",
+                        type: "boolean",
+                        enum: [true, false],
+                        enumNames: ["Si", "No"],
+                    },
+                },
             },
             description: {
                 title: "Descripción",
@@ -67,54 +85,52 @@ const integrationFormSchema = {
     },
     uiSchema: {
         name: { "ui:columnSize": 8 },
-        enabled: { "ui:columnSize": 4, "ui:widget": "select" },
+        deployment_config: {
+            organization_id: {
+                "ui:columnSize": "6",
+                "ui:widget": "SelectRemoteWidget",
+                "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
+            },
+            enabled: { "ui:columnSize": 4, "ui:widget": "select" },
+        },
         description: { "ui:widget": "textarea" },
     },
 };
-const editTabFormSchema = {
-    schema: {
-        type: "object",
-        required: ["name"],
-        properties: {
-            name: {
-                type: "string",
-            },
-        },
-    },
-    uiSchema: {},
-};
-let channelActions;
+
+let channelActions = new ChannelActions();
 
 const Integration = ({ packageUrl }) => {
     const history = useHistory();
     const integForm = useRef(null);
-    const editTabFormEl = useRef(null);
 
     const { state } = useLocation();
-    const { id } = useParams();
+    const { id, channel } = useParams();
     const packageData = usePackage();
 
     const [currentIntegration, setCurrentIntegration] = useState(null);
     const [activeTab, setActiveTab] = useState();
     const [channels, setChannels] = useState([]);
+    const [channelStatuses, setChannelStatus] = useState({});
     const [editHeader, setEditHeader] = useState(false);
     const [pendingChanges, setPendingChanges] = useState(false);
-    const [editingTab, setEditingTab] = useState({});
-    const [editTabVisible, setEditTabVisible] = useState(false);
+    const [editingChannel, setEditingChannel] = useState({});
+    const [editingChannelVisible, setEditingChannelVisible] = useState(false);
 
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
     const [nodeTypes, setNodeTypes] = useState([]);
+    const [organizations, setOrganizations] = useState([]);
 
     useEffect(() => {
         loadNodeTypes();
+        loadOrganizations();
     }, []);
 
     /**
      * Interval para ir actualizando en tiempo real el estado de los canales
      */
     useInterval(() => {
-        loadChannelStatus(currentIntegration);
+        if (!editHeader) loadChannelStatus(currentIntegration);
     }, 30 * 1000);
 
     /**
@@ -123,13 +139,6 @@ const Integration = ({ packageUrl }) => {
     useEffect(() => {
         loadIntegration();
     }, [state]);
-
-    /**
-     * Reinstanciar channelActions con los ultimos cambios en el state
-     */
-    useEffect(() => {
-        channelActions = new ChannelActions(channels, pendingChanges, setChannels, setActiveTab, onChannelUpdate);
-    }, [currentIntegration, channels, pendingChanges]);
 
     /**
      * Si cambia la integracion actual cargar la lista de canales
@@ -147,16 +156,7 @@ const Integration = ({ packageUrl }) => {
         setCurrentIntegration(null); //Resetear primero
         setChannels([]);
 
-        await Transformer.init();
-        if (state && state.record) {
-            setCurrentIntegration(state.record);
-            setActiveTab(state.record && state.record.channels[0] && state.record.channels[0].id);
-            setEditHistory([{ ...state.record }]);
-
-            if (state.new) {
-                setEditHeader(true);
-            }
-        } else if (id === "new") {
+        if (id === "new") {
             setCurrentIntegration({
                 id: "new",
                 name: "",
@@ -172,7 +172,7 @@ const Integration = ({ packageUrl }) => {
     };
 
     /**
-     *
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
     const loadNodeTypes = async () => {
         let filters = {};
@@ -184,9 +184,36 @@ const Integration = ({ packageUrl }) => {
 
         if (response?.data?.success) {
             setNodeTypes(response?.data?.data);
+
+            await Transformer.init(response?.data?.data);
         } else {
             console.error(response.data);
         }
+    };
+
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadOrganizations = async () => {
+        const response = await axios.get("/configuration/model/organization/data");
+
+        if (response?.data?.success) {
+            setOrganizations(response?.data?.data);
+        } else {
+            console.error(response.data);
+        }
+    };
+
+    /**
+     * Obtiene una organización en base a su id
+     * @param {*} id
+     * @returns
+     */
+    const getOrganizationById = (id) => {
+        if (!id) return null;
+        const org = lodash.find(organizations, { id: id });
+        if (!org) return null;
+        return { ...org, ...org.data };
     };
 
     /**
@@ -194,16 +221,24 @@ const Integration = ({ packageUrl }) => {
      * @param {*} identifier
      */
     const fetchIntegration = async (identifier) => {
+        setPendingChanges(false);
         try {
             const response = await axios.get("/integration/" + identifier);
 
             if (response?.data?.data) {
-                let { data: integration } = response.data.data[0];
+                let { data: integration } = response.data.data;
                 setCurrentIntegration(integration);
+                setChannelStatus(lodash.mapValues(lodash.keyBy(integration.channels, "id"), "status"));
+
                 setEditHistory([{ ...integration }]);
-                setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
+                if (channel) {
+                    setActiveTab(channel);
+                } else {
+                    setActiveTab(integration && integration.channels[0] && integration.channels[0].id);
+                }
             }
         } catch (ex) {
+            console.error(ex);
             return notification.error({
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
@@ -226,15 +261,82 @@ const Integration = ({ packageUrl }) => {
             if (response?.data?.data) {
                 const statuses = response.data.data;
 
-                const newChannels = channels.map((chn) => {
-                    chn.status = statuses[chn.id] || chn.status;
-                    return chn;
-                });
-                setChannels(newChannels);
+                setChannelStatus(statuses);
             }
         } catch (ex) {
             console.error(ex);
         }
+    };
+
+    /**
+     * Añade un nuevo canal a la lista de la integracion actual
+     */
+    const addChannel = () => {
+        const channelId = uuid_v4();
+        const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, animals], style: "lowerCase" });
+
+        const newChannels = onChannelUpdate(
+            {
+                name: randomName,
+                id: channelId,
+                created_on: moment().toISOString(),
+                version: 0,
+                nodes: [],
+                options: {
+                    trace_file: true,
+                    trace_incoming_message: false,
+                    trace_headers: false,
+                    trace_properties: false,
+                    trace_outgoing_message: false,
+                },
+                enabled: true,
+                status: "UNDEPLOYED",
+            },
+            "add"
+        );
+
+        if (newChannels.length === 1) {
+            setActiveTab(channelId);
+        }
+        setChannels(newChannels);
+    };
+
+    /**
+     * Elimina un canal de la lista de la integracion actual
+     *
+     * @param {*} targetKey
+     * @param {*} active
+     */
+    const removeChannel = (targetKey, active) => {
+        let prevIndex = channels.length !== 0 ? channels.length - 2 : 0;
+        if (channels && channels[prevIndex]) {
+            let newActiveKey = channels[prevIndex].id;
+
+            if (active === targetKey) {
+                setActiveTab(newActiveKey);
+            }
+        }
+        const newChannels = onChannelUpdate({ id: targetKey }, "remove");
+        setChannels(newChannels);
+    };
+
+    /**
+     * Cambia el estado de un canal concreto
+     *
+     * @param {*} identifier
+     */
+    const toggleEnabledChannel = async (identifier) => {
+        let channel = lodash.find(channels, { id: identifier });
+        channel.enabled = !channel.enabled;
+        if (!channel.enabled && channel.status === "Started") {
+            const resp = await channelActions.undeployChannel(currentIntegration.id, channel.id);
+            if (resp) onStatusUpdate(resp.id, resp.status);
+        }
+
+        setTimeout(() => {
+            let newChannels = onChannelUpdate(channel);
+            setChannels(newChannels);
+        }, 100);
     };
 
     /**
@@ -246,22 +348,26 @@ const Integration = ({ packageUrl }) => {
      */
     const onTabEdit = (targetKey, action) => {
         if (action === "add") {
-            return channelActions.add();
+            return addChannel();
         }
         if (action === "remove") {
-            return channelActions.remove(targetKey, activeTab);
+            return removeChannel(targetKey, activeTab);
         }
     };
 
     /**
      * Método encargado de confirmar los cambios en el formulario de edición de la cabecera de la integración
      */
-    const confirmIntegrationChanges = (values) => {
+    const confirmIntegrationChanges = (data, event) => {
         setEditHeader(false);
-        const newIntegration = values.formData;
+        const newIntegration = data.formData;
         setCurrentIntegration(newIntegration);
 
         onIntegrationChange(newIntegration);
+
+        if (event.forceSave) {
+            saveIntegration(newIntegration);
+        }
     };
 
     /**
@@ -279,13 +385,13 @@ const Integration = ({ packageUrl }) => {
     /**
      * Método que envía al servidor los cambios en memoria
      */
-    const saveIntegration = async () => {
+    const saveIntegration = async (integration) => {
         try {
-            const method = currentIntegration.id !== "new" ? "put" : "post";
+            const method = integration.id !== "new" ? "put" : "post";
             const response = await axios[method](
-                "/integration" + (currentIntegration.id !== "new" ? `/${currentIntegration.id}` : ""),
+                "/integration" + (integration.id !== "new" ? `/${integration.id}` : ""),
                 {
-                    ...currentIntegration,
+                    ...integration,
                     package_code: packageData.currentPackage.code,
                     package_version: packageData.currentPackage.version,
                 }
@@ -293,7 +399,7 @@ const Integration = ({ packageUrl }) => {
 
             if (response?.data?.success) {
                 setPendingChanges(false);
-                if (currentIntegration.id === "new") {
+                if (integration.id === "new") {
                     //Redirigir al nuevo identificador
                     history.push({
                         pathname: packageUrl + "/integrations/" + response.data.data.id,
@@ -335,7 +441,7 @@ const Integration = ({ packageUrl }) => {
             newChannels = channels.map((chn) => {
                 if (chn.id === channel.id) {
                     channel.last_updated = moment().toISOString();
-                    channel.version += 1; //TODO mejorar?
+                    channel.version += 1; //TODO mejorar versionado canales
                     chn = channel;
                 }
                 return chn;
@@ -350,6 +456,12 @@ const Integration = ({ packageUrl }) => {
         onIntegrationChange(newIntegration);
 
         return newChannels;
+    };
+
+    const onStatusUpdate = (channelId, status) => {
+        const newStatuses = { ...channelStatuses };
+        newStatuses[channelId] = status;
+        setChannelStatus(newStatuses);
     };
 
     const undo = () => {
@@ -371,40 +483,55 @@ const Integration = ({ packageUrl }) => {
     const drawStatusButtons = () => {
         let activeChannel = lodash.find(channels, { id: activeTab });
         if (!activeChannel) return [];
+        let currentStatus = channelStatuses[activeTab];
 
         let buttons = [];
 
-        if (activeChannel.status === "STARTED" && activeChannel.enabled) {
+        if (currentStatus === "Started" && activeChannel.enabled) {
             buttons.push(
                 <Popconfirm
                     key="undeploy"
                     title={T.translate("common.question")}
-                    onConfirm={() => channelActions.undeployChannel(currentIntegration.id, activeTab, true)}>
-                    <Button
-                        icon={
-                            <Icon
-                                path={mdiStopCircle}
-                                size={0.6}
-                                color="red"
-                                title={T.translate("integrations.channel.button.undeploy")}
-                            />
-                        }
+                    onConfirm={async () => {
+                        const modifiedChannel = await channelActions.undeployChannel(currentIntegration.id, activeTab);
+                        if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                    }}>
+                    <IconButton
+                        icon={{
+                            path: mdiStopCircle,
+                            color: "red",
+                            size: 0.6,
+                            title: T.translate("integrations.channel.button.undeploy"),
+                        }}
                     />
                 </Popconfirm>
             );
         } else if (activeChannel.enabled) {
             buttons.push(
-                <Button
+                <IconButton
                     key="deploy"
-                    onClick={() => channelActions.deployChannel(currentIntegration.id, activeTab, true)}
-                    icon={
-                        <Icon
-                            path={mdiPlayCircle}
-                            color="green"
-                            size={0.6}
-                            title={T.translate("integrations.channel.button.deploy")}
-                        />
-                    }
+                    onClick={async () => {
+                        if (pendingChanges) {
+                            return notification.error({
+                                message: "Cambios pendientes",
+                                description: "Guarde sus cambios para antes de desplegar el canal.",
+                            });
+                        }
+
+                        if (!currentIntegration?.deployment_config?.enabled) {
+                            return notification.error({
+                                message: "Integración deshabilitada",
+                                description: "Active la integración para poder desplegar sus canales.",
+                            });
+                        }
+                        const modifiedChannel = await channelActions.deployChannel(currentIntegration.id, activeTab);
+                        if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                    }}
+                    icon={{
+                        path: mdiPlayCircle,
+                        color: "green",
+                        size: 0.6,
+                    }}
                 />
             );
         }
@@ -414,55 +541,51 @@ const Integration = ({ packageUrl }) => {
                 <Popconfirm
                     key="disable"
                     title={T.translate("common.question")}
-                    onConfirm={() => channelActions.toggleEnabled(activeTab)}>
-                    <Button
-                        icon={
-                            <Icon
-                                path={mdiCloseCircleOutline}
-                                size={0.6}
-                                title={T.translate("common.button.disable")}
-                            />
-                        }
+                    onConfirm={() => toggleEnabledChannel(activeTab)}>
+                    <IconButton
+                        icon={{ path: mdiCloseCircleOutline, size: 0.6, title: T.translate("common.button.disable") }}
                     />
                 </Popconfirm>
             );
         } else {
             buttons.push(
-                <Button
+                <IconButton
                     key="enable"
-                    onClick={() => channelActions.toggleEnabled(activeTab)}
-                    icon={<Icon path={mdiCheckOutline} size={0.6} title={T.translate("common.button.enable")} />}
+                    onClick={() => toggleEnabledChannel(activeTab)}
+                    icon={{ path: mdiCheckOutline, size: 0.6, title: T.translate("common.button.enable") }}
                 />
             );
         }
         return [
-            <Button
+            <IconButton
                 key="log"
-                onClick={() => showChannelLog()}
-                icon={<Icon path={mdiTextLong} size={0.6} title={T.translate("common.button.debug")} />}
+                onClick={() =>
+                    channelActions.showChannelLog(currentIntegration.id, activeTab, activeChannel?.agent?.id)
+                }
+                icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.debug") }}
             />,
-            <Button
+            <IconButton
                 key="debug"
                 onClick={() => showChannelDebug()}
-                icon={<Icon path={mdiBug} size={0.6} title={T.translate("common.button.debug")} />}
+                icon={{ path: mdiBug, size: 0.6, title: T.translate("common.button.debug") }}
             />,
             ...buttons,
-            <Button
+            <IconButton
                 key="edit"
-                onClick={() => startEditingTab()}
-                icon={<Icon path={mdiPencil} size={0.6} title={T.translate("common.button.edit")} />}
+                onClick={() => startEditingChannel()}
+                icon={{ path: mdiCogs, size: 0.6, title: T.translate("common.button.edit") }}
             />,
-            <Button
+            <IconButton
                 key="undo"
                 disabled={!editHistory[currentHistoryIndex - 1]}
                 onClick={() => undo()}
-                icon={<Icon path={mdiUndo} size={0.6} title={T.translate("common.button.undo")} />}
+                icon={{ path: mdiUndo, size: 0.6, title: T.translate("common.button.undo") }}
             />,
-            <Button
+            <IconButton
                 key="redo"
                 disabled={!editHistory[currentHistoryIndex + 1]}
                 onClick={() => redo()}
-                icon={<Icon path={mdiRedo} size={0.6} title={T.translate("common.button.redo")} />}
+                icon={{ path: mdiRedo, size: 0.6, title: T.translate("common.button.redo") }}
             />,
         ];
     };
@@ -521,46 +644,18 @@ const Integration = ({ packageUrl }) => {
     };
 
     /**
-     * Muestra la ventana de debug
-     */
-    const showChannelLog = async () => {
-        if (activeTab) {
-            const response = await axios.get(`/integration/${currentIntegration.id}/channel/${activeTab}/log`);
-
-            Modal.info({
-                title: "Log Channel",
-                width: "60vw",
-                closable: true,
-                centered: true,
-                content: (
-                    <div>
-                        <AceEditor
-                            setOptions={{
-                                useWorker: false,
-                            }}
-                            width="100%"
-                            value={response.data.data}
-                            name="chann.log"
-                            theme="github"
-                        />
-                    </div>
-                ),
-                onOk() {},
-            });
-        }
-    };
-
-    /**
      * Método encargado de pintar los iconos de estado de cada uno de los canales (pestañas)
      */
-    const renderChannelStatus = (channel) => {
+    const renderChannelStatus = (channel, status) => {
+        const currentStatus = status[channel.id];
+
         if (!channel.enabled)
             return <Icon path={mdiCancel} size={0.6} color="gray" title={T.translate("common.disabled")} />;
-        if (channel.status === "STARTED")
+        if (currentStatus === "Started")
             return <Icon path={mdiPlay} size={0.6} color="green" title={T.translate("integrations.channel.started")} />;
-        if (channel.status === "STOPPED")
+        if (currentStatus === "Stopped")
             return <Icon path={mdiStop} size={0.6} title={T.translate("integrations.channel.stopped")} />;
-        if (channel.status === "UNDEPLOYED")
+        if (currentStatus === "UNDEPLOYED")
             return (
                 <Icon
                     path={mdiMinusBox}
@@ -571,29 +666,36 @@ const Integration = ({ packageUrl }) => {
             );
     };
 
-    const startEditingTab = () => {
+    const startEditingChannel = () => {
         const channel = lodash.find(channels, { id: activeTab });
         if (channel) {
-            setEditTabVisible(true);
-            setEditingTab(channel);
+            setEditingChannelVisible(true);
+            setEditingChannel(channel);
         }
     };
 
     const editTabOk = ({ formData }) => {
         onChannelUpdate(formData);
-        setEditTabVisible(false);
+        setEditingChannelVisible(false);
     };
 
     const editTabCancel = () => {
-        setEditTabVisible(false);
-        setEditingTab({});
+        setEditingChannelVisible(false);
+        setEditingChannel({});
     };
 
     const drawIntegrationStatus = (integ) => {
-        if (integ?.enabled) {
+        if (integ?.deployment_config?.enabled) {
             return <Tag color="green">{T.translate("common.enabled")}</Tag>;
         }
         return <Tag color="red">{T.translate("common.disabled")}</Tag>;
+    };
+
+    const renderOrganization = (item) => {
+        const org = getOrganizationById(item?.deployment_config?.organization_id);
+        return T.translate("integrations.integration_form_subtitle", {
+            name: org?.name || "-",
+        });
     };
 
     return (
@@ -603,25 +705,35 @@ const Integration = ({ packageUrl }) => {
                     <PageHeader
                         ghost={false}
                         title={T.translate("integrations.integration_form_title", { name: currentIntegration?.name })}
-                        subTitle={currentIntegration?.description}
-                        tags={drawIntegrationStatus(currentIntegration)}
+                        tags={[
+                            <Tag>{renderOrganization(currentIntegration)}</Tag>,
+                            drawIntegrationStatus(currentIntegration),
+                        ]}
+                        avatar={{ icon: <Icon path={mdiSourceBranchPlus} size={0.7} /> }}
                         extra={[
                             <Button key="edit" type="dashed" onClick={() => setEditHeader(true)}>
                                 {T.translate("common.button.edit")}
                             </Button>,
 
-                            <Popconfirm title={T.translate("common.question")} onConfirm={() => loadIntegration()}>
+                            <Popconfirm
+                                title={T.translate("common.question")}
+                                onConfirm={() => fetchIntegration(currentIntegration.id)}>
                                 <Button key="cancel" danger>
                                     {T.translate("common.button.cancel")}
                                 </Button>
                             </Popconfirm>,
-                            <Popconfirm title={T.translate("common.question")} onConfirm={() => saveIntegration()}>
+                            <Popconfirm
+                                title={T.translate("common.question")}
+                                onConfirm={() => saveIntegration(currentIntegration)}>
                                 <Button key="enable" type="primary">
                                     {T.translate("common.button.save")}
                                 </Button>
                             </Popconfirm>,
-                        ]}
-                    />
+                        ]}>
+                        <div>
+                            <EllipsisParagraph text={currentIntegration?.description} maxChars={100} />
+                        </div>
+                    </PageHeader>
                 </div>
             )}
             {editHeader && (
@@ -645,8 +757,24 @@ const Integration = ({ packageUrl }) => {
                                         persist: () => true,
                                     });
                                 }}>
-                                {T.translate("common.button.accept")}
+                                {T.translate("common.button.confirm")}
                             </Button>,
+                            <Popconfirm
+                                title={T.translate("common.question")}
+                                onConfirm={(e) => {
+                                    //Forzar el submit del FORM simulando el evento
+                                    integForm.current.onSubmit({
+                                        target: null,
+                                        currentTarget: null,
+                                        preventDefault: () => true,
+                                        persist: () => true,
+                                        forceSave: true,
+                                    });
+                                }}>
+                                <Button key="enable" type="primary">
+                                    {T.translate("integrations.button.confirmSave")}
+                                </Button>
+                            </Popconfirm>,
                         ]}>
                         <div>
                             {currentIntegration && (
@@ -658,7 +786,9 @@ const Integration = ({ packageUrl }) => {
                                     schema={integrationFormSchema.schema}
                                     formData={currentIntegration}
                                     uiSchema={integrationFormSchema.uiSchema}
-                                    onSubmit={(e) => confirmIntegrationChanges(e)}
+                                    onSubmit={(data, event) => {
+                                        confirmIntegrationChanges(data, event);
+                                    }}
                                     onError={(e) => console.log(e)}>
                                     <></>
                                 </Form>
@@ -681,55 +811,24 @@ const Integration = ({ packageUrl }) => {
                     <TabPane
                         tab={
                             <span>
-                                {renderChannelStatus(channel)} &nbsp; {channel.name}
+                                {renderChannelStatus(channel, channelStatuses)} &nbsp; {channel.name}
                             </span>
                         }
                         key={channel.id}
                         closable={true}>
-                        <Channel channel={channel} onChannelUpdate={onChannelUpdate} nodeTypes={nodeTypes} />
+                        <Channel
+                            channel={channel}
+                            channelStatus={channelStatuses[channel.id]}
+                            onChannelUpdate={onChannelUpdate}
+                            nodeTypes={nodeTypes}
+                            undo={undo}
+                            redo={redo}
+                        />
                     </TabPane>
                 ))}
             </Tabs>
 
-            <Modal
-                width={800}
-                title={T.translate("integrations.channel.edit_title")}
-                visible={editTabVisible}
-                onOk={editTabOk}
-                onCancel={editTabCancel}
-                footer={[
-                    <Button key="cancel" type="dashed" onClick={() => editTabCancel()}>
-                        {T.translate("common.button.cancel")}
-                    </Button>,
-                    <Button
-                        key="accept"
-                        type="primary"
-                        onClick={(e) => {
-                            //Forzar el submit del FORM simulando el evento
-                            editTabFormEl.current.onSubmit({
-                                target: null,
-                                currentTarget: null,
-                                preventDefault: () => true,
-                                persist: () => true,
-                            });
-                        }}>
-                        {T.translate("common.button.accept")}
-                    </Button>,
-                ]}>
-                <Form
-                    ref={editTabFormEl}
-                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                    schema={editTabFormSchema.schema}
-                    formData={editingTab}
-                    uiSchema={editTabFormSchema.uiSchema}
-                    widgets={formConfig.widgets}
-                    onChange={(e) => setEditingTab(e.formData)}
-                    onSubmit={(e) => editTabOk(e)}
-                    onError={(e) => console.log(e)}>
-                    <></>
-                </Form>
-            </Modal>
+            {editingChannelVisible && <ChannelOptions visible={editingChannelVisible} onOk={editTabOk} onCancel={editTabCancel} channel={editingChannel} />}
 
             <PreventTransitionPrompt
                 when={pendingChanges}

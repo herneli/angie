@@ -9,7 +9,6 @@ const useStyles = createUseStyles({
             backgrounfColor: "white",
             border: 0,
             borderRadius: "4px",
-            fontSize: "14px",
             outline: "none",
             fontSize: 12,
             maxWidth: 500,

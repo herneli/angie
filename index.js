@@ -8,15 +8,18 @@ import { keycloakAdmin } from "./config/keycloak-admin-client-config";
 import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
 import { IntegrationChannelController } from "./app/server/api/integration_channel";
+import { MessageController } from "./app/server/api/messages";
 import { OrganizationController } from "./app/server/api/organization";
 import { PackageController } from "./app/server/api/package";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
-import { ProfileController } from "./app/server/api/profile/ProfileController";
+import { SectionController } from "./app/server/api/section/SectionController";
 
 import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
+import { JUMAgentController, JUMAgentMaster, JUMAgentService } from "./app/server/api/jum_agents";
+import Cache from "./app/server/common/Cache";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -82,7 +85,9 @@ module.exports = async () => {
         new ConfigurationController(),
         new ScriptController(),
         new PackageController(),
-        new ProfileController(),
+        new JUMAgentController(),
+        new SectionController(),
+        new MessageController(),
     ];
 
     const directives = {
@@ -106,13 +111,22 @@ module.exports = async () => {
     });
 
     App.executeOnlyMain = async () => {
+        //Start agentListening
+        await JUMAgentMaster.listenForAgents(App.server.app.io);
+
         //Acciones a ejecutar sobre el mainWorker
         console.log("MainThread");
+        console.log("Import Users From Keycloak");
+
+        App.events.emit("config_import_users");
+
+        console.log("Import Process has being completed.");
     };
+
+    await Cache.resetAll();
 
     //Arrancar la aplicacion
     await App.start();
-
     App.server.on("listening", () => {
         console.log("Server Ready to Serve 😄");
     });

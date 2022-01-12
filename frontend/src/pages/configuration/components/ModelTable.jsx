@@ -5,6 +5,7 @@ import T from "i18n-react";
 // import ModelOverwriteDialog from "./ModelOverwriteDialog";
 import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload, mdiPencil } from "@mdi/js";
 import Icon from "@mdi/react";
+import Utils from "../../../common/Utils";
 const { Search } = Input;
 
 const useStyles = createUseStyles({
@@ -43,6 +44,12 @@ export default function ModelTable({
                 dataIndex: field.field,
                 sorter: true,
             }));
+
+            // columns.push({
+            //     title: "packageCode",
+            //     key: "packageCode",
+            //     dataIndex: "packageCode",
+            // });
             columns.push({
                 title: "packageCode",
                 key: "packageCode",
@@ -55,12 +62,14 @@ export default function ModelTable({
                 width: 180,
                 render: (text, record) => (
                     <Row justify="center">
-                        <Button
-                            icon={<Icon path={mdiPencil} className={classes.icon} />}
-                            type="text"
-                            title={T.translate("common.button.edit")}
-                            onClick={(e) => handleOnRowClick(record)}
-                        />
+                        {record.editable !== false && (
+                            <Button
+                                icon={<Icon path={mdiPencil} className={classes.icon} />}
+                                type="text"
+                                title={T.translate("common.button.edit")}
+                                onClick={(e) => handleOnRowClick(record)}
+                            />
+                        )}
 
                         <Popconfirm
                             title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
@@ -77,15 +86,17 @@ export default function ModelTable({
                             title={T.translate("common.button.download")}
                             onClick={(e) => handleOnDownloadModel(e, record)}
                         />
-                        <Popconfirm
-                            title={T.translate("configuration.do_you_want_to_delete_the_item")}
-                            onConfirm={(e) => handleOnDeleteModel(e, record)}>
-                            <Button
-                                icon={<Icon path={mdiDelete} className={classes.icon} />}
-                                type="text"
-                                title={T.translate("common.button.delete")}
-                            />
-                        </Popconfirm>
+                        {record.editable !== false && (
+                            <Popconfirm
+                                title={T.translate("configuration.do_you_want_to_delete_the_item")}
+                                onConfirm={(e) => handleOnDeleteModel(e, record)}>
+                                <Button
+                                    icon={<Icon path={mdiDelete} className={classes.icon} />}
+                                    type="text"
+                                    title={T.translate("common.button.delete")}
+                                />
+                            </Popconfirm>
+                        )}
                     </Row>
                 ),
             });
@@ -94,10 +105,9 @@ export default function ModelTable({
             return null;
         }
     };
-    const [importItems, setImportItems] = useState();
-    const [searchString, setSearchString] = useState();
+    const [importItems] = useState();
+    const [searchString] = useState();
     const [pagination, setPagination] = useState({});
-    const [paramsPagination, setParamsPagination] = useState({ limit: 100, start: 0 });
 
     const classes = useStyles();
 
@@ -198,13 +208,17 @@ export default function ModelTable({
     const search = async (params, searchValue, sorts) => {
         let filters = {};
 
-        if (searchValue != "" && searchValue != undefined && Object.keys(searchValue).length > 0) {
-            filters = {
-                "data::text": {
-                    type: "jsonb",
-                    value: searchValue,
-                },
-            };
+        if (searchValue && Object.keys(searchValue).length > 0) {
+            if (searchValue.indexOf(":") !== -1) {
+                filters = Utils.getFiltersByPairs((key) => (`data->>'${key}'`), searchValue);
+            } else {
+                filters = {
+                    "data::text": {
+                        type: "jsonb",
+                        value: searchValue,
+                    },
+                };
+            }
         }
 
         if (params?.pageSize && params?.current) {

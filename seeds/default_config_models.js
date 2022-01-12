@@ -659,36 +659,29 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "users_config",
-            name: "users_config",
+            code: "users",
+            name: "users",
             data: {
-                code: "users_config",
+                code: "users",
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery: "users.*,p.data as profile_data,o.data as organization_data",
+                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                group_by: "users.id",
                 relation_schema: [
                     {
                         type: "LEFT JOIN",
-                        tabletoJoin: "profile as p",
-                        column1: "(users.data->>'profile')::text",
-                        column2: " text(p.id)",
-                        relationColumn: "profile_data",
-                    },
-                    {
-                        type: "LEFT JOIN",
-                        tabletoJoin: "organization as o",
-                        column1: "(users.data->>'organization_id')::text",
-                        column2: " text(o.id)",
-                        relationColumn: "organization_data",
+                        with_table: "organization",
+                        on_condition: "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
+                        relation_column: "organization_data"
                     },
                 ],
-                documentType: "object",
+                documentType: "user",
                 listFields: [
-                    {
-                        title: "id",
-                        field: "id",
-                    },
+                    // {
+                    //     title: "id",
+                    //     field: "id",
+                    // },
                     {
                         title: "username",
                         field: "username",
@@ -698,20 +691,20 @@ exports.seed = async function (knex) {
                         field: "email",
                     },
                     {
-                        title: "Perfil",
-                        field: ["profile_data", "name"],
+                        title: "roles",
+                        field: ["roles"],
                     },
                     {
                         title: "Organization",
-                        field: ["organization_data", "name"],
+                        field: ["organization_data"],
                     },
                     {
-                        title: "created_time_stamp",
-                        field: "created_time_stamp",
+                        title: "created_timestamp",
+                        field: "created_timestamp",
                     },
                 ],
                 schema: {
-                    title: "Add User",
+                    title: "",
                     type: "object",
                     required: ["username"],
                     properties: {
@@ -721,38 +714,40 @@ exports.seed = async function (knex) {
                         email: {
                             type: "string",
                         },
-                        profile: {
+                        roles: {
                             type: "string",
-                            title: "Perfil",
+                            title: "Roles",
                         },
                         organization_id: {
-                            type: "string",
+                            type: "array",
                             title: "Organization",
+                            items: {
+                                type: "string",
+                                enum: [],
+                            },
+                            uniqueItems: true,
                         },
                     },
                 },
                 uiSchema: {
-                    id: {
-                        "ui:columnSize": "3",
-                    },
                     username: {
+                        "ui:readonly": true,
                         "ui:columnSize": "3",
                     },
 
                     email: {
+                        "ui:readonly": true,
                         "ui:columnSize": "3",
                     },
-                    profile: {
+                    roles: {
+                        "ui:readonly": true,
                         "ui:columnSize": "6",
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions":
-                            "/configuration/model/profile_config/data#path=data&value=id&label=data.name",
                     },
                     organization_id: {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions":
-                            "/configuration/model/organization_config/data#path=data&value=id&label=data.name",
+                        "ui:mode": "multiple",
+                        "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",
@@ -849,8 +844,8 @@ exports.seed = async function (knex) {
                         react_component_type: {
                             title: "Tipo Componente",
                             type: "string",
-                            enum: ["default", "output", "input", "MultiTargetNode"],
-                            enumNames: ["Default", "Output", "Input", "MultiTargetNode"],
+                            enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode"],
+                            enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode"],
                         },
                         camel_component_id: {
                             type: "string",
@@ -900,7 +895,7 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
                         "ui:selectOptions":
-                            "/configuration/model/camel_component/data#path=data&value=id&label=data.name",
+                            "/configuration/model/camel_component/data#path=data&value=code&label=data.name",
                     },
                 },
             },
@@ -1047,18 +1042,18 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "organization_config",
-            name: "organization_config",
+            code: "organization",
+            name: "organization",
             data: {
-                code: "organization_config",
+                code: "organization",
                 name: "Organizaciones",
                 id_mode: "uuid",
                 table: "organization",
-                documentType: "object",
+                documentType: "organization",
                 listFields: [
                     {
-                        title: "id",
-                        field: "id",
+                        title: "code",
+                        field: "code",
                     },
                     {
                         title: "Nombre",
@@ -1072,8 +1067,11 @@ exports.seed = async function (knex) {
                 schema: {
                     title: "Add Organization",
                     type: "object",
-                    required: ["name", "config"],
+                    required: ["code", "name", "config"],
                     properties: {
+                        code: {
+                            type: "string",
+                        },
                         name: {
                             type: "string",
                         },
@@ -1083,7 +1081,7 @@ exports.seed = async function (knex) {
                     },
                 },
                 uiSchema: {
-                    id: {
+                    code: {
                         "ui:columnSize": "3",
                     },
                     name: {
@@ -1097,73 +1095,169 @@ exports.seed = async function (knex) {
             },
         },
         {
-            code: "profile_config",
-            name: "profile_config",
+            code: "sections",
+            name: "sections",
             data: {
-                code: "profile_config",
-                name: "Perfiles",
-                table: "profile",
+                code: "sections",
+                name: "Sections",
+                table: "sections",
                 id_mode: "uuid",
-                documentType: "object",
+                documentType: "section",
                 listFields: [
                     {
-                        title: "id",
-                        field: "id",
+                        title: "code",
+                        field: "code",
+                    },
+                    // {
+                    //     title: "title",
+                    //     field: "title",
+                    // },
+                    // {
+                    //     title: "icon",
+                    //     field: "icon",
+                    // },
+                    {
+                        title: "Ruta",
+                        field: "value",
                     },
                     {
-                        title: "name",
-                        field: "name",
-                    },
-                    {
-                        title: "sections",
-                        field: "sections",
+                        title: "Roles",
+                        field: "roles",
                     },
                 ],
                 schema: {
-                    title: "Create Profile",
                     type: "object",
-                    required: ["name"],
+                    required: ["code", "value"],
                     properties: {
-                        name: {
+                        code: {
                             type: "string",
                         },
-                        sections: {
+                        // title: {
+                        //     type: "string",
+                        // },
+                        // icon: {
+                        //     type: "string",
+                        // },
+                        value: {
+                            title: "Ruta",
+                            type: "string",
+                        },
+                        roles: {
+                            title: "Roles",
                             type: "array",
                             items: {
                                 type: "string",
-                                enum: [
-                                    "/admin/users",
-                                    "/admin/profiles",
-                                    "/admin/organization",
-                                    "/admin/integration",
-                                    "/admin/node_type",
-                                    "/admin/camel_component",
-                                    "/admin/config_context",
-                                    "/admin/config_method",
-                                    "/admin/config_object",
-                                    "/admin/gestion",
-                                    "/admin/comunicaciones",
-                                    "/admin/personalization",
-                                    "/admin/script/test_groovy",
-                                ],
+                                enum: [],
                             },
                             uniqueItems: true,
                         },
+                        // childrens: {
+                        //     title: "SubMenu",
+                        //     type: "array",
+                        //     items: {
+                        //         type: "object",
+                        //         required: ["code","value"],
+                        //         properties: {
+                        //             code: {
+                        //                 title: "Código",
+                        //                 type: "string",
+                        //             },
+                        //             title: {
+                        //                 title: "Nombre",
+                        //                 type: "string",
+                        //             },
+                        //             icon: {
+                        //                 type: "string",
+                        //             },
+                        //             value: {
+                        //                 type: "string",
+                        //             },
+                        // "childrens": {
+                        //     "title": "Opciones",
+                        //     "type": "array",
+                        //     "items": {
+                        //         "type": "object",
+                        //         "properties": {
+                        //             "code": {
+                        //                 "type": "string",
+                        //                 "title": "Código"
+                        //             },
+                        //             "title": {
+                        //                 title: "Nombre",
+                        //                 type: "string",
+                        //             },
+                        //             "icon": {
+                        //                 type: "string",
+                        //             },
+                        //             "value": {
+                        //                 type: "string",
+                        //             },
+                        //         },
+                        //         "required": ["code"]
+                        //     }
+                        // }
+                        //             }
+                        //         },
+                        //     }
                     },
                 },
                 uiSchema: {
-                    id: {
+                    code: {
                         "ui:columnSize": "3",
                     },
-                    name: {
-                        "ui:columnSize": "3",
+                    title: {
+                        type: "string",
                     },
-                    sections: {
-                        "ui:ArrayFieldTemplate": null,
-                        "ui:columnSize": "3",
-                        "ui:widget": "MultipleSelectWidget",
-                        "ui:url": "/getMenuConfiguration",
+                    icon: {
+                        type: "string",
                     },
+                    value: {
+                        type: "string",
+                    },
+                    roles: {
+                        "ui:columnSize": "6",
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:mode": "multiple",
+                        "ui:selectOptions": "/getRoles/#path=data&value=name&label=name",
+                    },
+                    // "childrens": {
+                    //     "ui:options": {
+                    //         "columns": [
+                    //             { "title": "Código", "dataIndex": "code" },
+                    //             { "title": "Nombre", "dataIndex": "name" },
+                    //             { "title": "Tipo", "dataIndex": ["type", "type"] },
+                    //             { "title": "Objeto", "dataIndex": ["type", "objectCode"] }
+                    //         ]
+                    //     },
+                    //     "items": {
+                    //         "code": {
+                    //             "ui:columnSize": "4"
+                    //         },
+                    //         "name": {
+                    //             "ui:columnSize": "4"
+                    //         },
+                    //         "required": {
+                    //             "ui:columnSize": "12"
+                    //         },
+                    //         "options": {
+                    //             "items": {
+                    //                 "code": {
+                    //                     "ui:columnSize": "4"
+                    //                 },
+                    //                 icon: {
+                    //                     type: "string",
+                    //                 },
+                    //                 value: {
+                    //                     type: "string",
+                    //                 },
+                    //                 "value": {
+                    //                     "ui:columnSize": "4"
+                    //                 }
+
+                    //             }
+                    //         }
+                    // }
+                    // }
                 },
             },
         },

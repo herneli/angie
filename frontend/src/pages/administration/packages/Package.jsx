@@ -9,11 +9,14 @@ import { createUseStyles } from "react-jss";
 import PackageContextProvider from "../../../components/packages/PackageContext";
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
+
 const { Sider, Content, Header } = Layout;
 
 const useStyles = createUseStyles({
     header: {
         backgroundColor: "white",
+        height: 40,
+        lineHeight: "40px",
     },
 });
 
@@ -84,6 +87,11 @@ export default function Package({ match }) {
                             <Route
                                 exact
                                 path={path + "/integrations/:id"}
+                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                            />
+                            <Route
+                                exact
+                                path={path + "/integrations/:id/:channel"}
                                 render={({ match }) => <Integration match={match} packageUrl={url} />}
                             />
                         </Switch>

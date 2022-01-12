@@ -69,6 +69,7 @@ export class MainController extends BaseController {
         response.json(data);
     }
 
+
     /**
      * Muestra los logs de la aplicacion
      *

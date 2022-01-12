@@ -9,19 +9,11 @@ import T from "i18n-react";
 import { useHistory } from "react-router";
 import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
-import {
-    mdiContentCopy,
-    mdiDelete,
-    mdiDownload,
-    mdiPencil,
-    mdiPlayCircle,
-    mdiPlus,
-    mdiStopCircle,
-    mdiUpload,
-} from "@mdi/js";
+import { mdiCancel, mdiCheck, mdiContentCopy, mdiDelete, mdiDownload, mdiPencil, mdiPlus, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
-import ChannelActions from "./ChannelActions";
 import { usePackage } from "../../../components/packages/PackageContext";
+import Utils from "../../../common/Utils";
+import { Link } from "react-router-dom";
 
 const useStyles = createUseStyles({
     card: {
@@ -40,7 +32,7 @@ const useStyles = createUseStyles({
     },
 });
 
-const channelActions = new ChannelActions();
+// const channelActions = new ChannelActions();
 
 const Integrations = ({ packageUrl }) => {
     let [dataSource, setDataSource] = useState([]);
@@ -61,20 +53,15 @@ const Integrations = ({ packageUrl }) => {
     const startEdit = (record) => {
         history.push({
             pathname: packageUrl + "/integrations/" + record.id,
-            state: {
-                record: record,
-            },
         });
     };
 
     const onElementDelete = async (record) => {
         setLoading(true);
         try {
-            const response = await axios.delete(`/integration/${record.id}`);
+            await axios.delete(`/integration/${record.id}`);
 
-            if (response?.data?.success) {
-                search();
-            }
+            setTimeout(search, 200);
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -222,7 +209,7 @@ const Integrations = ({ packageUrl }) => {
         });
         return (
             <Space size="middle">
-                {record.status === "STARTED" && (
+                {/* {record.enabled && record.status === "Started" && (
                     <Popconfirm
                         title={T.translate("common.question")}
                         onConfirm={async () => {
@@ -243,12 +230,12 @@ const Integrations = ({ packageUrl }) => {
                         />
                     </Popconfirm>
                 )}
-                {record.status !== "STARTED" && (
+                {record.enabled && record.status !== "Started" && (
                     <Button
                         key="deploy"
                         type="text"
                         onClick={async () => {
-                            await channelActions.deployChannel(integration.id, record.id, false);
+                            await channelActions.deployChannel(integration.id, record.id);
                             await search();
                         }}
                         icon={
@@ -260,7 +247,7 @@ const Integrations = ({ packageUrl }) => {
                             />
                         }
                     />
-                )}
+                )} */}
             </Space>
         );
     };
@@ -308,9 +295,20 @@ const Integrations = ({ packageUrl }) => {
             ellipsis: true,
             sorter: true,
             render: (text, record) => {
-                if (record.channels) return <b>{text}</b>;
+                if (record.channels)
+                    return (
+                        <Link to={`${packageUrl}/integrations/${record.id}`}>
+                            <b>{record.name}</b>
+                        </Link>
+                    );
 
-                return text;
+                let int = lodash.find(dataSource, (int) => {
+                    let chann = lodash.find(int.channels, { id: record.id });
+                    if (chann != null) {
+                        return int;
+                    }
+                });
+                return <Link to={`${packageUrl}/integrations/${int.id}/${record.id}`}>{text}</Link>;
             },
         },
         {
@@ -332,13 +330,28 @@ const Integrations = ({ packageUrl }) => {
             align: "center",
             width: 60,
             render: (text, record) => {
-                if (record.channels) return;
+                if (!record.channels)
+                    return (
+                        <div>
+                            {!record.enabled && (
+                                <Icon path={mdiCancel} size={0.6} color="red" title={T.translate("common.disabled")} />
+                            )}
+                            {record?.enabled && (
+                                <Icon path={mdiCheck} size={0.6} color="green" title={T.translate("common.enabled")} />
+                            )}
+                        </div>
+                    );
                 return (
                     <div>
-                        {!record.enabled && <span>DISABLED</span>}
-                        {record.enabled && text === "STARTED" && <span title={text}>🟢</span>}
+                        {!record?.deployment_config?.enabled && (
+                            <Icon path={mdiCancel} size={0.6} color="red" title={T.translate("common.disabled")} />
+                        )}
+                        {record?.deployment_config?.enabled && (
+                            <Icon path={mdiCheck} size={0.6} color="green" title={T.translate("common.enabled")} />
+                        )}
+                        {/* {record.enabled && text === "Started" && <span title={text}>🟢</span>}
                         {record.enabled && text === "UNDEPLOYED" && <span title={text}>🔴</span>}
-                        {record.enabled && text === "STOPPED" && <span title={text}>🟠</span>}
+                        {record.enabled && text === "Stopped" && <span title={text}>🟠</span>} */}
                     </div>
                 );
             },
@@ -352,16 +365,36 @@ const Integrations = ({ packageUrl }) => {
                 return text;
             },
         },
-        {
-            title: T.translate("integrations.columns.message_count"),
-            dataIndex: "message_count",
-            key: "message_count",
-            width: 100,
-            render: (text, record) => {
-                if (record.channels) return;
-                return text;
-            },
-        },
+        // {
+        //     title: T.translate("integrations.columns.messages_sent"),
+        //     dataIndex: "messages_sent",
+        //     key: "messages_sent",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
+        // {
+        //     title: T.translate("integrations.columns.messages_error"),
+        //     dataIndex: "messages_error",
+        //     key: "messages_error",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
+        // {
+        //     title: T.translate("integrations.columns.messages_total"),
+        //     dataIndex: "messages_total",
+        //     key: "messages_total",
+        //     width: 100,
+        //     render: (text, record) => {
+        //         if (record.channels) return;
+        //         return text;
+        //     },
+        // },
         {
             title: T.translate("integrations.columns.last_updated"),
             dataIndex: "last_updated",
@@ -403,39 +436,16 @@ const Integrations = ({ packageUrl }) => {
         });
     };
 
-    const getFiltersByPairs = (str) => {
-        const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
-        let m;
-
-        let data = {};
-        while ((m = regex.exec(str)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            let { key, value } = m.groups;
-            if (key) {
-                data[key] = {
-                    type: "likeI",
-                    value: `%${value}%`,
-                };
-            }
-        }
-        return data;
-    };
-
     const onSearch = (value) => {
-        // if (value.indexOf(":") !== -1) {
-        //     return search(null, getFiltersByPairs(value));
-        // }
-        if (value) {
-            search(null, {
-                "integration.data::text": {
-                    type: "jsonb",
-                    value: value,
-                },
-            });
+        if (value.indexOf(":") !== -1) {
+            return search(null, Utils.getFiltersByPairs((key) => (`data->>'${key}'`), value));
         }
+        search(null, {
+            "integration.data::text": {
+                type: "jsonb",
+                value: value,
+            },
+        });
     };
 
     return (

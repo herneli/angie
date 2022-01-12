@@ -1,27 +1,31 @@
 import { App, BaseService } from "lisco";
 import { IntegrationChannelService } from "../integration_channel";
 import { IntegrationDao } from "./IntegrationDao";
-import { JumDao } from "../../integration/jum-angie";
 import { ScriptService } from "../script/ScriptService";
 
+import { JUMAgentService } from "../jum_agents";
+
+import lodash from "lodash";
 export class IntegrationService extends BaseService {
     constructor() {
         super(IntegrationDao);
 
         this.channelService = new IntegrationChannelService();
-        this.jumDao = new JumDao();
+        this.agentService = new JUMAgentService();
     }
 
     //Overwrite
     async loadById(id) {
-        const [integration] = await super.loadById(id);
+        const integration = await super.loadById(id);
 
-        if (integration.data.channels) {
+        if (integration && integration.data && integration.data.channels) {
             for (let channel of integration.data.channels) {
-                channel = await this.channelService.channelObjStatus(channel);
+                const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);
+                channel = await this.channelService.channelApplyStatus(channel, channelState);
+                channel.agent = currentAgent;
             }
         }
-        return [integration];
+        return integration;
     }
 
     async applyBeforeSave(action, node, integration) {
@@ -46,24 +50,42 @@ export class IntegrationService extends BaseService {
         }
     }
 
+    computeChannelsDeploymentConfig(integration) {
+        if (!integration.deployment_config) {
+            integration.deployment_config = {};
+        }
+        integration.deployment_config.channel_config = lodash.mapValues(
+            lodash.keyBy(integration.channels, "id"),
+            "deployment_options"
+        );
+    }
+
     async completeBeforeSave(body) {
         let completedChannels = [];
-        for (const channel of body.channels) {
-            let nodes = [];
-            if (channel.nodes) {
-                if (channel.nodes.list) {
-                    channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
-                }
-                for (const node of channel.nodes) {
-                    if (node.data.beforeSave) {
-                        let completedNode = await this.applyBeforeSave(node.data.beforeSave, node, body);
-                        nodes.push(completedNode);
-                    } else {
-                        nodes.push(node);
+        if (body.channels) {
+            this.computeChannelsDeploymentConfig(body);
+
+            for (const channel of body.channels) {
+                let nodes = [];
+                delete channel.deployment_options; //Una vez aplicada la configuracion de despliegue sobre los canales, se limpia para no guardarla en bd.
+                delete channel.agent; //Antes de guardar los canales se limpia su agente para evitar almacenar información redundante
+                delete channel.options; //!FIXME: Propiedad obsoleta Quitar en el futuro
+
+                if (channel.nodes) {
+                    if (channel.nodes.list) {
+                        channel.nodes = channel.nodes.list; //FIXME: Quitar en una temporada, sirve para mantener compatibilidad con versiones previas de las integraciones
                     }
+                    for (const node of channel.nodes) {
+                        if (node.data.beforeSave) {
+                            let completedNode = await this.applyBeforeSave(node.data.beforeSave, node, body);
+                            nodes.push(completedNode);
+                        } else {
+                            nodes.push(node);
+                        }
+                    }
+                    completedChannels.push({ ...channel, nodes: nodes });
                 }
             }
-            completedChannels.push({ ...channel, nodes: nodes });
         }
         return {
             ...body,
@@ -74,14 +96,15 @@ export class IntegrationService extends BaseService {
     //Overwrite
     async save(body) {
         let integrationData = await this.completeBeforeSave(body);
+
         let entity = {
             name: integrationData.name,
-            enabled: integrationData.enabled,
-            organization_id: integrationData.organization_id,
             package_code: integrationData.package_code,
             package_version: integrationData.package_version,
             data: integrationData,
+            deployment_config: integrationData.deployment_config,
         };
+        delete entity.data.deployment_config;
 
         const res = await super.save(entity);
         App.events.emit("integration_saved", { integrationData });
@@ -94,12 +117,13 @@ export class IntegrationService extends BaseService {
         let entity = {
             id: id,
             name: integrationData.name,
-            enabled: integrationData.enabled,
-            organization_id: integrationData.organization_id,
             package_code: integrationData.package_code,
             package_version: integrationData.package_version,
             data: integrationData,
+            deployment_config: integrationData.deployment_config,
         };
+        delete entity.data.deployment_config;
+
         const res = await super.update(id, entity);
         App.events.emit("integration_updated", { integrationData });
         return res;
@@ -126,7 +150,9 @@ export class IntegrationService extends BaseService {
         for (const integration of data) {
             if (integration.data.channels) {
                 for (let channel of integration.data.channels) {
-                    channel = await this.channelService.channelObjStatus(channel);
+                    const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);
+                    channel = await this.channelService.channelApplyStatus(channel, channelState);
+                    channel.agent = currentAgent;
                 }
             }
         }
@@ -135,59 +161,52 @@ export class IntegrationService extends BaseService {
     }
 
     async integrationChannelStatuses(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }
 
         let response = {};
+
         for (let channel of integration.data.channels) {
-            let channStatus;
-            try {
-                channStatus = await this.jumDao.getRouteStatus(channel.id);
-            } catch (ex) {
-                console.error(ex);
-            }
-            response[channel.id] = (channStatus && channStatus.status) || "UNDEPLOYED";
+            response[channel.id] = channel.status;
         }
 
         return response;
     }
 
     async deployIntegration(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }
 
         for (const channel of integration.data.channels) {
             try {
-                let camelRoute = await this.channelService.convertChannelToCamel(channel);
-
-                const response = await this.jumDao.deployRoute(channel.id, camelRoute);
-                console.log(response);
-                channel.status = "STARTED"; //TODO
+                const response = await this.channelService.performDeploy(channel);
+                // console.log(response);
+                channel.status = response && response.status;
             } catch (e) {
                 console.error(e);
                 channel.status = "CONVERSION_ERROR";
             }
         }
 
-        return response;
+        return integration;
     }
 
     async undeployIntegration(identifier) {
-        const [integration] = await this.loadById(identifier);
+        const integration = await this.loadById(identifier);
         if (!integration) {
             throw "Integration does not exist";
         }
 
         for (const channel of integration.data.channels) {
-            const response = await this.jumDao.undeployRoute(channel.id);
+            const response = await this.channelService.performUndeploy(channel);
             console.log(response);
             channel.status = "UNDEPLOYED";
         }
 
-        return response;
+        return integration;
     }
 }

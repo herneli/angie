@@ -28,14 +28,19 @@ export class UserController extends BaseController {
         );
 
         //listen on events to update Keycloak data
-        App.events.on("config_deleted_users_config", (id) => {
-            this.deleteUser(id.id);
+        App.events.on("config_deleted_users", (id) => {
+            // this.deleteUser(id.id);
         });
-        App.events.on("config_saved_users_config", (data) => {
-            this.saveUsers(data.model, data.body);
+        App.events.on("config_saved_users", (data) => {
+            // this.saveUsers(data.model, data.body);
         });
-        App.events.on("config_updated_users_config", (data) => {
-            this.updateUser(data.model, data.body, data.id);
+        App.events.on("config_updated_users", (data) => {
+            // this.updateUser(data.model, data.body, data.id);
+        });
+
+        App.events.on("config_import_users", async () => {
+            const service = new UserService();
+            await service.importKeycloakUsers();
         });
 
         return this.router;
@@ -70,55 +75,12 @@ export class UserController extends BaseController {
      */
     async importUsers(request, response, next) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let usersTosave = [];
-            let users = App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : [];
-            for await (let e of users) {
-                let roles = await App.keycloakAdmin.users.listRoleMappings({
-                    id: e.id,
-                });
-                roles.pop;
-                let groups = await App.keycloakAdmin.users.listGroups({
-                    id: e.id,
-                });
-                delete e.totp;
-                delete e.disableableCredentialTypes;
-                delete e.requiredActions;
-                delete e.notBefore;
-                delete e.access;
-                delete e.firstName;
-                e.created_time_stamp = e.createdTimeStamp;
-                delete e.createdTimestamp;
-                e.email_verified = e.emailVerified;
-                delete e.emailVerified;
-                e.roles = JSON.stringify(roles);
+            const service = new UserService();
 
-                let exists = await bServ.loadById(e.id);
-                if (exists.length > 0) {
-                    let r = {
-                        id: e.id,
-                        document_type: "object",
-                        code: e.username,
-                        data: e,
-                    };
-                    r = {...exists[0],...r}
-                    let update = await bServ.update(r.id, r);
-                } else {
-                    let r = {
-                        id: e.id,
-                        document_type: "object",
-                        code: e.username,
-                        data: e,
-                    };
-                    usersTosave.push(r);
-                }
-            }
-            
-            let data = usersTosave.length > 0 ? await bServ.save(usersTosave) : [];
-            jsRes.success = false;
-            jsRes.message = users;
-            response.json(jsRes);
+            await service.importKeycloakUsers();
+
+            const jsRes = new JsonResponse(true);
+            response.status(200).json(jsRes);
         } catch (e) {
             next(e);
         }
@@ -126,15 +88,9 @@ export class UserController extends BaseController {
 
     /*
      */
-    async saveUsers(mode, body) {
+    saveUsers(mode, body) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let data = await App.keycloakAdmin.users.create(body);
-
-            jsRes.success = false;
-            jsRes.message = data;
-            return res;
+            return App.keycloakAdmin.users.create(body);
         } catch (e) {
             console.log(e);
         }
@@ -142,17 +98,11 @@ export class UserController extends BaseController {
 
     async updateUser(mode, body, id) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
             delete body.roles;
             delete body.profile;
             delete body.organization_id;
             delete body.email_verified;
-            let data = await App.keycloakAdmin.users.update({ id: id }, body);
-            
-            jsRes.success = false;
-            jsRes.message = data;
-            return res;
+            return await App.keycloakAdmin.users.update({ id: id }, body);
         } catch (e) {
             console.log(e);
         }
@@ -162,13 +112,7 @@ export class UserController extends BaseController {
      */
     async deleteUser(id) {
         try {
-            const bServ = new UserService();
-            var jsRes = new JsonResponse();
-            let data = await App.keycloakAdmin.users.del({ id: id });
-
-            jsRes.success = false;
-            jsRes.message = data;
-            return jsRes;
+            return await App.keycloakAdmin.users.del({ id: id });
         } catch (e) {
             console.log(e);
         }

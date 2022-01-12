@@ -1,6 +1,8 @@
 import { BaseController, JsonResponse } from "lisco";
 import lodash from "lodash";
 import { IntegrationChannelService } from "./IntegrationChannelService";
+import { App } from "lisco";
+import axios from "axios";
 
 import expressAsyncHandler from "express-async-handler";
 
@@ -10,6 +12,18 @@ export class IntegrationChannelController extends BaseController {
             `/integration/:id/channel/:channel/deploy`,
             expressAsyncHandler((request, response, next) => {
                 this.deployChannel(request, response, next);
+            })
+        );
+        this.router.post(
+            `/integration/:id/channel/:channel/move/`,
+            expressAsyncHandler((request, response, next) => {
+                this.moveChannel(request, response, next);
+            })
+        );
+        this.router.post(
+            `/integration/:id/channel/:channel/move/:agent`,
+            expressAsyncHandler((request, response, next) => {
+                this.moveChannel(request, response, next);
             })
         );
         this.router.post(
@@ -26,12 +40,6 @@ export class IntegrationChannelController extends BaseController {
         );
 
         this.router.get(
-            `/integration/:id/channel/:channel/statistics`,
-            expressAsyncHandler((request, response, next) => {
-                this.channelStats(request, response, next);
-            })
-        );
-        this.router.get(
             `/integration/:id/channel/:channel/log`,
             expressAsyncHandler((request, response, next) => {
                 this.channelLogs(request, response, next);
@@ -45,6 +53,13 @@ export class IntegrationChannelController extends BaseController {
             })
         );
 
+        this.router.post(
+            `/channel/:id/sendMessageToRoute`,
+            expressAsyncHandler((request, response, next) => {
+                this.sendMessageToRoute(request, response, next);
+            })
+        );
+
         return this.router;
     }
 
@@ -55,6 +70,22 @@ export class IntegrationChannelController extends BaseController {
             let channel = request.params.channel;
 
             let res = await service.deployChannel(integration, channel);
+            let jsRes = new JsonResponse(true, res, null, 1);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async moveChannel(request, response, next) {
+        try {
+            let service = new IntegrationChannelService();
+            let integration = request.params.id;
+            let channel = request.params.channel;
+            let currentAgent = request.params.agent;
+
+            let res = await service.moveChannel(integration, channel, currentAgent);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
@@ -93,20 +124,6 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async channelStats(request, response, next) {
-        try {
-            let service = new IntegrationChannelService();
-            let integration = request.params.id;
-            let channel = request.params.channel;
-
-            let res = await service.channelStats(integration, channel);
-            let jsRes = new JsonResponse(true, res, null, 1);
-
-            response.json(jsRes.toJson());
-        } catch (e) {
-            next(e);
-        }
-    }
 
     async channelLogs(request, response, next) {
         try {
@@ -132,6 +149,21 @@ export class IntegrationChannelController extends BaseController {
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async sendMessageToRoute(request, response, next) {
+        try {
+            let service = new IntegrationChannelService();
+
+            const { endpoint, content } = request.body;
+            const channelId = request.params.id;
+
+            await service.sendMessageToRoute(channelId, endpoint, content);
+
+            response.status(200);
         } catch (e) {
             next(e);
         }

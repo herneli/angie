@@ -1,96 +1,79 @@
-import React from "react";
-import moment from "moment";
 import axios from "axios";
+import AceEditor from "react-ace";
 
-import { v4 as uuid_v4 } from "uuid";
-import lodash from "lodash";
-import T from "i18n-react";
-import { notification } from "antd";
+import { Modal, notification, Tabs } from "antd";
 
 class ChannelActions {
-    constructor(channels, pendingChanges, setChannels, setActiveTab, onChannelUpdate) {
-        this.channels = channels;
-        this.pendingChanges = pendingChanges;
-        this.setChannels = setChannels;
-        this.setActiveTab = setActiveTab;
-        this.onChannelUpdate = onChannelUpdate;
-    }
+    /**
+     * Muestra la ventana de debug
+     */
+    showChannelLog = async (integrationId, channelId, activeAgent) => {
+        if (channelId) {
+            const response = await axios.get(`/integration/${integrationId}/channel/${channelId}/log`);
 
-    add = () => {
-        const channelId = uuid_v4();
+            const agentLogs = response?.data?.data;
 
-        const newChannels = this.onChannelUpdate(
-            {
-                name: "Channel",
-                id: channelId,
-                created_on: moment().toISOString(),
-                version: 0,
-                nodes: [],
-                enabled: true,
-                status: "UNDEPLOYED",
-            },
-            "add"
-        );
-
-        if (newChannels.length === 1) {
-            this.setActiveTab(channelId);
-        }
-        this.setChannels(newChannels);
-    };
-
-    remove = (targetKey, active) => {
-        let prevIndex = this.channels.length !== 0 ? this.channels.length - 2 : 0;
-        if (this.channels && this.channels[prevIndex]) {
-            let newActiveKey = this.channels[prevIndex].id;
-
-            if (active === targetKey) {
-                this.setActiveTab(newActiveKey);
-            }
-        }
-        const newChannels = this.onChannelUpdate({ id: targetKey }, "remove");
-        this.setChannels(newChannels);
-    };
-
-    edit = () => {};
-
-    toggleEnabled = async (identifier) => {
-        let channel = lodash.find(this.channels, { id: identifier });
-        channel.enabled = !channel.enabled;
-        if (!channel.enabled && channel.status === "STARTED") {
-            await this.undeployChannel(identifier);
-        }
-
-        setTimeout(() => {
-            let newChannels = this.onChannelUpdate(channel);
-            this.setChannels(newChannels);
-        }, 200);
-    };
-
-    channelStatusChanged = (channel) => {
-        const newChannels = this.channels.map((chn) => {
-            if (chn.id === channel.id) {
-                chn = channel;
-            }
-            return chn;
-        });
-        this.setChannels(newChannels);
-    };
-
-    deployChannel = async (integration, identifier, reloadChannels) => {
-        if (this.pendingChanges) {
-            return notification.error({
-                message: "Cambios pendientes",
-                description: "Guarde sus cambios para antes de desplegar el canal.",
+            Modal.info({
+                title: "Log Channel",
+                width: "60vw",
+                closable: true,
+                centered: true,
+                content: (
+                    <Tabs defaultActiveKey={activeAgent}>
+                        {agentLogs.map((agent) => (
+                            <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    width="100%"
+                                    value={agent.data + ""}
+                                    name="chann.log"
+                                    theme="github"
+                                />
+                            </Tabs.TabPane>
+                        ))}
+                    </Tabs>
+                ),
+                onOk() {},
             });
         }
+    };
+
+    deployToAnotherAgent = async (integrationId, channelId) => {
         try {
-            const response = await axios.post(`/integration/${integration}/channel/${identifier}/deploy`);
-            if (response?.data?.success && reloadChannels !== false) {
-                let newChann = response?.data?.data;
-                return this.channelStatusChanged(newChann);
-            }
+            const response = await axios.post(`/integration/${integrationId}/channel/${channelId}/move/`);
+
+            let newChann = response?.data?.data;
+            return newChann;
         } catch (ex) {
             console.log(ex);
+            if (ex?.response?.data?.message?.indexOf("no_agent_available") !== -1) {
+                return notification.error({
+                    message: "No hay Agentes",
+                    description: "No hay ningún agente disponible para mover este canal.",
+                });
+            }
+            return notification.error({
+                message: "Se ha producido un error",
+                description: "No se ha podido desplegar el canal, revise el log para mas información.",
+            });
+        }
+    };
+    deployToSpecificAgent = async (integrationId, channelId, toAgentId) => {
+        try {
+            const response = await axios.post(`/integration/${integrationId}/channel/${channelId}/move/${toAgentId}`);
+
+            let newChann = response?.data?.data;
+            return newChann;
+        } catch (ex) {
+            console.log(ex);
+            if (ex?.response?.data?.message?.indexOf("no_agent_available") !== -1) {
+                return notification.error({
+                    message: "No hay Agentes",
+                    description: "No hay ningún agente disponible para mover este canal.",
+                });
+            }
             return notification.error({
                 message: "Se ha producido un error",
                 description: "No se ha podido desplegar el canal, revise el log para mas información.",
@@ -98,13 +81,33 @@ class ChannelActions {
         }
     };
 
-    undeployChannel = async (integration, identifier, reloadChannels) => {
+    deployChannel = async (integrationId, channelId) => {
         try {
-            const response = await axios.post(`/integration/${integration}/channel/${identifier}/undeploy`);
-            if (response?.data?.success && reloadChannels !== false) {
-                let newChann = response?.data?.data;
-                return this.channelStatusChanged(newChann);
+            const response = await axios.post(`/integration/${integrationId}/channel/${channelId}/deploy`);
+
+            let newChann = response?.data?.data;
+            return newChann;
+        } catch (ex) {
+            console.log(ex);
+            if (ex?.response?.data?.message?.indexOf("no_agent_available") !== -1) {
+                return notification.error({
+                    message: "No hay Agentes",
+                    description: "No hay ningún agente disponible para desplegar este canal.",
+                });
             }
+            return notification.error({
+                message: "Se ha producido un error",
+                description: "No se ha podido desplegar el canal, revise el log para mas información.",
+            });
+        }
+    };
+
+    undeployChannel = async (integrationId, channelId) => {
+        try {
+            const response = await axios.post(`/integration/${integrationId}/channel/${channelId}/undeploy`);
+
+            let newChann = response?.data?.data;
+            return newChann;
         } catch (ex) {
             console.log(ex);
             return notification.error({

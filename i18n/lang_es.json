@@ -38,7 +38,8 @@
             "load": "Cargar",
             "finish": "Finalizar",
             "add_selection": "Seleccionar/Deseleccionar todas",
-            "resend": "Reenviar"
+            "resend": "Reenviar",
+            "confirm": "Confirmar"
         },
         "messages": {
             "saved": {
@@ -75,14 +76,44 @@
             "message": "Existen cambios pendientes, si continúa sus cambios se perderán, ¿Esta Seguro?"
         }
     },
+    "agents": {
+        "columns": {
+            "name": "Nombre",
+            "status": "Estado",
+            "approved": "Aprobado"
+        }
+    },
+    "deployed_integrations": {
+        "integration_form_subtitle": "Organización: {name}",
+        "channel": {
+            "button": {
+                "deploy": "Desplegar",
+                "undeploy": "Replegar"
+            },
+            "started": "En Ejecución",
+            "stoped": "Detenido",
+            "undeployed": "Sin Desplegar"
+        },
+        "agent_actions": {
+            "title": "Acciones Agente",
+            "move": "Mover canal",
+            "any_available": "Cualquiera Disponible"
+        }
+    },
     "integrations": {
+        "button": {
+            "confirmSave": "Confirmar y Guardar"
+        },
         "integration_form_title": "Integración: {name}",
+        "integration_form_subtitle": "Organización: {name}",
         "integration_edit_title": "Editando elemento",
         "columns": {
             "name": "Nombre",
             "description": "Descripción",
             "status": "Estado",
-            "message_count": "Mensajes",
+            "messages_sent": "Enviados",
+            "messages_error": "Errores",
+            "messages_total": "Total",
             "last_updated": "Ult. Modificación",
             "version": "Versión",
             "actions": "Acciones"
@@ -94,6 +125,13 @@
                 "undeploy": "Replegar",
                 "stop": "Detener",
                 "start": "Arrancar"
+            },
+            "context_menu": {
+                "configure": "Configurar",
+                "copy": "Copiar",
+                "cut": "Cortar",
+                "paste": "Pegar",
+                "delete": "Eliminar"
             },
             "started": "En Ejecución",
             "stoped": "Detenido",
@@ -110,6 +148,7 @@
         "users": "Usuarios",
         "profiles": "Perfiles",
         "organization": "Organizaciones",
+        "sections": "Secciones",
         "integration": "Integraciones",
         "node_type": "Tipos Nodos ",
         "camel_component": "Componentes Camel",

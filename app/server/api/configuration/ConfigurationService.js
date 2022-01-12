@@ -30,7 +30,7 @@ export class ConfigurationService extends BaseService {
             entity.id = uuid_v4(); //Por defecto se usa el increments pero se puede personalizar para que la tabla de configuracion utilice uuid
         }
         const res = await super.save(entity);
-        App.events.emit("config_saved" + code, { body });
+        App.events.emit("config_saved_" + code, { body });
         return res;
     }
 
@@ -56,6 +56,10 @@ export class ConfigurationService extends BaseService {
     async list(code, filters, start, limit) {
         const model = await this.getModel(code);
 
+        if (model.data.relation_schema) {
+            return this.listWithRelations(code, filters, start, limit);
+        }
+
         if (!filters) {
             filters = {};
         }
@@ -68,7 +72,7 @@ export class ConfigurationService extends BaseService {
         return res;
     }
 
-    async listWithRelations(code, filters, start, limit, relations, selectQuery) {
+    async listWithRelations(code, filters, start, limit) {
         const model = await this.getModel(code);
 
         if (!filters) {
@@ -77,16 +81,22 @@ export class ConfigurationService extends BaseService {
         if (!filters.sort) {
             // filters.sort = { field: "code", direction: "ascend" };
         }
-        let res = await super.listWithRelations(filters, start, limit, relations, selectQuery);
+        filters[`${model.data.table}.document_type`] = model.data.documentType;
 
+        let res = await super.listWithRelations(filters, start, limit, {
+            relation_schema: model.data.relation_schema || {},
+            selectQuery: model.data.selectQuery || "",
+            group_by: model.data.group_by,
+        });
+
+        let relations = model.data.relation_schema || {};
         res.data.forEach((element) => {
-            if (Array.isArray(relations)) {
-                relations.forEach((relation) => {
-                    element.data[relation.relationColumn] = element[relation.relationColumn];
-                });
-            } else {
-                element.data[relations.relationColumn] = element[relations.relationColumn];
+            if (!Array.isArray(relations)) {
+                relations = [relations];
             }
+            relations.forEach((relation) => {
+                element.data[relation.relation_column] = element[relation.relation_column];
+            });
         });
 
         return res;

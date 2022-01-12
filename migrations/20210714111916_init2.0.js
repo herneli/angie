@@ -22,31 +22,6 @@ exports.up = async function (knex) {
         });
     }
 
-    if (!(await knex.schema.hasTable("camel_component"))) {
-        await knex.schema.createTable("camel_component", function (table) {
-            table.uuid("id").primary();
-            table.string("name").notNullable();
-            table.text("xml_template");
-            table.json("options");
-        });
-    }
-    if (!(await knex.schema.hasTable("node_type"))) {
-        await knex.schema.createTable("node_type", function (table) {
-            table.uuid("id").primary();
-            table.string("name").notNullable();
-            table.string("description");
-            table.string("node_type", 30);
-            table.string("react_component_type", 30);
-            table.uuid("camel_component_id");
-            table.uuid("plugin_id");
-            table.string("handles");
-            table.string("form_type", 30);
-            table.uuid("form_type_plugin_id");
-            table.json("json_data_schema");
-            table.json("json_ui_schema");
-            table.json("defaults");
-        });
-    }
     if (!(await knex.schema.hasTable("users"))) {
         await knex.schema.createTable("users", function (table) {
             table.uuid("id").primary();
@@ -63,33 +38,6 @@ exports.up = async function (knex) {
             table.jsonb("data");
         });
     }
-    if (!(await knex.schema.hasTable("node_type_subflow"))) {
-        await knex.schema.createTable("node_type_subflow", function (table) {
-            table.uuid("id").primary();
-            table.string("custom_name").notNullable();
-            table.uuid("type_id").notNullable();
-            table.json("nodes");
-        });
-    }
-
-    if (!(await knex.schema.hasTable("historic"))) {
-        await knex.schema.createTable("historic", function (table) {
-            table.increments();
-            table.string("date", 30).notNullable();
-            table.integer("user_id");
-            table.string("action_url");
-            table.string("method");
-            table.integer("time_spent");
-        });
-    }
-    if (!(await knex.schema.hasTable("historic_data"))) {
-        await knex.schema.createTable("historic_data", function (table) {
-            table.increments();
-            table.integer("historic_id").notNullable();
-            table.json("data");
-            table.json("client_data");
-        });
-    }
 
     if (!(await knex.schema.hasTable("config_model"))) {
         await knex.schema.createTable("config_model", function (table) {
@@ -100,26 +48,7 @@ exports.up = async function (knex) {
         });
     }
 
-    if (!(await knex.schema.hasTable("package"))) {
-        await knex.schema.createTable("package", function (table) {
-            table.increments();
-            table.string("code").notNullable();
-            table.string("name").notNullable();
-            table.string("remote");
-            table.unique(["code"]);
-        });
-    }
-
-    if (!(await knex.schema.hasTable("package_version"))) {
-        await knex.schema.createTable("package_version", function (table) {
-            table.increments();
-            table.string("code").notNullable();
-            table.string("version").notNullable();
-            table.jsonb("dependencies");
-            table.boolean("modified");
-            table.unique(["code", "version"]);
-        });
-    }
+    
 
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
@@ -144,6 +73,10 @@ exports.up = async function (knex) {
             table.unique(["document_type", "code"]);
         });
     }
+
+    await knex.from("organization").update({ document_type: "organization" });
+    await knex.from("users").update({ document_type: "user" });
+    await knex.from("profile").update({ document_type: "profile" });
 };
 
 exports.down = async function (knex) {
@@ -187,12 +120,6 @@ exports.down = async function (knex) {
 
     if (await knex.schema.hasTable("script_config")) {
         await knex.schema.dropTable("script_config");
-    }
-    if (await knex.schema.hasTable("package")) {
-        await knex.schema.dropTable("package");
-    }
-    if (await knex.schema.hasTable("package_version")) {
-        await knex.schema.dropTable("package_version");
     }
     if (await knex.schema.hasTable("integration_config")) {
         await knex.schema.dropTable("integration_config");

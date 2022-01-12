@@ -3,25 +3,37 @@ import ReactFlow, { ReactFlowProvider, Controls, MiniMap, Background } from "rea
 
 import Sidebar from "./Sidebar";
 import MultiTargetNode from "./custom_nodes/MultiTargetNode";
+import ButtonNode from "./custom_nodes/ButtonNode";
+import CommentNode from "./custom_nodes/CommentNode";
 import Transformer from "./Transformer";
 
+import T from "i18n-react";
 import { v4 as uuid_v4 } from "uuid";
 
 import "./Channel.css";
 import NodeEditModal from "./NodeEditModal";
 
-import lodash, { filter } from "lodash";
+import lodash from "lodash";
+import useEventListener from "../../../common/useEventListener";
+import { Dropdown, Menu } from "antd";
+import Icon from "@mdi/react";
+import { mdiClipboard, mdiCogs, mdiContentCopy, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
+import ChannelContextProvider from "../../../components/channels/ChannelContext";
 
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
+    ButtonNode: ButtonNode,
+    CommentNode: CommentNode,
 };
 
-const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
+const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeTypes }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState(undefined);
     const [selectedType, changeSelection] = useState(null);
     const [editNodeVisible, setEditNodeVisible] = useState(false);
+
+    const [selectedNodes, changeSelectedNodes] = useState(null);
 
     /**
      * Almacena la instancia actual del RFlow
@@ -42,6 +54,7 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
             console.log("transform!");
             setElements(Transformer.transformFromBd(channel));
         }
+        // console.log(channel);
     }, [channel]);
 
     /**
@@ -137,10 +150,21 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
     const onNodeEditEnd = (id, newData) => {
         setEditNodeVisible(false);
 
+        onMultiNodeEditEnd([{ id, ...newData }]);
+    };
+
+    /**
+     * Metodo ejecutado al finalizar la edición de una lista de nodos
+     * @param {*} newNodeList
+     */
+    const onMultiNodeEditEnd = (newNodeList) => {
+        setEditNodeVisible(false);
+
         let newChannel = lodash.cloneDeep(channel);
 
         let newNodes = newChannel.nodes.map((node) => {
-            if (node.id === id) {
+            let newData = lodash.find(newNodeList, { id: node.id });
+            if (newData) {
                 node = { ...node, ...newData };
                 node.data.handles = generateHandleIds(node.data.handles);
             }
@@ -167,15 +191,33 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
             y: event.clientY - reactFlowBounds.top,
         });
 
+        addNode(type, position, extra);
+    };
+
+    /**
+     * Añade un nuevo nodo
+     *
+     * @param {*} type
+     * @param {*} position
+     * @param {*} data
+     */
+    const addNode = (type_id, position, data) => {
+        addNodes([{ id: uuid_v4(), type_id, position, data }]);
+    };
+
+    /**
+     * Añade una lista de nodos
+     *
+     * @param {*} newNodes
+     */
+    const addNodes = (newNodes) => {
         let newChannel = lodash.cloneDeep(channel);
-        newChannel.nodes.push({
-            id: uuid_v4(),
-            type_id: type,
-            custom_name: extra.label,
-            links: [],
-            position: position,
-            data: lodash.omit(extra, ["label"]),
-        });
+        newChannel.nodes.push(
+            ...newNodes.map((n) => ({
+                ...n,
+                links: n.links || [],
+            }))
+        );
         onChannelUpdate(newChannel);
     };
 
@@ -189,45 +231,246 @@ const Channel = ({ channel, onChannelUpdate, nodeTypes }) => {
         setEditNodeVisible(true);
     };
 
+    /**
+     * Event handler para las acciones de teclado
+     */
+    useEventListener("keyup", async (event) => {
+        //Ignorar el evento si se realiza fuera del tab panel
+        if (event.target.className.indexOf("ant-tabs-tabpane") === -1) {
+            event.stopPropagation();
+            return;
+        }
+        if (event.keyCode === 67 && event.ctrlKey && !editNodeVisible) {
+            console.log("copy pressed");
+            await performCopy();
+
+            event.stopPropagation();
+        }
+        if (event.keyCode === 86 && event.ctrlKey && !editNodeVisible) {
+            console.log("paste pressed");
+
+            if (await checkClipboard()) {
+                await performPaste();
+            }
+            event.stopPropagation();
+        }
+        if (event.keyCode === 88 && event.ctrlKey && !editNodeVisible) {
+            console.log("cut pressed");
+            await performCut();
+            event.stopPropagation();
+        }
+        if (event.keyCode === 90 && event.ctrlKey && !editNodeVisible) {
+            console.log("undo pressed");
+            undo();
+            event.stopPropagation();
+        }
+        if (event.keyCode === 89 && event.ctrlKey && !editNodeVisible) {
+            console.log("redo pressed");
+            redo();
+            event.stopPropagation();
+        }
+    });
+
+    /**
+     * Corta los elementos seleccionados en el flujo actual almacenandolos en el portapapeles.
+     *
+     * @returns
+     */
+    const performCut = async () => {
+        let current = lodash.cloneDeep(
+            lodash.filter(channel.nodes, (n) => selectedNodes && lodash.find(selectedNodes, { id: n.id }))
+        );
+        let strContent = JSON.stringify(current);
+        onElementsRemove(lodash.cloneDeep(current));
+
+        await navigator.clipboard.writeText(strContent);
+        return strContent;
+    };
+
+    /**
+     * Copia los elementos seleccionados en el flujo actual almacenandolos en el portapapeles.
+     * @returns
+     */
+    const performCopy = async () => {
+        let current = lodash.cloneDeep(
+            lodash.filter(channel.nodes, (n) => selectedNodes && lodash.find(selectedNodes, { id: n.id }))
+        );
+        let strContent = JSON.stringify(current);
+
+        await navigator.clipboard.writeText(strContent);
+        return strContent;
+    };
+
+    /**
+     * Añade elementos al flujo actual en base al portapapeles
+     */
+    const performPaste = async () => {
+        try {
+            let clipboardContent = await navigator.clipboard.readText();
+
+            let nodes = JSON.parse(clipboardContent);
+            //Recrear los identificadores para evitar duplicidades
+            nodes.forEach((el) => {
+                const newId = uuid_v4();
+                clipboardContent = clipboardContent.replaceAll(el.id, newId);
+
+                //TODO quitar las referencias a nodos que no esten dentro de lo copiado?
+            });
+            //Volver a procesar el string una vez modificado con los nuevos identificadores
+            nodes = JSON.parse(clipboardContent);
+
+            addNodes(
+                //Recalcular la posición para no superponer
+                nodes.map((n) => ({
+                    ...n,
+                    position: { x: n.position.x + 50, y: n.position.y + 50 },
+                }))
+            );
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
+
+    const checkClipboard = async () => {
+        try {
+            const clipboardContent = await navigator.clipboard.readText();
+
+            const nodes = JSON.parse(clipboardContent);
+            //TODO check nodes valid
+
+            return true;
+        } catch (ex) {
+            return false;
+        }
+    };
+
+    const contextMenu = () => {
+        const multiple = selectedNodes && selectedNodes.length > 1;
+        const single = selectedNodes && selectedNodes.length === 1;
+        const is_node_selected = selectedNodes && selectedNodes.length === 1 && !lodash.has(selectedNodes[0], "target");
+
+        return (
+            <Menu>
+                {single && is_node_selected && (
+                    <>
+                        <Menu.Item
+                            icon={<Icon path={mdiCogs} size={0.6} />}
+                            key="configure"
+                            onClick={() => startEditing(selectedNodes[0].id)}>
+                            {T.translate("integrations.channel.context_menu.configure")}
+                        </Menu.Item>
+                        <Menu.Divider />
+                    </>
+                )}
+                {((single && is_node_selected) || multiple) && (
+                    <Menu.Item
+                        icon={<Icon path={mdiContentCopy} size={0.6} />}
+                        key="copy"
+                        onClick={() => performCopy()}>
+                        {T.translate("integrations.channel.context_menu.copy")}
+                    </Menu.Item>
+                )}
+                {((single && is_node_selected) || multiple) && (
+                    <Menu.Item
+                        icon={<Icon path={mdiScissorsCutting} size={0.6} />}
+                        key="cut"
+                        onClick={() => performCut()}>
+                        {T.translate("integrations.channel.context_menu.cut")}
+                    </Menu.Item>
+                )}
+                {!single && !multiple && (
+                    <Menu.Item
+                        icon={<Icon path={mdiClipboard} size={0.6} />}
+                        key="paste"
+                        onClick={() => performPaste()}>
+                        {T.translate("integrations.channel.context_menu.paste")}
+                    </Menu.Item>
+                )}
+                {(single || multiple) && (
+                    <>
+                        <Menu.Divider />
+
+                        <Menu.Item
+                            icon={<Icon path={mdiTrashCan} size={0.6} />}
+                            key="delete"
+                            onClick={() => onElementsRemove(selectedNodes)}>
+                            {T.translate("integrations.channel.context_menu.delete")}
+                        </Menu.Item>
+                    </>
+                )}
+            </Menu>
+        );
+    };
+
     return (
         <div>
             <div className="dndflow">
-                <ReactFlowProvider>
-                    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                        <ReactFlow
-                            elements={elements}
-                            onConnect={onConnect}
-                            onElementsRemove={onElementsRemove}
-                            onLoad={onLoad}
-                            onDrop={onDrop}
-                            nodeTypes={customNodes}
-                            deleteKeyCode={46}
-                            onDragOver={onDragOver}
-                            onNodeDragStop={(event, node) => {
-                                onNodeEditEnd(node.id, {
-                                    position: node.position,
-                                    data: node.data,
-                                });
-                            }}
-                            onNodeDoubleClick={(event, node) => {
-                                startEditing(node.id);
-                            }}>
-                            <Controls />
-                            <MiniMap />
-                            <Background />
-                        </ReactFlow>
-                    </div>
+                <ChannelContextProvider currentChannel={channel} currentStatus={channelStatus}>
+                    <ReactFlowProvider>
+                        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                            <Dropdown overlay={contextMenu()} trigger={["contextMenu"]}>
+                                <ReactFlow
+                                    elements={elements}
+                                    onConnect={onConnect}
+                                    onElementsRemove={onElementsRemove}
+                                    onLoad={onLoad}
+                                    onDrop={onDrop}
+                                    nodeTypes={customNodes}
+                                    deleteKeyCode={46}
+                                    multiSelectionKeyCode={17}
+                                    onDragOver={onDragOver}
+                                    onSelectionDragStop={(event, nodes) => onMultiNodeEditEnd(nodes)}
+                                    onPaneContextMenu={() => changeSelectedNodes([])}
+                                    onNodeContextMenu={(event, node) => {
+                                        if (selectedNodes == null || selectedNodes?.length < 2) {
+                                            console.log("setting");
+                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                        }
+                                    }}
+                                    onEdgeContextMenu={(event, node) => {
+                                        if (selectedNodes == null || selectedNodes?.length < 2) {
+                                            console.log("setting");
+                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                        }
+                                    }}
+                                    onNodeDragStop={(event, node) => {
+                                        if (selectedNodes != null && selectedNodes?.length > 1) {
+                                            onMultiNodeEditEnd(
+                                                lodash.filter(
+                                                    reactFlowInstance.getElements(),
+                                                    (el) => el.id && lodash.find(selectedNodes, { id: el.id })
+                                                )
+                                            );
+                                            //Actualmente hay un bug y la selección multiple con Control no funciona del todo bien
+                                            //De ahí que se haga la busqueda en los elements de la seleccion y notificar de la modificación de los mismos.
+                                            //https://github.com/wbkd/react-flow/issues/1314
+                                        } else {
+                                            onNodeEditEnd(node.id, {
+                                                position: node.position,
+                                                data: node.data,
+                                            });
+                                        }
+                                    }}
+                                    onNodeDoubleClick={(event, node) => startEditing(node.id)}
+                                    onSelectionChange={(elements) => changeSelectedNodes(elements)}>
+                                    <Controls />
+                                    <MiniMap />
+                                    <Background />
+                                </ReactFlow>
+                            </Dropdown>
+                        </div>
 
-                    <Sidebar nodeTypes={nodeTypes} />
+                        <Sidebar nodeTypes={nodeTypes} />
 
-                    <NodeEditModal
-                        selectedType={selectedType}
-                        nodeTypes={nodeTypes}
-                        editNodeVisible={editNodeVisible}
-                        onEditCancel={() => setEditNodeVisible(false)}
-                        onNodeEditEnd={onNodeEditEnd}
-                    />
-                </ReactFlowProvider>
+                        <NodeEditModal
+                            selectedType={selectedType}
+                            nodeTypes={nodeTypes}
+                            editNodeVisible={editNodeVisible}
+                            onEditCancel={() => setEditNodeVisible(false)}
+                            onNodeEditEnd={onNodeEditEnd}
+                        />
+                    </ReactFlowProvider>
+                </ChannelContextProvider>
             </div>
         </div>
     );

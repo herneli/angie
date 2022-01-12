@@ -1,17 +1,35 @@
 import { useKeycloak } from "@react-keycloak/web";
-import React, { useState } from "react";
-import { Menu, Button, Popover } from "antd";
-import { Link } from "react-router-dom";
-import AuthorizedFunction from "../components/security/AuthorizedFunction";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Button, Popover } from "antd";
+import { useLocation, Link } from "react-router-dom";
+import MenuHandler from "../common/MenuHandler";
 
 import T from "i18n-react";
 
-import { mdiAccount, mdiHome, mdiLogout, mdiPackageVariantClosed, mdiSourceBranch } from "@mdi/js";
+import { mdiAccount, mdiHome, mdiLogout } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const AppMenu = () => {
+const AppMenu = ({ tokenLoaded }) => {
     const { keycloak } = useKeycloak();
+    const { pathname } = useLocation();
     const [selected, changeSelection] = useState(null);
+    const [paintedMenu, setPaintedMenu] = useState([]);
+
+    useEffect(() => {
+        //Se utiliza la propiedad key del menu para identificar la seleccion en función de la url
+        const splitted = pathname.split("/");
+
+        changeSelection(`/${splitted[1]}`);
+    }, [pathname]);
+
+    useEffect(() => {
+        (async () => {
+            if (keycloak.tokenParsed && keycloak.tokenParsed.sub) {
+                const menu = await getMenuItems();
+                setPaintedMenu(menu);
+            }
+        })();
+    }, [tokenLoaded]);
 
     //TODO get current center (#4)
     const userPopup = keycloak && keycloak.authenticated && (
@@ -41,26 +59,30 @@ const AppMenu = () => {
         </span>
     );
 
+    const getMenuItems = async () => {
+        let menu = [];
+        let itemsAuthorized = [];
+        let dataMenu = await MenuHandler.getMenu(keycloak.tokenParsed.sub, keycloak);
+
+        if (dataMenu != null && dataMenu.length > 0) {
+            itemsAuthorized = dataMenu;
+        }
+
+        return itemsAuthorized;
+    };
+
     //TODO translate main links
     return (
         <div>
             <div className="logo">
                 <img alt="logo" src={process.env.PUBLIC_URL + "/logo512.png"} />
             </div>
-            <Menu onClick={(e) => changeSelection(e.key)} selectedKeys={[selected]} mode="horizontal">
-                <Menu.Item key="home" icon={<Icon path={mdiHome} size={0.6} />}>
+            <Menu selectedKeys={[selected]} mode="horizontal">
+                <Menu.Item key="/" icon={<Icon path={mdiHome} size={0.6} />}>
                     <Link to="/">Home Page </Link>
                 </Menu.Item>
-                {AuthorizedFunction(["default-roles-angie"]) && (
-                    <>
-                        <Menu.Item key="admin" icon={<Icon path={mdiSourceBranch} size={0.6} />}>
-                            <Link to="/admin">Administration </Link>
-                        </Menu.Item>
-                        <Menu.Item key="packages" icon={<Icon path={mdiPackageVariantClosed} size={0.6} />}>
-                            <Link to="/packages">Packages </Link>
-                        </Menu.Item>
-                    </>
-                )}
+
+                <>{keycloak && keycloak.authenticated && paintedMenu}</>
 
                 {keycloak && !keycloak.authenticated && (
                     <Menu.Item
@@ -82,9 +104,8 @@ const AppMenu = () => {
                                 {keycloak.tokenParsed.preferred_username}
                             </Menu.Item>
                         </Popover>
-                        <Menu.Item key="logoutButton">
+                        <Menu.Item key="logoutButton" className="logoutBtn">
                             <Button
-                                className="logoutBtn"
                                 type="primary"
                                 size="middle"
                                 shape="circle"

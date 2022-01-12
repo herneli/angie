@@ -17,8 +17,8 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
      */
     useEffect(() => {
         if (selectedType && editNodeVisible) {
-            const type = lodash.find(nodeTypes, {
-                id: selectedType.type_id,
+            const type = lodash.find(nodeTypes, (el) => {
+                return el.id === selectedType.type_id || el.code === selectedType.type_id;
             });
             let jsonSchema = {};
             try {
@@ -89,6 +89,8 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
                     schema={formData.schema}
                     formData={formData.data}
                     uiSchema={formData.uiSchema}
+                    liveOmit={formData.schema.liveOmit ? formData.schema.liveOmit : false}
+                    omitExtraData={formData.schema.omitExtraData ? formData.schema.omitExtraData : false}
                     widgets={formConfig.widgets}
                     fields={formConfig.fields}
                     onChange={(e) => setFormData({ ...formData, data: e.formData })}

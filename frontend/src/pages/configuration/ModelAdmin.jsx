@@ -31,7 +31,7 @@ const ModelAdmin = ({ model, fixedData }) => {
 
         api.getModelInfo(model)
             .then((element) => {
-                api.getModelDataList(model, searchFilters, element?.relation_schema, element?.selectQuery).then(
+                api.getModelDataList(model, searchFilters).then(
                     (list) => {
                         const modelDataDict = list.reduce((result, model) => {
                             result = { ...result, [model.id]: model };

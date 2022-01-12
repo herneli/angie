@@ -1,10 +1,7 @@
-import React, { Component, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { asNumber, guessType } from "@rjsf/core/lib/utils";
-import { TreeSelect } from "antd";
-import T from "i18n-react";
+import { Select } from "antd";
 import axios from "axios";
-import get from "lodash/get";
-import querystring from "query-string";
 
 const MultipleSelectWidget = (props) => {
     const [value, setValue] = useState({});
@@ -44,28 +41,32 @@ const MultipleSelectWidget = (props) => {
 
     useEffect(async () => {
         if (props.options.url) {
+            
             let response = await axios.get(props.options.url);
             if ((response.success = "true")) {
-                setTreeData(response.data);
+                
+                setTreeData(response.data.data);
             }
         }
-
-        // if(props && props.schema && props.schema.items && props.schema.items.enum && !(props.schema.items.enum instanceof Array)){
-        //     let optionsOnServerSide = await axios.get(props.options.enumOptions)
-        //     if(optionsOnServerSide.success = "true"){
-        //         props.schema.items.enum = optionsOnServerSide.data
-        //     }
-        // }
+        
+        if(props && props.schema && props.schema.items && props.schema.items.enum && !(props.schema.items.enum instanceof Array)){
+            
+            let optionsOnServerSide = await axios.get(props.options.enumOptions)
+            if(optionsOnServerSide.success = "true"){
+                props.schema.items.enum = optionsOnServerSide.data
+               
+            }
+        }
     }, []);
 
     return (
         <>
-            <TreeSelect
+            <Select
                 style={{ width: "100%" }}
-                multiple
+                mode="multiple"
                 value={props.value}
                 dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                treeData={treeData}
+                options={treeData}
                 onChange={handleOnChange}
                 placeholder="Please select"
                 treeDefaultExpandAll

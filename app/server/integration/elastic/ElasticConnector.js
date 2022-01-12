@@ -1,11 +1,8 @@
-import { Client } from '@elastic/elasticsearch';
-import App from '../../../../frontend/src/App';
+import { Client } from "@elastic/elasticsearch";
 
 class ElasticConnector {
-
-    connection = null
-    host = null
-
+    connection = null;
+    host = null;
 
     getConnection() {
         if (!this.connection) {
@@ -15,11 +12,9 @@ class ElasticConnector {
     }
 
     connect(host) {
-        this.host = host || App.settings.getConfigValue("rabbitmq:host");
-        this.connection = new Client({ node: host || App.settings.getConfigValue('core.application.elastic.host') })
+        this.host = host || process.env.ELASTIC_URL;
+        this.connection = new Client({ node: host });
     }
-
 }
-
 
 export default new ElasticConnector(); //Singleton

@@ -1,0 +1,10 @@
+[
+  {
+    "id": "a1c50628-d27b-4631-a477-c9ecccd52bd9",
+    "code": "core.utils.inject_button",
+    "name": "Inject Button",
+    "name_": "Generic Input CLONED",
+    "options": "{\n    \"target\": \"string\",\n    \"url\": \"string\",\n    \"out_format\": \"string\"\n}",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <setBody>\n        <simple>\n<![CDATA[{{safe code}}]]>\n        </simple>\n    </setBody>\n    {{#if (eq out_format \"json\")}}\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    {{/if}}\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+  }
+]

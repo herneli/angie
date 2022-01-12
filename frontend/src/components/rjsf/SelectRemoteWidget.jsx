@@ -55,6 +55,7 @@ function getselectOptions(url, filters, returnPath) {
 export default class SelectRemoteWidget extends Component {
     state = { options: [] };
     componentDidMount() {
+        const { schema } = this.props;
         let { selectOptions, filters = null } = this.props.options;
         let valueField = "code";
         let labelField = "name";
@@ -80,6 +81,10 @@ export default class SelectRemoteWidget extends Component {
             }));
             options = [{ value: null, label: T.translate("Select...") }, ...options];
 
+            if (schema?.items?.enum) {
+                schema.items.enum = entries.map((e) => get(e, valueField));
+            }
+
             this.setState({ ...this.state, options: options });
         });
     }
@@ -96,16 +101,15 @@ export default class SelectRemoteWidget extends Component {
     };
 
     render() {
-        let { schema, id, label, required, disabled, readonly, value = "", multiple, autofocus } = this.props;
+        let { schema, id, label, required, disabled, readonly, value = "", options, autofocus } = this.props;
 
-        const emptyValue = multiple ? [] : "";
+        const emptyValue = options.mode === "multiple" ? [] : "";
         return (
             <Select
-                multiple={typeof multiple === "undefined" ? false : multiple}
                 options={this.state.options}
                 value={typeof value === "undefined" || value === null ? emptyValue : value}
                 required={required}
-                mode={this.props.options && this.props.options.mode ? this.props.options.mode : null}
+                mode={options && options.mode ? options.mode : null}
                 disabled={disabled || readonly}
                 autoFocus={autofocus}
                 onChange={this.handleOnChange}

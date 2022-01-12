@@ -6,7 +6,7 @@
 .dndflow {
     flex-direction: column;
     display: flex;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 294px);
 }
 
 .dndflow aside {
@@ -86,6 +86,7 @@
     padding: 10px;
     text-align: center;
     width: 150px;
+    background-color: #fff;
 }
 
 .dndflow .react-flow__edge-path {
@@ -95,4 +96,25 @@
 
 .avoid-selection {
     user-select: none;
+}
+
+.react-flow__node-ButtonNode .react-flow__handle {
+    background: #237a52;
+}
+
+.react-flow__node-ButtonNode {
+    border-color: #237a52;
+}
+
+.react-flow__node-CommentNode .react-flow__handle {
+    background: #7a7423;
+}
+
+.react-flow__node-CommentNode {
+    border-color: #7a7423;
+    background-color: #fffebc !important;
+}
+
+.react-flow__node.selected {
+    box-shadow: 0 0 0 0.5px #1a192b;
 }

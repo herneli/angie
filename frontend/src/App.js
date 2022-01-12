@@ -1,7 +1,7 @@
 import "./App.less";
 import { withRouter } from "react-router-dom";
 import AppMain from "./layout/AppMain";
-import React, { Component } from "react";
+import React, { Component,useState, useEffect } from "react";
 import AxiosConfig from "./common/AxiosConfig";
 import Config from "./common/Config";
 import TranslationLoader from "./common/TranslationLoader";
@@ -11,10 +11,12 @@ import AppMenu from "./layout/AppMenu";
 
 import configureKeycloak from "./configureKeycloak";
 import { Layout } from "antd";
+import MenuHandler from "./common/MenuHandler";
 
 class App extends Component {
     state = {
         loaded: false,
+        tokenLoaded: false,
     };
 
     /**
@@ -31,6 +33,7 @@ class App extends Component {
         await Config.loadConfigParams();
         this.keycloak = await configureKeycloak();
         await TranslationLoader.loadTranslations();
+
         this.setState({
             loaded: true,
         });
@@ -48,11 +51,17 @@ class App extends Component {
     tokenLogger = (tokens) => {
         console.log("onKeycloakTokens", tokens);
         localStorage.setItem("tokenJWT", tokens.token);
+        if(tokens.idToken != undefined){
+            this.setState({
+                tokenLoaded: true,
+            });
+        }
         AxiosConfig.reloadToken()
+       
     };
 
     render() {
-        const { loaded } = this.state;
+        const { loaded,tokenLoaded } = this.state;
         return (
             <div>
                 {loaded && (
@@ -63,7 +72,7 @@ class App extends Component {
                         initOptions={{ checkLoginIframe: false }}
                     >
                         <Layout className="App">
-                            <AppMenu />
+                            <AppMenu tokenLoaded={tokenLoaded}/>
                             <AppMain app={this} />
                         </Layout>
                     </ReactKeycloakProvider>
