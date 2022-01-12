@@ -110,7 +110,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
     const showMessages = (record, integration) => {
         history.push({
-            pathname: `/packages/${integration.package_code}/versions/${integration.package_version}/messages/${record.id}`,
+            pathname: `/messages/${record.id}`,
         });
     };
 

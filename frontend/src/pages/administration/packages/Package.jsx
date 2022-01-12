@@ -9,11 +9,7 @@ import { createUseStyles } from "react-jss";
 import PackageContextProvider from "../../../components/packages/PackageContext";
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
-<<<<<<< HEAD
-import Message from "../message/Message";
 import ModelEdit from "../../configuration/ModelEdit";
-=======
->>>>>>> 2a3d1ba5bea80d0c7b719074c818bed897316a92
 
 const { Sider, Content, Header } = Layout;
 
@@ -91,11 +87,6 @@ export default function Package({ match }) {
                                 exact
                                 path={path + "/integrations/:id/:channel"}
                                 render={({ match }) => <Integration match={match} />}
-                            />
-                            <Route
-                                exact
-                                path={path + "/messages/:channel_id"}
-                                render={({ match }) => <Message match={match} packageUrl={url} />}
                             />
                             <Route
                                 exact

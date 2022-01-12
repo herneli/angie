@@ -799,9 +799,7 @@ const Integration = () => {
             )}
 
             <Tabs
-                tabBarExtraContent={
-                    <Space size="small">{channels && activeTab && drawStatusButtons()}</Space>
-                }
+                tabBarExtraContent={<Space size="small">{channels && activeTab && drawStatusButtons()}</Space>}
                 type="editable-card"
                 onChange={(activeKey) => setActiveTab(activeKey) && console.log("wii")}
                 activeKey={activeTab}
@@ -828,7 +826,14 @@ const Integration = () => {
                 ))}
             </Tabs>
 
-            {editingChannelVisible && <ChannelOptions visible={editingChannelVisible} onOk={editTabOk} onCancel={editTabCancel} channel={editingChannel} />}
+            {editingChannelVisible && (
+                <ChannelOptions
+                    visible={editingChannelVisible}
+                    onOk={editTabOk}
+                    onCancel={editTabCancel}
+                    channel={editingChannel}
+                />
+            )}
 
             <PreventTransitionPrompt
                 when={pendingChanges}

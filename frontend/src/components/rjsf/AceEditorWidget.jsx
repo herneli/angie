@@ -30,7 +30,7 @@ const AceEditorWidget = function ({ id, value, onChange, options, readonly }) {
             }
             setTimeout(() => onChange(newValue), 100); //Force rerender beautified
         } catch (ex) {
-            console.error(ex);
+            // console.error(ex);
         }
     };
 

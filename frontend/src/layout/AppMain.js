@@ -29,7 +29,7 @@ const AppMain = ({ app, location }) => {
             <PrivateRoute
                 roles={["default-roles-angie"]}
                 exact
-                path="/packages/:packageCode/versions/:packageVersion/messages/:channel_id"
+                path="/messages/:channel_id"
                 component={Message}
                 {...defaultProps}
             />
