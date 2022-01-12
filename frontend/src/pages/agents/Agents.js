@@ -6,19 +6,12 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import { createUseStyles } from "react-jss";
-import {
-    mdiCancel,
-    mdiCheck,
-    mdiCheckCircleOutline,
-    mdiCloseCircleOutline,
-    mdiReload,
-    mdiTextLong,
-    mdiTrashCan,
-} from "@mdi/js";
+import { mdiCancel, mdiCheck, mdiCheckCircleOutline, mdiCogs, mdiReload, mdiTextLong, mdiTrashCan } from "@mdi/js";
 import Icon from "@mdi/react";
 
 import AceEditor from "react-ace";
 import { Link } from "react-router-dom";
+import AgentOptions from "./AgentOptions";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -42,6 +35,8 @@ const Agents = () => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
+    let [optionsVisible, setOptionsVisible] = useState(false);
+    let [currentAgent, setCurrentAgent] = useState(null);
 
     const [pagination, setPagination] = useState({});
 
@@ -220,6 +215,22 @@ const Agents = () => {
                     return (
                         <Space size="middle">
                             <Button
+                                key="options"
+                                type="text"
+                                onClick={() => {
+                                    setCurrentAgent(record);
+                                    setOptionsVisible(true);
+                                }}
+                                icon={
+                                    <Icon
+                                        path={mdiCogs}
+                                        className={classes.icon}
+                                        title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+
+                            <Button
                                 key="log"
                                 type="text"
                                 onClick={() => showAgentLog(record)}
@@ -292,6 +303,25 @@ const Agents = () => {
         },
     ];
 
+    const cancelOptions = () => {
+        setOptionsVisible(false);
+        setCurrentAgent(null);
+    };
+
+    const saveAgent = async ({ formData }) => {
+        //TODo
+        try {
+            await axios.put(`/jum_agent/${formData.id}`, { id: formData.id, options: formData.options });
+            await search();
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
+
+        cancelOptions();
+    };
     return (
         <Content>
             <Row className={classes.card}></Row>
@@ -309,6 +339,10 @@ const Agents = () => {
                 size="small"
                 expandable={{ expandedRowKeys: dataSourceKeys }}
             />
+
+            {optionsVisible && (
+                <AgentOptions agent={currentAgent} visible={optionsVisible} onOk={saveAgent} onCancel={cancelOptions} />
+            )}
         </Content>
     );
 };

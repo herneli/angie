@@ -6,6 +6,7 @@ import * as queryString from "query-string";
 import { ConfigurationService } from "../configuration/ConfigurationService";
 import { IntegrationDao } from "../integration/IntegrationDao";
 import { JUMAgentService } from "../jum_agents";
+import { IntegrationService } from "../integration";
 
 export class IntegrationChannelService {
     constructor() {
@@ -78,7 +79,9 @@ export class IntegrationChannelService {
      * @returns
      */
     async findIntegrationChannel(integrationId, channelId) {
-        const integration = await this.dao.loadById(integrationId);
+        
+        const integrationService = new IntegrationService();
+        const integration = await integrationService.loadById(integrationId);
         return lodash.find(integration.data.channels, { id: channelId });
     }
 
@@ -89,7 +92,8 @@ export class IntegrationChannelService {
      * @returns
      */
     async findChannel(channelId) {
-        const integrations = await this.dao.loadAllData();
+        const integrationService = new IntegrationService();
+        const {data: integrations} = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -107,7 +111,8 @@ export class IntegrationChannelService {
      * @returns
      */
     async getIntegrationByChannel(channelId) {
-        const integrations = await this.dao.loadAllData();
+        const integrationService = new IntegrationService();
+        const {data: integrations} = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -119,13 +124,31 @@ export class IntegrationChannelService {
     }
 
     /**
+     * Obtiene una lista con todos los canales de la aplicación
+     * 
+     * @returns 
+     */
+    async listAllChannels() {
+        const integrationService = new IntegrationService();
+        const {data: integrations} = await integrationService.list();
+
+        let channels = [];
+        for (const integration of integrations) {
+            channels = [...channels, ...integration.data.channels];
+        }
+
+        return channels;
+    }
+
+    /**
      * Busca un canal mediante su identificador
      *
      * @param {*} channelId
      * @returns
      */
     async getChannelById(channelId) {
-        const integrations = await this.dao.loadAllData();
+        const integrationService = new IntegrationService();
+        const {data: integrations} = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });

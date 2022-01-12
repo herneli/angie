@@ -44,8 +44,8 @@ const editTabFormSchema = {
                     restart_policy: {
                         title: "Política Reinicios",
                         type: "string",
-                        enum: ["none", "same_agent", "any_agent"],
-                        enumNames: ["Detener", "Mismo Agente", "Cualquier Agente Disponible"],
+                        enum: ["none", "unless_stopped", 'allways'],
+                        enumNames: ["No hacer nada", "Reiniciar si estaba desplegado", "Reiniciar siempre"],
                         default: "none",
                     },
                     agent_assign_mode: {

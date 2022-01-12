@@ -163,7 +163,7 @@ export class IntegrationChannelController extends BaseController {
 
             await service.sendMessageToRoute(channelId, endpoint, content);
 
-            response.status(200);
+            response.status(200).end();
         } catch (e) {
             next(e);
         }

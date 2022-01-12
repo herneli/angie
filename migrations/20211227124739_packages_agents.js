@@ -96,6 +96,11 @@ exports.up = async function (knex) {
                 table.string("last_online_date", 40);
             });
         }
+        if (!(await knex.schema.hasColumn("jum_agent", "options"))) {
+            await knex.schema.alterTable("jum_agent", function (table) {
+                table.json("options");
+            });
+        }
     }
 
     if (!(await knex.schema.hasTable("cache"))) {

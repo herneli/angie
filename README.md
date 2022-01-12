@@ -162,6 +162,7 @@ Configuraciones necesarias:
 5. _Opcional:_ Establecer el tema **angie** en el realm.
 
 **Administrador**  
+
 6. Desde la pantalla Clients, en **angie-front** crear un rol 'admin'  
 7. Asignar al usuario creado ese rol  
 8. Crear un "Client Scope" llamado "client-roles-angie" (todo por defecto)  
@@ -169,11 +170,17 @@ Configuraciones necesarias:
 10. Ir al cliente **angie-front** y asociarle el Client Scope creado como Default (parte superior)
 
 **Acceso REST**  
-11. Seleccionar el cliente **admin-cli**  
-12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential' 13. Guardar, aparecerá la pestaña Service Account Roles 14. 14. En Client Roles seleccionar `realm_management`  
-15. Asociar el rol `view_users` mediante el botón **Add Selected**
 
-**Roles** 16. Crear un Rol: 'admin' a nivel de Realm 17. Asignar el usuario de la aplicación a dicho rol
+11. Seleccionar el cliente **admin-cli**  
+12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential' 
+13. Guardar, aparecerá la pestaña Service Account Roles 
+14. En Client Roles seleccionar `realm_management`  
+15. Asociar el rol `view_users` mediante el botón **Add Selected** 
+
+**Roles**  
+
+16. Crear un Rol: 'admin' a nivel de Realm 
+17. Asignar el usuario de la aplicación a dicho rol
 
 ## Tests
 
