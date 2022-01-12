@@ -119,14 +119,16 @@
         "test_groovy": "Script"
     },
     "packages": {
+        "camel_components": "Componentes camel",
         "configure": "Configurar",
         "contexts": "Contextos",
         "dependencies": "Dependencias",
         "integrations": "Integraciones",
         "methods": "Métodos",
         "node_types": "Tipos de nodo",
-        "camel_components": "Componentes camel",
         "objects": "Objetos",
+        "publish": "Publicar",
+        "published_successfully": "Versión publicada con éxito",
         "select_package": "Seleccione un paquete",
         "versions": "Versiones"
     },

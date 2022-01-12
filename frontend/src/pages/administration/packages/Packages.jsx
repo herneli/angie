@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Select, Space, Spin, Table, Layout } from "antd";
+import { Col, Row, Select, Space, Spin, Table, Layout, Button, message } from "antd";
 import T from "i18n-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -14,6 +14,12 @@ export default function Packages({ history }) {
         });
     }, []);
 
+    const handleOnPublish = (code, version) => () => {
+        axios.get("/packages/" + code + "/versions/" + version + "/update_remote").then((response) => {
+            message.info(T.translate("packages.published_successfully"));
+        });
+    };
+
     if (!packages) {
         return <Spin></Spin>;
     }
@@ -26,9 +32,14 @@ export default function Packages({ history }) {
                 key: "actions",
                 render: (text, record) => {
                     return (
-                        <Link to={"packages/" + record.code + "/versions/" + record.version}>
-                            {T.translate("packages.configure")}
-                        </Link>
+                        <Space>
+                            <Link to={"packages/" + record.code + "/versions/" + record.version}>
+                                {T.translate("packages.configure")}
+                            </Link>
+                            <Button type="link" onClick={handleOnPublish(record.code, record.version)}>
+                                {T.translate("packages.publish")}
+                            </Button>
+                        </Space>
                     );
                 },
             },
