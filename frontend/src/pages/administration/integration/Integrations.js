@@ -34,7 +34,7 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Integrations = ({ packageUrl }) => {
+const Integrations = () => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ const Integrations = ({ packageUrl }) => {
 
     const startEdit = (record) => {
         history.push({
-            pathname: packageUrl + "/integrations/" + record.id,
+            pathname: "integrations/" + record.id,
         });
     };
 
@@ -297,7 +297,7 @@ const Integrations = ({ packageUrl }) => {
             render: (text, record) => {
                 if (record.channels)
                     return (
-                        <Link to={`${packageUrl}/integrations/${record.id}`}>
+                        <Link to={`integrations/${record.id}`}>
                             <b>{record.name}</b>
                         </Link>
                     );
@@ -308,7 +308,7 @@ const Integrations = ({ packageUrl }) => {
                         return int;
                     }
                 });
-                return <Link to={`${packageUrl}/integrations/${int.id}/${record.id}`}>{text}</Link>;
+                return <Link to={`integrations/${int.id}/${record.id}`}>{text}</Link>;
             },
         },
         {
@@ -422,7 +422,7 @@ const Integrations = ({ packageUrl }) => {
 
     const addIntegration = () => {
         history.push({
-            pathname: packageUrl + "/integrations/new",
+            pathname: "integrations/new",
             state: {
                 new: true,
                 record: {

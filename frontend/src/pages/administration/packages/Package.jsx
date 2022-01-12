@@ -10,6 +10,7 @@ import PackageContextProvider from "../../../components/packages/PackageContext"
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
 import Message from "../message/Message";
+import ModelEdit from "../../configuration/ModelEdit";
 
 const { Sider, Content, Header } = Layout;
 
@@ -51,19 +52,19 @@ export default function Package({ match }) {
                                 <Link to={url + "/integrations"}>{T.translate("packages.integrations")}</Link>
                             </Menu.Item>
                             <Menu.Item key="camel_components">
-                                <Link to={url + "/camel_components"}>{T.translate("packages.camel_components")}</Link>
+                                <Link to={url + "/camel_component"}>{T.translate("packages.camel_components")}</Link>
                             </Menu.Item>
                             <Menu.Item key="node_types">
-                                <Link to={url + "/node_types"}>{T.translate("packages.node_types")}</Link>
+                                <Link to={url + "/node_type"}>{T.translate("packages.node_types")}</Link>
                             </Menu.Item>
                             <Menu.Item key="contexts">
-                                <Link to={url + "/contexts"}>{T.translate("packages.contexts")}</Link>
+                                <Link to={url + "/script_context"}>{T.translate("packages.contexts")}</Link>
                             </Menu.Item>
                             <Menu.Item key="objects">
-                                <Link to={url + "/objects"}>{T.translate("packages.objects")}</Link>
+                                <Link to={url + "/script_object"}>{T.translate("packages.objects")}</Link>
                             </Menu.Item>
                             <Menu.Item key="methods">
-                                <Link to={url + "/methods"}>{T.translate("packages.methods")}</Link>
+                                <Link to={url + "/script_method"}>{T.translate("packages.methods")}</Link>
                             </Menu.Item>
                         </Menu>
                     </Sider>
@@ -72,33 +73,40 @@ export default function Package({ match }) {
                             <Route exact path={path}>
                                 Seleccione una opción
                             </Route>
-                            <Route path={path + "/node_types"} component={() => <ModelAdmin model="node_type" />} />
-                            <Route
-                                path={path + "/camel_components"}
-                                component={() => <ModelAdmin model="camel_component" />}
-                            />
-                            <Route path={path + "/methods"} component={() => <ModelAdmin model="script_method" />} />
-                            <Route path={path + "/objects"} component={() => <ModelAdmin model="script_object" />} />
-                            <Route path={path + "/contexts"} component={() => <ModelAdmin model="script_context" />} />
+
                             <Route
                                 exact
                                 path={path + "/integrations"}
-                                render={({ match }) => <Integrations match={match} packageUrl={url} />}
+                                render={({ match }) => <Integrations match={match} />}
                             />
                             <Route
                                 exact
                                 path={path + "/integrations/:id"}
-                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                                render={({ match }) => <Integration match={match} />}
                             />
                             <Route
                                 exact
                                 path={path + "/integrations/:id/:channel"}
-                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                                render={({ match }) => <Integration match={match} />}
                             />
                             <Route
                                 exact
                                 path={path + "/messages/:channel_id"}
                                 render={({ match }) => <Message match={match} packageUrl={url} />}
+                            />
+                            <Route
+                                exact
+                                path={path + "/:model"}
+                                render={({ match }) => {
+                                    return <ModelAdmin model={match.params.model} />;
+                                }}
+                            />
+                            <Route
+                                exact
+                                path={path + "/:model/:id"}
+                                render={({ match }) => {
+                                    return <ModelEdit model={match.params.model} />;
+                                }}
                             />
                         </Switch>
                     </Content>

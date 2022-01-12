@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { withRouter, Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import * as api from "../../api/configurationApi";
 import errorHandler from "../../api/errorHandler";
 import { usePackage } from "../../components/packages/PackageContext";
-import ModelEditor from "./components/ModelEditor";
 import ModelTable from "./components/ModelTable";
 
-const ModelAdmin = ({ model, fixedData }) => {
-    const [state, setState] = useState({
+const ModelAdmin = ({ model }) => {
+    const [modelConfig, setModelConfig] = useState({
         modelInfo: null,
         modelData: null,
-        edit: null,
-        total: null,
-        redirectTo: null,
     });
+    const [total, setTotal] = useState(null);
+
+    let history = useHistory();
     const packageData = usePackage();
+
     useEffect(() => {
-        search(model);
+        search();
     }, [model]);
 
-    const search = (modelInfo, filters) => {
+    const search = async (filters) => {
         let searchFilters = { ...filters };
         if (packageData) {
             searchFilters[["package_code", "package_version"]] = {
@@ -28,105 +28,81 @@ const ModelAdmin = ({ model, fixedData }) => {
                 value: [[packageData.currentPackage.code, packageData.currentPackage.version]],
             };
         }
-
-        api.getModelInfo(model)
-            .then((element) => {
-                api.getModelDataList(model, searchFilters).then(
-                    (list) => {
-                        const modelDataDict = list.reduce((result, model) => {
-                            result = { ...result, [model.id]: model };
-                            return result;
-                        }, {});
-                        setState({
-                            ...state,
-                            edit: null,
-                            modelInfo: element,
-                            modelData: modelDataDict,
-                            total: list.total,
-                        });
-                    }
-                );
-            })
-            .catch(errorHandler);
-    };
-
-    const handleOnClose = () => {
-        setState({ ...state, redirectTo: "/" });
-    };
-
-    const handleOnDelete = (data) => {
-        return api.deleteModelData(model, data.id).then((response) => {
-            setState({
-                ...state,
-                edit: null,
+        try {
+            const modelConfig = await api.getModelInfo(model);
+            const list = await api.getModelDataList(model, searchFilters);
+            const modelDataDict = list.reduce((result, element) => {
+                result = { ...result, [element.id]: element };
+                return result;
+            }, {});
+            setModelConfig({
+                modelInfo: modelConfig,
+                modelData: modelDataDict,
             });
-            search(model);
+
+            setTotal(list.total);
+        } catch (ex) {
+            errorHandler(ex);
+        }
+    };
+
+    const handleOnDelete = async (data) => {
+        await api.deleteModelData(model, data.id);
+        await search();
+    };
+
+    const setEditData = async (data) => {
+        history.push({
+            pathname: `${model}/${data.id}`,
         });
     };
 
-    const setEditData = (data) => {
-        return api.getModelData(model, data.id).then((model) => {
-            setState({
-                ...state,
-                edit: model,
-            });
-        });
+    const handleOnSave = async (formData, overwrite = false) => {
+        try {
+            await api.saveModelData(model, formData, packageData, overwrite);
+            await search();
+        } catch (ex) {
+            errorHandler(ex);
+        }
     };
 
-    const handleOnSave = (formData, overwrite = false) => {
-        return api
-            .saveModelData(model, formData, packageData, overwrite)
-            .then((model) => {
-                search(model);
-            })
-            .catch(errorHandler);
-    };
-
-    const handleOnSaveBatch = (formData, overwrite = false) => {
-        return api
-            .saveModelData(model, formData, packageData, overwrite)
-            .then((model) => {
-                return true;
-            })
-            .catch(errorHandler);
+    const handleOnSaveBatch = async (formData, overwrite = false) => {
+        try {
+            await api.saveModelData(model, formData, packageData, overwrite);
+            return true;
+        } catch (ex) {
+            errorHandler(ex);
+        }
     };
 
     const addCreateData = (e) => {
-        let defaultData = fixedData || {};
-        setState({ ...state, edit: { ...defaultData } });
+        history.push({
+            pathname: `${model}/new`,
+            state: {
+                new: true,
+            },
+        });
     };
 
-    const { modelInfo, modelData, edit, redirectTo } = state;
-    return redirectTo ? (
-        <Redirect push={true} to={redirectTo} />
-    ) : !modelData ? (
-        <h1>Loading...</h1>
-    ) : edit ? (
-        <ModelEditor
-            schema={modelInfo.schema}
-            uiSchema={modelInfo.uiSchema}
-            data={edit}
-            onCancel={() => {
-                setState({ ...state, edit: null });
-            }}
-            onClose={() => {
-                setState({ ...state, edit: null });
-            }}
-            onSave={handleOnSave}
-        />
-    ) : (
-        <ModelTable
-            modelInfo={state.modelInfo}
-            modelData={Object.values(state.modelData)}
-            onAddData={addCreateData}
-            onDeleteData={handleOnDelete}
-            onEditData={setEditData}
-            onSearchData={search}
-            onSaveData={handleOnSave}
-            total={state.total}
-            onSaveDataBatch={handleOnSaveBatch}
-        />
+    const { modelInfo, modelData } = modelConfig;
+    return (
+        <div>
+            {!modelData && <h1>Loading...</h1>}
+            {modelData && (
+                <ModelTable
+                    modelInfo={modelInfo}
+                    modelData={Object.values(modelData)}
+                    onAddData={addCreateData}
+                    onDeleteData={handleOnDelete}
+                    onEditData={setEditData}
+                    onSearchData={search}
+                    onSaveData={handleOnSave}
+                    total={total}
+                    onSaveDataBatch={handleOnSaveBatch}
+                />
+            )}
+        </div>
     );
 };
 
-export default withRouter(ModelAdmin);
+export default ModelAdmin;

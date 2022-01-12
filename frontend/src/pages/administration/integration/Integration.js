@@ -99,7 +99,7 @@ const integrationFormSchema = {
 
 let channelActions = new ChannelActions();
 
-const Integration = ({ packageUrl }) => {
+const Integration = () => {
     const history = useHistory();
     const integForm = useRef(null);
 
@@ -402,7 +402,7 @@ const Integration = ({ packageUrl }) => {
                 if (integration.id === "new") {
                     //Redirigir al nuevo identificador
                     history.push({
-                        pathname: packageUrl + "/integrations/" + response.data.data.id,
+                        pathname: "integrations/" + response.data.data.id,
                     });
                 }
                 setCurrentIntegration(response.data.data.data);

@@ -233,7 +233,7 @@ export default function ModelTable({
             };
         }
 
-        await onSearchData(modelInfo, filters);
+        await onSearchData(filters);
     };
 
     //ComponentDidMount
