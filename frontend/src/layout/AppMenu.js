@@ -8,12 +8,12 @@ import T from "i18n-react";
 
 import { mdiAccount, mdiHome, mdiLogout } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useMenu } from "../components/security/MenuContext";
+import { useAngieSession } from "../components/security/UserContext";
 
 const AppMenu = () => {
     const { keycloak } = useKeycloak();
     const { pathname } = useLocation();
-    const { currentMenu } = useMenu();
+    const { currentUser, currentMenu } = useAngieSession();
     const [selected, changeSelection] = useState(null);
     const [paintedMenu, setPaintedMenu] = useState([]);
 
@@ -33,31 +33,17 @@ const AppMenu = () => {
         setPaintedMenu(renderedMenu);
     };
 
-    //TODO get current center (#4)
-    const userPopup = keycloak && keycloak.authenticated && (
+    const userPopup = keycloak && keycloak.authenticated && currentUser && (
         <span>
-            {T.translate("application.user_info.user_label")} {keycloak.tokenParsed.preferred_username}
+            {T.translate("application.user_info.user_label")} {currentUser?.data?.username}
             <br />
-            {T.translate("application.user_info.organization_label")} XXX{" "}
+            {T.translate("application.user_info.user_email")} {currentUser?.data?.email}
+            <br />
+            {T.translate("application.user_info.organization_label")} {currentUser?.organization_data}
+            <br />
+            {T.translate("application.user_info.current_organization_label")} XXX{" "}
             <Button type="link">{T.translate("application.user_info.organization_change_label")}</Button>
             <br />
-            <br />
-            <div>
-                <Button
-                    type="primary"
-                    size="small"
-                    block
-                    icon={
-                        <Icon
-                            path={mdiLogout}
-                            size={0.5}
-                            onClick={() => keycloak.logout()}
-                            title={T.translate("application.user_info.logout_title")}
-                        />
-                    }>
-                    {T.translate("application.user_info.logout")}
-                </Button>
-            </div>
         </span>
     );
 

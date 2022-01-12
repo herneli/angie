@@ -1,13 +1,13 @@
 import { Layout, Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import MenuHandler from "../common/MenuHandler";
-import { useMenu } from "../components/security/MenuContext";
+import { useAngieSession } from "../components/security/UserContext";
 
 import lodash from "lodash";
 
 const SubMenu = ({ parent,  url}) => {
     const { Sider } = Layout;
-    const { currentMenu } = useMenu();
+    const { currentMenu } = useAngieSession();
 
     const [childrenKeys, setChildrenKeys] = useState([]);
     const [paintedMenu, setPaintedMenu] = useState([]);

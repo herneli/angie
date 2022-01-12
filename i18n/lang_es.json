@@ -5,7 +5,9 @@
         "user_info": {
             "title": "Información Usuario",
             "user_label": "*Usuario: *",
-            "organization_label": "*Organización: *",
+            "user_email": "*Correo: *",
+            "organization_label": "*Org. Asignadas: *",
+            "current_organization_label": "*Org. Actual: *",
             "organization_change_label": "_(cambiar)_",
             "logout": "Salir",
             "logout_title": "Cerrar Sesión",

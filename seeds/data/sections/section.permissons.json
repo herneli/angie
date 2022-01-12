@@ -34,5 +34,11 @@
         "code": "packages/any",
         "roles": ["admin"],
         "value": "/packages/(.*)"
+    },
+    {
+        "id": "495daebe-198d-42ac-8f58-1659c36dcd11",
+        "code": "messages",
+        "roles": ["admin"],
+        "value": "/messages/(.*)"
     }
 ]

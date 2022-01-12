@@ -3,11 +3,11 @@ import React from "react";
 import { useLocation, useRouteMatch } from "react-router";
 import { Redirect, Route } from "react-router-dom";
 import MenuHandler from "../../common/MenuHandler";
-import { useMenu } from "./MenuContext";
+import { useAngieSession } from "./UserContext";
 
 export function PrivateRoute({ component: Component, render, roles, path, ...rest }) {
     const { keycloak } = useKeycloak();
-    const { currentAllowedPaths } = useMenu();
+    const { currentAllowedPaths } = useAngieSession();
 
     const isAutherized = (roles) => {
         if (keycloak && roles) {

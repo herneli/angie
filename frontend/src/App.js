@@ -12,7 +12,7 @@ import AppMenu from "./layout/AppMenu";
 import configureKeycloak from "./configureKeycloak";
 import { Layout, Spin } from "antd";
 import axios from "axios";
-import MenuContextProvider from "./components/security/MenuContext";
+import UserContextProvider from "./components/security/UserContext";
 
 class App extends Component {
     state = {
@@ -21,6 +21,7 @@ class App extends Component {
         tokenLoaded: false,
         menu: null,
         allowedPaths: null,
+        currentUser: null,
     };
 
     /**
@@ -47,6 +48,7 @@ class App extends Component {
         if (event === "onReady") {
             if (this.keycloak?.tokenParsed?.sub) {
                 await this.getAllowedSections(this.keycloak.tokenParsed.sub);
+                await this.getCurrentUser(this.keycloak.tokenParsed.sub);
             }
 
             this.setState({
@@ -71,23 +73,32 @@ class App extends Component {
         try {
             const data = await axios.post(`/section/${id}/check_allowed`);
 
-            let menu = [];
-            let allowedPaths = [];
             if (data.status === 200) {
-                menu = data.data.menu;
-                allowedPaths = data.data.allowedPaths;
+                return this.setState({
+                    menu: data.data.menu,
+                    allowedPaths: data.data.allowedPaths,
+                });
             }
-            return this.setState({
-                menu,
-                allowedPaths,
-            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async getCurrentUser(id) {
+        try {
+            const response = await axios.get(`/configuration/model/users/data/${id}`);
+            if (response.status === 200) {
+                this.setState({
+                    currentUser: response.data.data,
+                });
+            }
         } catch (e) {
             console.error(e);
         }
     }
 
     render() {
-        const { loaded, menu, allowedPaths, keycloakReady } = this.state;
+        const { loaded, menu, allowedPaths, keycloakReady, currentUser } = this.state;
         return (
             <div>
                 {loaded && (
@@ -97,14 +108,14 @@ class App extends Component {
                         onTokens={this.tokenLogger}
                         initOptions={{ checkLoginIframe: false }}>
                         {keycloakReady && (
-                            <MenuContextProvider menu={menu} allowedPaths={allowedPaths}>
+                            <UserContextProvider user={currentUser} menu={menu} allowedPaths={allowedPaths}>
                                 {menu && allowedPaths && (
                                     <Layout className="App">
                                         <AppMenu />
                                         <AppMain />
                                     </Layout>
                                 )}
-                            </MenuContextProvider>
+                            </UserContextProvider>
                         )}
                         {!keycloakReady && (
                             <div style={{ textAlign: "center", padding: "46vh" }}>
