@@ -195,6 +195,9 @@ export default class BaseDao {
                     case "likeI":
                         body.query("wildcard", index, "*" + element.value + "*");
                         break;
+                    case "countDistinct":
+                        body.aggregation("cardinality", index, "count");
+                        break;
                     //  case "null":
                     //TODO: Revisar null_value
                     //

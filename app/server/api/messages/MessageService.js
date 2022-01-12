@@ -7,4 +7,15 @@ export class MessageService extends BaseDao {
         this.tableName = `stats_${channelId}`;
         return this.loadAllData({}, start, limit);
     }
+
+    getChannelMessageCount(channelId) {
+        this.tableName = `stats_${channelId}`;
+        return this.loadAllData(
+            {
+                ["breadcrumb_id.keyword"]: { type: "countDistinct" },
+            },
+            0,
+            0
+        );
+    }
 }

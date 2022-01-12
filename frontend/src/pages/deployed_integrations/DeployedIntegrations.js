@@ -7,7 +7,15 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiRefresh } from "@mdi/js";
+import {
+    mdiPlayCircle,
+    mdiSourceBranchPlus,
+    mdiStopCircle,
+    mdiTextLong,
+    mdiMessage,
+    mdiDatabaseArrowRightOutline,
+    mdiRefresh,
+} from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link, useHistory } from "react-router-dom";
@@ -100,6 +108,16 @@ const DeployedIntegrations = ({ packageUrl }) => {
         });
     };
 
+    const getChannelMessageCount = async (channelId) => {
+        //TODO: Obtener mensajes con errores
+        try {
+            const response = await axios.get(`/messages/${channelId}/count`);
+            return response.data?.aggregations?.count?.value || 0;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     /**
      * Realiza la busqueda teniendo en cuenta la paginacion y los filtros
      *
@@ -128,6 +146,13 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
             if (response && response.data && response.data.data) {
                 let integrations = response.data.data;
+                for (let integration of integrations) {
+                    for (let channel of integration.data.channels) {
+                        const messages = await getChannelMessageCount(channel.id);
+                        channel.messages_sent = messages;
+                        channel.messages_total = messages;
+                    }
+                }
                 setDataSource({
                     data: lodash.map(integrations, (el) => {
                         el.data.package_code = el.package_code;
@@ -201,7 +226,6 @@ const DeployedIntegrations = ({ packageUrl }) => {
                     key="messages"
                     onClick={() => {
                         showMessages(record, integration);
-                        console.log("showMessages");
                     }}
                     icon={{ path: mdiMessage, size: 0.6, title: "Mensajes" }}
                 />
@@ -359,11 +383,17 @@ const DeployedIntegrations = ({ packageUrl }) => {
                 actions={[
                     <div className={classes.channelVersion}>v{chann.version}</div>,
                     <span>{moment(chann.last_updated).format("DD/MM/YYYY HH:mm:ss")}</span>,
-                    <Badge showZero count={chann.messages_sent} style={{ backgroundColor: "green" }} />,
-                    <Badge showZero count={chann.messages_error} />,
+                    <Badge
+                        showZero
+                        count={chann.messages_sent}
+                        overflowCount={9999}
+                        style={{ backgroundColor: "green" }}
+                    />,
+                    <Badge showZero count={chann.messages_error} overflowCount={9999} />,
                     <Badge
                         showZero
                         count={chann.messages_total}
+                        overflowCount={9999}
                         style={{
                             backgroundColor: "#2db7f5",
                         }}

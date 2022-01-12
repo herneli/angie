@@ -260,6 +260,21 @@ describe("parseFiltersObject (BaseDao)", () => {
         expect(result.query.bool.filter.query_string.query).to.be.equal("field:value");
     });
 
+    it("countDistinct", async () => {
+        const result = await elm.parseFiltersObject(
+            {
+                breadcrumb_id: { type: "countDistinct" },
+            },
+            10,
+            1
+        );
+        console.log(result);
+        expect(result.aggs).to.have.property("count");
+        expect(result.aggs.count).to.have.property("cardinality");
+        expect(result.aggs.count.cardinality).to.have.property("field");
+        expect(result.aggs.count.cardinality.field).to.have.be.equal("breadcrumb_id");
+    });
+
     it("Empty filter", async () => {
         const result = await elm.parseFiltersObject({}, 10, 1);
 
