@@ -145,6 +145,7 @@
         }
     },
     "administration": {
+        "management": "Gestión",
         "users": "Usuarios",
         "profiles": "Perfiles",
         "organization": "Organizaciones",

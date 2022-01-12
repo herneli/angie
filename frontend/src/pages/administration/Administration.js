@@ -1,83 +1,58 @@
 import { Layout } from "antd";
-import React, { useEffect, useState } from "react";
-import { Route, Switch } from "react-router";
+import React from "react";
+import { Route, Switch, useRouteMatch } from "react-router";
 import { PrivateRoute } from "../../components/security/PrivateRoute";
-import SubMenu from "./AdminSubMenu";
-import { Redirect } from 'react-router-dom';
+import SubMenu from "../../layout/SubMenu";
 
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
-import Script from "../../pages/script/Script";
+import ModelEdit from "../configuration/ModelEdit";
 import UsersConfig from "./Users/UsersConfig";
-import Integration from "./integration/Integration";
-import Integrations from "./integration/Integrations";
-import MenuHandler from "../../common/MenuHandler";
-import { useKeycloak } from "@react-keycloak/web";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
-    const { keycloak } = useKeycloak();
-    let allowed;
     const defaultProps = {
         app: app,
     };
 
+    let { url } = useRouteMatch();
+
     return (
         <Layout>
-            <SubMenu parent={"/admin"} />
+            <SubMenu parent={"/admin"} url={url} />
 
             <Layout>
                 <Content>
                     <Switch>
-                        {/* <Route
-                            exact
-                            path="/admin/integration"
-                            render={({ match }) => <Integrations match={match} {...defaultProps} />}
-                        />
-                        <Route
-                            exact
-                            path="/admin/integration/:id"
-                            render={({ match }) => <Integration match={match} {...defaultProps} />}
-                        /> */}
-                        <Route
-                            exact
-                            path="/admin/users"
-                            render={({ match }) => <UsersConfig match={match} {...defaultProps} />}
-                        />
-                        <Route
-                            exact
-                            path="/admin/organization"
-                            render={({ match }) => <ModelAdmin match={match} model="organization" />}
-                        />
-                        <Route
-                            exact
-                            path="/admin/sections"
-                            render={({ match }) => <ModelAdmin match={match} model="sections" />}
-                        />
-
-                        {/* <Route
-                            exact
-                            path="/admin/organization"
-                            render={({ match }) => (
-                                <OrganizationConfig
-                                    match={match}
-                                    {...defaultProps}
-                                />
-                            )}
-                        /> */}
-
-                        {/* <PrivateRoute
+                        <PrivateRoute
                             roles={["default-roles-angie"]}
-                            path="/admin/node_type"
-                            allowed={false}
-                            component={() => <ModelAdmin model="node_type" />}
+                            path="/admin/users/:id"
+                            component={ModelEdit}
+                            model={"users"}
                             {...defaultProps}
                         />
                         <PrivateRoute
                             roles={["default-roles-angie"]}
-                            path="/admin/camel_component"
-                            component={() => <ModelAdmin model="camel_component" />}
+                            path="/admin/users"
+                            component={UsersConfig}
                             {...defaultProps}
-                        /> */}
+                        />
+
+                        <PrivateRoute
+                            roles={["default-roles-angie"]}
+                            exact
+                            path={"/admin/:model"}
+                            render={({ match }) => {
+                                return <ModelAdmin model={match.params.model} />;
+                            }}
+                        />
+                        <PrivateRoute
+                            roles={["default-roles-angie"]}
+                            exact
+                            path={"/admin/:model/:id"}
+                            render={({ match }) => {
+                                return <ModelEdit model={match.params.model} />;
+                            }}
+                        />
                     </Switch>
                 </Content>
             </Layout>

@@ -2,32 +2,37 @@
     {
         "id": "add80922-0ba9-4658-b576-5ef8d20f527f",
         "code": "admin",
-        "icon": "mdiSourceBranch",
         "roles": ["admin"],
-        "title": "Administracion",
         "value": "/admin"
     },
     {
-        "code": "packages",
-        "icon": "mdiPackageVariantClosed",
+        "id": "add80922-0ba9-4658-b576-5ef8320f527f",
+        "code": "admin/any",
         "roles": ["admin"],
-        "title": "Packages",
+        "value": "/admin/(.*)"
+    },
+    {
+        "code": "packages",
+        "roles": ["admin"],
         "value": "/packages",
         "id": "86f72d47-8845-4cda-9583-d8200b592862"
     },
     {
         "id": "5fd9d565-8fce-408a-b349-a03eea697457",
         "code": "integrations",
-        "icon": "mdiSourceBranch",
         "roles": ["admin"],
-        "title": "Integrations",
         "value": "/integrations/deployed"
     },
     {
         "code": "agents",
         "roles": ["admin"],
-        "title": "Agents",
         "value": "/agents",
         "id": "6d481a16-990b-48f7-8bf5-c988744fe4e7"
+    },
+    {
+        "id": "b489c908-c26f-4c8e-9aad-267449cc87de",
+        "code": "packages/any",
+        "roles": ["admin"],
+        "value": "/packages/(.*)"
     }
 ]

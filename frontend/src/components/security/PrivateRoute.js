@@ -1,10 +1,13 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
+import { useLocation, useRouteMatch } from "react-router";
 import { Redirect, Route } from "react-router-dom";
 import MenuHandler from "../../common/MenuHandler";
+import { useMenu } from "./MenuContext";
 
-export function PrivateRoute({ component: Component, roles, path, ...rest }) {
+export function PrivateRoute({ component: Component, render, roles, path, ...rest }) {
     const { keycloak } = useKeycloak();
+    const { currentAllowedPaths } = useMenu();
 
     const isAutherized = (roles) => {
         if (keycloak && roles) {
@@ -17,22 +20,26 @@ export function PrivateRoute({ component: Component, roles, path, ...rest }) {
         return false;
     };
 
-    const check = async (path) => {
-        const response = await MenuHandler.hasRealmRoleForPath(keycloak.tokenParsed.sub, path);
-        return response;
-    };
+    let { pathname } = useLocation();
 
-    // if (!auth) return null;
+    const check = (routePath) => {
+        return MenuHandler.pathAllowed(currentAllowedPaths || [], routePath, pathname);
+    };
 
     return (
         <Route
             {...rest}
             render={(props) => {
-                return isAutherized(roles) && check(path) ? (
-                    <Component {...props} />
-                ) : (
-                    <Redirect to={{ pathname: "/" }} />
-                );
+                if (!isAutherized(roles)) {
+                    return <Redirect to={{ pathname: "/403" }} />;
+                }
+                if (!check(path)) {
+                    return <Redirect to={{ pathname: "/403" }} />;
+                }
+                if (render) {
+                    return render(props);
+                }
+                return <Component {...props} {...rest} />;
             }}
         />
     );

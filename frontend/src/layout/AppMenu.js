@@ -8,10 +8,12 @@ import T from "i18n-react";
 
 import { mdiAccount, mdiHome, mdiLogout } from "@mdi/js";
 import Icon from "@mdi/react";
+import { useMenu } from "../components/security/MenuContext";
 
-const AppMenu = ({ tokenLoaded }) => {
+const AppMenu = () => {
     const { keycloak } = useKeycloak();
     const { pathname } = useLocation();
+    const { currentMenu } = useMenu();
     const [selected, changeSelection] = useState(null);
     const [paintedMenu, setPaintedMenu] = useState([]);
 
@@ -23,13 +25,13 @@ const AppMenu = ({ tokenLoaded }) => {
     }, [pathname]);
 
     useEffect(() => {
-        (async () => {
-            if (keycloak.tokenParsed && keycloak.tokenParsed.sub) {
-                const menu = await getMenuItems();
-                setPaintedMenu(menu);
-            }
-        })();
-    }, [tokenLoaded]);
+        getMenuItems();
+    }, [currentMenu]);
+
+    const getMenuItems = async () => {
+        let renderedMenu = await MenuHandler.renderMenu(currentMenu, keycloak);
+        setPaintedMenu(renderedMenu);
+    };
 
     //TODO get current center (#4)
     const userPopup = keycloak && keycloak.authenticated && (
@@ -58,18 +60,6 @@ const AppMenu = ({ tokenLoaded }) => {
             </div>
         </span>
     );
-
-    const getMenuItems = async () => {
-        let menu = [];
-        let itemsAuthorized = [];
-        let dataMenu = await MenuHandler.getMenu(keycloak.tokenParsed.sub, keycloak);
-
-        if (dataMenu != null && dataMenu.length > 0) {
-            itemsAuthorized = dataMenu;
-        }
-
-        return itemsAuthorized;
-    };
 
     //TODO translate main links
     return (

@@ -10,8 +10,9 @@ import PackageContextProvider from "../../../components/packages/PackageContext"
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
 import ModelEdit from "../../configuration/ModelEdit";
+import SubMenu from "../../../layout/SubMenu";
 
-const { Sider, Content, Header } = Layout;
+const { Content, Header } = Layout;
 
 const useStyles = createUseStyles({
     header: {
@@ -24,6 +25,7 @@ const useStyles = createUseStyles({
 export default function Package({ match }) {
     const [currentPackage, setCurrentPackage] = useState();
     const classes = useStyles();
+
     useEffect(() => {
         axios
             .get("/packages/" + match.params.packageCode + "/versions/" + match.params.packageVersion)
@@ -45,29 +47,8 @@ export default function Package({ match }) {
                     {currentPackage.name} ({currentPackage.code}/{currentPackage.version})
                 </Header>
                 <Layout>
-                    <Sider width={200} className="adm-submenu">
-                        <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
-                            <Menu.Item key="integrations">
-                                <Link to={url + "/integrations"}>{T.translate("packages.integrations")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="camel_components">
-                                <Link to={url + "/camel_component"}>{T.translate("packages.camel_components")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="node_types">
-                                <Link to={url + "/node_type"}>{T.translate("packages.node_types")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="contexts">
-                                <Link to={url + "/script_context"}>{T.translate("packages.contexts")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="objects">
-                                <Link to={url + "/script_object"}>{T.translate("packages.objects")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="methods">
-                                <Link to={url + "/script_method"}>{T.translate("packages.methods")}</Link>
-                            </Menu.Item>
-                        </Menu>
-                    </Sider>
-                    <Content>
+                    <SubMenu parent={"/packages"} url={url}/>
+                    <Content className="packageContent">
                         <Switch>
                             <Route exact path={path}>
                                 Seleccione una opción
