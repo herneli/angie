@@ -81,7 +81,6 @@ export class IntegrationChannelService {
      * @returns
      */
     async findIntegrationChannel(integrationId, channelId) {
-        
         const integrationService = new IntegrationService();
         const integration = await integrationService.loadById(integrationId);
         return lodash.find(integration.data.channels, { id: channelId });
@@ -95,7 +94,7 @@ export class IntegrationChannelService {
      */
     async findChannel(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -114,7 +113,7 @@ export class IntegrationChannelService {
      */
     async getIntegrationByChannel(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -127,12 +126,12 @@ export class IntegrationChannelService {
 
     /**
      * Obtiene una lista con todos los canales de la aplicación
-     * 
-     * @returns 
+     *
+     * @returns
      */
     async listAllChannels() {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         let channels = [];
         for (const integration of integrations) {
@@ -150,7 +149,7 @@ export class IntegrationChannelService {
      */
     async getChannelById(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -409,9 +408,9 @@ export class IntegrationChannelService {
     async channelApplyStatus(channel, remoteChannel) {
         const messages = await this.messageDao.getChannelMessageCount(channel.id);
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
-        channel.messages_total = messages.total || (remoteChannel && remoteChannel.messages_total) || 0;
-        channel.messages_error = messages.error || (remoteChannel && remoteChannel.messages_error) || 0;
-        channel.messages_sent = messages.sent || (remoteChannel && remoteChannel.messages_sent) || 0;
+        channel.messages_total = messages ? messages.total : (remoteChannel && remoteChannel.messages_total) || 0;
+        channel.messages_error = messages ? messages.error : (remoteChannel && remoteChannel.messages_error) || 0;
+        channel.messages_sent = messages ? messages.sent : (remoteChannel && remoteChannel.messages_sent) || 0;
 
         return channel;
     }
