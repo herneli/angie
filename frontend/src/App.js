@@ -109,12 +109,10 @@ class App extends Component {
                         initOptions={{ checkLoginIframe: false }}>
                         {keycloakReady && (
                             <UserContextProvider user={currentUser} menu={menu} allowedPaths={allowedPaths}>
-                                {menu && allowedPaths && (
-                                    <Layout className="App">
-                                        <AppMenu />
-                                        <AppMain />
-                                    </Layout>
-                                )}
+                                <Layout className="App">
+                                    <AppMenu />
+                                    <AppMain />
+                                </Layout>
                             </UserContextProvider>
                         )}
                         {!keycloakReady && (
