@@ -13,7 +13,12 @@ export class MessageService extends BaseDao {
                     inner_hits: [
                         {
                             name: "all",
-                            size: 10,
+                            /*
+                             ! Un size demasiado alto en inner_hits podría afectar al rendimiento
+                             En este caso el size es preciso que sea alto para poder detectar errores en mensajes con muchos pasos
+                             TODO: Encontrar otra forma de averiguar si un mensaje tiene o no errores a lo largo de su recorrido
+                                  */
+                            size: 200,
                             from: 0,
                             sort: [
                                 {
