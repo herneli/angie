@@ -6,6 +6,7 @@ import * as queryString from "query-string";
 import { ConfigurationService } from "../configuration/ConfigurationService";
 import { IntegrationDao } from "../integration/IntegrationDao";
 import { JUMAgentService } from "../jum_agents";
+import { MessageService } from "../messages";
 
 export class IntegrationChannelService {
     constructor() {
@@ -67,6 +68,7 @@ export class IntegrationChannelService {
         });
 
         this.dao = new IntegrationDao();
+        this.messageDao = new MessageService();
         this.agentService = new JUMAgentService();
     }
 
@@ -382,11 +384,12 @@ export class IntegrationChannelService {
      * @returns
      */
     async channelApplyStatus(channel, remoteChannel) {
+        const messages = await this.channelMessages(channel.id);
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
-        channel.messages_total = (remoteChannel && remoteChannel.messages_total) || 0;
-        channel.messages_error = (remoteChannel && remoteChannel.messages_error) || 0;
-        channel.messages_sent = (remoteChannel && remoteChannel.messages_sent) || 0;
-        //TODO extract counters from ES
+        channel.messages_total = messages.total || (remoteChannel && remoteChannel.messages_total) || 0;
+        channel.messages_error = messages.error || (remoteChannel && remoteChannel.messages_error) || 0;
+        channel.messages_sent = messages.sent || (remoteChannel && remoteChannel.messages_sent) || 0;
+
         return channel;
     }
 
@@ -407,6 +410,34 @@ export class IntegrationChannelService {
             console.error(ex);
         }
         return channelLogs;
+    }
+
+    /**
+     * Obtiene el número de mensajes de un canal
+     *
+     * @param {*} channelId
+     * @returns
+     */
+    async channelMessages(channelId) {
+        const messages = { total: 0, error: 0, sent: 0 };
+        try {
+            const response = await this.messageDao.getChannelMessageCount(channelId);
+            const responseData = response.body.aggregations || false;
+
+            if (responseData) {
+                messages.total = responseData.messages.value || 0;
+                messages.error = responseData.errorMessages.total.value || 0;
+                messages.sent = messages.total - messages.error;
+            }
+        } catch (e) {
+            if (e.body && e.body.status === 404) {
+                console.log("Canal sin mensajes");
+            } else {
+                console.error("Error de conexión con Elastic:");
+                console.error(e);
+            }
+        }
+        return messages;
     }
 
     /**

@@ -121,16 +121,6 @@ const DeployedIntegrations = ({ packageUrl }) => {
         });
     };
 
-    const getChannelMessageCount = async (channelId) => {
-        //TODO: Obtener mensajes con errores
-        try {
-            const response = await axios.get(`/messages/${channelId}/count`);
-            return response.data?.aggregations?.count?.value || 0;
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
     /**
      * Realiza la busqueda teniendo en cuenta la paginacion y los filtros
      *
@@ -159,13 +149,6 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
             if (response && response.data && response.data.data) {
                 let integrations = response.data.data;
-                for (let integration of integrations) {
-                    for (let channel of integration.data.channels) {
-                        const messages = await getChannelMessageCount(channel.id);
-                        channel.messages_sent = messages;
-                        channel.messages_total = messages;
-                    }
-                }
                 setDataSource({
                     data: lodash.map(integrations, (el) => {
                         el.data.package_code = el.package_code;
@@ -399,14 +382,14 @@ const DeployedIntegrations = ({ packageUrl }) => {
                     <Badge
                         showZero
                         count={chann.messages_sent}
-                        overflowCount={9999}
                         style={{ backgroundColor: "green" }}
+                        overflowCount={999}
                     />,
-                    <Badge showZero count={chann.messages_error} overflowCount={9999} />,
+                    <Badge showZero count={chann.messages_error} overflowCount={999} />,
                     <Badge
                         showZero
                         count={chann.messages_total}
-                        overflowCount={9999}
+                        overflowCount={999}
                         style={{
                             backgroundColor: "#2db7f5",
                         }}
