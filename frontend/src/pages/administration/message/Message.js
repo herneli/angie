@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Input,  notification,  Row, Table } from "antd";
+import { Button, Col, Input, notification, Row, Table } from "antd";
 import axios from "axios";
 import moment from "moment";
-import lodash from "lodash";
 
 import T from "i18n-react";
 
 import { useParams } from "react-router";
 // import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
-import { mdiDownload, mdiUpload } from "@mdi/js";
+import { mdiDownload, mdiUpload, mdiEmailOff, mdiEmailCheck } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import { Content } from "antd/lib/layout/layout";
 
@@ -32,7 +31,7 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Message = ({ packageUrl }, props) => {
+const Messages = ({ packageUrl }, props) => {
     const [dataSource, setDataSource] = useState([]);
     // const [dataSourceKeys, setDataSourceKeys] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -65,6 +64,7 @@ const Message = ({ packageUrl }, props) => {
         try {
             const channelResponse = await axios.post(`/messages/${channel}`, filters);
             // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
+
             if (
                 channelResponse &&
                 channelResponse.data &&
@@ -72,8 +72,33 @@ const Message = ({ packageUrl }, props) => {
                 channelResponse.data.hits.hits
             ) {
                 const messages = channelResponse.data.hits.hits;
-                setPagination({ ...pagination, total: channelResponse.data.hits.total.value });
-                setDataSource(lodash.map(lodash.map(messages, "_source")));
+                const totalMessages = channelResponse.data.aggregations.messages.value;
+
+                const parsedMessages = messages.reduce((acc, message) => {
+                    const messageData = message._source;
+                    const messageId = messageData.breadcrumb_id;
+                    const messageStart = message.inner_hits.first.hits.hits[0]._source.date_time;
+                    const messageEnd = message.inner_hits.last.hits.hits[0]._source.date_time;
+                    const elapsed = moment(messageEnd) - moment(messageStart);
+
+                    const hasErrors = message.inner_hits.all.hits.hits.reduce((hasError, innerMessage) => {
+                        if (innerMessage._source.event === "ERROR") {
+                            hasError = true;
+                        }
+                        return hasError;
+                    }, false);
+                    acc.push({
+                        breadcrumb_id: messageId,
+                        start: messageStart,
+                        end: messageEnd,
+                        error: hasErrors,
+                        elapsed: elapsed,
+                    });
+                    return acc;
+                }, []);
+
+                setPagination({ ...pagination, total: totalMessages });
+                setDataSource(parsedMessages);
                 // setDataSourceKeys(lodash.map(messages, "_source"));
                 // setDataSource(response.data.hits.hits);
             }
@@ -86,7 +111,7 @@ const Message = ({ packageUrl }, props) => {
         setLoading(false);
     };
 
-    /* const downloadJsonFile = (data, filename) => {
+    const downloadJsonFile = (data, filename) => {
         let filedata = JSON.stringify(data, null, 2);
         const blob = new Blob([filedata], {
             type: "application/json",
@@ -96,16 +121,16 @@ const Message = ({ packageUrl }, props) => {
         link.download = filename;
         link.href = url;
         link.click();
-    }; */
+    };
 
     /* const handleOnDownloadModel = (e, row) => {
         const data = [row];
         downloadJsonFile(data, `Integration-${row.name}.json`);
-    };
- */
-    /*  const handleDownloadTable = (data) => {
-        downloadJsonFile(data, `Integrations.json`);
     }; */
+
+    const handleDownloadTable = (data) => {
+        downloadJsonFile(data, `channel_${channel}_messages.json`);
+    };
 
     // const drawChannelActionButtons = (record) => {
     //     //Find integration(parent) FIXME: Lo se, es un poco ñapa, pero no hay posibilidad de obtener una referencia al padre y necesito el id de la integracion.
@@ -175,45 +200,30 @@ const Message = ({ packageUrl }, props) => {
 
     const columns = [
         {
-            title: "Flecha",
-            dataIndex: "arrow",
-            key: "arrow",
-            ellipsis: true,
-            sorter: true,
-            width: 70,
-            /* render: (text, record) => {
-                console.log(record._source);
+            title: "Estado",
+            dataIndex: "error",
+            key: "msg_error",
+            width: 25,
+            align: "center",
 
-                return record._source.arrow;
-            }, */
+            render: (text) => {
+                if (text) {
+                    return <Icon path={mdiEmailOff} size="1.5rem" color="red" title="Error" />;
+                }
+
+                return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title="Enviado" />;
+            },
         },
         {
-            title: "Evento",
-            dataIndex: "event",
-            key: "event",
+            title: "Id Mensaje",
+            dataIndex: "breadcrumb_id",
+            key: "breadcrumb_id",
+            width: 200,
             ellipsis: true,
             sorter: true,
-            width: 150,
-            /* render: (text, record) => {
-                console.log(record._source);
-
-                return record._source.arrow;
-            }, */
         },
-        {
-            title: "Exchange ID",
-            dataIndex: "exchange_id",
-            key: "exchange_id",
-            width: 280,
-            ellipsis: true,
-            sorter: true,
-            // render: (text, record) => {
-            //     if (record.channels) return <b>{text}</b>;
 
-            //     return text;
-            // },
-        },
-        {
+        /*  {
             title: "Ruta de origen",
             dataIndex: "origin_route",
             key: "origin_route",
@@ -233,15 +243,25 @@ const Message = ({ packageUrl }, props) => {
             key: "node_endpoint",
             ellipsis: true,
             sorter: true,
-        },
+        }, */
 
         {
-            title: "Fecha",
-            dataIndex: "date_time",
-            key: "integration.data->>'last_updated'",
+            title: "Fecha de inicio",
+            dataIndex: "start",
+            key: "start_date",
             sorter: true,
             width: 120,
             render: (text, record) => {
+                return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
+            },
+        },
+        {
+            title: "Fecha de finalización",
+            dataIndex: "end",
+            key: "end_date",
+            sorter: true,
+            width: 120,
+            render: (text) => {
                 return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
             },
         },
@@ -315,7 +335,7 @@ const Message = ({ packageUrl }, props) => {
                             <Button
                                 icon={<Icon path={mdiDownload} className={classes.icon} />}
                                 type="text"
-                                // onClick={() => handleDownloadTable(dataSource)}
+                                onClick={() => handleDownloadTable(dataSource)}
                             />
                         </Col>
                     </Row>
@@ -341,4 +361,4 @@ const Message = ({ packageUrl }, props) => {
     );
 };
 
-export default Message;
+export default Messages;
