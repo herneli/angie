@@ -8,7 +8,7 @@ export class MessageService extends BaseDao {
         return this.loadAllData({}, start, limit);
     }
 
-    getChannelMessageCount(channelId) {
+    async getChannelMessageCount(channelId) {
         this.tableName = `stats_${channelId}`;
         //Los filtros se establecen manualmente al ser estáticos y utilizarse directamente el método search()
         const filters = {
@@ -34,6 +34,25 @@ export class MessageService extends BaseDao {
             },
         };
 
-        return this.search(filters);
+        const messages = { total: 0, error: 0, sent: 0 };
+
+        try {
+            const response = await this.search(filters);
+            const responseData = response.body.aggregations || false;
+
+            if (responseData) {
+                messages.total = responseData.messages.value || 0;
+                messages.error = responseData.errorMessages.total.value || 0;
+                messages.sent = messages.total - messages.error;
+            }
+        } catch (e) {
+            if (e.body && e.body.status === 404) {
+                console.log("Canal sin mensajes");
+            } else {
+                console.error("Error de conexión con Elastic:");
+                console.error(e);
+            }
+        }
+        return messages;
     }
 }

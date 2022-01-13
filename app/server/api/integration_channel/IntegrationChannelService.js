@@ -384,7 +384,7 @@ export class IntegrationChannelService {
      * @returns
      */
     async channelApplyStatus(channel, remoteChannel) {
-        const messages = await this.channelMessages(channel.id);
+        const messages = await this.messageDao.getChannelMessageCount(channel.id);
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
         channel.messages_total = messages.total || (remoteChannel && remoteChannel.messages_total) || 0;
         channel.messages_error = messages.error || (remoteChannel && remoteChannel.messages_error) || 0;
@@ -410,34 +410,6 @@ export class IntegrationChannelService {
             console.error(ex);
         }
         return channelLogs;
-    }
-
-    /**
-     * Obtiene el número de mensajes de un canal
-     *
-     * @param {*} channelId
-     * @returns
-     */
-    async channelMessages(channelId) {
-        const messages = { total: 0, error: 0, sent: 0 };
-        try {
-            const response = await this.messageDao.getChannelMessageCount(channelId);
-            const responseData = response.body.aggregations || false;
-
-            if (responseData) {
-                messages.total = responseData.messages.value || 0;
-                messages.error = responseData.errorMessages.total.value || 0;
-                messages.sent = messages.total - messages.error;
-            }
-        } catch (e) {
-            if (e.body && e.body.status === 404) {
-                console.log("Canal sin mensajes");
-            } else {
-                console.error("Error de conexión con Elastic:");
-                console.error(e);
-            }
-        }
-        return messages;
     }
 
     /**
