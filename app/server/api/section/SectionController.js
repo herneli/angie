@@ -14,39 +14,15 @@ export class SectionController extends BaseController {
                 this.getAllowedSectionBasedOnRole(res, req, next);
             })
         );
-        this.router.get("/getRoles", (request, response, next) => {
+        this.router.get("/roles", (request, response, next) => {
             this.getRoles(request, response, next);
         });
 
-        this.router.get("/getMenuConfiguration", (request, response, next) => {
+        this.router.get("/menu/schema", (request, response, next) => {
             this.getMenuConfiguration(request, response, next);
         });
 
-        App.events.on("config_saved_section_config", (data) => {
-            this.updateMenu(data.model, data.body);
-        });
-        App.events.on("config_updated_section_config", (data) => {
-            this.updateMenu(data.model, data.body);
-        });
         return this.router;
-    }
-
-    async updateMenu(model, body) {
-        try {
-            //!FIXME Iago.S: Se comenta ya que hace alguna cosa rara y no creo que sea necesario
-            // const sectServ = new SectionService();
-            // //Sobreescribe en función del value ( URl), cuidado con esto.
-            // // Si no existe lo guarda.
-            // let exists = await sectServ.loadById("51cacf54-eb49-4912-b856-c6a68b14dae1");
-            // exists.data.forEach((element, index) => {
-            //     if (element.value == body.value) {
-            //         return (exists.data[index] = body);
-            //     }
-            // });
-            // let resp = await sectServ.updateMenu(exists.data);
-        } catch (e) {
-            console.log(e);
-        }
     }
 
     async getMenuConfiguration(request, response) {

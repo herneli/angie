@@ -1,4 +1,6 @@
-import { BaseKnexDao, KnexConnector } from "lisco";
+import { BaseKnexDao, KnexConnector, KnexFilterParser } from "lisco";
+
+import lodash from "lodash";
 
 export class ConfigurationDao extends BaseKnexDao {
     tableName = "script_config";
@@ -38,12 +40,51 @@ export class ConfigurationDao extends BaseKnexDao {
                 });
             }
 
-            return qry.first();
+            const elm = await qry.first();
+            let relations = model.data.relation_schema || {};
+            if (elm) {
+                if (!Array.isArray(relations)) {
+                    relations = [relations];
+                }
+                relations.forEach((relation) => {
+                    elm.data[relation.relation_column] = elm[relation.relation_column];
+                });
+            }
+
+            return elm;
         }
         return knex
             .select("*")
             .from(model.data.table)
             .where({ document_type: model.data.documentType, id: id })
             .first();
+    }
+
+    async loadFilteredDataWithRelations(filters, start, limit, relation_config) {
+        let sorts = [];
+
+        if (filters.sort) {
+            sorts = KnexFilterParser.parseSort(filters.sort);
+        } else {
+            sorts = 1;
+        }
+        let qry = KnexConnector.connection
+            .select(KnexConnector.connection.raw(relation_config.selectQuery))
+            .from(this.tableName)
+            .groupBy(relation_config.group_by)
+            .where((builder) =>
+                KnexFilterParser.parseFilters(builder, lodash.omit(filters, ["sort", "start", "limit"]))
+            );
+
+        if (relation_config.relation_schema) {
+            if (!Array.isArray(relation_config.relation_schema)) {
+                relationParams = [relation_config.relation_schema];
+            }
+            relation_config.relation_schema.forEach((element) => {
+                qry = qry.joinRaw(element.type + " " + element.with_table + " ON " + element.on_condition);
+            });
+        }
+
+        return qry.orderByRaw(sorts).limit(limit).offset(start);
     }
 }

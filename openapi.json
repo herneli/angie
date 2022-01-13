@@ -184,8 +184,19 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
-        "tags": []
+        "responses": {
+          "302": {
+            "description": "Found",
+            "schema": {
+              "type": "string",
+              "example": "<p>Found. Redirecting to <a href=\"http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=angie-back&amp;state=9850eb56-b67e-48fc-8ea9-4a67351e73a9&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code\">http://localhost:3114/auth/realms/Angie/protocol/openid-connect/auth?client_id=angie-back&amp;state=9850eb56-b67e-48fc-8ea9-4a67351e73a9&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3105%2Flogin%3Fauth_callback%3D1&amp;scope=openid&amp;response_type=code</a></p>"
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "text/html"
+        ]
       }
     },
     "/logout": {
@@ -1155,6 +1166,1554 @@
         "responses": {},
         "tags": [
           "integration"
+        ]
+      }
+    },
+    "/integration/list/deployed": {
+      "post": {
+        "summary": "/integration/list/deployed",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "created_on": {
+                            "type": "string"
+                          },
+                          "channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "deployment_options": {
+                                  "type": "object",
+                                  "properties": {
+                                    "trace_file": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_headers": {
+                                      "type": "boolean"
+                                    },
+                                    "assigned_agent": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "restart_policy": {
+                                      "type": "string"
+                                    },
+                                    "trace_properties": {
+                                      "type": "boolean"
+                                    },
+                                    "agent_assign_mode": {
+                                      "type": "string"
+                                    },
+                                    "trace_incoming_message": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_outgoing_message": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "options": {
+                                  "type": "object",
+                                  "properties": {
+                                    "trace": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_file": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_headers": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_properties": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_incoming_message": {
+                                      "type": "boolean"
+                                    },
+                                    "trace_outgoing_message": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "string"
+                                },
+                                "created_on": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "number"
+                                },
+                                "nodes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "type_id": {
+                                        "type": "string"
+                                      },
+                                      "custom_name": {
+                                        "type": "string"
+                                      },
+                                      "links": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "node_id": {
+                                              "type": "string"
+                                            },
+                                            "handle": {
+                                              "type": [
+                                                "null",
+                                                "string"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "node_id",
+                                            "handle"
+                                          ]
+                                        }
+                                      },
+                                      "position": {
+                                        "type": "object",
+                                        "properties": {
+                                          "x": {
+                                            "type": "number"
+                                          },
+                                          "y": {
+                                            "type": "number"
+                                          }
+                                        }
+                                      },
+                                      "data": {
+                                        "type": "object",
+                                        "properties": {
+                                          "label": {
+                                            "type": "string"
+                                          },
+                                          "protocol": {
+                                            "type": "string"
+                                          },
+                                          "hostname": {
+                                            "type": "string"
+                                          },
+                                          "path": {
+                                            "type": "string"
+                                          },
+                                          "port": {
+                                            "type": "number"
+                                          },
+                                          "out_format": {
+                                            "type": "string"
+                                          },
+                                          "name": {
+                                            "type": "string"
+                                          },
+                                          "channel_id": {
+                                            "type": "string"
+                                          },
+                                          "channel_status": {
+                                            "type": "string"
+                                          },
+                                          "code": {
+                                            "type": [
+                                              "object",
+                                              "string"
+                                            ],
+                                            "properties": {
+                                              "code": {
+                                                "type": "string"
+                                              },
+                                              "value": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          },
+                                          "buttonLabel": {
+                                            "type": "string"
+                                          },
+                                          "url": {
+                                            "type": "string"
+                                          },
+                                          "script": {
+                                            "type": "object",
+                                            "properties": {
+                                              "contextCode": {
+                                                "type": "string"
+                                              },
+                                              "contextMember": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "memberType": {
+                                                    "type": "string"
+                                                  },
+                                                  "code": {
+                                                    "type": "string"
+                                                  },
+                                                  "name": {
+                                                    "type": "string"
+                                                  },
+                                                  "type": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "type": {
+                                                        "type": "string"
+                                                      },
+                                                      "objectCode": {
+                                                        "type": "string"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "language": {
+                                                "type": "string"
+                                              },
+                                              "mainStatement": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "id": {
+                                                    "type": "string"
+                                                  },
+                                                  "type": {
+                                                    "type": "string"
+                                                  },
+                                                  "main": {
+                                                    "type": "boolean"
+                                                  },
+                                                  "variables": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "hl7": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "memberType": {
+                                                            "type": "string"
+                                                          },
+                                                          "code": {
+                                                            "type": "string"
+                                                          },
+                                                          "name": {
+                                                            "type": "string"
+                                                          },
+                                                          "type": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "objectCode": {
+                                                                "type": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "Order": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "memberType": {
+                                                            "type": "string"
+                                                          },
+                                                          "code": {
+                                                            "type": "string"
+                                                          },
+                                                          "name": {
+                                                            "type": "string"
+                                                          },
+                                                          "type": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "objectCode": {
+                                                                "type": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "tests": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "memberType": {
+                                                            "type": "string"
+                                                          },
+                                                          "code": {
+                                                            "type": "string"
+                                                          },
+                                                          "name": {
+                                                            "type": "string"
+                                                          },
+                                                          "type": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                  "type": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                      "type": {
+                                                                        "type": "string"
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "objectCode": {
+                                                                    "type": "string"
+                                                                  }
+                                                                }
+                                                              },
+                                                              "objectCode": {
+                                                                "type": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "test": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "memberType": {
+                                                            "type": "string"
+                                                          },
+                                                          "code": {
+                                                            "type": "string"
+                                                          },
+                                                          "name": {
+                                                            "type": "string"
+                                                          },
+                                                          "type": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "objectCode": {
+                                                                "type": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "obj": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "memberType": {
+                                                            "type": "string"
+                                                          },
+                                                          "code": {
+                                                            "type": "string"
+                                                          },
+                                                          "name": {
+                                                            "type": "string"
+                                                          },
+                                                          "type": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "objectCode": {
+                                                                "type": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "nestedStatements": {
+                                                    "type": "array",
+                                                    "items": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "variables": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                  "type": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "objectCode": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                      "type": {
+                                                                        "type": "string"
+                                                                      },
+                                                                      "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                          "type": {
+                                                                            "type": "string"
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      "objectCode": {
+                                                                        "type": "string"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "code": {
+                                                                "type": "string"
+                                                              },
+                                                              "name": {
+                                                                "type": "string"
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "type",
+                                                              "code",
+                                                              "name"
+                                                            ]
+                                                          }
+                                                        },
+                                                        "id": {
+                                                          "type": "string"
+                                                        },
+                                                        "type": {
+                                                          "type": "string"
+                                                        },
+                                                        "name": {
+                                                          "type": "string"
+                                                        },
+                                                        "expressions": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "array"
+                                                          }
+                                                        },
+                                                        "arrayExpression": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "memberType": {
+                                                                "type": "string"
+                                                              },
+                                                              "code": {
+                                                                "type": "string"
+                                                              },
+                                                              "name": {
+                                                                "type": "string"
+                                                              },
+                                                              "type": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                  "type": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "objectCode": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                      "type": {
+                                                                        "type": "string"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "complexityLevel": {
+                                                                "type": "number"
+                                                              },
+                                                              "id": {
+                                                                "type": "number"
+                                                              },
+                                                              "isActive": {
+                                                                "type": "boolean"
+                                                              },
+                                                              "language": {
+                                                                "type": "string"
+                                                              },
+                                                              "parentType": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                  "type": {
+                                                                    "type": "string"
+                                                                  },
+                                                                  "objectCode": {
+                                                                    "type": "string"
+                                                                  }
+                                                                }
+                                                              },
+                                                              "sourceCode": {
+                                                                "type": "string"
+                                                              },
+                                                              "description": {
+                                                                "type": "string"
+                                                              },
+                                                              "paramMembers": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                  "type": "object",
+                                                                  "properties": {
+                                                                    "code": {
+                                                                      "type": "string"
+                                                                    },
+                                                                    "name": {
+                                                                      "type": "string"
+                                                                    },
+                                                                    "type": {
+                                                                      "type": "object",
+                                                                      "properties": {
+                                                                        "type": {
+                                                                          "type": "string"
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "required": {
+                                                                      "type": "boolean"
+                                                                    }
+                                                                  },
+                                                                  "required": [
+                                                                    "code",
+                                                                    "name",
+                                                                    "type",
+                                                                    "required"
+                                                                  ]
+                                                                }
+                                                              },
+                                                              "renderTemplate": {
+                                                                "type": "string"
+                                                              },
+                                                              "sourceCodeForBinaryOperator": {
+                                                                "type": "string"
+                                                              },
+                                                              "params": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                  "size": {
+                                                                    "type": "number"
+                                                                  },
+                                                                  "fromOne": {
+                                                                    "type": "boolean"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "memberType",
+                                                              "code",
+                                                              "name",
+                                                              "type",
+                                                              "complexityLevel",
+                                                              "id",
+                                                              "isActive",
+                                                              "language",
+                                                              "parentType",
+                                                              "sourceCode",
+                                                              "description",
+                                                              "paramMembers",
+                                                              "renderTemplate",
+                                                              "sourceCodeForBinaryOperator",
+                                                              "params"
+                                                            ]
+                                                          }
+                                                        },
+                                                        "itemVariable": {
+                                                          "type": "string"
+                                                        },
+                                                        "nestedStatements": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "id": {
+                                                                "type": "string"
+                                                              },
+                                                              "type": {
+                                                                "type": "string"
+                                                              },
+                                                              "nestedStatements": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                  "type": "object",
+                                                                  "properties": {
+                                                                    "id": {
+                                                                      "type": "string"
+                                                                    },
+                                                                    "type": {
+                                                                      "type": "string"
+                                                                    },
+                                                                    "name": {
+                                                                      "type": "string"
+                                                                    },
+                                                                    "rule": {
+                                                                      "type": "object",
+                                                                      "properties": {
+                                                                        "type": {
+                                                                          "type": "string"
+                                                                        },
+                                                                        "combinator": {
+                                                                          "type": "string"
+                                                                        },
+                                                                        "rules": {
+                                                                          "type": "array",
+                                                                          "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                              "type": {
+                                                                                "type": "string"
+                                                                              },
+                                                                              "expression": {
+                                                                                "type": "array",
+                                                                                "items": {
+                                                                                  "type": "object",
+                                                                                  "properties": {
+                                                                                    "memberType": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "code": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "name": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "type": {
+                                                                                      "type": "object",
+                                                                                      "properties": {
+                                                                                        "type": {
+                                                                                          "type": "string"
+                                                                                        },
+                                                                                        "objectCode": {
+                                                                                          "type": "string"
+                                                                                        }
+                                                                                      }
+                                                                                    },
+                                                                                    "error": {
+                                                                                      "type": "boolean"
+                                                                                    },
+                                                                                    "id": {
+                                                                                      "type": "number"
+                                                                                    },
+                                                                                    "name_": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "imports": {
+                                                                                      "type": "array",
+                                                                                      "items": {
+                                                                                        "type": "string"
+                                                                                      }
+                                                                                    },
+                                                                                    "isActive": {
+                                                                                      "type": "boolean"
+                                                                                    },
+                                                                                    "language": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "parentType": {
+                                                                                      "type": "object",
+                                                                                      "properties": {
+                                                                                        "type": {
+                                                                                          "type": "string"
+                                                                                        },
+                                                                                        "objectCode": {
+                                                                                          "type": "string"
+                                                                                        }
+                                                                                      }
+                                                                                    },
+                                                                                    "sourceCode": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "description": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "paramMembers": {
+                                                                                      "type": "array",
+                                                                                      "items": {
+                                                                                        "type": "object",
+                                                                                        "properties": {
+                                                                                          "code": {
+                                                                                            "type": "string"
+                                                                                          },
+                                                                                          "name": {
+                                                                                            "type": "string"
+                                                                                          },
+                                                                                          "type": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                              "type": {
+                                                                                                "type": "string"
+                                                                                              }
+                                                                                            }
+                                                                                          },
+                                                                                          "required": {
+                                                                                            "type": "boolean"
+                                                                                          }
+                                                                                        },
+                                                                                        "required": [
+                                                                                          "code",
+                                                                                          "name",
+                                                                                          "type",
+                                                                                          "required"
+                                                                                        ]
+                                                                                      }
+                                                                                    },
+                                                                                    "renderTemplate": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "complexityLevel": {
+                                                                                      "type": "number"
+                                                                                    },
+                                                                                    "sourceCodeForBinaryOperator": {
+                                                                                      "type": "string"
+                                                                                    },
+                                                                                    "params": {
+                                                                                      "type": "object",
+                                                                                      "properties": {
+                                                                                        "path": {
+                                                                                          "type": "string"
+                                                                                        },
+                                                                                        "value": {
+                                                                                          "type": "string"
+                                                                                        }
+                                                                                      }
+                                                                                    },
+                                                                                    "renderOperator": {
+                                                                                      "type": "string"
+                                                                                    }
+                                                                                  },
+                                                                                  "required": [
+                                                                                    "memberType",
+                                                                                    "code",
+                                                                                    "name",
+                                                                                    "type",
+                                                                                    "error",
+                                                                                    "id",
+                                                                                    "isActive",
+                                                                                    "language",
+                                                                                    "parentType",
+                                                                                    "sourceCode",
+                                                                                    "description",
+                                                                                    "paramMembers",
+                                                                                    "renderTemplate",
+                                                                                    "complexityLevel",
+                                                                                    "sourceCodeForBinaryOperator",
+                                                                                    "params"
+                                                                                  ]
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "nestedStatements": {
+                                                                      "type": "array",
+                                                                      "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                          "id": {
+                                                                            "type": "string"
+                                                                          },
+                                                                          "type": {
+                                                                            "type": "string"
+                                                                          },
+                                                                          "label": {
+                                                                            "type": "string"
+                                                                          },
+                                                                          "code": {
+                                                                            "type": "string"
+                                                                          },
+                                                                          "nestedStatements": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                              "type": "object",
+                                                                              "properties": {
+                                                                                "id": {
+                                                                                  "type": "string"
+                                                                                },
+                                                                                "type": {
+                                                                                  "type": "string"
+                                                                                },
+                                                                                "name": {
+                                                                                  "type": "string"
+                                                                                },
+                                                                                "expressions": {
+                                                                                  "type": "array",
+                                                                                  "items": {
+                                                                                    "type": "array"
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        "required": [
+                                                                          "id",
+                                                                          "type",
+                                                                          "label",
+                                                                          "code",
+                                                                          "nestedStatements"
+                                                                        ]
+                                                                      }
+                                                                    },
+                                                                    "expressions": {
+                                                                      "type": "array",
+                                                                      "items": {
+                                                                        "type": "array"
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "required": [
+                                                                    "id",
+                                                                    "type",
+                                                                    "name"
+                                                                  ]
+                                                                }
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "id",
+                                                              "type",
+                                                              "nestedStatements"
+                                                            ]
+                                                          }
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "id",
+                                                        "type",
+                                                        "name",
+                                                        "expressions",
+                                                        "variables",
+                                                        "arrayExpression",
+                                                        "itemVariable",
+                                                        "nestedStatements"
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "beforeSave": {
+                                            "type": "string"
+                                          },
+                                          "language": {
+                                            "type": "string"
+                                          },
+                                          "query_params": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "code": {
+                                                  "type": "string"
+                                                },
+                                                "value": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "code",
+                                                "value"
+                                              ]
+                                            }
+                                          },
+                                          "count": {
+                                            "type": "number"
+                                          },
+                                          "handles": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                },
+                                                "to": {
+                                                  "type": "string"
+                                                },
+                                                "title": {
+                                                  "type": "string"
+                                                },
+                                                "color": {
+                                                  "type": "string"
+                                                },
+                                                "condition": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "id",
+                                                "to",
+                                                "title",
+                                                "color",
+                                                "condition"
+                                              ]
+                                            }
+                                          },
+                                          "delay": {
+                                            "type": "number"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "type_id",
+                                      "custom_name",
+                                      "links",
+                                      "position",
+                                      "data"
+                                    ]
+                                  }
+                                },
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "last_updated": {
+                                  "type": "string"
+                                },
+                                "message_count": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                },
+                                "trace": {
+                                  "type": "boolean"
+                                },
+                                "messages_total": {
+                                  "type": "number"
+                                },
+                                "messages_error": {
+                                  "type": "number"
+                                },
+                                "messages_sent": {
+                                  "type": "number"
+                                },
+                                "last_deployed_route": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "agent": {
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "joined_date": {
+                                      "type": "string"
+                                    },
+                                    "approved": {
+                                      "type": "boolean"
+                                    },
+                                    "approved_date": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    },
+                                    "meta": {
+                                      "type": "object",
+                                      "properties": {
+                                        "ip": {
+                                          "type": "string"
+                                        },
+                                        "platform": {
+                                          "type": "string"
+                                        },
+                                        "rest_api_port": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "last_socket_id": {
+                                      "type": "string"
+                                    },
+                                    "current_channels": {
+                                      "type": "object",
+                                      "properties": {
+                                        "list": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {
+                                                "type": "string"
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "status": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "status": {
+                                                    "type": "string"
+                                                  },
+                                                  "uptime": {
+                                                    "type": "string"
+                                                  },
+                                                  "messages_sent": {
+                                                    "type": "number"
+                                                  },
+                                                  "messages_error": {
+                                                    "type": "number"
+                                                  },
+                                                  "messages_total": {
+                                                    "type": "number"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "last_online_date": {
+                                      "type": "string"
+                                    },
+                                    "options": {
+                                      "type": "null"
+                                    }
+                                  }
+                                }
+                              },
+                              "required": [
+                                "options",
+                                "name",
+                                "id",
+                                "created_on",
+                                "version",
+                                "nodes",
+                                "enabled",
+                                "status",
+                                "last_updated",
+                                "message_count",
+                                "trace",
+                                "messages_total",
+                                "messages_error",
+                                "messages_sent",
+                                "last_deployed_route",
+                                "agent",
+                                "deployment_options"
+                              ]
+                            }
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "last_updated": {
+                            "type": "string"
+                          },
+                          "package_code": {
+                            "type": "string"
+                          },
+                          "package_version": {
+                            "type": "string"
+                          },
+                          "deployment_config": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "last_deployment_date": {
+                                "type": "string"
+                              },
+                              "deployment_config": {
+                                "type": "null"
+                              },
+                              "organization_id": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "enabled": {
+                                "type": "boolean"
+                              },
+                              "channel_config": {
+                                "type": "object",
+                                "properties": {
+                                  "1fe99fbf-14dd-45e3-a154-867ce80aa6b6": {
+                                    "type": "object",
+                                    "properties": {
+                                      "trace_file": {
+                                        "type": "boolean"
+                                      },
+                                      "trace_headers": {
+                                        "type": "boolean"
+                                      },
+                                      "assigned_agent": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "restart_policy": {
+                                        "type": "string"
+                                      },
+                                      "trace_properties": {
+                                        "type": "boolean"
+                                      },
+                                      "agent_assign_mode": {
+                                        "type": "string"
+                                      },
+                                      "trace_incoming_message": {
+                                        "type": "boolean"
+                                      },
+                                      "trace_outgoing_message": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  },
+                                  "9ebe6344-fe79-4508-8376-3be18fba9f63": {
+                                    "type": "object",
+                                    "properties": {
+                                      "trace_file": {
+                                        "type": "boolean"
+                                      },
+                                      "trace_headers": {
+                                        "type": "boolean"
+                                      },
+                                      "assigned_agent": {
+                                        "type": "array",
+                                        "items": {}
+                                      },
+                                      "restart_policy": {
+                                        "type": "string"
+                                      },
+                                      "trace_properties": {
+                                        "type": "boolean"
+                                      },
+                                      "agent_assign_mode": {
+                                        "type": "string"
+                                      },
+                                      "trace_incoming_message": {
+                                        "type": "boolean"
+                                      },
+                                      "trace_outgoing_message": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "package_code": {
+                        "type": "string"
+                      },
+                      "package_version": {
+                        "type": "string"
+                      },
+                      "deployment_config": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "last_deployment_date": {
+                            "type": "string"
+                          },
+                          "deployment_config": {
+                            "type": "null"
+                          },
+                          "organization_id": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "channel_config": {
+                            "type": "object",
+                            "properties": {
+                              "1fe99fbf-14dd-45e3-a154-867ce80aa6b6": {
+                                "type": "object",
+                                "properties": {
+                                  "trace_file": {
+                                    "type": "boolean"
+                                  },
+                                  "trace_headers": {
+                                    "type": "boolean"
+                                  },
+                                  "assigned_agent": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "restart_policy": {
+                                    "type": "string"
+                                  },
+                                  "trace_properties": {
+                                    "type": "boolean"
+                                  },
+                                  "agent_assign_mode": {
+                                    "type": "string"
+                                  },
+                                  "trace_incoming_message": {
+                                    "type": "boolean"
+                                  },
+                                  "trace_outgoing_message": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              },
+                              "9ebe6344-fe79-4508-8376-3be18fba9f63": {
+                                "type": "object",
+                                "properties": {
+                                  "trace_file": {
+                                    "type": "boolean"
+                                  },
+                                  "trace_headers": {
+                                    "type": "boolean"
+                                  },
+                                  "assigned_agent": {
+                                    "type": "array",
+                                    "items": {}
+                                  },
+                                  "restart_policy": {
+                                    "type": "string"
+                                  },
+                                  "trace_properties": {
+                                    "type": "boolean"
+                                  },
+                                  "agent_assign_mode": {
+                                    "type": "string"
+                                  },
+                                  "trace_incoming_message": {
+                                    "type": "boolean"
+                                  },
+                                  "trace_outgoing_message": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "data",
+                      "package_code",
+                      "package_version",
+                      "deployment_config"
+                    ]
+                  },
+                  "example": [
+                    {
+                      "id": "170c02f8-0ce7-488a-a3e7-807196d5ee07",
+                      "name": "hl7_visual",
+                      "data": {
+                        "id": "170c02f8-0ce7-488a-a3e7-807196d5ee07",
+                        "name": "hl7_visual",
+                        "description": "HL7 visual",
+                        "created_on": "2021-11-22T10:14:03.257Z",
+                        "channels": [
+                          {
+                            "deployment_options": null,
+                            "options": {},
+                            "name": "Channel",
+                            "id": "fa46d407-40c4-4d69-bc12-2fe5fb861a80",
+                            "created_on": "2021-11-22T10:15:36.245Z",
+                            "version": 100,
+                            "nodes": [
+                              {
+                                "id": "43fddbee-f513-430a-aa11-345938282e75",
+                                "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                "custom_name": "HTTP Input",
+                                "links": [
+                                  {
+                                    "node_id": "eeb67b76-4949-4c5e-bb2a-f7fa60180704",
+                                    "handle": null
+                                  }
+                                ],
+                                "position": {
+                                  "x": 123,
+                                  "y": 105
+                                },
+                                "data": {
+                                  "label": "HTTP Input",
+                                  "protocol": "jetty:http",
+                                  "hostname": "0.0.0.0",
+                                  "path": "/hl7",
+                                  "port": 8778,
+                                  "out_format": "raw"
+                                }
+                              },
+                              {
+                                "id": "eeb67b76-4949-4c5e-bb2a-f7fa60180704",
+                                "type_id": "e0a4f9f7-0d4b-4fd4-a500-dc944b17f241",
+                                "custom_name": "Log",
+                                "links": [],
+                                "position": {
+                                  "x": 620,
+                                  "y": 110
+                                },
+                                "data": {
+                                  "name": "debug"
+                                }
+                              }
+                            ],
+                            "enabled": true,
+                            "status": "UNDEPLOYED",
+                            "last_updated": "2022-01-10T15:31:58.033Z",
+                            "message_count": 0,
+                            "trace": true,
+                            "messages_total": 0,
+                            "messages_error": 0,
+                            "messages_sent": 0,
+                            "last_deployed_route": null,
+                            "agent": null
+                          },
+                          {
+                            "options": {
+                              "trace": true,
+                              "trace_file": true,
+                              "trace_headers": true,
+                              "trace_properties": true,
+                              "trace_incoming_message": true,
+                              "trace_outgoing_message": true
+                            },
+                            "name": "Test",
+                            "id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                            "created_on": "2021-11-29T16:49:28.171Z",
+                            "version": 78,
+                            "nodes": [
+                              {
+                                "id": "546f4d2b-c93d-4c08-aedb-eab88ef7f15d",
+                                "type_id": "331a8e65-ed4e-4911-89b3-20f256870301",
+                                "custom_name": "HTTP Input",
+                                "links": [
+                                  {
+                                    "node_id": "8d3c57d5-304e-48a6-8d73-a2622eb2923b",
+                                    "handle": null
+                                  }
+                                ],
+                                "position": {
+                                  "x": 133,
+                                  "y": 170
+                                },
+                                "data": {
+                                  "label": "HTTP Input",
+                                  "protocol": "jetty:http",
+                                  "hostname": "0.0.0.0",
+                                  "path": "",
+                                  "port": 7875,
+                                  "out_format": "json"
+                                }
+                              },
+                              {
+                                "id": "8d3c57d5-304e-48a6-8d73-a2622eb2923b",
+                                "type_id": "a50e7aff-e302-4fd9-bfe4-31e64bc8fe02",
+                                "custom_name": "JSON Mapper",
+                                "links": [
+                                  {
+                                    "node_id": "412288c7-6a39-49af-ad64-61f1371be330",
+                                    "handle": null
+                                  }
+                                ],
+                                "position": {
+                                  "x": 446,
+                                  "y": 248
+                                },
+                                "data": {
+                                  "label": "JSON Mapper",
+                                  "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                  "channel_status": "UNDEPLOYED",
+                                  "code": {
+                                    "code": "${body['id']}",
+                                    "value": "${body['id2']}"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "bb3a39f9-9038-4c49-b0ae-570c070d7be0",
+                                "type_id": "61a6b078-f7a2-4f0d-978b-c9c36e136d58",
+                                "custom_name": "Inyectar Mensaje",
+                                "links": [
+                                  {
+                                    "node_id": "8d3c57d5-304e-48a6-8d73-a2622eb2923b",
+                                    "handle": null
+                                  }
+                                ],
+                                "position": {
+                                  "x": 203,
+                                  "y": 358
+                                },
+                                "data": {
+                                  "label": "Inyectar Mensaje",
+                                  "channel_id": "f2c8e90a-5464-4aa0-83b3-33951678aeaa",
+                                  "channel_status": "Started",
+                                  "buttonLabel": "Enviar",
+                                  "code": "{\r\n\t\"id\": \"Holi\",\r\n\t\"id2\": \"Que Tal\"\r\n}",
+                                  "url": "sendMessageToRoute",
+                                  "out_format": "json"
+                                }
+                              },
+                              {
+                                "id": "412288c7-6a39-49af-ad64-61f1371be330",
+                                "type_id": "core.utils.log",
+                                "position": {
+                                  "x": 766,
+                                  "y": 332
+                                },
+                                "data": {
+                                  "label": "Log",
+                                  "name": "debug"
+                                },
+                                "links": []
+                              }
+                            ],
+                            "enabled": true,
+                            "status": "UNDEPLOYED",
+                            "last_updated": "2021-12-20T08:09:53.944Z",
+                            "message_count": 0,
+                            "trace": false,
+                            "messages_total": 0,
+                            "messages_error": 0,
+                            "messages_sent": 0,
+                            "last_deployed_route": null,
+                            "agent": null,
+                            "deployment_options": null
+                          }
+                        ],
+                        "enabled": true,
+                        "last_updated": "2022-01-10T15:32:25.337Z",
+                        "package_code": "angie.core",
+                        "package_version": "1.0.0",
+                        "deployment_config": {
+                          "id": "170c02f8-0ce7-488a-a3e7-807196d5ee07",
+                          "last_deployment_date": "2022-01-10T15:32:25.343Z",
+                          "deployment_config": null,
+                          "organization_id": null,
+                          "enabled": true,
+                          "channel_config": null
+                        }
+                      },
+                      "package_code": "angie.core",
+                      "package_version": "1.0.0",
+                      "deployment_config": {
+                        "id": "170c02f8-0ce7-488a-a3e7-807196d5ee07",
+                        "last_deployment_date": "2022-01-10T15:32:25.343Z",
+                        "deployment_config": null,
+                        "organization_id": null,
+                        "enabled": true,
+                        "channel_config": null
+                      }
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "4"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "select count(\"id\") as \"total\" from \"integration\" where (\"organization_id\" = $1) - column \"organization_id\" does not exist"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "integration"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -3604,7 +5163,23 @@
               }
             }
           },
-          "304": {}
+          "304": {},
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "select count(\"id\") as \"total\" from \"integration\" left join \"integration_deployment\" on \"integration\".\"id\" = \"integration_deployment\".\"id\" group by \"integration\".\"id\" - column reference \"id\" is ambiguous"
+                }
+              }
+            }
+          }
         },
         "tags": [],
         "produces": [
@@ -3916,15 +5491,69 @@
         "tags": []
       }
     },
-    "/section/{role}/path_allowed": {
+    "/roles": {
+      "get": {
+        "summary": "/roles",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/menu/schema": {
+      "get": {
+        "summary": "/menu/schema",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/messages/{channel}": {
       "post": {
-        "summary": "/section/{role}/path_allowed",
+        "summary": "/messages/{channel}",
         "consumes": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "role",
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "get": {
+        "summary": "/messages/{channel}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/messages/{channel}/count": {
+      "get": {
+        "summary": "/messages/{channel}/count",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "channel",
             "in": "path",
             "required": true
           }
@@ -3957,30 +5586,15 @@
         ]
       }
     },
-    "/messages/{channel}": {
+    "/section/{role}/path_allowed": {
       "post": {
-        "summary": "/messages/{channel}",
+        "summary": "/section/{role}/path_allowed",
         "consumes": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "channel",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {},
-        "tags": []
-      },
-      "get": {
-        "summary": "/messages/{channel}",
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "channel",
+            "name": "role",
             "in": "path",
             "required": true
           }

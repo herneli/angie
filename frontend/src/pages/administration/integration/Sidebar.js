@@ -23,8 +23,8 @@ const Sidebar = ({ nodeTypes }) => {
      * @returns
      */
     const drawGroupedTypes = (types) => {
-        const sorted = lodash.sortBy(types, "data.group");
-        const grouped = sorted && sorted.length !== 0 ? lodash.groupBy(sorted, "data.group") : {};
+        const sorted = lodash.sortBy(types, "group");
+        const grouped = sorted && sorted.length !== 0 ? lodash.groupBy(sorted, "group") : {};
 
         let result = [];
         for (const group in grouped) {
@@ -37,15 +37,15 @@ const Sidebar = ({ nodeTypes }) => {
                     {child.map((type) => (
                         <div
                             key={type.id}
-                            className={"dndnode " + type.data.react_component_type}
+                            className={"dndnode " + type.react_component_type}
                             onDragStart={(event) =>
                                 onDragStart(event, type.code, {
-                                    label: type.data.name,
-                                    ...JSON.parse(type.data.defaults),
+                                    label: type.name,
+                                    ...JSON.parse(type.defaults),
                                 })
                             }
                             draggable>
-                            {type.data.name}
+                            {type.name}
                         </div>
                     ))}
                 </div>

@@ -2,7 +2,7 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Typography } from "antd";
+import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
 
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
@@ -49,6 +49,9 @@ import { usePackage } from "../../../components/packages/PackageContext";
 import EllipsisParagraph from "../../../components/text/EllipsisParagraph";
 import IconButton from "../../../components/button/IconButton";
 import ChannelOptions from "./ChannelOptions";
+
+import * as api from "../../../api/configurationApi";
+
 
 const { TabPane } = Tabs;
 
@@ -180,14 +183,14 @@ const Integration = () => {
             type: "in",
             value: packageData.dependencies,
         };
-        const response = await axios.get("/configuration/model/node_type/data", { params: { filters } });
 
-        if (response?.data?.success) {
-            setNodeTypes(response?.data?.data);
-
-            await Transformer.init(response?.data?.data);
-        } else {
-            console.error(response.data);
+        try {
+            const types = await api.getModelDataList("node_type", { params: { filters } });
+            setNodeTypes(types);
+            await Transformer.init(types);
+            
+        } catch (ex) {
+            console.error(ex);
         }
     };
 
@@ -195,12 +198,11 @@ const Integration = () => {
      * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
     const loadOrganizations = async () => {
-        const response = await axios.get("/configuration/model/organization/data");
-
-        if (response?.data?.success) {
-            setOrganizations(response?.data?.data);
-        } else {
-            console.error(response.data);
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
         }
     };
 

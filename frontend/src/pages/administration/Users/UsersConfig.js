@@ -1,8 +1,5 @@
-import { mdiAccountGroup, mdiAxisLock, mdiConnection, mdiDelete, mdiPalette, mdiPencil } from "@mdi/js";
-import Icon from "@mdi/react";
-import { Layout, Menu, Space, Tag, Table, Button, Popconfirm, Modal, Divider, Input } from "antd";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Button, Popconfirm } from "antd";
+import React, { useState } from "react";
 import axios from "axios";
 import ModelAdmin from "../../configuration/ModelAdmin";
 

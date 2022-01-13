@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router";
+import { Switch, useRouteMatch } from "react-router";
 import { PrivateRoute } from "../../components/security/PrivateRoute";
 import SubMenu from "../../layout/SubMenu";
 
@@ -24,21 +24,21 @@ const Administration = ({ app }) => {
                 <Content>
                     <Switch>
                         <PrivateRoute
-                            roles={["default-roles-angie"]}
+                            roles={["admin"]}
                             path="/admin/users/:id"
                             component={ModelEdit}
                             model={"users"}
                             {...defaultProps}
                         />
                         <PrivateRoute
-                            roles={["default-roles-angie"]}
+                            roles={["admin"]}
                             path="/admin/users"
                             component={UsersConfig}
                             {...defaultProps}
                         />
 
                         <PrivateRoute
-                            roles={["default-roles-angie"]}
+                            roles={["admin"]}
                             exact
                             path={"/admin/:model"}
                             render={({ match }) => {
@@ -46,7 +46,7 @@ const Administration = ({ app }) => {
                             }}
                         />
                         <PrivateRoute
-                            roles={["default-roles-angie"]}
+                            roles={["admin"]}
                             exact
                             path={"/admin/:model/:id"}
                             render={({ match }) => {

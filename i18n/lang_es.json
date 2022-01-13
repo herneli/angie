@@ -9,9 +9,14 @@
             "organization_label": "*Org. Asignadas: *",
             "current_organization_label": "*Org. Actual: *",
             "organization_change_label": "_(cambiar)_",
+            "change_org": "Cambiar Organización",
             "logout": "Salir",
             "logout_title": "Cerrar Sesión",
-            "login": "Iniciar Sesión"
+            "login": "Iniciar Sesión",
+            "organizations": {
+                "all": "Todas",
+                "assigned": "Asignadas a mí"
+            }
         }
     },
     "common": {
@@ -113,6 +118,7 @@
             "name": "Nombre",
             "description": "Descripción",
             "status": "Estado",
+            "organization": "Organización",
             "messages_sent": "Enviados",
             "messages_error": "Errores",
             "messages_total": "Total",

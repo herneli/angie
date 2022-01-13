@@ -45,16 +45,6 @@ export default function ModelTable({
                 sorter: true,
             }));
 
-            // columns.push({
-            //     title: "packageCode",
-            //     key: "packageCode",
-            //     dataIndex: "packageCode",
-            // });
-            columns.push({
-                title: "packageCode",
-                key: "packageCode",
-                dataIndex: "packageCode",
-            });
             columns.push({
                 title: T.translate("configuration.actions"),
                 key: "_actions",

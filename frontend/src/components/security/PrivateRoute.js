@@ -1,6 +1,6 @@
 import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
-import { useLocation, useRouteMatch } from "react-router";
+import { useLocation } from "react-router";
 import { Redirect, Route } from "react-router-dom";
 import MenuHandler from "../../common/MenuHandler";
 import { useAngieSession } from "./UserContext";

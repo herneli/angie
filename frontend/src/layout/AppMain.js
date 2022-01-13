@@ -25,35 +25,35 @@ const AppMain = ({ location }) => {
         <Switch>
             <Route exact path="/" render={({ match }) => <Home match={match} {...defaultProps} />} />
             <Route exact path="/403" render={({ match }) => <Unauth match={match} {...defaultProps} />} />
-            <PrivateRoute roles={["default-roles-angie"]} path="/admin" component={Administration} {...defaultProps} />
+            <PrivateRoute roles={["admin"]} path="/admin" component={Administration} {...defaultProps} />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 exact
                 path="/messages/:channel_id"
                 component={Message}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 exact
                 path="/packages"
                 component={Packages}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 path="/packages/:packageCode/versions/:packageVersion"
                 component={Package}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin", "user"]}
                 exact
                 path="/integrations/deployed"
                 component={DeployedIntegrations}
                 {...defaultProps}
             />
-            <PrivateRoute roles={["default-roles-angie"]} path="/agents" component={Agents} {...defaultProps} />
+            <PrivateRoute roles={["admin"]} path="/agents" component={Agents} {...defaultProps} />
         </Switch>
     );
 };

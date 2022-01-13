@@ -1,7 +1,7 @@
 import "./App.less";
 import { withRouter } from "react-router-dom";
 import AppMain from "./layout/AppMain";
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import AxiosConfig from "./common/AxiosConfig";
 import Config from "./common/Config";
 import TranslationLoader from "./common/TranslationLoader";
@@ -13,6 +13,8 @@ import configureKeycloak from "./configureKeycloak";
 import { Layout, Spin } from "antd";
 import axios from "axios";
 import UserContextProvider from "./components/security/UserContext";
+
+import * as api from "./api/configurationApi";
 
 class App extends Component {
     state = {
@@ -47,8 +49,7 @@ class App extends Component {
     eventLogger = async (event, error) => {
         if (event === "onReady") {
             if (this.keycloak?.tokenParsed?.sub) {
-                await this.getAllowedSections(this.keycloak.tokenParsed.sub);
-                await this.getCurrentUser(this.keycloak.tokenParsed.sub);
+                await this.loadUserInfo(this.keycloak.tokenParsed.sub);
             }
 
             this.setState({
@@ -69,33 +70,20 @@ class App extends Component {
         AxiosConfig.reloadToken();
     };
 
-    async getAllowedSections(id) {
+    loadUserInfo = async (id) => {
         try {
-            const data = await axios.post(`/section/${id}/check_allowed`);
+            const user = await api.getModelData("users", id);
+            const menuResponse = await axios.post(`/section/${id}/check_allowed`);
 
-            if (data.status === 200) {
-                return this.setState({
-                    menu: data.data.menu,
-                    allowedPaths: data.data.allowedPaths,
-                });
-            }
+            return this.setState({
+                currentUser: user,
+                menu: menuResponse?.data?.menu || [],
+                allowedPaths: menuResponse?.data?.allowedPaths || [],
+            });
         } catch (e) {
             console.error(e);
         }
-    }
-
-    async getCurrentUser(id) {
-        try {
-            const response = await axios.get(`/configuration/model/users/data/${id}`);
-            if (response.status === 200) {
-                this.setState({
-                    currentUser: response.data.data,
-                });
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
+    };
 
     render() {
         const { loaded, menu, allowedPaths, keycloakReady, currentUser } = this.state;
@@ -110,7 +98,7 @@ class App extends Component {
                         {keycloakReady && (
                             <UserContextProvider user={currentUser} menu={menu} allowedPaths={allowedPaths}>
                                 <Layout className="App">
-                                    <AppMenu />
+                                    <AppMenu app={this} />
                                     <AppMain />
                                 </Layout>
                             </UserContextProvider>

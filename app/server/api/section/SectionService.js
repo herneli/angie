@@ -21,6 +21,7 @@ export class SectionService extends BaseService {
         let allowedSections = await this.getAllowedPaths(role);
         let finalMenu = [];
 
+        //TODO filter children recursively
         menu.forEach((menuEntry) => {
             let resp = allowedSections.filter((element) => element == menuEntry.value);
             if (resp.length > 0) {

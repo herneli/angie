@@ -16,7 +16,6 @@ export class UserService extends BaseService {
                 id: e.id,
             });
 
-
             const user = {
                 ...lodash.omit(e, [
                     "totp",
@@ -30,7 +29,7 @@ export class UserService extends BaseService {
                 ]),
                 created_timestamp: moment(e.createdTimestamp).toISOString(),
                 email_verified: e.emailVerified,
-                roles: lodash.map(roles.realmMappings, "name").join(',')
+                roles: lodash.map(roles.realmMappings, "name").join(","),
             };
             // roles.pop; //!! FIXME  ??? esto que es?
             // let groups = await App.keycloakAdmin.users.listGroups({
@@ -42,10 +41,15 @@ export class UserService extends BaseService {
             if (exists) {
                 //Si existe se actualiza
                 userRecord.data = { ...exists.data, ...user };
+                if (!userRecord.data.current_organization) {
+                    userRecord.data.current_organization = "assigned";
+                }
                 userRecord = { ...exists, ...userRecord };
 
                 await this.update(user.id, userRecord);
                 continue;
+            } else {
+                userRecord.data.current_organization = "assigned";
             }
             //De lo contrario se introduce en el listado de elementos a guardar
             usersTosave.push(userRecord);
@@ -54,5 +58,9 @@ export class UserService extends BaseService {
         if (usersTosave.length > 0) {
             await this.save(usersTosave);
         }
+    }
+
+    loadByUsername(username) {
+        return this.dao.loadByUsername(username);
     }
 }

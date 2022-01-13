@@ -7,15 +7,7 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import {
-    mdiPlayCircle,
-    mdiSourceBranchPlus,
-    mdiStopCircle,
-    mdiTextLong,
-    mdiMessage,
-    mdiDatabaseArrowRightOutline,
-    mdiRefresh,
-} from "@mdi/js";
+import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiRefresh } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link, useHistory } from "react-router-dom";
@@ -23,6 +15,9 @@ import EllipsisParagraph from "../../components/text/EllipsisParagraph";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
 import AgentInfo from "./AgentInfo";
+
+import * as api from "../../api/configurationApi";
+import { useAngieSession } from "../../components/security/UserContext";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -63,20 +58,20 @@ const useStyles = createUseStyles({
 
 const channelActions = new ChannelActions();
 
-const DeployedIntegrations = ({ packageUrl }) => {
+const DeployedIntegrations = () => {
     const classes = useStyles();
     const history = useHistory();
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
     const [agents, setAgents] = useState([]);
+    const { currentUser } = useAngieSession();
 
     const [pagination, setPagination] = useState({});
 
     const initialize = async () => {
         await loadOrganizations();
         await loadAgents();
-        await search();
     };
     /**
      * Carga los datos iniciales
@@ -85,6 +80,12 @@ const DeployedIntegrations = ({ packageUrl }) => {
         initialize();
     }, []);
 
+    /**
+     *
+     */
+    useEffect(() => {
+        search();
+    }, [currentUser]);
     /**
      * Establece los parametros basicos de paginacion
      */
@@ -106,16 +107,6 @@ const DeployedIntegrations = ({ packageUrl }) => {
         history.push({
             pathname: `/messages/${record.id}`,
         });
-    };
-
-    const getChannelMessageCount = async (channelId) => {
-        //TODO: Obtener mensajes con errores
-        try {
-            const response = await axios.get(`/messages/${channelId}/count`);
-            return response.data?.aggregations?.count?.value || 0;
-        } catch (e) {
-            console.error(e);
-        }
     };
 
     /**
@@ -142,17 +133,10 @@ const DeployedIntegrations = ({ packageUrl }) => {
         }
 
         try {
-            const response = await axios.post("/integration/list", filters);
+            const response = await axios.post("/integration/list/deployed", filters);
 
             if (response && response.data && response.data.data) {
                 let integrations = response.data.data;
-                for (let integration of integrations) {
-                    for (let channel of integration.data.channels) {
-                        const messages = await getChannelMessageCount(channel.id);
-                        channel.messages_sent = messages;
-                        channel.messages_total = messages;
-                    }
-                }
                 setDataSource({
                     data: lodash.map(integrations, (el) => {
                         el.data.package_code = el.package_code;
@@ -284,12 +268,11 @@ const DeployedIntegrations = ({ packageUrl }) => {
      * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
     const loadOrganizations = async () => {
-        const response = await axios.get("/configuration/model/organization/data");
-
-        if (response?.data?.success) {
-            setOrganizations(response?.data?.data);
-        } else {
-            console.error(response.data);
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
         }
     };
 

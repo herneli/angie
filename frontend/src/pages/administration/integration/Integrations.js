@@ -15,6 +15,8 @@ import { usePackage } from "../../../components/packages/PackageContext";
 import Utils from "../../../common/Utils";
 import { Link } from "react-router-dom";
 
+import * as api from "../../../api/configurationApi";
+
 const useStyles = createUseStyles({
     card: {
         margin: 10,
@@ -41,6 +43,7 @@ const Integrations = () => {
     let packageData = usePackage();
 
     const [pagination, setPagination] = useState({});
+    const [organizations, setOrganizations] = useState([]);
 
     useEffect(() => {
         setPagination({ total: dataSource.total, showSizeChanger: true });
@@ -70,8 +73,20 @@ const Integrations = () => {
         }
         setLoading(false);
     };
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadOrganizations = async () => {
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
 
     const search = async (pagination, filters = {}, sorts) => {
+        await loadOrganizations();
         setLoading(true);
 
         if (pagination?.pageSize && pagination?.current) {
@@ -199,59 +214,6 @@ const Integrations = () => {
         search();
     }, []);
 
-    const drawChannelActionButtons = (record) => {
-        //Find integration(parent) FIXME: Lo se, es un poco ñapa, pero no hay posibilidad de obtener una referencia al padre y necesito el id de la integracion.
-        let integration = lodash.find(dataSource, (int) => {
-            let chann = lodash.find(int.channels, { id: record.id });
-            if (chann != null) {
-                return int;
-            }
-        });
-        return (
-            <Space size="middle">
-                {/* {record.enabled && record.status === "Started" && (
-                    <Popconfirm
-                        title={T.translate("common.question")}
-                        onConfirm={async () => {
-                            await channelActions.undeployChannel(integration.id, record.id, false);
-                            await search();
-                        }}>
-                        <Button
-                            key="undeploy"
-                            type="text"
-                            icon={
-                                <Icon
-                                    path={mdiStopCircle}
-                                    className={classes.icon}
-                                    color="red"
-                                    title={T.translate("integrations.channel.button.undeploy")}
-                                />
-                            }
-                        />
-                    </Popconfirm>
-                )}
-                {record.enabled && record.status !== "Started" && (
-                    <Button
-                        key="deploy"
-                        type="text"
-                        onClick={async () => {
-                            await channelActions.deployChannel(integration.id, record.id);
-                            await search();
-                        }}
-                        icon={
-                            <Icon
-                                path={mdiPlayCircle}
-                                color="green"
-                                className={classes.icon}
-                                title={T.translate("integrations.channel.button.deploy")}
-                            />
-                        }
-                    />
-                )} */}
-            </Space>
-        );
-    };
-
     const drawIntegrationActionButtons = (record) => {
         return (
             <Space size="middle">
@@ -311,16 +273,29 @@ const Integrations = () => {
                 return <Link to={`integrations/${int.id}/${record.id}`}>{text}</Link>;
             },
         },
-        {
-            title: T.translate("integrations.columns.description"),
-            dataIndex: "description",
-            key: "integration.data->>'description'",
-            ellipsis: true,
-            sorter: true,
-            render: (text, record) => {
-                if (record.channels) return <b>{text}</b>;
+        // {
+        //     title: T.translate("integrations.columns.description"),
+        //     dataIndex: "description",
+        //     key: "integration.data->>'description'",
+        //     ellipsis: true,
+        //     sorter: true,
+        //     render: (text, record) => {
+        //         if (record.channels) return <b>{text}</b>;
 
-                return text;
+        //         return text;
+        //     },
+        // },
+        {
+            title: T.translate("integrations.columns.organization"),
+            dataIndex: "deployment_config.organization_id",
+            key: "organization",
+            render: (text, record) => {
+                if (!record.channels) return;
+                if (!record?.deployment_config?.organization_id) {
+                    return "-";
+                }
+                const org = lodash.find(organizations, { id: record.deployment_config.organization_id });
+                return org.name;
             },
         },
         {
@@ -365,36 +340,6 @@ const Integrations = () => {
                 return text;
             },
         },
-        // {
-        //     title: T.translate("integrations.columns.messages_sent"),
-        //     dataIndex: "messages_sent",
-        //     key: "messages_sent",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
-        // {
-        //     title: T.translate("integrations.columns.messages_error"),
-        //     dataIndex: "messages_error",
-        //     key: "messages_error",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
-        // {
-        //     title: T.translate("integrations.columns.messages_total"),
-        //     dataIndex: "messages_total",
-        //     key: "messages_total",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
         {
             title: T.translate("integrations.columns.last_updated"),
             dataIndex: "last_updated",
@@ -410,9 +355,8 @@ const Integrations = () => {
             key: "action",
             width: 200,
             render: (text, record) => {
-                if (!record.channels) {
-                    return drawChannelActionButtons(record);
-                }
+                if (!record.channels) return;
+
                 if (record.channels) {
                     return drawIntegrationActionButtons(record);
                 }
@@ -438,7 +382,10 @@ const Integrations = () => {
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
-            return search(null, Utils.getFiltersByPairs((key) => (`data->>'${key}'`), value));
+            return search(
+                null,
+                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
+            );
         }
         search(null, {
             "integration.data::text": {

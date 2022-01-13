@@ -1218,7 +1218,7 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:widget": "SelectRemoteWidget",
                         "ui:mode": "multiple",
-                        "ui:selectOptions": "/getRoles/#path=data&value=name&label=name",
+                        "ui:selectOptions": "/roles/#path=data&value=name&label=name",
                     },
                     // "childrens": {
                     //     "ui:options": {

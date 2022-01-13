@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout } from "antd";
 import { Route, Switch } from "react-router";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import T from "i18n-react";
 import ModelAdmin from "../../configuration/ModelAdmin";
 import axios from "axios";

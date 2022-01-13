@@ -40,7 +40,7 @@ class Transformer {
                         label: node.custom_name,
                         ...node.data,
                     },
-                    type: nodeType.data.react_component_type,
+                    type: nodeType.react_component_type,
                     sourcePosition: "right",
                     targetPosition: "left",
                 });

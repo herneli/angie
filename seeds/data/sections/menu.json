@@ -48,7 +48,7 @@
                             {
                                 "key": "organization",
                                 "value": "/organization",
-                                "icon": "mdiOfficeBuilding",
+                                "icon": "mdiHomeGroup",
                                 "title": "administration.organization"
                             }
                         ]

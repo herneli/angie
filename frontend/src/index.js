@@ -17,13 +17,13 @@ notification.config({
 });
 
 ReactDOM.render(
-    <React.StrictMode>
-        <BrowserRouter basename={Config.getViewContextPath()}>
-            <ConfigProvider locale={esEs}>
-                <App />
-            </ConfigProvider>
-        </BrowserRouter>
-    </React.StrictMode>,
+    // <React.StrictMode> Se quita el strict mode debido a un problema con ant.d (https://github.com/ant-design/ant-design/issues/22493)
+    <BrowserRouter basename={Config.getViewContextPath()}>
+        <ConfigProvider locale={esEs}>
+            <App />
+        </ConfigProvider>
+    </BrowserRouter>,
+    // </React.StrictMode>,
     document.getElementById("root")
 );
 
