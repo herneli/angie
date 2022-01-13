@@ -57,8 +57,8 @@ export class IntegrationDao extends BaseKnexDao {
             .columns(columns)
             .from(this.tableName)
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
-            .where("integration.id", objectId)
-            .groupBy("integration.id");
+            .where(`${this.tableName}.id`, objectId)
+            .groupBy(`${this.tableName}.id`);
 
         res = this.applyIntegrationDeployment(res);
         if (res && res[0]) {
@@ -74,6 +74,22 @@ export class IntegrationDao extends BaseKnexDao {
         await KnexConnector.connection.from(this.deploymentTable).where("id", objectId).delete();
     }
 
+    async countFilteredData(filters) {
+        const RELATION_TABLE = this.deploymentTable;
+
+        let data = await KnexConnector.connection
+            .from(this.tableName)
+            .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
+            .where((builder) =>
+                KnexFilterParser.parseFilters(builder, lodash.omit(filters, ["sort", "start", "limit"]))
+            )
+            .groupBy(`${this.tableName}.id`)
+            .count(`${this.tableName}.id`, { as: "total" })
+            .first();
+
+        return data ? data.total : 0;
+    }
+
     //Overwrite
     async loadAllData(start, limit) {
         const RELATION_TABLE = this.deploymentTable;
@@ -87,7 +103,7 @@ export class IntegrationDao extends BaseKnexDao {
             .from(this.tableName)
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .limit(limit || 10000)
-            .groupBy("integration.id")
+            .groupBy(`${this.tableName}.id`)
             .offset(start);
 
         return this.applyIntegrationDeployment(res);
@@ -114,7 +130,7 @@ export class IntegrationDao extends BaseKnexDao {
             )
             .leftJoin(RELATION_TABLE, `${this.tableName}.id`, `${RELATION_TABLE}.id`)
             .orderByRaw(sorts)
-            .groupBy("integration.id")
+            .groupBy(`${this.tableName}.id`)
             .limit(limit)
             .offset(start);
 

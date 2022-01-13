@@ -13,7 +13,7 @@ class ElasticConnector {
 
     connect(host) {
         this.host = host || process.env.ELASTIC_URL;
-        this.connection = new Client({ node: host });
+        this.connection = new Client({ node: this.host });
     }
 }
 

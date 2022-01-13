@@ -161,7 +161,7 @@ describe("IntegrationChannelController", async () => {
         try {
             await controller.sendMessageToRoute(request, response, fakeNext);
         } catch (ex) {
-            expect(ex.message).to.be.eq("Agent not found!");
+            expect(ex.message).to.be.eq("channel_not_running");
         }
     });
 });

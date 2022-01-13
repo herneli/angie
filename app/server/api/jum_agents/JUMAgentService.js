@@ -59,18 +59,23 @@ export class JUMAgentService extends BaseService {
     /**
      * Método que desconecta a un agent en base al id.
      *
-     * @param {*} id
+     * @param {*} agentId
+     * @param {*} stop - Decide si parar todos sus canales o no
+     * @returns Devuelve el agente antes de ser desconectado (con su lista de canales desplegados)
      */
-    async disconnectAgent(agentId, redistribute) {
+    async disconnectAgent(agentId, stop) {
         if (!(await this.isRunning(agentId))) {
             console.log("already_disconnected");
             return;
         }
         const agent = await this.loadById(agentId);
+
+        //Se clona el agente para evitar referencias modificadas
+        const prevAgent = lodash.cloneDeep(agent);
         const socketId = agent.last_socket_id;
 
-        if (redistribute) {
-            await this.redistributeAgentChannels(agent);
+        if (stop) {
+            await this.stopAllAgentChannels(agent);
         }
 
         agent.status = JUMAgent.STATUS_OFFLINE;
@@ -81,6 +86,8 @@ export class JUMAgentService extends BaseService {
         await this.update(agentId, agent);
 
         await AgentSocketManager.disconnectSocket(socketId);
+
+        return prevAgent;
     }
 
     /**
@@ -95,7 +102,8 @@ export class JUMAgentService extends BaseService {
 
     //Override
     async delete(id) {
-        await this.disconnectAgent(id, true);
+        const agent = await this.disconnectAgent(id, true);
+        await this.redistributeAgentChannels(agent);
         return super.delete(id);
     }
 
@@ -352,7 +360,7 @@ export class JUMAgentService extends BaseService {
             }
         }
         //Si no existe ninguno... error
-        throw new Error("Agent not found!");
+        throw new Error("channel_not_running");
     }
 
     /**
@@ -509,13 +517,19 @@ export class JUMAgentService extends BaseService {
 
         for (const deplChann of agent.current_channels.list) {
             const channel = await channelService.getChannelById(deplChann.id);
-            const policy = channel.deployment_options && channel.deployment_options.restart_policy;
 
-            await this.undeployChannel(channel);
+            try {
+                await this.undeployChannel(channel);
+            } catch (ex) {
+                if (ex.message && ex.message != "channel_not_running") {
+                    console.error(ex);
+                }
+            }
 
-            if (policy === "any_agent") {
-                const candidate = await this.getFreeAgent(channel, [agent.id]);
-                await this.deployChannel(channel, channel.last_deployed_route, candidate);
+            try {
+                await this.redeployChannel(channel, [agent.id]);
+            } catch (ex) {
+                console.log(ex);
             }
         }
     }
@@ -545,5 +559,56 @@ export class JUMAgentService extends BaseService {
 
         await this.undeployChannel(channel);
         return this.deployChannel(channel, channel.last_deployed_route, candidate);
+    }
+
+    /**
+     * Evalua todos los canales para ver cuales han de ser redesplegados en base a su configuración.
+     *
+     * @param {*} agent
+     */
+    async redeployNotRunningChannels(agent) {
+        const channelService = new IntegrationChannelService();
+        const channels = await channelService.listAllChannels();
+
+        for (const channel of channels) {
+            try {
+                if (channel.status !== "Started") {
+                    //Obtener de nuevo el estado para asegurarse (Evitar redesplegarlo si otro agente se ha adelantado)
+                    const updatedChannel = await channelService.channelObjStatus(channel);
+                    if (updatedChannel.status !== "Started") {
+                        //Obtener un candidato nuevo y desplegarlo en el
+                        await this.redeployChannel(channel, null, [agent.id]);
+                    }
+                }
+            } catch (ex) {
+                console.error(ex);
+            }
+        }
+    }
+
+    /**
+     * Redespliega un canal basandose en su configuración de reinicios
+     */
+    async redeployChannel(channel, ignoreAgents, specificAgents) {
+        const policy = channel.deployment_options && channel.deployment_options.restart_policy;
+
+        if (policy === "unless_stopped" && channel.last_deployed_route) {
+            console.debug(`Trying to auto deploy: ${channel.name}`);
+            const candidate = await this.getFreeAgent(channel, ignoreAgents, specificAgents);
+            return await this.deployChannel(channel, channel.last_deployed_route, candidate);
+        }
+
+        if (policy === "allways") {
+            console.debug(`Trying to auto deploy: ${channel.name}`);
+            let route = channel.last_deployed_route;
+            if (!route) {
+                //rebuild route
+                const channelService = new IntegrationChannelService();
+                route = await channelService.convertChannelToCamel(channel);
+            }
+
+            const candidate = await this.getFreeAgent(channel, ignoreAgents, specificAgents);
+            return await this.deployChannel(channel, route, candidate);
+        }
     }
 }

@@ -1,19 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-    Col,
-    Input,
-    List,
-    notification,
-    Popconfirm,
-    Row,
-    Space,
-    Layout,
-    Avatar,
-    Tag,
-    Badge,
-    Popover,
-    Select,
-} from "antd";
+import { Col, Input, List, notification, Popconfirm, Row, Space, Layout, Avatar, Tag, Badge } from "antd";
 import axios from "axios";
 import moment from "moment";
 import lodash from "lodash";
@@ -21,14 +7,7 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import {
-    mdiPlayCircle,
-    mdiSourceBranchPlus,
-    mdiStopCircle,
-    mdiTextLong,
-    mdiMessage,
-    mdiDatabaseArrowRightOutline,
-} from "@mdi/js";
+import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiRefresh } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link, useHistory } from "react-router-dom";
@@ -36,6 +15,9 @@ import EllipsisParagraph from "../../components/text/EllipsisParagraph";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
 import AgentInfo from "./AgentInfo";
+
+import * as api from "../../api/configurationApi";
+import { useAngieSession } from "../../components/security/UserContext";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -76,20 +58,20 @@ const useStyles = createUseStyles({
 
 const channelActions = new ChannelActions();
 
-const DeployedIntegrations = ({ packageUrl }) => {
+const DeployedIntegrations = () => {
     const classes = useStyles();
     const history = useHistory();
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
     const [agents, setAgents] = useState([]);
+    const { currentUser } = useAngieSession();
 
     const [pagination, setPagination] = useState({});
 
     const initialize = async () => {
         await loadOrganizations();
         await loadAgents();
-        await search();
     };
     /**
      * Carga los datos iniciales
@@ -98,6 +80,12 @@ const DeployedIntegrations = ({ packageUrl }) => {
         initialize();
     }, []);
 
+    /**
+     *
+     */
+    useEffect(() => {
+        search();
+    }, [currentUser]);
     /**
      * Establece los parametros basicos de paginacion
      */
@@ -117,7 +105,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
 
     const showMessages = (record, integration) => {
         history.push({
-            pathname: `/packages/${integration.package_code}/versions/${integration.package_version}/messages/${record.id}`,
+            pathname: `/messages/${record.id}`,
         });
     };
 
@@ -145,7 +133,7 @@ const DeployedIntegrations = ({ packageUrl }) => {
         }
 
         try {
-            const response = await axios.post("/integration/list", filters);
+            const response = await axios.post("/integration/list/deployed", filters);
 
             if (response && response.data && response.data.data) {
                 let integrations = response.data.data;
@@ -280,12 +268,11 @@ const DeployedIntegrations = ({ packageUrl }) => {
      * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
     const loadOrganizations = async () => {
-        const response = await axios.get("/configuration/model/organization/data");
-
-        if (response?.data?.success) {
-            setOrganizations(response?.data?.data);
-        } else {
-            console.error(response.data);
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
         }
     };
 
@@ -421,8 +408,21 @@ const DeployedIntegrations = ({ packageUrl }) => {
     return (
         <Content className={"deployedIntegrations"}>
             <Row className={classes.card}>
-                <Col flex={1}>
+                <Col flex={4}>
                     <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
+                </Col>
+                <Col flex={1}>
+                    <Row justify="end">
+                        <IconButton
+                            key="undeploy"
+                            onClick={() => search()}
+                            icon={{
+                                path: mdiRefresh,
+                                size: 0.7,
+                            }}
+                            title={T.translate("common.button.reload")}
+                        />
+                    </Row>
                 </Col>
             </Row>
 

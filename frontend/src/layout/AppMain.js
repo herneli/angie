@@ -10,13 +10,12 @@ import Package from "../pages/administration/packages/Package";
 import Agents from "../pages/agents/Agents";
 import DeployedIntegrations from "../pages/deployed_integrations/DeployedIntegrations";
 import Message from "../pages/administration/message/Message";
+import Unauth from "../pages/Unauth";
 
-const AppMain = ({ app, location }) => {
+const AppMain = ({ location }) => {
     const { initialized } = useKeycloak();
 
-    const defaultProps = {
-        app: app,
-    };
+    const defaultProps = {};
 
     if (!initialized) {
         return <div />;
@@ -25,35 +24,36 @@ const AppMain = ({ app, location }) => {
     return (
         <Switch>
             <Route exact path="/" render={({ match }) => <Home match={match} {...defaultProps} />} />
-            <PrivateRoute roles={["default-roles-angie"]} path="/admin" component={Administration} {...defaultProps} />
+            <Route exact path="/403" render={({ match }) => <Unauth match={match} {...defaultProps} />} />
+            <PrivateRoute roles={["admin"]} path="/admin" component={Administration} {...defaultProps} />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 exact
-                path="/packages/:packageCode/versions/:packageVersion/messages/:channel_id"
+                path="/messages/:channel_id"
                 component={Message}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 exact
                 path="/packages"
                 component={Packages}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin"]}
                 path="/packages/:packageCode/versions/:packageVersion"
                 component={Package}
                 {...defaultProps}
             />
             <PrivateRoute
-                roles={["default-roles-angie"]}
+                roles={["admin", "user"]}
                 exact
                 path="/integrations/deployed"
                 component={DeployedIntegrations}
                 {...defaultProps}
             />
-            <PrivateRoute roles={["default-roles-angie"]} path="/agents" component={Agents} {...defaultProps} />
+            <PrivateRoute roles={["admin"]} path="/agents" component={Agents} {...defaultProps} />
         </Switch>
     );
 };

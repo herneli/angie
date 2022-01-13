@@ -61,7 +61,8 @@ exports.up = async function (knex) {
             table.foreign("organization_id").references("organization.id");
             table.boolean("enabled").defaultTo(true);
         });
-    } else {
+    } 
+    if ((await knex.schema.hasTable("integration_deployment"))) {
         if (!(await knex.schema.hasColumn("integration_deployment", "channel_config"))) {
             await knex.schema.alterTable("integration_deployment", function (table) {
                 table.jsonb("channel_config");
@@ -79,7 +80,8 @@ exports.up = async function (knex) {
             table.string("status");
             table.jsonb("meta");
         });
-    } else {
+    } 
+    if ((await knex.schema.hasTable("jum_agent"))) {
         if (!(await knex.schema.hasColumn("jum_agent", "last_socket_id"))) {
             await knex.schema.alterTable("jum_agent", function (table) {
                 table.string("last_socket_id").notNullable().defaultTo("");
@@ -94,6 +96,11 @@ exports.up = async function (knex) {
         if (!(await knex.schema.hasColumn("jum_agent", "last_online_date"))) {
             await knex.schema.alterTable("jum_agent", function (table) {
                 table.string("last_online_date", 40);
+            });
+        }
+        if (!(await knex.schema.hasColumn("jum_agent", "options"))) {
+            await knex.schema.alterTable("jum_agent", function (table) {
+                table.json("options");
             });
         }
     }

@@ -1,17 +1,9 @@
 import lodash from "lodash";
-import Handlebars from "handlebars";
 
 import axios from "axios";
 
-import * as queryString from "query-string";
 import beautify from "xml-beautifier";
 
-Handlebars.registerHelper("safe", function (inputData) {
-    return new Handlebars.SafeString(inputData);
-});
-Handlebars.registerHelper("querystring", function (inputData) {
-    return new Handlebars.SafeString(!lodash.isEmpty(inputData) ? "?" + queryString.stringify(inputData) : "");
-});
 
 class Transformer {
     nodeTypes = [];
@@ -48,7 +40,7 @@ class Transformer {
                         label: node.custom_name,
                         ...node.data,
                     },
-                    type: nodeType.data.react_component_type,
+                    type: nodeType.react_component_type,
                     sourcePosition: "right",
                     targetPosition: "left",
                 });

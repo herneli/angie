@@ -15,6 +15,8 @@ import { usePackage } from "../../../components/packages/PackageContext";
 import Utils from "../../../common/Utils";
 import { Link } from "react-router-dom";
 
+import * as api from "../../../api/configurationApi";
+
 const useStyles = createUseStyles({
     card: {
         margin: 10,
@@ -34,13 +36,14 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Integrations = ({ packageUrl }) => {
+const Integrations = () => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
     let packageData = usePackage();
 
     const [pagination, setPagination] = useState({});
+    const [organizations, setOrganizations] = useState([]);
 
     useEffect(() => {
         setPagination({ total: dataSource.total, showSizeChanger: true });
@@ -52,7 +55,7 @@ const Integrations = ({ packageUrl }) => {
 
     const startEdit = (record) => {
         history.push({
-            pathname: packageUrl + "/integrations/" + record.id,
+            pathname: "integrations/" + record.id,
         });
     };
 
@@ -70,8 +73,20 @@ const Integrations = ({ packageUrl }) => {
         }
         setLoading(false);
     };
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadOrganizations = async () => {
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
 
     const search = async (pagination, filters = {}, sorts) => {
+        await loadOrganizations();
         setLoading(true);
 
         if (pagination?.pageSize && pagination?.current) {
@@ -182,7 +197,7 @@ const Integrations = ({ packageUrl }) => {
     const handleUploadTable = () => {
         uploadJsonFile()
             .then((importItems) => {
-                const promises = importItems.map((item) => saveIntegration({ ...item, id: null }, false));
+                const promises = importItems.map((item) => saveIntegration({ ...item, id: null }));
                 Promise.all(promises).then((values) => {
                     message.success(T.translate("configuration.end_of_loading_json_file"));
                     search();
@@ -198,59 +213,6 @@ const Integrations = ({ packageUrl }) => {
     useEffect(() => {
         search();
     }, []);
-
-    const drawChannelActionButtons = (record) => {
-        //Find integration(parent) FIXME: Lo se, es un poco ñapa, pero no hay posibilidad de obtener una referencia al padre y necesito el id de la integracion.
-        let integration = lodash.find(dataSource, (int) => {
-            let chann = lodash.find(int.channels, { id: record.id });
-            if (chann != null) {
-                return int;
-            }
-        });
-        return (
-            <Space size="middle">
-                {/* {record.enabled && record.status === "Started" && (
-                    <Popconfirm
-                        title={T.translate("common.question")}
-                        onConfirm={async () => {
-                            await channelActions.undeployChannel(integration.id, record.id, false);
-                            await search();
-                        }}>
-                        <Button
-                            key="undeploy"
-                            type="text"
-                            icon={
-                                <Icon
-                                    path={mdiStopCircle}
-                                    className={classes.icon}
-                                    color="red"
-                                    title={T.translate("integrations.channel.button.undeploy")}
-                                />
-                            }
-                        />
-                    </Popconfirm>
-                )}
-                {record.enabled && record.status !== "Started" && (
-                    <Button
-                        key="deploy"
-                        type="text"
-                        onClick={async () => {
-                            await channelActions.deployChannel(integration.id, record.id);
-                            await search();
-                        }}
-                        icon={
-                            <Icon
-                                path={mdiPlayCircle}
-                                color="green"
-                                className={classes.icon}
-                                title={T.translate("integrations.channel.button.deploy")}
-                            />
-                        }
-                    />
-                )} */}
-            </Space>
-        );
-    };
 
     const drawIntegrationActionButtons = (record) => {
         return (
@@ -297,7 +259,7 @@ const Integrations = ({ packageUrl }) => {
             render: (text, record) => {
                 if (record.channels)
                     return (
-                        <Link to={`${packageUrl}/integrations/${record.id}`}>
+                        <Link to={`integrations/${record.id}`}>
                             <b>{record.name}</b>
                         </Link>
                     );
@@ -308,19 +270,32 @@ const Integrations = ({ packageUrl }) => {
                         return int;
                     }
                 });
-                return <Link to={`${packageUrl}/integrations/${int.id}/${record.id}`}>{text}</Link>;
+                return <Link to={`integrations/${int.id}/${record.id}`}>{text}</Link>;
             },
         },
-        {
-            title: T.translate("integrations.columns.description"),
-            dataIndex: "description",
-            key: "integration.data->>'description'",
-            ellipsis: true,
-            sorter: true,
-            render: (text, record) => {
-                if (record.channels) return <b>{text}</b>;
+        // {
+        //     title: T.translate("integrations.columns.description"),
+        //     dataIndex: "description",
+        //     key: "integration.data->>'description'",
+        //     ellipsis: true,
+        //     sorter: true,
+        //     render: (text, record) => {
+        //         if (record.channels) return <b>{text}</b>;
 
-                return text;
+        //         return text;
+        //     },
+        // },
+        {
+            title: T.translate("integrations.columns.organization"),
+            dataIndex: "deployment_config.organization_id",
+            key: "organization",
+            render: (text, record) => {
+                if (!record.channels) return;
+                if (!record?.deployment_config?.organization_id) {
+                    return "-";
+                }
+                const org = lodash.find(organizations, { id: record.deployment_config.organization_id });
+                return org.name;
             },
         },
         {
@@ -365,36 +340,6 @@ const Integrations = ({ packageUrl }) => {
                 return text;
             },
         },
-        // {
-        //     title: T.translate("integrations.columns.messages_sent"),
-        //     dataIndex: "messages_sent",
-        //     key: "messages_sent",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
-        // {
-        //     title: T.translate("integrations.columns.messages_error"),
-        //     dataIndex: "messages_error",
-        //     key: "messages_error",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
-        // {
-        //     title: T.translate("integrations.columns.messages_total"),
-        //     dataIndex: "messages_total",
-        //     key: "messages_total",
-        //     width: 100,
-        //     render: (text, record) => {
-        //         if (record.channels) return;
-        //         return text;
-        //     },
-        // },
         {
             title: T.translate("integrations.columns.last_updated"),
             dataIndex: "last_updated",
@@ -410,9 +355,8 @@ const Integrations = ({ packageUrl }) => {
             key: "action",
             width: 200,
             render: (text, record) => {
-                if (!record.channels) {
-                    return drawChannelActionButtons(record);
-                }
+                if (!record.channels) return;
+
                 if (record.channels) {
                     return drawIntegrationActionButtons(record);
                 }
@@ -422,7 +366,7 @@ const Integrations = ({ packageUrl }) => {
 
     const addIntegration = () => {
         history.push({
-            pathname: packageUrl + "/integrations/new",
+            pathname: "integrations/new",
             state: {
                 new: true,
                 record: {
@@ -438,7 +382,10 @@ const Integrations = ({ packageUrl }) => {
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
-            return search(null, Utils.getFiltersByPairs((key) => (`data->>'${key}'`), value));
+            return search(
+                null,
+                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
+            );
         }
         search(null, {
             "integration.data::text": {

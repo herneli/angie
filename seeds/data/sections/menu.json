@@ -24,14 +24,80 @@
             {
                 "key": "admin",
                 "title": "Administracion",
-                "icon": "mdiSourceBranch",
-                "value": "/admin"
+                "icon": "mdiAccountMultiple",
+                "value": "/admin",
+                "children": [
+                    {
+                        "key": "management",
+                        "title": "administration.management",
+                        "icon": "mdiAccountGroup",
+                        "value": "/management",
+                        "children": [
+                            {
+                                "key": "users",
+                                "value": "/users",
+                                "icon": "mdiAccount",
+                                "title": "administration.users"
+                            },
+                            {
+                                "key": "sections",
+                                "value": "/sections",
+                                "icon": "mdiLock",
+                                "title": "administration.sections"
+                            },
+                            {
+                                "key": "organization",
+                                "value": "/organization",
+                                "icon": "mdiHomeGroup",
+                                "title": "administration.organization"
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "key": "packages",
                 "title": "Packages",
                 "icon": "mdiPackageVariantClosed",
-                "value": "/packages"
+                "value": "/packages",
+                "children": [
+                    {
+                        "key": "integrations",
+                        "value": "/integrations",
+                        "icon": "mdiConnection",
+                        "title": "packages.integrations"
+                    },
+                    {
+                        "key": "camel_component",
+                        "value": "/camel_component",
+                        "icon": "mdiVideoInputComponent",
+                        "title": "packages.camel_components"
+                    },
+                    {
+                        "key": "node_type",
+                        "value": "/node_type",
+                        "icon": "mdiSourceBranch",
+                        "title": "packages.node_types"
+                    },
+                    {
+                        "key": "script_context",
+                        "value": "/script_context",
+                        "icon": "mdiScriptTextKeyOutline",
+                        "title": "packages.contexts"
+                    },
+                    {
+                        "key": "script_object",
+                        "value": "/script_object",
+                        "icon": "mdiScriptText",
+                        "title": "packages.objects"
+                    },
+                    {
+                        "key": "script_method",
+                        "value": "/script_method",
+                        "icon": "mdiFunctionVariant",
+                        "title": "packages.methods"
+                    }
+                ]
             }
         ]
     }

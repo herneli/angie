@@ -22,13 +22,13 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
             });
             let jsonSchema = {};
             try {
-                jsonSchema = type.data && JSON.parse(type.data.json_data_schema);
+                jsonSchema = type && JSON.parse(type.json_data_schema);
             } catch (ex) {
                 console.error(ex);
             }
             let uiSchema = {};
             try {
-                uiSchema = type.data && JSON.parse(type.data.json_ui_schema);
+                uiSchema = type && JSON.parse(type.json_ui_schema);
             } catch (ex) {
                 console.error(ex);
             }

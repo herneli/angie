@@ -1,4 +1,3 @@
-import axios from "axios";
 import SubMenu from "antd/lib/menu/SubMenu";
 import { Menu } from "antd";
 import T from "i18n-react";
@@ -8,26 +7,40 @@ import {
     mdiAccountGroup,
     mdiAccount,
     mdiLock,
-    mdiOfficeBuilding,
+    mdiHomeGroup,
     mdiDatabaseOutline,
+    mdiConnection,
+    mdiVideoInputComponent,
+    mdiScriptText,
+    mdiScriptTextKeyOutline,
+    mdiFunctionVariant,
+    mdiAccountMultiple,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
+
+import { match } from "path-to-regexp";
 
 export default class MenuHandler {
     static menu = [];
 
     static icons = {
+        mdiConnection: mdiConnection,
+        mdiVideoInputComponent: mdiVideoInputComponent,
+        mdiScriptText: mdiScriptText,
+        mdiScriptTextKeyOutline: mdiScriptTextKeyOutline,
+        mdiFunctionVariant: mdiFunctionVariant,
         mdiAccountGroup: mdiAccountGroup,
+        mdiAccountMultiple: mdiAccountMultiple,
         mdiAccount: mdiAccount,
         mdiLock: mdiLock,
-        mdiOfficeBuilding: mdiOfficeBuilding,
+        mdiHomeGroup: mdiHomeGroup,
         mdiSourceBranch: mdiSourceBranch,
         mdiDatabaseOutline: mdiDatabaseOutline,
         mdiPackageVariantClosed: mdiPackageVariantClosed,
     };
 
-    static drawSubMenu = async (item) => {
+    static drawSubMenu = async (item, baseUrl) => {
         try {
             let submenu = [];
 
@@ -36,20 +49,20 @@ export default class MenuHandler {
                     let fmenu = [];
                     if (item.children && item.children.length > 0) {
                         item.children.forEach((childMenu) => {
-                            fmenu.push(this.drawItem(childMenu));
+                            fmenu.push(this.drawItem(childMenu, baseUrl));
                         });
                         if (fmenu.length > 0) {
                             submenu.push(
                                 <SubMenu
                                     key={item.title}
                                     icon={<Icon size={0.6} path={this.icons[item.icon]} />}
-                                    title={item.title}>
+                                    title={T.translate(item.title)}>
                                     {fmenu}
                                 </SubMenu>
                             );
                         }
                     } else {
-                        submenu.push(this.drawItem(item));
+                        submenu.push(this.drawItem(item, baseUrl));
                     }
                 });
                 return submenu;
@@ -60,55 +73,55 @@ export default class MenuHandler {
         }
     };
 
-    static drawItem = (item) => {
+    static drawItem = (item, baseUrl) => {
         return (
-            <Menu.Item key={item.title} icon={<Icon size={0.6} path={this.icons[item.icon]} />} title={item.title}>
-                <Link to={item.value}>{T.translate(item.title)}</Link>
+            <Menu.Item
+                key={`/${item.key}`}
+                icon={<Icon size={0.6} path={this.icons[item.icon]} />}
+                title={T.translate(item.title)}>
+                <Link to={(baseUrl || "") + item.value}>{T.translate(item.title)}</Link>
             </Menu.Item>
         );
     };
 
-    static async hasRealmRoleForPath(id, path) {
-        const data = await axios.post(`/section/${id}/path_allowed`, { path: path });
-        if (data.status === 200) {
-            return data.data.data;
-        } else {
-            return [];
+    static pathAllowed(allowedPaths, routePath, currentPath) {
+        let hasAccess = false;
+        for (const el of allowedPaths) {
+            const routeFn = match(routePath, { decode: decodeURIComponent });
+            const currentFn = match(el, { decode: decodeURIComponent });
+
+            // console.log("Checking: " + routePath + "@" + currentPath + "->" + el);
+            const routeMatch = routeFn(el);
+            const currentMatch = currentFn(currentPath);
+
+            // console.log(routeMatch);
+            // console.log(currentMatch);
+
+            hasAccess = routeMatch !== false || currentMatch !== false;
+            if (hasAccess) break; //Si se encuentra en el primer nivel, se ignora el resto
         }
+
+        return hasAccess;
     }
 
-    static async getMenu(id, keycloak) {
+    static async renderMenu(dataMenu, keycloak) {
         let itemsAuthorized = [];
-        let dataMenu = await this.checkAllowedSections(id);
         if (dataMenu) {
             for (let item of dataMenu) {
                 if (keycloak && keycloak.authenticated) {
                     itemsAuthorized.push(
-                        <Menu.Item
-                            key={`/${item.key}`}
-                            icon={<Icon path={this.icons[item.icon]} size={0.6} />}
-                            title={item.title}>
-                            <Link to={item.value}>{T.translate(item.title)}</Link>
-                        </Menu.Item>
+                        this.drawItem(item)
+                        // <Menu.Item
+                        //     key={`/${item.key}`}
+                        //     icon={<Icon path={this.icons[item.icon]} size={0.6} />}
+                        //     title={T.translate(item.title)}>
+                        //     <Link to={item.value}>{T.translate(item.title)}</Link>
+                        // </Menu.Item>
                     );
                 }
             }
         }
 
         return itemsAuthorized;
-    }
-
-    static async checkAllowedSections(id) {
-        try {
-            const data = await axios.post(`/section/${id}/check_allowed`);
-
-            if (data.status === 200) {
-                return data.data.data;
-            } else {
-                return [];
-            }
-        } catch (e) {
-            return false;
-        }
     }
 }

@@ -74,6 +74,9 @@ export class ConfigurationService extends BaseService {
 
     async listWithRelations(code, filters, start, limit) {
         const model = await this.getModel(code);
+        //Pagination
+        var start = start || 0;
+        var limit = limit || 1000; //Default limit
 
         if (!filters) {
             filters = {};
@@ -83,11 +86,17 @@ export class ConfigurationService extends BaseService {
         }
         filters[`${model.data.table}.document_type`] = model.data.documentType;
 
-        let res = await super.listWithRelations(filters, start, limit, {
+        const relation_config = {
             relation_schema: model.data.relation_schema || {},
             selectQuery: model.data.selectQuery || "",
             group_by: model.data.group_by,
-        });
+        };
+
+        let res = {};
+        res.total = await this.dao.countFilteredData(filters, start, limit);
+
+        let filteredData = await this.dao.loadFilteredDataWithRelations(filters, start, limit, relation_config);
+        res.data = filteredData;
 
         let relations = model.data.relation_schema || {};
         res.data.forEach((element) => {

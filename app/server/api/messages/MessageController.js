@@ -3,7 +3,7 @@ import { MessageService } from ".";
 import expressAsyncHandler from "express-async-handler";
 
 export class MessageController extends BaseController {
-    dao = new MessageService();
+    service = new MessageService();
 
     configure() {
         this.router.post(
@@ -29,7 +29,7 @@ export class MessageController extends BaseController {
         const filters = req.body;
 
         try {
-            const data = await this.dao.getChannelMessages(channel, filters);
+            const data = await this.service.getChannelMessages(channel, filters);
             res.json(data.body);
         } catch (e) {
             if (e.body.status === 404) {
@@ -44,7 +44,7 @@ export class MessageController extends BaseController {
         const channel = req.params.channel;
 
         try {
-            const data = await this.dao.getChannelMessageCount(channel);
+            const data = await this.service.getChannelMessageCount(channel);
             res.json(data.body);
         } catch (e) {
             if (e.body.status === 404) {

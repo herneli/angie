@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Select, Space, Spin, Table, Layout } from "antd";
+import { Col, Row, Spin, Table, Layout } from "antd";
 import T from "i18n-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -26,7 +26,7 @@ export default function Packages({ history }) {
                 key: "actions",
                 render: (text, record) => {
                     return (
-                        <Link to={"packages/" + record.code + "/versions/" + record.version}>
+                        <Link to={"packages/" + record.code + "/versions/" + record.version }>
                             {T.translate("packages.configure")}
                         </Link>
                     );

@@ -2,6 +2,7 @@ import { AgentActionsCache, AgentSocketManager, JUMAgent, JUMAgentService } from
 import { IntegrationChannelService } from "../integration_channel";
 
 import moment from "moment";
+import { Utils } from "lisco";
 
 /**
  * Clase ejecutada únicamente en el hilo principal de la aplicación y encargada de la gestión de los eventos
@@ -37,17 +38,31 @@ class JUMAgentMaster {
                 let agent = await this.service.createAgentIfNotExists(agentId, socket);
                 if (await this.service.isRunning(agent.id)) {
                     console.log("Already running");
-                    socket.emit("messages", "Agent already online");
-                    //TODO improve already running mechanic
-                    return this.service.disconnectAgent(agent.id, false);
+                    socket.emit("messages", "Agent already online, forcing reconnect");
+                    return this.service.disconnectAgent(agent.id);
                 }
                 console.log("Agent connected: " + agent.id);
                 //On disconnect
                 socket.on("disconnect", async (reason) => {
                     console.log("Agent disconnected! -> " + agent.id);
                     console.log(reason);
-                    //TODO check disconnect mechanics
-                    await this.service.disconnectAgent(agent.id, true);
+
+                    const prevAgent = await this.service.disconnectAgent(agent.id);
+
+                    if (prevAgent.options && prevAgent.options.redistribute_on_lost) {
+                        //Crear un timer para, pasado un tiempo, redistribuir el trabajo del agente si no se ha reconectado.
+                        setTimeout(async () => {
+                            try {
+                                console.debug(`Checking if agent ${prevAgent.id} reconnected`);
+                                if (!(await this.service.isRunning(prevAgent.id))) {
+                                    console.debug(`Agent ${prevAgent.id} not reconnected, redistrib channels`);
+                                    await this.service.redistributeAgentChannels(prevAgent);
+                                }
+                            } catch (ex) {
+                                console.error(ex);
+                            }
+                        }, ((prevAgent.options && prevAgent.options.reconnect_timeout) || 30) * 1000);
+                    }
                 });
 
                 //Se pone como Online
@@ -63,11 +78,18 @@ class JUMAgentMaster {
                 //Configurar los elementos a escuchar.
                 this.configureJUMEvents(socket);
 
+                //Recargar estados de los canales
                 await this.service.loadAgentStatus(agent);
+
+                //Esperar para que si mas de un agente se reconectan a la vez, de tiempo a que todo este sincronizado.
+                await Utils.sleep(((agent.options && agent.options.autostart_delay) || 5) * 1000);
+
+                //Redesplegar canales detenidos
+                await this.service.redeployNotRunningChannels(agent);
             } catch (ex) {
                 console.error(ex);
                 socket.emit("messages", "An error ocurred:" + ex);
-                this.service.disconnectAgent(agentId, false);
+                this.service.disconnectAgent(agentId);
             }
         });
     }
@@ -116,11 +138,10 @@ class JUMAgentMaster {
                 const channelService = new IntegrationChannelService();
                 const channel = await channelService.getChannelById(channelId);
 
-                const policy = channel.deployment_options && channel.deployment_options.restart_policy;
-                if (policy === "any_agent") {
-                    //Obtener un candidato nuevo y desplegarlo en el
-                    const candidate = await this.service.getFreeAgent(channel, [currentAgent.id]);
-                    await this.service.deployChannel(channel, channel.last_deployed_route, candidate);
+                try {
+                    await this.service.redeployChannel(channel, [currentAgent.id]);
+                } catch (ex) {
+                    console.log(ex);
                 }
             } else {
                 //Una vez desencadenado el evento de despliegue sobre ese canal se quita la marca de despliegue

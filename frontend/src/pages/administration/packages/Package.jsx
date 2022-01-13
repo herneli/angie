@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout } from "antd";
 import { Route, Switch } from "react-router";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import T from "i18n-react";
 import ModelAdmin from "../../configuration/ModelAdmin";
 import axios from "axios";
@@ -9,8 +9,10 @@ import { createUseStyles } from "react-jss";
 import PackageContextProvider from "../../../components/packages/PackageContext";
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
+import ModelEdit from "../../configuration/ModelEdit";
+import SubMenu from "../../../layout/SubMenu";
 
-const { Sider, Content, Header } = Layout;
+const { Content, Header } = Layout;
 
 const useStyles = createUseStyles({
     header: {
@@ -23,6 +25,7 @@ const useStyles = createUseStyles({
 export default function Package({ match }) {
     const [currentPackage, setCurrentPackage] = useState();
     const classes = useStyles();
+
     useEffect(() => {
         axios
             .get("/packages/" + match.params.packageCode + "/versions/" + match.params.packageVersion)
@@ -44,55 +47,41 @@ export default function Package({ match }) {
                     {currentPackage.name} ({currentPackage.code}/{currentPackage.version})
                 </Header>
                 <Layout>
-                    <Sider width={200} className="adm-submenu">
-                        <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
-                            <Menu.Item key="integrations">
-                                <Link to={url + "/integrations"}>{T.translate("packages.integrations")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="camel_components">
-                                <Link to={url + "/camel_components"}>{T.translate("packages.camel_components")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="node_types">
-                                <Link to={url + "/node_types"}>{T.translate("packages.node_types")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="contexts">
-                                <Link to={url + "/contexts"}>{T.translate("packages.contexts")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="objects">
-                                <Link to={url + "/objects"}>{T.translate("packages.objects")}</Link>
-                            </Menu.Item>
-                            <Menu.Item key="methods">
-                                <Link to={url + "/methods"}>{T.translate("packages.methods")}</Link>
-                            </Menu.Item>
-                        </Menu>
-                    </Sider>
-                    <Content>
+                    <SubMenu parent={"/packages"} url={url}/>
+                    <Content className="packageContent">
                         <Switch>
                             <Route exact path={path}>
                                 Seleccione una opción
                             </Route>
-                            <Route path={path + "/node_types"} component={() => <ModelAdmin model="node_type" />} />
-                            <Route
-                                path={path + "/camel_components"}
-                                component={() => <ModelAdmin model="camel_component" />}
-                            />
-                            <Route path={path + "/methods"} component={() => <ModelAdmin model="script_method" />} />
-                            <Route path={path + "/objects"} component={() => <ModelAdmin model="script_object" />} />
-                            <Route path={path + "/contexts"} component={() => <ModelAdmin model="script_context" />} />
+
                             <Route
                                 exact
                                 path={path + "/integrations"}
-                                render={({ match }) => <Integrations match={match} packageUrl={url} />}
+                                render={({ match }) => <Integrations match={match} />}
                             />
                             <Route
                                 exact
                                 path={path + "/integrations/:id"}
-                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                                render={({ match }) => <Integration match={match} />}
                             />
                             <Route
                                 exact
                                 path={path + "/integrations/:id/:channel"}
-                                render={({ match }) => <Integration match={match} packageUrl={url} />}
+                                render={({ match }) => <Integration match={match} />}
+                            />
+                            <Route
+                                exact
+                                path={path + "/:model"}
+                                render={({ match }) => {
+                                    return <ModelAdmin model={match.params.model} />;
+                                }}
+                            />
+                            <Route
+                                exact
+                                path={path + "/:model/:id"}
+                                render={({ match }) => {
+                                    return <ModelEdit model={match.params.model} />;
+                                }}
                             />
                         </Switch>
                     </Content>

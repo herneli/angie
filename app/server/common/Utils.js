@@ -16,4 +16,13 @@ export default class Utils {
 
         return "";
     }
+
+    getUsername(request) {
+        let header = [];
+        let content = [];
+        if (request.headers.authorization) {
+            [header, content] = this.parseToken(request);
+        }
+        return content.preferred_username;
+    }
 }

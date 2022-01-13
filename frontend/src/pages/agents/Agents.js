@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { notification, Row, Table, Layout, Space, Popconfirm, Button, Modal } from "antd";
+import { notification, Row, Table, Layout, Space, Popconfirm, Button, Modal, Col, Input } from "antd";
 import axios from "axios";
 import lodash from "lodash";
 
@@ -10,7 +10,8 @@ import {
     mdiCancel,
     mdiCheck,
     mdiCheckCircleOutline,
-    mdiCloseCircleOutline,
+    mdiCogs,
+    mdiRefresh,
     mdiReload,
     mdiTextLong,
     mdiTrashCan,
@@ -19,6 +20,9 @@ import Icon from "@mdi/react";
 
 import AceEditor from "react-ace";
 import { Link } from "react-router-dom";
+import AgentOptions from "./AgentOptions";
+import IconButton from "../../components/button/IconButton";
+import Utils from "../../common/Utils";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -42,6 +46,8 @@ const Agents = () => {
     let [dataSource, setDataSource] = useState([]);
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
+    let [optionsVisible, setOptionsVisible] = useState(false);
+    let [currentAgent, setCurrentAgent] = useState(null);
 
     const [pagination, setPagination] = useState({});
 
@@ -220,6 +226,22 @@ const Agents = () => {
                     return (
                         <Space size="middle">
                             <Button
+                                key="options"
+                                type="text"
+                                onClick={() => {
+                                    setCurrentAgent(record);
+                                    setOptionsVisible(true);
+                                }}
+                                icon={
+                                    <Icon
+                                        path={mdiCogs}
+                                        className={classes.icon}
+                                        title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+
+                            <Button
                                 key="log"
                                 type="text"
                                 onClick={() => showAgentLog(record)}
@@ -292,9 +314,64 @@ const Agents = () => {
         },
     ];
 
+    const cancelOptions = () => {
+        setOptionsVisible(false);
+        setCurrentAgent(null);
+    };
+
+    const saveAgent = async ({ formData }) => {
+        //TODo
+        try {
+            await axios.put(`/jum_agent/${formData.id}`, { id: formData.id, options: formData.options });
+            await search();
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
+
+        cancelOptions();
+    };
+
+    const onSearch = (value) => {
+        if (value.indexOf(":") !== -1) {
+            return search(
+                null,
+                Utils.getFiltersByPairs((key) => `${key}::text`, value)
+            );
+        }
+        if (!value) {
+            return search();
+        }
+        search(null, {
+            jum_agent: {
+                type: "full-text-psql",
+                value: value,
+            },
+        });
+    };
     return (
         <Content>
-            <Row className={classes.card}></Row>
+            <Row className={classes.card}>
+                <Col flex={4}>
+                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
+                </Col>
+                <Col flex={1}>
+                    <Row justify="end">
+                        <IconButton
+                            key="undeploy"
+                            onClick={() => search()}
+                            icon={{
+                                path: mdiRefresh,
+                                size: 0.7,
+                            }}
+                            title={T.translate("common.button.reload")}
+                        />
+                    </Row>
+                </Col>
+            </Row>
+
             <Table
                 loading={loading}
                 key="agents-table"
@@ -309,6 +386,9 @@ const Agents = () => {
                 size="small"
                 expandable={{ expandedRowKeys: dataSourceKeys }}
             />
+            {optionsVisible && (
+                <AgentOptions agent={currentAgent} visible={optionsVisible} onOk={saveAgent} onCancel={cancelOptions} />
+            )}
         </Content>
     );
 };

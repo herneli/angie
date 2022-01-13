@@ -18,7 +18,7 @@ import { SectionController } from "./app/server/api/section/SectionController";
 import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
-import { JUMAgentController, JUMAgentMaster, JUMAgentService } from "./app/server/api/jum_agents";
+import { JUMAgentController, JUMAgentMaster } from "./app/server/api/jum_agents";
 import Cache from "./app/server/common/Cache";
 
 module.exports = async () => {
@@ -108,6 +108,7 @@ module.exports = async () => {
             //     directives: directives,
             // },
         },
+        socketio: { transports: ["websocket"], pingTimeout: 60 * 1000 },
     });
 
     App.executeOnlyMain = async () => {
