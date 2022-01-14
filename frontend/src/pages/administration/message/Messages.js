@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Input, notification, Row, Table } from "antd";
+import { Button, Col, Input, notification, Row, Table, Space } from "antd";
 import axios from "axios";
 import moment from "moment";
-
+// import Message from "./Message";
 import T from "i18n-react";
-
 import { useParams } from "react-router";
 // import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
-import { mdiDownload, mdiUpload, mdiEmailOff, mdiEmailCheck } from "@mdi/js";
+import { mdiDownload, mdiUpload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import { Content } from "antd/lib/layout/layout";
 
@@ -36,6 +35,9 @@ const Messages = ({ packageUrl }, props) => {
     // const [dataSourceKeys, setDataSourceKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({});
+    const [messageModalVisible, setMessageModalVisible] = useState(false);
+    const [detailedMessage, setDetailedMessage] = useState([]);
+
     const params = useParams();
     const channel = params.channel_id;
 
@@ -81,18 +83,19 @@ const Messages = ({ packageUrl }, props) => {
                     const messageEnd = message.inner_hits.last.hits.hits[0]._source.date_time;
                     const elapsed = moment(messageEnd) - moment(messageStart);
 
-                    const hasErrors = message.inner_hits.all.hits.hits.reduce((hasError, innerMessage) => {
+                    const errorCount = message.inner_hits.all.hits.hits.reduce((acc, innerMessage) => {
                         if (innerMessage._source.event === "ERROR") {
-                            hasError = true;
+                            acc++;
                         }
-                        return hasError;
-                    }, false);
+                        return acc;
+                    }, 0);
                     acc.push({
                         breadcrumb_id: messageId,
                         start: messageStart,
                         end: messageEnd,
-                        error: hasErrors,
+                        errors: errorCount,
                         elapsed: elapsed,
+                        traces: message.inner_hits.all.hits.hits,
                     });
                     return acc;
                 }, []);
@@ -132,87 +135,50 @@ const Messages = ({ packageUrl }, props) => {
         downloadJsonFile(data, `channel_${channel}_messages.json`);
     };
 
-    // const drawChannelActionButtons = (record) => {
-    //     //Find integration(parent) FIXME: Lo se, es un poco ñapa, pero no hay posibilidad de obtener una referencia al padre y necesito el id de la integracion.
-    //     let integration = lodash.find(dataSource, (int) => {
-    //         let chann = lodash.find(int.channels, { id: record.id });
-    //         if (chann != null) {
-    //             return int;
-    //         }
-    //     });
-    //     return (
-    //         <Space size="middle">
-    //             {/* {record.enabled && record.status === "Started" && (
-    //                 <Popconfirm
-    //                     title={T.translate("common.question")}
-    //                     onConfirm={async () => {
-    //                         await channelActions.undeployChannel(integration.id, record.id, false);
-    //                         await search();
-    //                     }}>
-    //                     <Button
-    //                         key="undeploy"
-    //                         type="text"
-    //                         icon={
-    //                             <Icon
-    //                                 path={mdiStopCircle}
-    //                                 className={classes.icon}
-    //                                 color="red"
-    //                                 title={T.translate("integrations.channel.button.undeploy")}
-    //                             />
-    //                         }
-    //                     />
-    //                 </Popconfirm>
-    //             )}
-    //             {record.enabled && record.status !== "Started" && (
-    //                 <Button
-    //                     key="deploy"
-    //                     type="text"
-    //                     onClick={async () => {
-    //                         await channelActions.deployChannel(integration.id, record.id, false);
-    //                         await search();
-    //                     }}
-    //                     icon={
-    //                         <Icon
-    //                             path={mdiPlayCircle}
-    //                             color="green"
-    //                             className={classes.icon}
-    //                             title={T.translate("integrations.channel.button.deploy")}
-    //                         />
-    //                     }
-    //                 />
-    //             )} */}
-    //         </Space>
-    //     );
-    // };
-
-    // const drawIntegrationActionButtons = (record) => {
-    //     return (
-    //         <Space size="middle">
-    //             <Button
-    //                 icon={<Icon path={mdiDownload} className={classes.icon} />}
-    //                 type="text"
-    //                 title={T.translate("common.button.download")}
-    //                 onClick={(e) => handleOnDownloadModel(e, record)}
-    //             />
-    //         </Space>
-    //     );
-    // };
+    const drawMessageActions = (record) => {
+        return (
+            <Space size="middle">
+                <Button
+                    key="undeploy"
+                    type="text"
+                    onClick={(e) => {
+                        setDetailedMessage(record);
+                        setMessageModalVisible(true);
+                    }}
+                    icon={<Icon path={mdiMagnifyPlus} className={classes.icon} title={"Ver en detalle"} />}
+                />
+                {/*  <Button
+                    key="undeploy"
+                    type="text"
+                    icon={<Icon path={mdiDownload} className={classes.icon} title={"Descargar"} />}
+                /> */}
+            </Space>
+        );
+    };
 
     const columns = [
+        //TODO: Traducir nombres de los campos
         {
             title: "Estado",
-            dataIndex: "error",
+            dataIndex: "errors",
             key: "msg_error",
             width: 25,
             align: "center",
 
-            render: (text) => {
+            render: (text, record) => {
                 if (text) {
                     return <Icon path={mdiEmailOff} size="1.5rem" color="red" title="Error" />;
                 }
 
                 return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title="Enviado" />;
             },
+        },
+        {
+            title: "Errores",
+            dataIndex: "errors",
+            key: "error_count",
+            width: 25,
+            align: "center",
         },
         {
             title: "Id Mensaje",
@@ -272,14 +238,14 @@ const Messages = ({ packageUrl }, props) => {
             width: 80,
             sorter: true,
         },
-        /*   {
+        {
             title: T.translate("integrations.columns.actions"),
             key: "action",
-            width: 240,
+            width: 50,
             render: (text, record) => {
-              
+                return drawMessageActions(record);
             },
-        }, */
+        },
     ];
 
     // const getFiltersByPairs = (str) => {
@@ -357,6 +323,15 @@ const Messages = ({ packageUrl }, props) => {
                     // expandable={{ expandedRowKeys: dataSourceKeys }}
                 />
             )}
+            {/* {messageModalVisible && (
+                <Message
+                    visible={messageModalVisible}
+                    messageData={detailedMessage}
+                    onCancel={() => {
+                        setDetailedMessage([]);
+                        setMessageModalVisible(false);
+                    }}></Message>
+            )} */}
         </Content>
     );
 };
