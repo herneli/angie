@@ -26,7 +26,13 @@ const AppMain = ({ location }) => {
             <Route exact path="/" render={({ match }) => <Home match={match} {...defaultProps} />} />
             <Route exact path="/403" render={({ match }) => <Unauth match={match} {...defaultProps} />} />
             <PrivateRoute roles={["admin"]} path="/admin" component={Administration} {...defaultProps} />
-            <PrivateRoute roles={["admin"]} exact path="/messages/:channel_id" component={Messages} {...defaultProps} />
+            <PrivateRoute
+                roles={["admin"]}
+                exact
+                path="/messages/:integration_id/:channel_id"
+                component={Messages}
+                {...defaultProps}
+            />
             <PrivateRoute roles={["admin"]} exact path="/packages" component={Packages} {...defaultProps} />
             <PrivateRoute
                 roles={["admin"]}
