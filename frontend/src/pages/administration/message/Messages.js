@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { Button, Col, Input, notification, Row, Table, Space } from "antd";
 import axios from "axios";
 import moment from "moment";
-// import Message from "./Message";
+import Message from "./Message";
 import T from "i18n-react";
 import { useParams } from "react-router";
 // import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
-import { mdiDownload, mdiUpload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
+import { mdiDownload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import { Content } from "antd/lib/layout/layout";
 
@@ -39,7 +39,7 @@ const Messages = ({ packageUrl }, props) => {
     const [detailedMessage, setDetailedMessage] = useState([]);
 
     const params = useParams();
-    const channel = params.channel_id;
+    const { channel_id: channel, integration_id: integration } = params;
 
     useEffect(() => {
         search();
@@ -139,7 +139,7 @@ const Messages = ({ packageUrl }, props) => {
         return (
             <Space size="middle">
                 <Button
-                    key="undeploy"
+                    key="showMessage"
                     type="text"
                     onClick={(e) => {
                         setDetailedMessage(record);
@@ -292,13 +292,6 @@ const Messages = ({ packageUrl }, props) => {
                     <Row justify="end" gutter={10}>
                         <Col>
                             <Button
-                                icon={<Icon path={mdiUpload} className={classes.icon} />}
-                                type="text"
-                                // onClick={() => handleUploadTable()}
-                            />
-                        </Col>
-                        <Col>
-                            <Button
                                 icon={<Icon path={mdiDownload} className={classes.icon} />}
                                 type="text"
                                 onClick={() => handleDownloadTable(dataSource)}
@@ -323,15 +316,17 @@ const Messages = ({ packageUrl }, props) => {
                     // expandable={{ expandedRowKeys: dataSourceKeys }}
                 />
             )}
-            {/* {messageModalVisible && (
+            {messageModalVisible && (
                 <Message
                     visible={messageModalVisible}
                     messageData={detailedMessage}
+                    integration={integration}
+                    channel={channel}
                     onCancel={() => {
                         setDetailedMessage([]);
                         setMessageModalVisible(false);
                     }}></Message>
-            )} */}
+            )}
         </Content>
     );
 };
