@@ -33,19 +33,23 @@ export class IntegrationChannelController extends BaseController {
             })
         );
         this.router.get(
+            `/integration/:id/channel/:channel`,
+            expressAsyncHandler((request, response, next) => {
+                this.getChannelById(request, response, next);
+            })
+        );
+        this.router.get(
             `/integration/:id/channel/:channel/status`,
             expressAsyncHandler((request, response, next) => {
                 this.channelStatus(request, response, next);
             })
         );
-
         this.router.get(
             `/integration/:id/channel/:channel/log`,
             expressAsyncHandler((request, response, next) => {
                 this.channelLogs(request, response, next);
             })
         );
-
         this.router.post(
             `/integration_channel/to_camel`,
             expressAsyncHandler((request, response, next) => {
@@ -124,6 +128,19 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
+    async getChannelById(request, response, next) {
+        try {
+            const service = new IntegrationChannelService();
+            const channel = request.params.channel;
+
+            const res = await service.getChannelById(channel);
+            const jsRes = new JsonResponse(true, res, null, 1);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
 
     async channelLogs(request, response, next) {
         try {
