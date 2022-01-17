@@ -433,9 +433,9 @@ export class IntegrationChannelService {
     async channelApplyStatus(channel, remoteChannel) {
         const messages = await this.messageService.getChannelMessageCount(channel.id);
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
-        channel.messages_total = messages.total || (remoteChannel && remoteChannel.messages_total) || 0;
-        channel.messages_error = messages.error || (remoteChannel && remoteChannel.messages_error) || 0;
-        channel.messages_sent = messages.sent || (remoteChannel && remoteChannel.messages_sent) || 0;
+        channel.messages_total = messages ? messages.total : (remoteChannel && remoteChannel.messages_total) || 0;
+        channel.messages_error = messages ? messages.error : (remoteChannel && remoteChannel.messages_error) || 0;
+        channel.messages_sent = messages ? messages.sent : (remoteChannel && remoteChannel.messages_sent) || 0;
 
         return channel;
     }

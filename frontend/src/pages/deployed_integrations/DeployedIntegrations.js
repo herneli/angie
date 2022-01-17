@@ -105,7 +105,7 @@ const DeployedIntegrations = () => {
 
     const showMessages = (record, integration) => {
         history.push({
-            pathname: `/messages/${record.id}`,
+            pathname: `/messages/${integration.id}/${record.id}`,
         });
     };
 

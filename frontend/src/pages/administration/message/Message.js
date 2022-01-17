@@ -1,344 +1,112 @@
-import { useEffect, useState } from "react";
-import { Button, Col, Input,  notification,  Row, Table } from "antd";
+import { Modal, Timeline, Spin, Divider } from "antd";
+import lodash from "lodash";
 import axios from "axios";
 import moment from "moment";
-import lodash from "lodash";
-
+import { useEffect, useState } from "react";
 import T from "i18n-react";
 
-import { useParams } from "react-router";
-// import { v4 as uuid_v4 } from "uuid";
-import Icon from "@mdi/react";
-import { mdiDownload, mdiUpload } from "@mdi/js";
-import { createUseStyles } from "react-jss";
-import { Content } from "antd/lib/layout/layout";
-
-const useStyles = createUseStyles({
-    card: {
-        margin: 10,
-    },
-    search: {
-        marginBottom: 15,
-    },
-    button: {
-        fontSize: 10,
-    },
-    icon: {
-        color: "#3d99f6",
-        width: 20,
-        height: 20,
-    },
-});
-
-// const channelActions = new ChannelActions();
-
-const Message = ({ packageUrl }, props) => {
-    const [dataSource, setDataSource] = useState([]);
-    // const [dataSourceKeys, setDataSourceKeys] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [pagination, setPagination] = useState({});
-    const params = useParams();
-    const channel = params.channel_id;
+export default function Message({ visible, onCancel, messageData, integration, channel }) {
+    const { breadcrumb_id: messageId, traces } = messageData;
+    const [nodes, setNodes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        search();
+        getChannelData();
     }, []);
 
-    const classes = useStyles();
-
-    const search = async (pagination, filters = {}, sorts) => {
-        setLoading(true);
-
-        if (pagination?.pageSize && pagination?.current) {
-            filters.limit = pagination.pageSize ? pagination.pageSize : 10;
-            filters.start =
-                (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
-        }
-
-        if (sorts) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
-                field: sorts.columnKey || sorts.field,
-                direction: sorts.order,
-            };
-        }
-
+    const getChannelData = async () => {
         try {
-            const channelResponse = await axios.post(`/messages/${channel}`, filters);
-            // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
-            if (
-                channelResponse &&
-                channelResponse.data &&
-                channelResponse.data.hits &&
-                channelResponse.data.hits.hits
-            ) {
-                const messages = channelResponse.data.hits.hits;
-                setPagination({ ...pagination, total: channelResponse.data.hits.total.value });
-                setDataSource(lodash.map(lodash.map(messages, "_source")));
-                // setDataSourceKeys(lodash.map(messages, "_source"));
-                // setDataSource(response.data.hits.hits);
+            const response = await axios.get(`/integration/${integration}/channel/${channel}`);
+            if (response?.data?.data?.nodes) {
+                setNodes(response.data.data.nodes);
             }
-        } catch (ex) {
-            notification.error({
-                message: T.translate("common.messages.error.title"),
-                description: T.translate("common.messages.error.description", { error: ex }),
-            });
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
         }
-        setLoading(false);
     };
 
-    /* const downloadJsonFile = (data, filename) => {
-        let filedata = JSON.stringify(data, null, 2);
-        const blob = new Blob([filedata], {
-            type: "application/json",
+    const messages = traces.map((item) => item._source);
+    const groupedMessages = groupNodes(messages, nodes);
+
+    const timelineItems = groupedMessages.map((item, index) => {
+        const timelineContent = item.data.map((message) => {
+            const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss");
+            return (
+                <>
+                    <p>{`${message.arrow ? message.arrow + " | " : ""}${message.event} | ${date}`}</p>
+                    <p>{`${message.exchange_id}`}</p>
+                    <p>{`${message.node_endpoint || ""} `}</p>
+                    <p>{`${message.current_route || ""} `}</p>
+                    <Divider></Divider>
+                </>
+            );
         });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.download = filename;
-        link.href = url;
-        link.click();
-    }; */
 
-    /* const handleOnDownloadModel = (e, row) => {
-        const data = [row];
-        downloadJsonFile(data, `Integration-${row.name}.json`);
-    };
- */
-    /*  const handleDownloadTable = (data) => {
-        downloadJsonFile(data, `Integrations.json`);
-    }; */
+        return (
+            <Timeline.Item
+                key={`message${index}`}
+                label={item.node || "Nodo desconocido"}
+                color={item.error ? "red" : "green"}>
+                {timelineContent}
+            </Timeline.Item>
+        );
+    });
 
-    // const drawChannelActionButtons = (record) => {
-    //     //Find integration(parent) FIXME: Lo se, es un poco ñapa, pero no hay posibilidad de obtener una referencia al padre y necesito el id de la integracion.
-    //     let integration = lodash.find(dataSource, (int) => {
-    //         let chann = lodash.find(int.channels, { id: record.id });
-    //         if (chann != null) {
-    //             return int;
-    //         }
-    //     });
-    //     return (
-    //         <Space size="middle">
-    //             {/* {record.enabled && record.status === "Started" && (
-    //                 <Popconfirm
-    //                     title={T.translate("common.question")}
-    //                     onConfirm={async () => {
-    //                         await channelActions.undeployChannel(integration.id, record.id, false);
-    //                         await search();
-    //                     }}>
-    //                     <Button
-    //                         key="undeploy"
-    //                         type="text"
-    //                         icon={
-    //                             <Icon
-    //                                 path={mdiStopCircle}
-    //                                 className={classes.icon}
-    //                                 color="red"
-    //                                 title={T.translate("integrations.channel.button.undeploy")}
-    //                             />
-    //                         }
-    //                     />
-    //                 </Popconfirm>
-    //             )}
-    //             {record.enabled && record.status !== "Started" && (
-    //                 <Button
-    //                     key="deploy"
-    //                     type="text"
-    //                     onClick={async () => {
-    //                         await channelActions.deployChannel(integration.id, record.id, false);
-    //                         await search();
-    //                     }}
-    //                     icon={
-    //                         <Icon
-    //                             path={mdiPlayCircle}
-    //                             color="green"
-    //                             className={classes.icon}
-    //                             title={T.translate("integrations.channel.button.deploy")}
-    //                         />
-    //                     }
-    //                 />
-    //             )} */}
-    //         </Space>
-    //     );
-    // };
-
-    // const drawIntegrationActionButtons = (record) => {
-    //     return (
-    //         <Space size="middle">
-    //             <Button
-    //                 icon={<Icon path={mdiDownload} className={classes.icon} />}
-    //                 type="text"
-    //                 title={T.translate("common.button.download")}
-    //                 onClick={(e) => handleOnDownloadModel(e, record)}
-    //             />
-    //         </Space>
-    //     );
-    // };
-
-    const columns = [
-        {
-            title: "Flecha",
-            dataIndex: "arrow",
-            key: "arrow",
-            ellipsis: true,
-            sorter: true,
-            width: 70,
-            /* render: (text, record) => {
-                console.log(record._source);
-
-                return record._source.arrow;
-            }, */
-        },
-        {
-            title: "Evento",
-            dataIndex: "event",
-            key: "event",
-            ellipsis: true,
-            sorter: true,
-            width: 150,
-            /* render: (text, record) => {
-                console.log(record._source);
-
-                return record._source.arrow;
-            }, */
-        },
-        {
-            title: "Exchange ID",
-            dataIndex: "exchange_id",
-            key: "exchange_id",
-            width: 280,
-            ellipsis: true,
-            sorter: true,
-            // render: (text, record) => {
-            //     if (record.channels) return <b>{text}</b>;
-
-            //     return text;
-            // },
-        },
-        {
-            title: "Ruta de origen",
-            dataIndex: "origin_route",
-            key: "origin_route",
-            ellipsis: true,
-            sorter: true,
-        },
-        {
-            title: "Ruta actual",
-            dataIndex: "current_route",
-            key: "current_route",
-            ellipsis: true,
-            sorter: true,
-        },
-        {
-            title: "Nodo endpoint",
-            dataIndex: "node_endpoint",
-            key: "node_endpoint",
-            ellipsis: true,
-            sorter: true,
-        },
-
-        {
-            title: "Fecha",
-            dataIndex: "date_time",
-            key: "integration.data->>'last_updated'",
-            sorter: true,
-            width: 120,
-            render: (text, record) => {
-                return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
-            },
-        },
-        {
-            title: "Elapsed",
-            dataIndex: "elapsed",
-            key: "elapsed'",
-            width: 80,
-            sorter: true,
-        },
-        /*   {
-            title: T.translate("integrations.columns.actions"),
-            key: "action",
-            width: 240,
-            render: (text, record) => {
-              
-            },
-        }, */
-    ];
-
-    // const getFiltersByPairs = (str) => {
-    //     const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
-    //     let m;
-
-    //     let data = {};
-    //     while ((m = regex.exec(str)) !== null) {
-    //         // This is necessary to avoid infinite loops with zero-width matches
-    //         if (m.index === regex.lastIndex) {
-    //             regex.lastIndex++;
-    //         }
-    //         let { key, value } = m.groups;
-    //         if (key) {
-    //             data[key] = {
-    //                 type: "likeI",
-    //                 value: `%${value}%`,
-    //             };
-    //         }
-    //     }
-    //     return data;
-    // };
-
-    const onSearch = (value) => {
-        // if (value.indexOf(":") !== -1) {
-        //     return search(null, getFiltersByPairs(value));
-        // }
-        if (value) {
-            search(null, {
-                "integration.data::text": {
-                    type: "jsonb",
-                    value: value,
-                },
-            });
-        }
-    };
     return (
-        <Content>
-            <Row className={classes.card}>
-                <Col flex={1}>
-                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
-                </Col>
-                <Col flex={2}>
-                    <Row justify="end" gutter={10}>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiUpload} className={classes.icon} />}
-                                type="text"
-                                // onClick={() => handleUploadTable()}
-                            />
-                        </Col>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                type="text"
-                                // onClick={() => handleDownloadTable(dataSource)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
-            {dataSource && (
-                <Table
-                    loading={loading}
-                    key="messages-table"
-                    dataSource={dataSource}
-                    columns={columns}
-                    onChange={search}
-                    pagination={pagination}
-                    rowKey={"id"}
-                    childrenColumnName={"channels"}
-                    bordered
-                    sort
-                    size="small"
-                    // expandable={{ expandedRowKeys: dataSourceKeys }}
-                />
+        <Modal
+            title={`Mensaje ${messageId}`}
+            visible={visible}
+            onCancel={onCancel}
+            onOk={onCancel}
+            destroyOnClose={true}
+            width={1000}>
+            {loading ? (
+                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                    <Spin tip={T.translate("application.loading")} />
+                </div>
+            ) : (
+                <Timeline mode="alternate">{timelineItems}</Timeline>
             )}
-        </Content>
+        </Modal>
     );
-};
+}
 
-export default Message;
+/**
+ * Agrupa los mensajes por el nodo correspondiente en orden de aparición
+ * @param {*} messages
+ * @param {*} nodes
+ * @returns
+ */
+const groupNodes = (messages, nodes) => {
+    const result = [];
+    let acc = { node: "", data: [] };
+    const restartAcc = () => {
+        acc.node = "";
+        acc.data = [];
+        acc.error = false;
+    };
+
+    for (let i = 0; i <= messages.length; i++) {
+        if (i !== messages.length) {
+            const currentMessage = messages[i];
+            const prevMessage = messages[i - 1];
+            if (prevMessage && currentMessage.current_route !== prevMessage?.current_route) {
+                result.push({ ...acc });
+                restartAcc();
+            }
+            if (!acc.node) {
+                const node = lodash.find(nodes, { id: currentMessage.current_route });
+                acc.node = node?.data.label || currentMessage.current_route;
+            }
+            if (currentMessage.event === "ERROR") {
+                acc.error = true;
+            }
+            acc.data.push(currentMessage);
+        } else {
+            result.push({ ...acc });
+        }
+    }
+
+    return result;
+};
