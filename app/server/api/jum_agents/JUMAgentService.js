@@ -611,4 +611,22 @@ export class JUMAgentService extends BaseService {
             return await this.deployChannel(channel, route, candidate);
         }
     }
+
+    /**
+     * Envia al agente las dependencias configuradas para que las añada a su classpath
+     *
+     * @param {*} agentDependencies
+     * @returns
+     */
+    async addAgentDependencies(agent, agentDependencies) {
+        if (!agentDependencies) {
+            return false;
+        }
+        const response = await this.sendCommand(agent.id, "/agent/load_dependencies", agentDependencies);
+
+        if (!response.success) {
+            throw new Error(response.data);
+        }
+    }
+    
 }

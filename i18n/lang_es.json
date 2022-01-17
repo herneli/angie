@@ -46,7 +46,8 @@
             "finish": "Finalizar",
             "add_selection": "Seleccionar/Deseleccionar todas",
             "resend": "Reenviar",
-            "confirm": "Confirmar"
+            "confirm": "Confirmar",
+            "libraries": "Librerías"
         },
         "messages": {
             "saved": {
@@ -88,6 +89,14 @@
             "name": "Nombre",
             "status": "Estado",
             "approved": "Aprobado"
+        },
+        "options": {
+            "edit_title": "Editar opciones agente"
+        },
+        "libraries": {
+            "edit_title": "Editar librerías",
+            "title": "Librerías",
+            "library": "Librería"
         }
     },
     "deployed_integrations": {
