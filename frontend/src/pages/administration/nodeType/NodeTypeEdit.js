@@ -33,7 +33,7 @@ const NodeTypeEdit = ({ model }) => {
                     document_type: "node_type",
                     data: { ...currentData },
                 },
-                data: { data: formData },
+                data: { id: "demo", data: formData },
             });
 
             setDebugData(response?.data?.data);
@@ -44,7 +44,7 @@ const NodeTypeEdit = ({ model }) => {
 
     const getDefaults = (data) => {
         try {
-            return { ...JSON.parse(data.defaults) };
+            return { ...JSON.parse(data.defaults), label: data.name };
         } catch (ex) {
             return {};
         }
@@ -59,12 +59,13 @@ const NodeTypeEdit = ({ model }) => {
             <ModelEdit model={model} onElementLoad={(data) => setCurrentData(data)} />
             {currentData && (
                 <NodeEditModal
-                    selectedType={{ type_id: currentData.id, data: getDefaults(currentData) }}
+                    selectedType={{ id: "demo", type_id: currentData.id, data: getDefaults(currentData) }}
                     nodeTypes={[currentData]}
                     editNodeVisible={testVisible}
                     onEditCancel={() => setTestVisible(false)}
                     onNodeEditEnd={(id, { data }) => console.log(data)}
                     onDataChange={(data) => debounced(data)}>
+                    <h4>Camel XML</h4>
                     <Divider />
                     <AceEditor
                         setOptions={{

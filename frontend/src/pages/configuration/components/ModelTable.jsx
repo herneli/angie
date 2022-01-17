@@ -168,11 +168,11 @@ export default function ModelTable({
         const data = [row];
         const code = row.code || row.name;
 
-        downloadJsonFile(data, `${modelInfo.name}-${code}.json`);
+        downloadJsonFile(data, `${modelInfo.code}.${code}.json`);
     };
 
     const handleDownloadTable = (data) => {
-        downloadJsonFile(data, `${modelInfo.name}.json`);
+        downloadJsonFile(data, `${modelInfo.code}.json`);
     };
 
     const handleUploadTable = () => {

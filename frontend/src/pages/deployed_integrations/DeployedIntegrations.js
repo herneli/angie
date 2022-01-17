@@ -370,13 +370,13 @@ const DeployedIntegrations = () => {
                         showZero
                         count={chann.messages_sent}
                         style={{ backgroundColor: "green" }}
-                        overflowCount={999}
+                        overflowCount={99999999}
                     />,
-                    <Badge showZero count={chann.messages_error} overflowCount={999} />,
+                    <Badge showZero count={chann.messages_error} overflowCount={99999999} />,
                     <Badge
                         showZero
                         count={chann.messages_total}
-                        overflowCount={999}
+                        overflowCount={99999999}
                         style={{
                             backgroundColor: "#2db7f5",
                         }}
