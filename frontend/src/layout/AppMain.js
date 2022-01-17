@@ -9,7 +9,7 @@ import Administration from "../pages/administration/Administration";
 import Package from "../pages/administration/packages/Package";
 import Agents from "../pages/agents/Agents";
 import DeployedIntegrations from "../pages/deployed_integrations/DeployedIntegrations";
-import Message from "../pages/administration/message/Message";
+import Messages from "../pages/administration/message/Messages";
 import Unauth from "../pages/Unauth";
 
 const AppMain = ({ location }) => {
@@ -29,17 +29,11 @@ const AppMain = ({ location }) => {
             <PrivateRoute
                 roles={["admin"]}
                 exact
-                path="/messages/:channel_id"
-                component={Message}
+                path="/messages/:integration_id/:channel_id"
+                component={Messages}
                 {...defaultProps}
             />
-            <PrivateRoute
-                roles={["admin"]}
-                exact
-                path="/packages"
-                component={Packages}
-                {...defaultProps}
-            />
+            <PrivateRoute roles={["admin"]} exact path="/packages" component={Packages} {...defaultProps} />
             <PrivateRoute
                 roles={["admin"]}
                 path="/packages/:packageCode/versions/:packageVersion"
