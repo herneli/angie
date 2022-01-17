@@ -19,7 +19,12 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
     useEffect(() => {
         if (selectedType && editNodeVisible) {
             const type = lodash.find(nodeTypes, (el) => {
-                return el.id === selectedType.type_id || el.code === selectedType.type_id;
+                let result = el.id === selectedType.type_id || el.code === selectedType.type_id;
+                if (!result && el.alt_codes) {
+                    const splitted = el.alt_codes.split(",");
+                    result = splitted.indexOf(selectedType.type_id) !== -1;
+                }
+                return result;
             });
             let jsonSchema = {};
             try {

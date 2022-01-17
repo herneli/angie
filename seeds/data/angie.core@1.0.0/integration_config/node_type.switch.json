@@ -1,0 +1,22 @@
+[
+  {
+    "id": "5031a614-6f8c-4419-99d1-fcc5d6786ffe",
+    "code": "switch",
+    "name": "Switch",
+    "group": "Flujo",
+    "handles": "",
+    "defaults": "{\n    \"language\": \"simple\",\n    \"handles\": [\n        {\n            \"id\": \"out0\",\n            \"condition\": \"a == b\",\n            \"to\": \"\"\n        }\n    ]\n}",
+    "alt_codes": "core.flow.switch",
+    "form_type": "jsonschema",
+    "node_type": "node",
+    "plugin_id": null,
+    "description": "Create dynamic condition",
+    "package_code": "angie.core",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\" />\n    <choice>\n        {{#each handles}}\n        <when>\n            <{{../language}}>\n                {{safe this.condition}}\n            </{{../language}}>\n            <multicast>\n                {{#each this.to}}\n                <to uri=\"direct:{{this}}\" />\n                {{/each}}\n            </multicast>\n        </when>\n        {{/each}}\n    </choice>\n</route>",
+    "json_ui_schema": "{}",
+    "package_version": "1.0.0",
+    "json_data_schema": "{\n    \"title\": \"Switch Node\",\n    \"description\": \"Create dynamic conditions\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\",\n        \"handles\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"type\": \"string\"\n        },\n        \"language\": {\n            \"type\": \"string\"\n        },\n        \"handles\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"condition\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        }\n    }\n}",
+    "form_type_plugin_id": null,
+    "react_component_type": "MultiTargetNode"
+  }
+]

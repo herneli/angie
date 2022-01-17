@@ -68,12 +68,6 @@
                         "title": "packages.integrations"
                     },
                     {
-                        "key": "camel_component",
-                        "value": "/camel_component",
-                        "icon": "mdiVideoInputComponent",
-                        "title": "packages.camel_components"
-                    },
-                    {
                         "key": "node_type",
                         "value": "/node_type",
                         "icon": "mdiSourceBranch",

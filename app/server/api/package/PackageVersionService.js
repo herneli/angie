@@ -14,7 +14,7 @@ const packageComponent = [
     },
     {
         table: "integration_config",
-        document_types: ["camel_component", "node_type"],
+        document_types: ["node_type"],
     },
     {
         table: "integration",

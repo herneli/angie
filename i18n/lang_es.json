@@ -164,7 +164,6 @@
         "sections": "Secciones",
         "integration": "Integraciones",
         "node_type": "Tipos Nodos ",
-        "camel_component": "Componentes Camel",
         "config_context": "Contextos",
         "config_method": "Métodos",
         "config_object": "Objetos",
@@ -180,7 +179,6 @@
         "integrations": "Integraciones",
         "methods": "Métodos",
         "node_types": "Tipos de nodo",
-        "camel_components": "Componentes camel",
         "objects": "Objetos",
         "select_package": "Seleccione un paquete",
         "versions": "Versiones"

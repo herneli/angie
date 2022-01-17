@@ -1,9 +1,0 @@
-[
-  {
-    "id": "a5587797-ed99-4834-b267-5fe804583da0",
-    "code": "core.utils.debug",
-    "name": "Debug",
-    "options": "{}",
-    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
-  }
-]

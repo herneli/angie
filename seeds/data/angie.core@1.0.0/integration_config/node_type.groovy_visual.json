@@ -1,14 +1,17 @@
 [
   {
     "id": "b30ed503-44f3-4387-af08-b7cd2df81f5e",
-    "code": "core.code.groovy.visual_editor",
+    "code": "groovy_visual",
     "name": "Visual Groovy Code",
     "group": "Utilidades",
     "handles": "in, out",
     "defaults": "{\n    \"script\": null,\n    \"beforeSave\": \"generateCode\"\n}",
+    "alt_codes": "core.code.groovy.visual_editor",
+    "package_code": "angie.core",
+    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <script>\n        <{{script.language}}>\n            <![CDATA[{{safe code}}]]>\n        </{{script.language}}>\n    </script>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
     "json_ui_schema": "{\n    \"script\": {\n        \"ui:field\": \"ScriptField\",\n        \"ui:options\": {\n            \"contextCode\": \"camel_context_groovy\"\n        }\n    },\n    \"code\": {\n        \"ui:columnSize\": \"12\",\n        \"ui:widget\": \"AceEditorWidget\",\n        \"ui:mode\": \"javascript\",\n        \"ui:beautify\": true,\n        \"ui:readonly\": true,\n        \"ui:height\": \"400px\"\n    }\n}",
+    "package_version": "1.0.0",
     "json_data_schema": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"script\": {\n            \"type\": \"object\",\n            \"title\": \"Editor de código\"\n        },\n        \"code\": {\n            \"title\": \"Codigo generado\",\n            \"type\": \"string\"\n        }\n    }\n}",
-    "camel_component_id": "core.utils.visual_code",
     "react_component_type": "default"
   }
 ]

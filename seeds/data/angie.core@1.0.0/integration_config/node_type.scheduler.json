@@ -1,16 +1,17 @@
 [
   {
     "id": "1a9df1f0-69b5-4a8f-b4f2-ea0e1e6bd739",
-    "code": "core.utils.scheduler",
+    "code": "scheduler",
     "name": "Scheduler",
     "group": "Utilidades",
     "handles": "in",
     "defaults": "{\n    \"timeUnit\": \"MILLISECONDS\",\n    \"initialDelay\": 1000\n}",
+    "alt_codes": "core.utils.scheduler",
     "package_code": "angie.core",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"scheduler://{{label}}?delay={{delay}}&amp;timeUnit={{timeUnit}}&amp;initialDelay={{initialDelay}}\"/>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
     "json_ui_schema": "{}",
     "package_version": "1.0.0",
     "json_data_schema": "{\n    \"description\": \"Scheduler\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\",\n        \"delay\",\n        \"initialDelay\",\n        \"timeUnit\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"title\": \"Name\",\n            \"type\": \"string\"\n        },\n        \"delay\": {\n            \"title\": \"Delay\",\n            \"type\": \"number\"\n        },\n        \"initialDelay\": {\n            \"title\": \"Initial Delay\",\n            \"type\": \"number\"\n        },\n        \"timeUnit\": {\n            \"title\": \"Time Unit\",\n            \"type\": \"string\",\n            \"enum\": [\n                \"NANOSECONDS\",\n                \"MICROSECONDS\",\n                \"MILLISECONDS\",\n                \"SECONDS\",\n                \"MINUTES\",\n                \"HOURS\",\n                \"DAYS\"\n            ],\n            \"enumNames\": [\n                \"NANOSECONDS\",\n                \"MICROSECONDS\",\n                \"MILLISECONDS\",\n                \"SECONDS\",\n                \"MINUTES\",\n                \"HOURS\",\n                \"DAYS\"\n            ]\n        }\n    }\n}",
-    "camel_component_id": "core.utils.scheduler",
     "react_component_type": "input"
   }
 ]

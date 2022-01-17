@@ -666,14 +666,16 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                selectQuery:
+                    "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
                 group_by: "users.id",
                 relation_schema: [
                     {
                         type: "LEFT JOIN",
                         with_table: "organization",
-                        on_condition: "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
-                        relation_column: "organization_data"
+                        on_condition:
+                            "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
+                        relation_column: "organization_data",
                     },
                 ],
                 documentType: "user",
@@ -756,59 +758,6 @@ exports.seed = async function (knex) {
             },
         },
         {
-            name: "Camel Component",
-            code: "camel_component",
-            data: {
-                code: "camel_component",
-                name: "Componentes Camel",
-                table: "integration_config",
-                id_mode: "uuid",
-                documentType: "camel_component",
-                listFields: [
-                    {
-                        title: "Código",
-                        field: "code",
-                        key: "code",
-                    },
-                    {
-                        title: "Nombre",
-                        field: "name",
-                        key: "data->>'name'",
-                    },
-                ],
-                schema: {
-                    type: "object",
-                    required: ["code", "name", "xml_template"],
-                    properties: {
-                        code: { title: "Código", type: "string" },
-                        name: { title: "Nombre", type: "string" },
-                        xml_template: { title: "Plantilla", type: "string" },
-                        options: { title: "Opciones", type: "string" },
-                    },
-                },
-                uiSchema: {
-                    code: {
-                        "ui:columnSize": "6",
-                    },
-                    name: {
-                        "ui:columnSize": "6",
-                    },
-                    xml_template: {
-                        "ui:columnSize": "12",
-                        "ui:widget": "AceEditorWidget",
-                        "ui:mode": "html",
-                        "ui:beautify": true,
-                    },
-                    options: {
-                        "ui:columnSize": "12",
-                        "ui:widget": "AceEditorWidget",
-                        "ui:mode": "json",
-                        "ui:beautify": true,
-                    },
-                },
-            },
-        },
-        {
             name: "Tipos de Nodo",
             code: "node_type",
             data: {
@@ -847,13 +796,11 @@ exports.seed = async function (knex) {
                             enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode"],
                             enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode"],
                         },
-                        camel_component_id: {
-                            type: "string",
-                            title: "Componente Camel",
-                        },
+                        alt_codes: { title: "Códigos Alternativos", type: "string" },
                         json_data_schema: { title: "Formulario", type: "string" },
                         json_ui_schema: { title: "UiSchema", type: "string" },
                         defaults: { title: "Valores por defecto", type: "string" },
+                        xml_template: { title: "Plantilla Camel", type: "string" },
                     },
                 },
                 uiSchema: {
@@ -882,6 +829,12 @@ exports.seed = async function (knex) {
                         "ui:mode": "json",
                         "ui:beautify": true,
                     },
+                    xml_template: {
+                        "ui:columnSize": "12",
+                        "ui:widget": "AceEditorWidget",
+                        "ui:mode": "html",
+                        "ui:beautify": true,
+                    },
                     defaults: {
                         "ui:columnSize": "12",
                         "ui:widget": "AceEditorWidget",
@@ -892,11 +845,9 @@ exports.seed = async function (knex) {
                     react_component_type: {
                         "ui:columnSize": "6",
                     },
-                    camel_component_id: {
+                    alt_codes: {
+                        "ui:help": "Util para mantener compatibilidad con codigos cambiados",
                         "ui:columnSize": "6",
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:selectOptions":
-                            "/configuration/model/camel_component/data#path=data&value=code&label=data.name",
                     },
                 },
             },

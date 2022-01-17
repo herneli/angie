@@ -53,43 +53,6 @@ const channel = {
     last_updated: "2021-12-15T10:19:06.470Z",
 };
 
-const config_camel_component = {
-    name: "Camel Component",
-    code: "camel_component",
-    data: {
-        code: "camel_component",
-        name: "Componentes Camel",
-        table: "integration_config",
-        id_mode: "uuid",
-        documentType: "camel_component",
-    },
-};
-
-const camel_components = [
-    {
-        id: "a5587797-ed99-4834-b267-5fe804583da0",
-        code: "core.utils.debug",
-        data: {
-            id: "a5587797-ed99-4834-b267-5fe804583da0",
-            code: "core.utils.debug",
-            name: "Debug",
-            options: "{}",
-            xml_template:
-                '<route id="{{source}}">\n    <from uri="direct:{{source}}"/>\n    <bean ref="debugBean" method="debug" />\n    <multicast>\n        {{#each target}}\n        <to uri="direct:{{this}}"/>\n        {{/each}}\n    </multicast>\n</route>',
-        },
-    },
-    {
-        id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
-        code: "core.utils.log",
-        data: {
-            id: "5eb79d2d-5b7d-4666-83b2-9c0abb80f569",
-            code: "core.utils.log",
-            name: "Log",
-            options: '{"name":"string"}',
-            xml_template: '<route  id="{{source}}"> <from uri="direct:{{source}}"/> <to uri="log:{{name}}"/> </route>',
-        },
-    },
-];
 
 const config_node_type = {
     name: "Tipos de Nodo",
@@ -117,7 +80,8 @@ const node_types = [
             json_ui_schema: "{}",
             json_data_schema:
                 '{\n    "type": "object",\n    "properties": {\n        "name": {\n            "type": "string"\n        }\n    }\n}',
-            camel_component_id: "core.utils.debug",
+            xml_template:
+                '<route id="{{source}}">\n    <from uri="direct:{{source}}"/>\n    <bean ref="debugBean" method="debug" />\n    <multicast>\n        {{#each target}}\n        <to uri="direct:{{this}}"/>\n        {{/each}}\n    </multicast>\n</route>',
             react_component_type: "default",
         },
     },
@@ -138,7 +102,7 @@ const node_types = [
             json_ui_schema: "{}",
             json_data_schema:
                 '{\n    "title": "Log",\n    "description": "Output message",\n    "type": "object",\n    "required": [\n        "label",\n        "name"\n    ],\n    "properties": {\n        "label": {\n            "type": "string"\n        },\n        "name": {\n            "type": "string"\n        }\n    }\n}',
-            camel_component_id: "core.utils.log",
+            xml_template: '<route  id="{{source}}"> <from uri="direct:{{source}}"/> <to uri="log:{{name}}"/> </route>',
             form_type_plugin_id: null,
             react_component_type: "output",
         },
@@ -152,19 +116,10 @@ describe("IntegrationChannelService", async () => {
 
         tracker.on
             .select(({ sql, bindings }) => {
-                return sql.indexOf("config_model") !== -1 && bindings[0] === "camel_component";
-            })
-            .response([config_camel_component]);
-        tracker.on
-            .select(({ sql, bindings }) => {
                 return sql.indexOf("config_model") !== -1 && bindings[0] === "node_type";
             })
             .response([config_node_type]);
-        tracker.on
-            .select(({ sql, bindings }) => {
-                return sql.indexOf("integration_config") !== -1 && bindings[0] === "camel_component";
-            })
-            .response(camel_components);
+            
         tracker.on
             .select(({ sql, bindings }) => {
                 return sql.indexOf("integration_config") !== -1 && bindings[0] === "node_type";

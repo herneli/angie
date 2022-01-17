@@ -4,7 +4,6 @@ import axios from "axios";
 
 import beautify from "xml-beautifier";
 
-
 class Transformer {
     nodeTypes = [];
 
@@ -27,7 +26,12 @@ class Transformer {
 
             for (const node of bdModel?.nodes) {
                 const nodeType = lodash.find(this.nodeTypes, (el) => {
-                    return el.id === node.type_id || el.code === node.type_id;
+                    let result = el.id === node.type_id || el.code === node.type_id;
+                    if (!result && el.alt_codes) {
+                        const splitted = el.alt_codes.split(",");
+                        result = splitted.indexOf(node.type_id) !== -1;
+                    }
+                    return result;
                 });
 
                 if (!nodeType) {

@@ -210,7 +210,6 @@ export class IntegrationChannelService {
         }
 
         const configService = new ConfigurationService();
-        const { data: camel_components } = await configService.list("camel_component");
 
         const { data: node_types } = await configService.list("node_type");
 
@@ -221,16 +220,19 @@ export class IntegrationChannelService {
             const element = nodes[idx];
 
             let type = lodash.find(node_types, (el) => {
-                return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
+                //return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
+                let result = el.id === element.type_id || el.code === element.type_id;
+                if (!result && el.alt_codes) {
+                    const splitted = el.alt_codes.split(",");
+                    result = splitted.indexOf(element.type_id) !== -1;
+                }
+                return result;
             });
             if (!type) continue;
             if (type.data.handles === "none") continue;
-            let camelComponent = lodash.find(camel_components, {
-                code: type.data.camel_component_id,
-            });
 
-            if (camelComponent.data.xml_template) {
-                const template = Handlebars.compile(camelComponent.data.xml_template);
+            if (type.data.xml_template) {
+                const template = Handlebars.compile(type.data.xml_template);
 
                 if (element.data.handles) {
                     //Calcular los links de los diferentes handles para la conversion
