@@ -50,6 +50,9 @@ export class IntegrationChannelService {
         Handlebars.registerHelper("safe", function (inputData) {
             return new Handlebars.SafeString(inputData);
         });
+        Handlebars.registerHelper("safeMessage", function (inputData) {
+            return new Handlebars.SafeString(inputData.replace(/\r\n|\n\r|\n|\r/g, "\\r\\n"));
+        });
         Handlebars.registerHelper("jsonStringSafe", function (inputData) {
             try {
                 return new Handlebars.SafeString(JSON.stringify(inputData));
@@ -58,6 +61,28 @@ export class IntegrationChannelService {
             }
             return "";
         });
+
+        Handlebars.registerHelper("applyUnmarshal", function (format) {
+            switch (format) {
+                case "json":
+                    return new Handlebars.SafeString("<unmarshal><json/></unmarshal>");
+                case "hl7":
+                    return new Handlebars.SafeString("<unmarshal><hl7/></unmarshal>");
+                default:
+                    return "";
+            }
+        });
+        Handlebars.registerHelper("applyMarshal", function (format) {
+            switch (format) {
+                case "json":
+                    return "<marshal><json/></marshal>";
+                case "hl7":
+                    return "<marshal><hl7/></marshal>";
+                default:
+                    return "";
+            }
+        });
+
         Handlebars.registerHelper("querystring", function (inputData) {
             let data = inputData;
             if (Array.isArray(inputData)) {
@@ -69,7 +94,7 @@ export class IntegrationChannelService {
         });
 
         this.dao = new IntegrationDao();
-        this.messageDao = new MessageService();
+        this.messageService = new MessageService();
         this.agentService = new JUMAgentService();
     }
 
@@ -81,7 +106,6 @@ export class IntegrationChannelService {
      * @returns
      */
     async findIntegrationChannel(integrationId, channelId) {
-        
         const integrationService = new IntegrationService();
         const integration = await integrationService.loadById(integrationId);
         return lodash.find(integration.data.channels, { id: channelId });
@@ -95,7 +119,7 @@ export class IntegrationChannelService {
      */
     async findChannel(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -114,7 +138,7 @@ export class IntegrationChannelService {
      */
     async getIntegrationByChannel(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -127,12 +151,12 @@ export class IntegrationChannelService {
 
     /**
      * Obtiene una lista con todos los canales de la aplicación
-     * 
-     * @returns 
+     *
+     * @returns
      */
     async listAllChannels() {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         let channels = [];
         for (const integration of integrations) {
@@ -150,7 +174,7 @@ export class IntegrationChannelService {
      */
     async getChannelById(channelId) {
         const integrationService = new IntegrationService();
-        const {data: integrations} = await integrationService.list();
+        const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
             const found = lodash.find(integration.data.channels, { id: channelId });
@@ -407,7 +431,7 @@ export class IntegrationChannelService {
      * @returns
      */
     async channelApplyStatus(channel, remoteChannel) {
-        const messages = await this.messageDao.getChannelMessageCount(channel.id);
+        const messages = await this.messageService.getChannelMessageCount(channel.id);
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
         channel.messages_total = messages.total || (remoteChannel && remoteChannel.messages_total) || 0;
         channel.messages_error = messages.error || (remoteChannel && remoteChannel.messages_error) || 0;

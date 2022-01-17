@@ -6,7 +6,7 @@
             {
                 "key": "integrations",
                 "title": "Integraciones",
-                "icon": "mdiSourceBranch",
+                "icon": "mdiConnection",
                 "value": "/integrations/deployed"
             },
             {

@@ -1,51 +1,51 @@
 [
-  {
-    "code": "core.generic.code",
-    "name": "Code",
-    "options": "{\"language\": \"string\",\"source\":\"string\",\"target\":\"string\",\"code\":\"string\"}",
-    "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <setBody>  <{{language}}><![CDATA[{{safe code}}]]></{{language}}>    </setBody> <multicast>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}}</multicast> </route>",
-    "id": "fdfe4184-2879-4670-ad4c-33b939d1906f"
-  },
-  {
-    "code": "core.utils.delay",
-    "name": "Delay",
-    "options": "{\"source\":\"string\",\"target\":\"string\",\"delay\":\"string\"}",
-    "xml_template": "<route  id=\"{{source}}\"><from uri=\"direct:{{source}}\"/><delay><constant>{{delay}}</constant></delay><to uri=\"mock:result\"/><multicast>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}}</multicast> </route>",
-    "id": "e664f0ea-9e3c-460b-826e-c5f1c0e1522f"
-  },
-  {
-    "id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
-    "code": "core.generic.input",
-    "name": "Generic Input",
-    "options": "{\n    \"out_format\": \"string\",\n    \"protocol\": \"string\",\n    \"target\": \"string\",\n    \"hostname\": \"string\",\n    \"port\": \"number\",\n    \"path\": \"string\",\n    \"query_params\": \"array\"\n}",
-    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring query_params}}\"/>\n    \n    {{#if (eq out_format \"json\")}}\n    <unmarshal>\n        <json/>\n    </unmarshal>\n    {{/if}}\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
-  },
-  {
-    "code": "core.generic.output",
-    "name": "Generic Output",
-    "options": "{\"protocol\":\"string\",\"source\":\"string\",\"hostname\":\"string\",\"port\":\"number\",\"path\":\"string\",\"query_params\":\"array\"}",
-    "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <to uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring query_params}}\"/> </route>",
-    "id": "1e2cd28f-7f6f-40de-a153-d716c2e4bd2b"
-  },
-  {
-    "code": "core.utils.log",
-    "name": "Log",
-    "options": "{\"name\":\"string\"}",
-    "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <to uri=\"log:{{name}}\"/> </route>",
-    "id": "5eb79d2d-5b7d-4666-83b2-9c0abb80f569"
-  },
-  {
-    "id": "1ea0f437-0e74-4ffa-b64e-7f75781178cb",
-    "code": "core.flow.loop",
-    "name": "Loop",
-    "options": "{\n  \"source\": \"string\",\n  \"count\": \"number\",\n  \"handles\": \"array\"\n}",
-    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <loop copy=\"true\">\n        <constant>\n            {{count}}\n        </constant>\n        <multicast>\n            {{#each handles.[0].to}}\n            <to uri=\"direct:{{this}}\"/>\n            {{/each}}\n        </multicast>\n    </loop>\n    <multicast>\n        {{#each handles.[1].to}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
-  },
-  {
-    "id": "67d93216-b818-44d2-a82c-5da0a305a94c",
-    "code": "core.flow.switch",
-    "name": "Switch",
-    "options": "{\n    \"language\": \"simple\",\n    \"source\": \"string\",\n    \"handles\": \"array\"\n}",
-    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\" />\n    <choice>\n        {{#each handles}}\n        <when>\n            <{{../language}}>\n                {{safe this.condition}}\n            </{{../language}}>\n            <multicast>\n                {{#each this.to}}\n                <to uri=\"direct:{{this}}\" />\n                {{/each}}\n            </multicast>\n        </when>\n        {{/each}}\n    </choice>\n</route>"
-  }
+    {
+        "code": "core.generic.code",
+        "name": "Code",
+        "options": "{\"language\": \"string\",\"source\":\"string\",\"target\":\"string\",\"code\":\"string\"}",
+        "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <setBody>  <{{language}}><![CDATA[{{safe code}}]]></{{language}}>    </setBody> <multicast>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}}</multicast> </route>",
+        "id": "fdfe4184-2879-4670-ad4c-33b939d1906f"
+    },
+    {
+        "code": "core.utils.delay",
+        "name": "Delay",
+        "options": "{\"source\":\"string\",\"target\":\"string\",\"delay\":\"string\"}",
+        "xml_template": "<route  id=\"{{source}}\"><from uri=\"direct:{{source}}\"/><delay><constant>{{delay}}</constant></delay><to uri=\"mock:result\"/><multicast>{{#each target}} <to uri=\"direct:{{this}}\"/> {{/each}}</multicast> </route>",
+        "id": "e664f0ea-9e3c-460b-826e-c5f1c0e1522f"
+    },
+    {
+        "id": "7662d716-a3da-4e92-9136-da2000fdc8a1",
+        "code": "core.generic.input",
+        "name": "Generic Input",
+        "options": "{\n    \"out_format\": \"string\",\n    \"protocol\": \"string\",\n    \"target\": \"string\",\n    \"hostname\": \"string\",\n    \"port\": \"number\",\n    \"path\": \"string\",\n    \"query_params\": \"array\"\n}",
+        "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring query_params}}\"/>\n    \n        {{applyUnmarshal out_format}}    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+    },
+    {
+        "code": "core.generic.output",
+        "name": "Generic Output",
+        "options": "{\"protocol\":\"string\",\"source\":\"string\",\"hostname\":\"string\",\"port\":\"number\",\"path\":\"string\",\"query_params\":\"array\"}",
+        "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <to uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring query_params}}\"/> </route>",
+        "id": "1e2cd28f-7f6f-40de-a153-d716c2e4bd2b"
+    },
+    {
+        "code": "core.utils.log",
+        "name": "Log",
+        "options": "{\"name\":\"string\"}",
+        "xml_template": "<route  id=\"{{source}}\"> <from uri=\"direct:{{source}}\"/> <to uri=\"log:{{name}}\"/> </route>",
+        "id": "5eb79d2d-5b7d-4666-83b2-9c0abb80f569"
+    },
+    {
+        "id": "1ea0f437-0e74-4ffa-b64e-7f75781178cb",
+        "code": "core.flow.loop",
+        "name": "Loop",
+        "options": "{\n  \"source\": \"string\",\n  \"count\": \"number\",\n  \"handles\": \"array\"\n}",
+        "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <loop copy=\"true\">\n        <constant>\n            {{count}}\n        </constant>\n        <multicast>\n            {{#each handles.[0].to}}\n            <to uri=\"direct:{{this}}\"/>\n            {{/each}}\n        </multicast>\n    </loop>\n    <multicast>\n        {{#each handles.[1].to}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>"
+    },
+    {
+        "id": "67d93216-b818-44d2-a82c-5da0a305a94c",
+        "code": "core.flow.switch",
+        "name": "Switch",
+        "options": "{\n    \"language\": \"simple\",\n    \"source\": \"string\",\n    \"handles\": \"array\"\n}",
+        "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\" />\n    <choice>\n        {{#each handles}}\n        <when>\n            <{{../language}}>\n                {{safe this.condition}}\n            </{{../language}}>\n            <multicast>\n                {{#each this.to}}\n                <to uri=\"direct:{{this}}\" />\n                {{/each}}\n            </multicast>\n        </when>\n        {{/each}}\n    </choice>\n</route>"
+    }
 ]

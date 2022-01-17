@@ -872,6 +872,7 @@ exports.seed = async function (knex) {
                     json_data_schema: {
                         "ui:columnSize": "12",
                         "ui:widget": "AceEditorWidget",
+                        "ui:height": 400,
                         "ui:mode": "json",
                         "ui:beautify": true,
                     },

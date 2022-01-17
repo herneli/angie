@@ -47,7 +47,7 @@ export class MessageService extends BaseDao {
             }
         } catch (e) {
             if (e.body && e.body.status === 404) {
-                console.log("Canal sin mensajes");
+                // console.log("Canal sin mensajes");
             } else {
                 console.error("Error de conexión con Elastic:");
                 console.error(e);

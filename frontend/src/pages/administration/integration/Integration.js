@@ -2,7 +2,7 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, Modal, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag } from "antd";
+import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Drawer } from "antd";
 
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
@@ -38,10 +38,10 @@ import {
     mdiCheckOutline,
     mdiStopCircle,
     mdiPlayCircle,
-    mdiBug,
     mdiTextLong,
     mdiSourceBranchPlus,
     mdiCogs,
+    mdiRefresh,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -51,7 +51,7 @@ import IconButton from "../../../components/button/IconButton";
 import ChannelOptions from "./ChannelOptions";
 
 import * as api from "../../../api/configurationApi";
-
+import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
 
 const { TabPane } = Tabs;
 
@@ -103,6 +103,7 @@ const integrationFormSchema = {
 let channelActions = new ChannelActions();
 
 const Integration = () => {
+    let mainContainer = useRef(null);
     const history = useHistory();
     const integForm = useRef(null);
 
@@ -118,6 +119,9 @@ const Integration = () => {
     const [pendingChanges, setPendingChanges] = useState(false);
     const [editingChannel, setEditingChannel] = useState({});
     const [editingChannelVisible, setEditingChannelVisible] = useState(false);
+
+    const [debugVisible, setDebugVisible] = useState(false);
+    const [debugData, setDebugData] = useState(null);
 
     const [editHistory, setEditHistory] = useState([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
@@ -188,7 +192,6 @@ const Integration = () => {
             const types = await api.getModelDataList("node_type", { params: { filters } });
             setNodeTypes(types);
             await Transformer.init(types);
-            
         } catch (ex) {
             console.error(ex);
         }
@@ -561,15 +564,8 @@ const Integration = () => {
         return [
             <IconButton
                 key="log"
-                onClick={() =>
-                    channelActions.showChannelLog(currentIntegration.id, activeTab, activeChannel?.agent?.id)
-                }
-                icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.debug") }}
-            />,
-            <IconButton
-                key="debug"
                 onClick={() => showChannelDebug()}
-                icon={{ path: mdiBug, size: 0.6, title: T.translate("common.button.debug") }}
+                icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.debug") }}
             />,
             ...buttons,
             <IconButton
@@ -598,50 +594,16 @@ const Integration = () => {
     const showChannelDebug = async () => {
         const channel = lodash.find(channels, { id: activeTab });
         if (channel) {
-            let camel = "";
-            try {
-                camel = await Transformer.fromBDToCamel(channel);
-            } catch (ex) {
-                console.error(ex);
-            }
+            const logs = await channelActions.getChannelLog(currentIntegration.id, activeTab);
+            const { channelJson, channelXml } = await channelActions.getChannelDebug(Transformer, channel);
 
-            Modal.info({
-                title: "Debugging Channel",
-                width: 800,
-                closable: true,
-                centered: true,
-                content: (
-                    <div>
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab="Canal JSON" key="1">
-                                <AceEditor
-                                    setOptions={{
-                                        useWorker: false,
-                                    }}
-                                    width="100%"
-                                    value={JSON.stringify(channel, null, 4)}
-                                    name="DB.code"
-                                    mode="json"
-                                    theme="github"
-                                />
-                            </TabPane>
-                            <TabPane tab="Camel XML" key="2">
-                                <AceEditor
-                                    setOptions={{
-                                        useWorker: false,
-                                    }}
-                                    width="100%"
-                                    value={camel}
-                                    name="camel.code"
-                                    mode="xml"
-                                    theme="github"
-                                />
-                            </TabPane>
-                        </Tabs>
-                    </div>
-                ),
-                onOk() {},
+            setDebugData({
+                channel,
+                logs,
+                channelJson,
+                channelXml,
             });
+            setDebugVisible(true);
         }
     };
 
@@ -701,7 +663,7 @@ const Integration = () => {
     };
 
     return (
-        <div>
+        <div style={{ position: "relative", overflow: "hidden" }}>
             {!editHeader && (
                 <div>
                     <PageHeader
@@ -836,6 +798,80 @@ const Integration = () => {
                     channel={editingChannel}
                 />
             )}
+
+            <ResizableDrawer
+                title="Channel Debug"
+                placement={"right"}
+                closable={true}
+                mask={false}
+                getContainer={false}
+                width={500}
+                onClose={() => setDebugVisible(false)}
+                visible={debugVisible}
+                key={"debugDrawer"}
+                style={{ position: "absolute" }}>
+                <Tabs
+                    tabBarExtraContent={
+                        <Space size="small">
+                            <IconButton
+                                key="refresh"
+                                onClick={() => showChannelDebug()}
+                                icon={{ path: mdiRefresh, size: 0.6, title: T.translate("common.button.reload") }}
+                            />
+                        </Space>
+                    }>
+                    <TabPane key={"logs"} tab="Logs">
+                        <Tabs defaultActiveKey={debugData?.channel?.agent?.id}>
+                            {debugData &&
+                                debugData.logs &&
+                                debugData.logs.map((agent) => (
+                                    <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
+                                        <AceEditor
+                                            setOptions={{
+                                                useWorker: false,
+                                            }}
+                                            width="100%"
+                                            height="calc(100vh - 360px)"
+                                            value={agent.data + ""}
+                                            name="chann.log"
+                                            theme="github"
+                                        />
+                                    </Tabs.TabPane>
+                                ))}
+                        </Tabs>
+                    </TabPane>
+                    <TabPane key={"definition"} tab="Definición">
+                        <Tabs defaultActiveKey="1">
+                            <TabPane tab="Canal JSON" key="1">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    width="100%"
+                                    height="calc(100vh - 360px)"
+                                    value={debugData && debugData.channelJson}
+                                    name="DB.code"
+                                    mode="json"
+                                    theme="github"
+                                />
+                            </TabPane>
+                            <TabPane tab="Camel XML" key="2">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    width="100%"
+                                    height="calc(100vh - 360px)"
+                                    value={debugData && debugData.channelXml}
+                                    name="camel.code"
+                                    mode="xml"
+                                    theme="github"
+                                />
+                            </TabPane>
+                        </Tabs>
+                    </TabPane>
+                </Tabs>
+            </ResizableDrawer>
 
             <PreventTransitionPrompt
                 when={pendingChanges}

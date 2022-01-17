@@ -5,13 +5,43 @@ import { Modal, notification, Tabs } from "antd";
 
 class ChannelActions {
     /**
+     * 
+     * @param {*} Transformer 
+     * @param {*} channel 
+     * @returns 
+     */
+    getChannelDebug = async (Transformer, channel) => {
+        if (channel) {
+            let camel = "";
+            try {
+                camel = await Transformer.fromBDToCamel(channel);
+            } catch (ex) {
+                console.error(ex);
+            }
+
+            const channelJson = JSON.stringify(channel, null, 4);
+            return { channelJson: channelJson, channelXml: camel };
+        }
+        return { channelJson: "", channelXml: "" };
+    };
+
+    /**
+     * 
+     * @param {*} integrationId 
+     * @param {*} channelId 
+     * @returns 
+     */
+    getChannelLog = async (integrationId, channelId) => {
+        const response = await axios.get(`/integration/${integrationId}/channel/${channelId}/log`);
+
+        return response?.data?.data;
+    };
+    /**
      * Muestra la ventana de debug
      */
     showChannelLog = async (integrationId, channelId, activeAgent) => {
         if (channelId) {
-            const response = await axios.get(`/integration/${integrationId}/channel/${channelId}/log`);
-
-            const agentLogs = response?.data?.data;
+            const agentLogs = await this.getChannelLog(integrationId, channelId);
 
             Modal.info({
                 title: "Log Channel",

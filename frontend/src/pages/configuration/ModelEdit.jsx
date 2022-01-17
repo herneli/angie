@@ -6,7 +6,7 @@ import errorHandler from "../../api/errorHandler";
 import { usePackage } from "../../components/packages/PackageContext";
 import ModelEditor from "./components/ModelEditor";
 
-const ModelEdit = ({ model }) => {
+const ModelEdit = ({ model, onElementLoad }) => {
     const [modelConfig, setModelConfig] = useState({
         modelInfo: null,
     });
@@ -49,13 +49,15 @@ const ModelEdit = ({ model }) => {
 
     const setEditData = async (id) => {
         const editModel = await api.getModelData(model, id);
+
         setEdit(editModel);
+        if (onElementLoad) onElementLoad(editModel);
     };
 
     const handleOnSave = async (formData, overwrite = false) => {
         try {
             await api.saveModelData(model, formData, packageData, overwrite);
-            
+
             history.goBack();
         } catch (ex) {
             errorHandler(ex);
@@ -77,6 +79,7 @@ const ModelEdit = ({ model }) => {
                     onClose={() => {
                         setEdit(null);
                     }}
+                    onChange={({ formData }) => onElementLoad && onElementLoad(formData)}
                     onSave={handleOnSave}
                 />
             )}

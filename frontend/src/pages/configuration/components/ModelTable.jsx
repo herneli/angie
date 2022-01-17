@@ -35,6 +35,7 @@ export default function ModelTable({
     total,
     onSearchData,
     onSaveDataBatch,
+    buttonsConfig,
 }) {
     const calculateColumns = (info) => {
         if (info) {
@@ -61,21 +62,25 @@ export default function ModelTable({
                             />
                         )}
 
-                        <Popconfirm
-                            title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
-                            onConfirm={(e) => handleOnDuplicateModel(e, record)}>
+                        {(!buttonsConfig || buttonsConfig.clone) && (
+                            <Popconfirm
+                                title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
+                                onConfirm={(e) => handleOnDuplicateModel(e, record)}>
+                                <Button
+                                    icon={<Icon path={mdiContentCopy} className={classes.icon} />}
+                                    type="text"
+                                    title={T.translate("common.button.duplicate")}
+                                />
+                            </Popconfirm>
+                        )}
+                        {(!buttonsConfig || buttonsConfig.download) && (
                             <Button
-                                icon={<Icon path={mdiContentCopy} className={classes.icon} />}
+                                icon={<Icon path={mdiDownload} className={classes.icon} />}
                                 type="text"
-                                title={T.translate("common.button.duplicate")}
+                                title={T.translate("common.button.download")}
+                                onClick={(e) => handleOnDownloadModel(e, record)}
                             />
-                        </Popconfirm>
-                        <Button
-                            icon={<Icon path={mdiDownload} className={classes.icon} />}
-                            type="text"
-                            title={T.translate("common.button.download")}
-                            onClick={(e) => handleOnDownloadModel(e, record)}
-                        />
+                        )}
                         {record.editable !== false && (
                             <Popconfirm
                                 title={T.translate("configuration.do_you_want_to_delete_the_item")}
@@ -200,7 +205,7 @@ export default function ModelTable({
 
         if (searchValue && Object.keys(searchValue).length > 0) {
             if (searchValue.indexOf(":") !== -1) {
-                filters = Utils.getFiltersByPairs((key) => (`data->>'${key}'`), searchValue);
+                filters = Utils.getFiltersByPairs((key) => `data->>'${key}'`, searchValue);
             } else {
                 filters = {
                     "data::text": {
@@ -259,25 +264,31 @@ export default function ModelTable({
                 <Col flex={2}>
                     <Row justify="end" gutter={10}>
                         <Col>
-                            <Button
-                                icon={<Icon path={mdiUpload} className={classes.icon} />}
-                                type="text"
-                                onClick={handleUploadTable}
-                            />
+                            {(!buttonsConfig || buttonsConfig.uploadTable) && (
+                                <Button
+                                    icon={<Icon path={mdiUpload} className={classes.icon} />}
+                                    type="text"
+                                    onClick={handleUploadTable}
+                                />
+                            )}
                         </Col>
                         <Col>
-                            <Button
-                                icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                type="text"
-                                onClick={() => handleDownloadTable(filteredData)}
-                            />
+                            {(!buttonsConfig || buttonsConfig.downloadTable) && (
+                                <Button
+                                    icon={<Icon path={mdiDownload} className={classes.icon} />}
+                                    type="text"
+                                    onClick={() => handleDownloadTable(filteredData)}
+                                />
+                            )}
                         </Col>
                         <Col>
-                            <Button
-                                icon={<Icon path={mdiPlus} className={classes.icon} />}
-                                type="text"
-                                onClick={onAddData}
-                            />
+                            {(!buttonsConfig || buttonsConfig.add) && (
+                                <Button
+                                    icon={<Icon path={mdiPlus} className={classes.icon} />}
+                                    type="text"
+                                    onClick={onAddData}
+                                />
+                            )}
                         </Col>
                     </Row>
                 </Col>

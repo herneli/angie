@@ -11,6 +11,7 @@ import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
 import ModelEdit from "../../configuration/ModelEdit";
 import SubMenu from "../../../layout/SubMenu";
+import NodeTypeEdit from "../nodeType/NodeTypeEdit";
 
 const { Content, Header } = Layout;
 
@@ -68,6 +69,13 @@ export default function Package({ match }) {
                                 exact
                                 path={path + "/integrations/:id/:channel"}
                                 render={({ match }) => <Integration match={match} />}
+                            />
+                            <Route
+                                exact
+                                path={path + "/node_type/:id"}
+                                render={({ match }) => {
+                                    return <NodeTypeEdit model={"node_type"} />
+                                }}
                             />
                             <Route
                                 exact

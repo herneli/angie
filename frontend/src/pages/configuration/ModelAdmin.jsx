@@ -6,7 +6,7 @@ import errorHandler from "../../api/errorHandler";
 import { usePackage } from "../../components/packages/PackageContext";
 import ModelTable from "./components/ModelTable";
 
-const ModelAdmin = ({ model }) => {
+const ModelAdmin = ({ buttonsConfig, model }) => {
     const [modelConfig, setModelConfig] = useState({
         modelInfo: null,
         modelData: null,
@@ -91,6 +91,7 @@ const ModelAdmin = ({ model }) => {
             {modelData && (
                 <ModelTable
                     modelInfo={modelInfo}
+                    buttonsConfig={buttonsConfig}
                     modelData={Object.values(modelData)}
                     onAddData={addCreateData}
                     onDeleteData={handleOnDelete}

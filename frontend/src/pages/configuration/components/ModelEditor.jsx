@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createUseStyles } from "react-jss";
 import Form from "@rjsf/antd";
 import { Button, Row, Space } from "antd";
@@ -22,18 +22,23 @@ const useStyles = createUseStyles({
     },
 });
 
-export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave }) {
+export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, onChange }) {
     const classes = useStyles();
+    const [currentData, setCurrentData] = useState(data);
+
+    useEffect(() => {
+        setCurrentData(data);
+    }, [data]);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     useEffect(() => {
         async function asyncloadEnum() {
-            await loadEnum(uiSchema,schema)
+            await loadEnum(uiSchema, schema);
         }
-        schema = asyncloadEnum()
-
+        schema = asyncloadEnum();
     }, [schema]);
 
     const handleOnSave = (event) => {
@@ -41,10 +46,9 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave }
     };
 
     //Encargado de cargar los enum si esta especificado el ""ui:url" actualmente solo funciona en la creación
-    const loadEnum = async (uiSchema,schema) => {
-        if(uiSchema){
+    const loadEnum = async (uiSchema, schema) => {
+        if (uiSchema) {
             Object.values(uiSchema).forEach(async (uiSchemaItem) => {
-                
                 if (uiSchemaItem && uiSchemaItem["ui:url"]) {
                     let response = await axios.get(uiSchemaItem["ui:url"]);
                     if ((response.success = "true")) {
@@ -54,7 +58,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave }
                 }
             });
             return schema;
-        }else{
+        } else {
             return schema;
         }
     };
@@ -68,8 +72,12 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave }
                 widgets={formConfig.widgets}
                 schema={schema}
                 uiSchema={uiSchema}
-                formData={data}
-                onSubmit={handleOnSave}>
+                formData={currentData}
+                onSubmit={handleOnSave}
+                onChange={(e) => {
+                    setCurrentData({ ...currentData, ...e.formData });
+                    onChange(e);
+                }}>
                 <Row justify="end">
                     <Space>
                         <Button onClick={onCancel}>{T.translate("configuration.return")}</Button>

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "27d60880-eec0-427b-a556-fd433a96ad68",
+    "code": "tcp_output",
+    "name": "TCP Output",
+    "name_": "Generic Output CLONED",
+    "options": "{\n    \"protocol\": \"string\",\n    \"source\": \"string\",\n    \"hostname\": \"string\",\n    \"port\": \"number\",\n    \"path\": \"string\",\n    \"query_params\": \"array\"\n}",
+    "package_code": "angie.core",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    {{#if (eq protocol \"mllp\")}}\n    <to uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring mllp_query_params}}\"/>\n    {{/if}}\n    {{#if (eq protocol \"netty:tcp\")}}\n    <to uri=\"{{protocol}}://{{hostname}}:{{port}}{{path}}{{querystring netty_query_params}}\"/>\n    {{/if}}\n</route>",
+    "package_version": "1.0.0"
+  }
+]

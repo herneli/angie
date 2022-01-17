@@ -155,6 +155,10 @@
     "administration": {
         "management": "Gestión",
         "users": "Usuarios",
+        "user_actions": {
+            "sync_users": "Sincronizar Usuarios",
+            "manage_users": "Gestionar Usuarios"
+        },
         "profiles": "Perfiles",
         "organization": "Organizaciones",
         "sections": "Secciones",
@@ -164,7 +168,10 @@
         "config_context": "Contextos",
         "config_method": "Métodos",
         "config_object": "Objetos",
-        "test_groovy": "Script"
+        "test_groovy": "Script",
+        "node_types": {
+            "test_button": "Probar Formulario"
+        }
     },
     "packages": {
         "configure": "Configurar",

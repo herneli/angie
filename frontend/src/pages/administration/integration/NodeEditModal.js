@@ -7,6 +7,7 @@ import Form from "@rjsf/antd";
 import formConfig from "../../../components/rjsf";
 
 import T from "i18n-react";
+import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 
 export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEditEnd, onEditCancel, nodeTypes }) {
     const formEl = useRef(null);
@@ -82,22 +83,22 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
                 </Button>,
             ]}>
             {editNodeVisible && formData && formData.data && (
-                <Form
+                <ConditionalForm
                     ref={formEl}
                     ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                     ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                     schema={formData.schema}
                     formData={formData.data}
                     uiSchema={formData.uiSchema}
-                    liveOmit={formData.schema.liveOmit ? formData.schema.liveOmit : false}
-                    omitExtraData={formData.schema.omitExtraData ? formData.schema.omitExtraData : false}
+                    liveOmit={formData?.schema?.liveOmit || false}
+                    omitExtraData={formData?.schema?.omitExtraData || false}
                     widgets={formConfig.widgets}
                     fields={formConfig.fields}
                     onChange={(e) => setFormData({ ...formData, data: e.formData })}
                     onSubmit={() => onFormSubmit()}
                     onError={(e) => console.log(e)}>
                     <></>
-                </Form>
+                </ConditionalForm>
             )}
         </Modal>
     );
