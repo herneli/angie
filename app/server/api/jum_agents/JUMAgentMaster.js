@@ -3,6 +3,7 @@ import { IntegrationChannelService } from "../integration_channel";
 
 import moment from "moment";
 import { Utils } from "lisco";
+import { LibraryService } from "../library/LibraryService";
 
 /**
  * Clase ejecutada únicamente en el hilo principal de la aplicación y encargada de la gestión de los eventos
@@ -77,6 +78,9 @@ class JUMAgentMaster {
                 socket.emit("messages", "Connected!");
                 //Configurar los elementos a escuchar.
                 this.configureJUMEvents(socket);
+
+                const libraries = await new LibraryService().list();
+                await this.service.addAgentDependencies(agent, libraries.data);
 
                 //Recargar estados de los canales
                 await this.service.loadAgentStatus(agent);

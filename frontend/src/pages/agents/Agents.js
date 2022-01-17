@@ -15,11 +15,13 @@ import {
     mdiReload,
     mdiTextLong,
     mdiTrashCan,
+    mdiLibrary,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
 import { Link } from "react-router-dom";
 import AgentOptions from "./AgentOptions";
+import AgentLibraries from "./AgentLibraries";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
 import AceEditor from "../../components/ace-editor/AceEditor";
@@ -47,6 +49,7 @@ const Agents = () => {
     let [dataSourceKeys, setDataSourceKeys] = useState([]);
     let [loading, setLoading] = useState(false);
     let [optionsVisible, setOptionsVisible] = useState(false);
+    let [librariesVisible, setLibrariesVisible] = useState(false);
     let [currentAgent, setCurrentAgent] = useState(null);
 
     const [pagination, setPagination] = useState({});
@@ -319,6 +322,10 @@ const Agents = () => {
         setCurrentAgent(null);
     };
 
+    const cancelLibraries = () => {
+        setLibrariesVisible(false);
+    }
+
     const saveAgent = async ({ formData }) => {
         //TODo
         try {
@@ -333,6 +340,20 @@ const Agents = () => {
 
         cancelOptions();
     };
+
+    const saveLibraries = async ({ formData }) => {
+        try {
+            await axios.post(`/library/updateAll`, { libraries: formData.libraries });
+            await search();
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
+
+        cancelLibraries();
+    }
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
@@ -359,6 +380,15 @@ const Agents = () => {
                 </Col>
                 <Col flex={1}>
                     <Row justify="end">
+                    <IconButton
+                            key="dependencies"
+                            onClick={() => setLibrariesVisible(true)}
+                            icon={{
+                                path: mdiLibrary, //mdi-folder-move, mdi-folder-plus, mdi-folder-upload, mdi-library-plus, mdi-library, mdi-basket-fill
+                                size: 0.7,
+                            }}
+                            title={T.translate("common.button.libraries")}
+                        />
                         <IconButton
                             key="undeploy"
                             onClick={() => search()}
@@ -366,7 +396,7 @@ const Agents = () => {
                                 path: mdiRefresh,
                                 size: 0.7,
                             }}
-                            title={T.translate("common.button.reload")}
+                            title={T.translate("common.button.refresh")}
                         />
                     </Row>
                 </Col>
@@ -388,6 +418,9 @@ const Agents = () => {
             />
             {optionsVisible && (
                 <AgentOptions agent={currentAgent} visible={optionsVisible} onOk={saveAgent} onCancel={cancelOptions} />
+            )}
+            {librariesVisible && (
+                <AgentLibraries visible={librariesVisible} onOk={saveLibraries} onCancel={cancelLibraries} />
             )}
         </Content>
     );
