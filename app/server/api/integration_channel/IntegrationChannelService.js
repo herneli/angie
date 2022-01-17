@@ -222,8 +222,8 @@ export class IntegrationChannelService {
             let type = lodash.find(node_types, (el) => {
                 //return el.id === element.type_id || el.code === element.type_id; //Retrocompatibilidad, se empezara a usar solo code
                 let result = el.id === element.type_id || el.code === element.type_id;
-                if (!result && el.alt_codes) {
-                    const splitted = el.alt_codes.split(",");
+                if (!result && el.data.alt_codes) {
+                    const splitted = el.data.alt_codes.split(",");
                     result = splitted.indexOf(element.type_id) !== -1;
                 }
                 return result;
@@ -231,25 +231,35 @@ export class IntegrationChannelService {
             if (!type) continue;
             if (type.data.handles === "none") continue;
 
-            if (type.data.xml_template) {
-                const template = Handlebars.compile(type.data.xml_template);
-
-                if (element.data.handles) {
-                    //Calcular los links de los diferentes handles para la conversion
-                    element.data.handles = this.linkHandles(element.data.handles, element.links);
-                }
-                camelStr += template({
-                    source: element.id,
-                    target:
-                        element.links && element.links.length !== 0 ? lodash.map(element.links, "node_id") : ["empty"],
-                    ...element.data,
-                });
-            }
+            camelStr += this.convertNodeTypeToCamel(type, element);
         }
 
         return `<routes xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
     }
 
+    /**
+     * Convierte un tipo de nodo en camel xml usando data
+     *
+     * @param {*} node
+     * @param {*} data
+     * @returns
+     */
+    convertNodeTypeToCamel(node, data) {
+        if (node.data.xml_template) {
+            const template = Handlebars.compile(node.data.xml_template);
+
+            if (data.data.handles) {
+                //Calcular los links de los diferentes handles para la conversion
+                data.data.handles = this.linkHandles(data.data.handles, data.links);
+            }
+            return template({
+                source: data.id,
+                target: data.links && data.links.length !== 0 ? lodash.map(data.links, "node_id") : ["empty"],
+                ...data.data,
+            });
+        }
+        return "";
+    }
     /**
      * Metodo para unificar los handles de los nodos de un canal con los links existentes.
      *

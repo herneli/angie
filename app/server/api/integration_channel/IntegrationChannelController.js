@@ -56,6 +56,12 @@ export class IntegrationChannelController extends BaseController {
                 this.convertToCamel(request, response, next);
             })
         );
+        this.router.post(
+            `/integration_channel/to_camel/specific_node`,
+            expressAsyncHandler((request, response, next) => {
+                this.convertToCamel(request, response, next);
+            })
+        );
 
         this.router.post(
             `/channel/:id/sendMessageToRoute`,
@@ -163,6 +169,21 @@ export class IntegrationChannelController extends BaseController {
             let channel = request.body.channel;
 
             let res = await service.convertChannelToCamel(channel);
+            let jsRes = new JsonResponse(true, res, null, 1);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async convertToCamel(request, response, next) {
+        try {
+            let service = new IntegrationChannelService();
+            let node = request.body.node_type;
+            let data = request.body.data;
+
+            let res = await service.convertNodeTypeToCamel(node, data);
             let jsRes = new JsonResponse(true, res, null, 1);
 
             response.json(jsRes.toJson());

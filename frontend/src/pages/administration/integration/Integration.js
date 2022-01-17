@@ -8,7 +8,6 @@ import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generato
 
 import { useHistory } from "react-router";
 
-import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-xml";
@@ -52,6 +51,7 @@ import ChannelOptions from "./ChannelOptions";
 
 import * as api from "../../../api/configurationApi";
 import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
+import AceEditor from "../../../components/ace-editor/AceEditor";
 
 const { TabPane } = Tabs;
 

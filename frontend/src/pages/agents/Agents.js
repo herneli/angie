@@ -18,11 +18,11 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import AceEditor from "react-ace";
 import { Link } from "react-router-dom";
 import AgentOptions from "./AgentOptions";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
+import AceEditor from "../../components/ace-editor/AceEditor";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({

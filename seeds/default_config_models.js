@@ -799,8 +799,8 @@ exports.seed = async function (knex) {
                         alt_codes: { title: "Códigos Alternativos", type: "string" },
                         json_data_schema: { title: "Formulario", type: "string" },
                         json_ui_schema: { title: "UiSchema", type: "string" },
-                        defaults: { title: "Valores por defecto", type: "string" },
                         xml_template: { title: "Plantilla Camel", type: "string" },
+                        defaults: { title: "Valores por defecto", type: "string" },
                     },
                 },
                 uiSchema: {

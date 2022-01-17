@@ -9,7 +9,15 @@ import formConfig from "../../../components/rjsf";
 import T from "i18n-react";
 import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 
-export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEditEnd, onEditCancel, nodeTypes }) {
+export default function NodeEditModal({
+    children,
+    selectedType,
+    editNodeVisible,
+    onNodeEditEnd,
+    onEditCancel,
+    nodeTypes,
+    onDataChange,
+}) {
     const formEl = useRef(null);
     const [formData, setFormData] = useState({});
 
@@ -99,12 +107,16 @@ export default function NodeEditModal({ selectedType, editNodeVisible, onNodeEdi
                     omitExtraData={formData?.schema?.omitExtraData || false}
                     widgets={formConfig.widgets}
                     fields={formConfig.fields}
-                    onChange={(e) => setFormData({ ...formData, data: e.formData })}
+                    onChange={(e) => {
+                        setFormData({ ...formData, data: e.formData });
+                        if (onDataChange) onDataChange(e.formData);
+                    }}
                     onSubmit={() => onFormSubmit()}
                     onError={(e) => console.log(e)}>
                     <></>
                 </ConditionalForm>
             )}
+            {children}
         </Modal>
     );
 }

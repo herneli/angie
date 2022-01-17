@@ -1,7 +1,7 @@
 import axios from "axios";
-import AceEditor from "react-ace";
 
 import { Modal, notification, Tabs } from "antd";
+import AceEditor from "../../../components/ace-editor/AceEditor";
 
 class ChannelActions {
     /**
