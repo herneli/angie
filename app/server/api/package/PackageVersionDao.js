@@ -20,14 +20,29 @@ export class PackageVersionDao extends BaseKnexDao {
             .first();
     }
 
-    async getDocumentTypeItems(table, documentType) {
+    async getDocumentTypeItems(table, documentType, code, version) {
         let knex = KnexConnector.connection;
         return await knex(table).where({
             document_type: documentType,
+            package_code: code,
+            package_version: version,
         });
     }
-    async getTableItems(table) {
+    async getTableItems(table, code, version) {
         let knex = KnexConnector.connection;
-        return await knex(table);
+        return await knex(table).where({ package_code: code, package_version: version });
+    }
+
+    async updatePackageVersionStatus(code, version, data) {
+        let knex = KnexConnector.connection;
+        return knex("package_version")
+            .insert({
+                code: code,
+                version: version,
+                ...data,
+            })
+            .onConflict(["code", "version"])
+            .merge()
+            .returning("*");
     }
 }

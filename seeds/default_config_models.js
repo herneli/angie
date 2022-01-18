@@ -180,7 +180,7 @@ exports.seed = async function (knex) {
                                     enumNames: [
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
-                                        "Cualquier objecto",
+                                        "Cualquier objeto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -371,16 +371,16 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:withBorder": true,
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                         items: {
                             "ui:withBorder": true,
                             objectCode: {
-                                "ui:widget": "SelectRemoteWidget",
+                                "ui:widget": "SelectRemoteWithPackageWidget",
                                 "ui:selectOptions":
-                                    "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                    "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                             },
                         },
                     },
@@ -388,16 +388,16 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:withBorder": true,
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                         items: {
                             "ui:withBorder": true,
                             objectCode: {
-                                "ui:widget": "SelectRemoteWidget",
+                                "ui:widget": "SelectRemoteWithPackageWidget",
                                 "ui:selectOptions":
-                                    "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                    "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                             },
                         },
                     },
@@ -443,16 +443,16 @@ exports.seed = async function (knex) {
                                 "ui:columnSize": "12",
                                 "ui:withBorder": true,
                                 objectCode: {
-                                    "ui:widget": "SelectRemoteWidget",
+                                    "ui:widget": "SelectRemoteWithPackageWidget",
                                     "ui:selectOptions":
-                                        "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                        "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                 },
                                 items: {
                                     "ui:withBorder": true,
                                     objectCode: {
-                                        "ui:widget": "SelectRemoteWidget",
+                                        "ui:widget": "SelectRemoteWithPackageWidget",
                                         "ui:selectOptions":
-                                            "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                            "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                     },
                                 },
                             },
@@ -648,9 +648,9 @@ exports.seed = async function (knex) {
                                 "ui:withBorder": true,
                                 "ui:columnSize": "12",
                                 objectCode: {
-                                    "ui:widget": "SelectRemoteWidget",
+                                    "ui:widget": "SelectRemoteWithPackageWidget",
                                     "ui:selectOptions":
-                                        "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                        "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                 },
                             },
                         },
@@ -666,14 +666,16 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                selectQuery:
+                    "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
                 group_by: "users.id",
                 relation_schema: [
                     {
                         type: "LEFT JOIN",
                         with_table: "organization",
-                        on_condition: "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
-                        relation_column: "organization_data"
+                        on_condition:
+                            "organization.id::text =  ANY(TRANSLATE(users.data->>'organization_id', '[]','{}')::TEXT[])",
+                        relation_column: "organization_data",
                     },
                 ],
                 documentType: "user",
@@ -1031,9 +1033,9 @@ exports.seed = async function (knex) {
                     },
                     type: {
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                     },
                     startCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },

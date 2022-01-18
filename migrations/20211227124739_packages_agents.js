@@ -46,6 +46,8 @@ exports.up = async function (knex) {
             table.increments();
             table.string("code").notNullable();
             table.string("version").notNullable();
+            table.string("remote_commit");
+            table.string("local_commit");
             table.jsonb("dependencies");
             table.boolean("modified");
             table.unique(["code", "version"]);
@@ -119,7 +121,6 @@ exports.up = async function (knex) {
 };
 
 exports.down = async function (knex) {
-    
     // if (await knex.schema.hasTable("package")) {
     //     await knex.schema.dropTable("package");
     // }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Select, Space, Spin, Table, Layout, Button, message } from "antd";
+import { Col, Row, Select, Space, Spin, Table, Layout, Button, message, notification } from "antd";
 import T from "i18n-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -15,9 +15,14 @@ export default function Packages({ history }) {
     }, []);
 
     const handleOnPublish = (code, version) => () => {
-        axios.get("/packages/" + code + "/versions/" + version + "/update_remote").then((response) => {
-            message.info(T.translate("packages.published_successfully"));
-        });
+        axios
+            .get("/packages/" + code + "/versions/" + version + "/update_remote")
+            .then((response) => {
+                message.info(T.translate("packages.published_successfully"));
+            })
+            .catch((error) => {
+                notification.error({ message: "Error puglishing" });
+            });
     };
 
     if (!packages) {
@@ -27,6 +32,8 @@ export default function Packages({ history }) {
     const renderExpandable = (packageData) => {
         let extendedColumns = [
             { title: "Version", key: "version", dataIndex: "version" },
+            { title: "Local commit", key: "local_commit", dataIndex: "local_commit" },
+            { title: "Remote commit", key: "remote_commit", dataIndex: "remote_commit" },
             {
                 title: "Acciones",
                 key: "actions",
