@@ -13,7 +13,6 @@ import { default as beautifier } from "xml-beautifier";
 import { useEffect } from "react";
 
 const AceEditor = (props) => {
-    console.log(props);
     const { mode, beautify, value } = props;
     let { commands } = props;
 
@@ -51,7 +50,6 @@ const AceEditor = (props) => {
         name: "beautify", //name for the key binding.
         bindKey: { win: "Alt-Shift-f", mac: "Shift-Alt-f" }, //key combination used for the command.
         exec: (editor) => {
-            console.log("wii");
             beautifyCode(editor.getValue());
         }, //function to execute when keys are pressed.
     });
