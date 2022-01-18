@@ -67,7 +67,7 @@ class JUMAgentMaster {
                 });
 
                 //Se pone como Online
-                agent.status = JUMAgent.STATUS_ONLINE;
+                agent.status = JUMAgent.STATUS_INSTALLING;
                 agent.last_socket_id = socket.id;
                 agent.last_online_date = moment().toISOString();
                 agent.current_channels = { list: [] };
@@ -81,7 +81,10 @@ class JUMAgentMaster {
 
                 const libraries = await new LibraryService().list();
                 await this.service.addAgentDependencies(agent, libraries.data);
-
+                //Finalizada la instalación se marca como online
+                agent.status = JUMAgent.STATUS_ONLINE;
+                await this.service.update(agent.id, agent);
+                
                 //Recargar estados de los canales
                 await this.service.loadAgentStatus(agent);
 

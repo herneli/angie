@@ -192,7 +192,8 @@ const Agents = () => {
                     return (
                         <div>
                             {text === "online" && <span title={text}>🟢</span>}
-                            {text !== "online" && <span title={text}>🔴</span>}
+                            {text === "offline" && <span title={text}>🔴</span>}
+                            {text === "installing" && <span title={text}>🟡</span>}
                         </div>
                     );
                 }

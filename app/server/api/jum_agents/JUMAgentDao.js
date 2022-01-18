@@ -7,7 +7,7 @@ export class JUMAgentDao extends BaseKnexDao {
     releaseAll() {
         return KnexConnector.connection
             .from(this.tableName)
-            .where({ status: JUMAgent.STATUS_ONLINE })
+            .whereIn("status", [JUMAgent.STATUS_ONLINE, JUMAgent.STATUS_INSTALLING])
             .update({ status: JUMAgent.STATUS_OFFLINE, last_socket_id: "", current_channels: { list: [] } });
     }
 
@@ -18,9 +18,9 @@ export class JUMAgentDao extends BaseKnexDao {
     async isRunning(id) {
         const agent = await KnexConnector.connection
             .from(this.tableName)
-            .where({ status: JUMAgent.STATUS_ONLINE, id: id })
+            .whereIn("status", [JUMAgent.STATUS_ONLINE, JUMAgent.STATUS_INSTALLING])
+            .where({ id: id })
             .first();
         return agent || false;
     }
-
 }

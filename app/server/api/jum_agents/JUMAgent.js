@@ -5,5 +5,8 @@ export class JUMAgent {
     static get STATUS_OFFLINE() {
         return "offline";
     }
+    static get STATUS_INSTALLING() {
+        return "installing";
+    }
 
 }

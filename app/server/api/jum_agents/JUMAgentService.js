@@ -276,7 +276,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Obtiene un agente para la realización de un despliegue
+     * Obtiene un agente para la realización de un despliegue. Solo se evaluan los agentes ONLINE!
      *
      * @param {*} channel
      * @returns
