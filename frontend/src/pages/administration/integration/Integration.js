@@ -8,7 +8,6 @@ import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generato
 
 import { useHistory } from "react-router";
 
-
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-xml";
 import "ace-builds/src-noconflict/theme-github";
@@ -40,7 +39,6 @@ import {
     mdiTextLong,
     mdiSourceBranchPlus,
     mdiCogs,
-    mdiRefresh,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -50,8 +48,6 @@ import IconButton from "../../../components/button/IconButton";
 import ChannelOptions from "./ChannelOptions";
 
 import * as api from "../../../api/configurationApi";
-import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
-import AceEditor from "../../../components/ace-editor/AceEditor";
 
 const { TabPane } = Tabs;
 
@@ -103,7 +99,6 @@ const integrationFormSchema = {
 let channelActions = new ChannelActions();
 
 const Integration = () => {
-    let mainContainer = useRef(null);
     const history = useHistory();
     const integForm = useRef(null);
 
@@ -663,7 +658,7 @@ const Integration = () => {
     };
 
     return (
-        <div style={{ position: "relative", overflow: "hidden" }}>
+        <div>
             {!editHeader && (
                 <div>
                     <PageHeader
@@ -771,6 +766,7 @@ const Integration = () => {
                 onEdit={onTabEdit}>
                 {channels.map((channel) => (
                     <TabPane
+                        style={{ position: "relative", overflow: "hidden" }}
                         tab={
                             <span>
                                 {renderChannelStatus(channel, channelStatuses)} &nbsp; {channel.name}
@@ -785,7 +781,12 @@ const Integration = () => {
                             nodeTypes={nodeTypes}
                             undo={undo}
                             redo={redo}
+                            debugVisible={debugVisible}
+                            debugData={debugData}
+                            debugClose={() => setDebugVisible(false)}
+                            reloadDebug={() => showChannelDebug()}
                         />
+                        
                     </TabPane>
                 ))}
             </Tabs>
@@ -798,80 +799,6 @@ const Integration = () => {
                     channel={editingChannel}
                 />
             )}
-
-            <ResizableDrawer
-                title="Channel Debug"
-                placement={"right"}
-                closable={true}
-                mask={false}
-                getContainer={false}
-                width={500}
-                onClose={() => setDebugVisible(false)}
-                visible={debugVisible}
-                key={"debugDrawer"}
-                style={{ position: "absolute" }}>
-                <Tabs
-                    tabBarExtraContent={
-                        <Space size="small">
-                            <IconButton
-                                key="refresh"
-                                onClick={() => showChannelDebug()}
-                                icon={{ path: mdiRefresh, size: 0.6, title: T.translate("common.button.reload") }}
-                            />
-                        </Space>
-                    }>
-                    <TabPane key={"logs"} tab="Logs">
-                        <Tabs defaultActiveKey={debugData?.channel?.agent?.id}>
-                            {debugData &&
-                                debugData.logs &&
-                                debugData.logs.map((agent) => (
-                                    <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
-                                        <AceEditor
-                                            setOptions={{
-                                                useWorker: false,
-                                            }}
-                                            width="100%"
-                                            height="calc(100vh - 360px)"
-                                            value={agent.data + ""}
-                                            name="chann.log"
-                                            theme="github"
-                                        />
-                                    </Tabs.TabPane>
-                                ))}
-                        </Tabs>
-                    </TabPane>
-                    <TabPane key={"definition"} tab="Definición">
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab="Canal JSON" key="1">
-                                <AceEditor
-                                    setOptions={{
-                                        useWorker: false,
-                                    }}
-                                    width="100%"
-                                    height="calc(100vh - 360px)"
-                                    value={debugData && debugData.channelJson}
-                                    name="DB.code"
-                                    mode="json"
-                                    theme="github"
-                                />
-                            </TabPane>
-                            <TabPane tab="Camel XML" key="2">
-                                <AceEditor
-                                    setOptions={{
-                                        useWorker: false,
-                                    }}
-                                    width="100%"
-                                    height="calc(100vh - 360px)"
-                                    value={debugData && debugData.channelXml}
-                                    name="camel.code"
-                                    mode="xml"
-                                    theme="github"
-                                />
-                            </TabPane>
-                        </Tabs>
-                    </TabPane>
-                </Tabs>
-            </ResizableDrawer>
 
             <PreventTransitionPrompt
                 when={pendingChanges}
