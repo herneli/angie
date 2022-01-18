@@ -1,17 +1,19 @@
-import { Modal, Timeline, Spin, Divider, Button } from "antd";
+import { Modal, Timeline, Spin, Divider, Button, Space } from "antd";
 import Icon from "@mdi/react";
 import lodash from "lodash";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import T from "i18n-react";
-import { mdiTimelinePlus, mdiTimelineMinus } from "@mdi/js";
+import { mdiTimelinePlus, mdiTimelineMinus, mdiMessagePlus } from "@mdi/js";
+import MessageDataModal from "./MessageDataModal";
 
 export default function Message({ visible, onCancel, messageData, integration, channel }) {
     const { breadcrumb_id: messageId, traces } = messageData;
     const [nodes, setNodes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [displayed, setDisplayed] = useState({});
+    const [showData, setShowData] = useState(null);
 
     useEffect(() => {
         getChannelData();
@@ -36,6 +38,7 @@ export default function Message({ visible, onCancel, messageData, integration, c
         let messageStart = "";
         let exchange = "";
         let messageEnd = "";
+        let messageContent = "";
         const nodeName = item.node ? item.node : item.error ? "Error" : "Nodo eliminado";
         const timelineContent = item.data.map((message, index, array) => {
             const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
@@ -45,6 +48,9 @@ export default function Message({ visible, onCancel, messageData, integration, c
             }
             if (index === array.length - 1) {
                 messageEnd = date;
+            }
+            if (!messageContent) {
+                messageContent = message.in_msg;
             }
             //TODO: Mostrar el detalle del error (error_stack)(?)
             const errorContent =
@@ -60,6 +66,7 @@ export default function Message({ visible, onCancel, messageData, integration, c
                         </p> */}
                     </>
                 ) : null;
+
             const successContent =
                 message.event !== "ERROR" ? (
                     <>
@@ -128,34 +135,57 @@ export default function Message({ visible, onCancel, messageData, integration, c
                         {timelineContent}
                     </>
                 ) : (
-                    <div style={{ height: "7rem" }}>
+                    <Space style={{ marginBottom: "5rem" }} size="middle">
                         <Button
                             icon={<Icon size="20px" path={mdiTimelinePlus} />}
+                            title="Ver trazas"
                             onClick={() => {
                                 setDisplayed({ ...displayed, ["message" + msgIndex]: true });
-                            }}></Button>
-                    </div>
+                            }}
+                        />
+
+                        <Button
+                            icon={<Icon size="20px" path={mdiMessagePlus} />}
+                            disabled={!messageContent}
+                            title={messageContent ? "Body del mensaje" : "No hay body para mostrar"}
+                            onClick={() => {
+                                setShowData({ node: nodeName, content: messageContent });
+                            }}
+                        />
+                    </Space>
                 )}
             </Timeline.Item>
         );
     });
 
     return (
-        <Modal
-            title={`Mensaje ${messageId}`}
-            visible={visible}
-            onCancel={onCancel}
-            onOk={onCancel}
-            destroyOnClose={true}
-            width={1000}>
-            {loading ? (
-                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                    <Spin tip={T.translate("application.loading")} />
-                </div>
-            ) : (
-                <Timeline mode="left">{timelineItems}</Timeline>
+        <>
+            <Modal
+                title={`Mensaje ${messageId}`}
+                visible={visible}
+                onCancel={onCancel}
+                cancelButtonProps={{ style: { display: "none" } }}
+                onOk={onCancel}
+                destroyOnClose={true}
+                width={1000}>
+                {loading ? (
+                    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                        <Spin tip={T.translate("application.loading")} />
+                    </div>
+                ) : (
+                    <Timeline mode="left">{timelineItems}</Timeline>
+                )}
+            </Modal>
+            {showData && (
+                <MessageDataModal
+                    visible={Boolean(showData)}
+                    messageData={showData}
+                    onCancel={() => {
+                        setShowData(null);
+                    }}
+                />
             )}
-        </Modal>
+        </>
     );
 }
 
