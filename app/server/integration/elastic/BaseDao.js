@@ -61,6 +61,7 @@ export default class BaseDao {
             params.body.sort = this.parseSorts(filter.sort);
         }
         // global.esstats.searchCount++;
+
         return this.search(params);
     }
 
@@ -124,10 +125,14 @@ export default class BaseDao {
 
     parseFiltersObject(filter, size, from) {
         const body = new bodybuilder();
+        let notParsed = {};
 
         for (let index in filter) {
             const element = filter[index];
             if (typeof element === "object") {
+                if (index === "noParse") {
+                    notParsed = element;
+                }
                 switch (element.type) {
                     //TODO: Añadir más opciones
                     case "date":
@@ -209,7 +214,7 @@ export default class BaseDao {
             }
         }
         // const result = body.size(size).from(from).build("v2");
-        const result = body.build("v2");
+        const result = { ...body.build("v2"), ...notParsed };
         return result;
     }
 

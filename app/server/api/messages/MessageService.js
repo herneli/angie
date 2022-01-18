@@ -2,7 +2,26 @@ import BaseDao from "../../integration/elastic/BaseDao";
 
 export class MessageService extends BaseDao {
     getChannelMessages(channelId, filters) {
-        const { start = 0, limit = 10 } = filters;
+        const { start = 0, limit = 10, sort } = filters;
+
+        const orders = { ascend: "asc", descend: "desc" };
+        let customSort = [
+            {
+                date_time: {
+                    order: "desc",
+                },
+            },
+        ];
+
+        if (sort) {
+            customSort = [
+                {
+                    [sort.field]: {
+                        order: orders[sort.direction],
+                    },
+                },
+            ];
+        }
 
         const staticFilters = {
             size: limit,
@@ -61,13 +80,7 @@ export class MessageService extends BaseDao {
                         },
                     },
                 },
-                sort: [
-                    {
-                        date_time: {
-                            order: "asc",
-                        },
-                    },
-                ],
+                sort: customSort,
             },
         };
 

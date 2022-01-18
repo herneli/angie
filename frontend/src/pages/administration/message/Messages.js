@@ -135,6 +135,10 @@ const Messages = ({ packageUrl }, props) => {
         downloadJsonFile(data, `channel_${channel}_messages.json`);
     };
 
+    const handleDownloadMessage = (data) => {
+        downloadJsonFile(data, `channel_${channel}_message${data.breadcrumb_id}.json`);
+    };
+
     const drawMessageActions = (record) => {
         return (
             <Space size="middle">
@@ -147,11 +151,14 @@ const Messages = ({ packageUrl }, props) => {
                     }}
                     icon={<Icon path={mdiMagnifyPlus} className={classes.icon} title={"Ver en detalle"} />}
                 />
-                {/*  <Button
-                    key="undeploy"
+                <Button
+                    key="downloadMessage"
                     type="text"
+                    onClick={(e) => {
+                        handleDownloadMessage(record);
+                    }}
                     icon={<Icon path={mdiDownload} className={classes.icon} title={"Descargar"} />}
-                /> */}
+                />
             </Space>
         );
     };
@@ -183,7 +190,7 @@ const Messages = ({ packageUrl }, props) => {
         {
             title: "Id Mensaje",
             dataIndex: "breadcrumb_id",
-            key: "breadcrumb_id",
+            key: "breadcrumb_id.keyword",
             width: 200,
             ellipsis: true,
             sorter: true,
@@ -214,7 +221,7 @@ const Messages = ({ packageUrl }, props) => {
         {
             title: "Fecha de inicio",
             dataIndex: "start",
-            key: "start_date",
+            key: "date_time",
             sorter: true,
             width: 120,
             render: (text, record) => {
@@ -225,7 +232,6 @@ const Messages = ({ packageUrl }, props) => {
             title: "Fecha de finalización",
             dataIndex: "end",
             key: "end_date",
-            sorter: true,
             width: 120,
             render: (text) => {
                 return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
@@ -236,7 +242,6 @@ const Messages = ({ packageUrl }, props) => {
             dataIndex: "elapsed",
             key: "elapsed'",
             width: 80,
-            sorter: true,
         },
         {
             title: T.translate("integrations.columns.actions"),
