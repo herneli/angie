@@ -59,7 +59,7 @@ export class IntegrationChannelController extends BaseController {
         this.router.post(
             `/integration_channel/to_camel/specific_node`,
             expressAsyncHandler((request, response, next) => {
-                this.convertToCamel(request, response, next);
+                this.convertNodeToCamel(request, response, next);
             })
         );
 
@@ -177,7 +177,7 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async convertToCamel(request, response, next) {
+    async converNodetToCamel(request, response, next) {
         try {
             let service = new IntegrationChannelService();
             let node = request.body.node_type;
