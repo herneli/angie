@@ -538,6 +538,7 @@ const Channel = ({
                                     setOptions={{
                                         useWorker: false,
                                     }}
+                                    beautify
                                     width="100%"
                                     height={editorHeight}
                                     value={debugData && debugData.channelJson}
@@ -551,6 +552,7 @@ const Channel = ({
                                     setOptions={{
                                         useWorker: false,
                                     }}
+                                    beautify
                                     width="100%"
                                     height={editorHeight}
                                     value={debugData && debugData.channelXml}

@@ -13,7 +13,17 @@ export default function MessageDataModal({ visible, onCancel, messageData, integ
             onOk={onCancel}
             destroyOnClose={true}
             width={800}>
-            <AceEditor width="100%" value={content} mode="json" theme="github" readOnly />
+            <AceEditor
+                width="100%"
+                beautify
+                setOptions={{
+                    useWorker: false,
+                }}
+                value={content}
+                mode="json"
+                theme="github"
+                readOnly
+            />
         </Modal>
     );
 }
