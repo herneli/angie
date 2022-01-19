@@ -83,11 +83,17 @@ export class IntegrationChannelService {
             }
         });
 
-        Handlebars.registerHelper("querystring", function (inputData) {
+        Handlebars.registerHelper("querystring", function (inputData, extraData) {
             let data = inputData;
             if (Array.isArray(inputData)) {
                 data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
             }
+            let extra = extraData;
+            if (Array.isArray(extra) && !lodash.isEmpty(extra)) {
+                extra = lodash.mapValues(lodash.keyBy(extra, "code"), "value");
+                data = { ...data, ...extra };
+            }
+
             return new Handlebars.SafeString(
                 !lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : ""
             );
