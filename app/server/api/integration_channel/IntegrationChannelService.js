@@ -46,6 +46,21 @@ export class IntegrationChannelService {
                 return reduceOp(arguments, (a, b) => a || b);
             },
         });
+        
+        Handlebars.registerHelper("switch", function (inputData, options) {
+            this.switch_value = inputData;
+            return options.fn(this);
+        });
+
+        Handlebars.registerHelper("case", function (inputData, options) {
+            if (inputData == this.switch_value) {
+                return options.fn(this);
+            }
+        });
+
+        Handlebars.registerHelper("default", function (inputData) {
+            return; ///We can add condition if needs
+        });
 
         Handlebars.registerHelper("safe", function (inputData) {
             return new Handlebars.SafeString(inputData);
