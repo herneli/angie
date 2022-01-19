@@ -6,6 +6,7 @@ import T from "i18n-react";
 import { useEffect, useRef, useState } from "react";
 
 import formConfig from "../../../components/rjsf";
+import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 const editTabFormSchema = {
     schema: {
         type: "object",
@@ -44,7 +45,7 @@ const editTabFormSchema = {
                     restart_policy: {
                         title: "Política Reinicios",
                         type: "string",
-                        enum: ["none", "unless_stopped", 'allways'],
+                        enum: ["none", "unless_stopped", "allways"],
                         enumNames: ["No hacer nada", "Reiniciar si estaba desplegado", "Reiniciar siempre"],
                         default: "none",
                     },
@@ -55,34 +56,14 @@ const editTabFormSchema = {
                         enumNames: ["Automático", "Fijo"],
                         default: "auto",
                     },
-                },
-                dependencies: {
-                    agent_assign_mode: {
-                        oneOf: [
-                            {
-                                properties: {
-                                    agent_assign_mode: {
-                                        enum: ["auto"],
-                                    },
-                                },
-                            },
-                            {
-                                properties: {
-                                    agent_assign_mode: {
-                                        enum: ["fixed"],
-                                    },
-                                    assigned_agent: {
-                                        type: "array",
-                                        title: "Agentes Asignados",
-                                        items: {
-                                            type: "string",
-                                            enum: [],
-                                        },
-                                        uniqueItems: true,
-                                    },
-                                },
-                            },
-                        ],
+                    assigned_agent: {
+                        type: "array",
+                        title: "Agentes Asignados",
+                        items: {
+                            type: "string",
+                            enum: [],
+                        },
+                        uniqueItems: true,
                     },
                 },
             },
@@ -111,6 +92,7 @@ const editTabFormSchema = {
                 "ui:columnSize": "4",
             },
             assigned_agent: {
+                condition: "deployment_options.agent_assign_mode=fixed",
                 "ui:columnSize": "8",
                 "ui:widget": "SelectRemoteWidget",
                 "ui:mode": "multiple",
@@ -143,7 +125,7 @@ const editTabFormSchema = {
 const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
     const editTabFormEl = useRef(null);
 
-    const [editingData, setEditingData] = useState({});
+    const [editingData, setEditingData] = useState();
 
     useEffect(() => {
         if (visible) {
@@ -153,7 +135,7 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
             if (!channel?.deployment_options.assigned_agent) {
                 channel.deployment_options.assigned_agent = [];
             }
-            setEditingData(channel);
+            setEditingData({ ...channel });
         }
     }, [visible]);
 
@@ -183,19 +165,21 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                     {T.translate("common.button.accept")}
                 </Button>,
             ]}>
-            <Form
-                ref={editTabFormEl}
-                ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                schema={editTabFormSchema.schema}
-                formData={editingData}
-                uiSchema={editTabFormSchema.uiSchema}
-                widgets={formConfig.widgets}
-                onChange={(e) => setEditingData(e.formData)}
-                onSubmit={(e) => onOk(e)}
-                onError={(e) => console.log(e)}>
-                <></>
-            </Form>
+            {editingData && (
+                <ConditionalForm
+                    ref={editTabFormEl}
+                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+                    schema={editTabFormSchema.schema}
+                    formData={editingData}
+                    uiSchema={editTabFormSchema.uiSchema}
+                    widgets={formConfig.widgets}
+                    onChange={(e) => setEditingData(e.formData)}
+                    onSubmit={(e) => onOk(e)}
+                    onError={(e) => console.log(e)}>
+                    <></>
+                </ConditionalForm>
+            )}
         </Modal>
     );
 };

@@ -12,12 +12,16 @@ const ConditionalForm = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         //Guardar el schema original ya que siempre se procesará a través de el y no del current
+        initialLoad()
+    }, [schema, uiSchema, formData]);
+
+    const initialLoad = () => {
         originalSchema = lodash.cloneDeep(schema);
         originalUISchema = lodash.cloneDeep(uiSchema);
 
         const initialState = processForm(originalSchema, originalUISchema, formData);
         setState(initialState);
-    }, []);
+    }
 
     const onChange = (e) => {
         const { formData } = e;

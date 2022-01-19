@@ -492,9 +492,14 @@ const Integration = () => {
                 <Popconfirm
                     key="undeploy"
                     title={T.translate("common.question")}
-                    onConfirm={async () => {
-                        const modifiedChannel = await channelActions.undeployChannel(currentIntegration.id, activeTab);
-                        if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                    onConfirm={() => {
+                        (async () => {
+                            const modifiedChannel = await channelActions.undeployChannel(
+                                currentIntegration.id,
+                                activeTab
+                            );
+                            if (modifiedChannel) onStatusUpdate(modifiedChannel.id, modifiedChannel.status);
+                        })();
                     }}>
                     <IconButton
                         icon={{
@@ -541,7 +546,9 @@ const Integration = () => {
                 <Popconfirm
                     key="disable"
                     title={T.translate("common.question")}
-                    onConfirm={() => toggleEnabledChannel(activeTab)}>
+                    onConfirm={() => {
+                        toggleEnabledChannel(activeTab);
+                    }}>
                     <IconButton
                         icon={{ path: mdiCloseCircleOutline, size: 0.6, title: T.translate("common.button.disable") }}
                     />
@@ -676,14 +683,18 @@ const Integration = () => {
 
                             <Popconfirm
                                 title={T.translate("common.question")}
-                                onConfirm={() => fetchIntegration(currentIntegration.id)}>
+                                onConfirm={() => {
+                                    fetchIntegration(currentIntegration.id);
+                                }}>
                                 <Button key="cancel" danger>
                                     {T.translate("common.button.cancel")}
                                 </Button>
                             </Popconfirm>,
                             <Popconfirm
                                 title={T.translate("common.question")}
-                                onConfirm={() => saveIntegration(currentIntegration)}>
+                                onConfirm={() => {
+                                    saveIntegration(currentIntegration);
+                                }}>
                                 <Button key="enable" type="primary">
                                     {T.translate("common.button.save")}
                                 </Button>
@@ -786,7 +797,6 @@ const Integration = () => {
                             debugClose={() => setDebugVisible(false)}
                             reloadDebug={() => showChannelDebug()}
                         />
-                        
                     </TabPane>
                 ))}
             </Tabs>

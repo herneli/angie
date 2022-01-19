@@ -26,7 +26,11 @@ const UsersConfig = () => {
     //TODO hide add and upload buttons
     return (
         <>
-            <Popconfirm title={T.translate("common.question")} onConfirm={importUsers}>
+            <Popconfirm
+                title={T.translate("common.question")}
+                onConfirm={() => {
+                    importUsers();
+                }}>
                 <Button style={{ display: "flex", float: "right", marginLeft: "1.5%" }} type="primary">
                     {T.translate("administration.user_actions.sync_users")}
                 </Button>

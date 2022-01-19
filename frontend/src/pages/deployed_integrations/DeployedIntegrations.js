@@ -168,9 +168,11 @@ const DeployedIntegrations = () => {
                 {integration?.deployment_config?.enabled && record.enabled && record.status === "Started" && (
                     <Popconfirm
                         title={T.translate("common.question")}
-                        onConfirm={async () => {
-                            await channelActions.undeployChannel(integration.id, record.id, false);
-                            await search();
+                        onConfirm={() => {
+                            (async () => {
+                                await channelActions.undeployChannel(integration.id, record.id, false);
+                                await search();
+                            })();
                         }}>
                         <IconButton
                             key="undeploy"

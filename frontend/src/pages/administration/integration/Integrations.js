@@ -225,7 +225,9 @@ const Integrations = () => {
                 />
                 <Popconfirm
                     title={T.translate("configuration.do_you_want_to_duplicate_the_item")}
-                    onConfirm={(e) => handleOnDuplicateModel(e, record)}>
+                    onConfirm={(e) => {
+                        handleOnDuplicateModel(e, record);
+                    }}>
                     <Button
                         icon={<Icon path={mdiContentCopy} className={classes.icon} />}
                         type="text"
@@ -236,9 +238,15 @@ const Integrations = () => {
                     icon={<Icon path={mdiDownload} className={classes.icon} />}
                     type="text"
                     title={T.translate("common.button.download")}
-                    onClick={(e) => handleOnDownloadModel(e, record)}
+                    onClick={(e) => {
+                        handleOnDownloadModel(e, record);
+                    }}
                 />
-                <Popconfirm title={T.translate("common.question")} onConfirm={() => onElementDelete(record)}>
+                <Popconfirm
+                    title={T.translate("common.question")}
+                    onConfirm={() => {
+                        onElementDelete(record);
+                    }}>
                     <Button
                         icon={<Icon path={mdiDelete} className={classes.icon} />}
                         type="text"
