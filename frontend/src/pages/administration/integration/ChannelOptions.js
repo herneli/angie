@@ -65,6 +65,14 @@ const editTabFormSchema = {
                         },
                         uniqueItems: true,
                     },
+
+                    traced_headers: {
+                        title: "Almacenar Cabeceras",
+                        type: "array",
+                        items: {
+                            type: "string",
+                        },
+                    },
                 },
             },
         },
