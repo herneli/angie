@@ -31,20 +31,16 @@ const ResizableDrawer = ({ children, ...props }) => {
     const [width, setWidth] = useState(props.width);
 
     const onMouseDown = (e) => {
-        console.log("down");
         setIsResizing(true);
     };
 
     const onMouseUp = (e) => {
-        console.log("up");
         setIsResizing(false);
     };
 
     const onMouseMove = (e) => {
-        
         if (isResizing) {
             e.preventDefault();
-            console.log("move");
 
             let currentOffset = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
             if (props.placement === "left") {

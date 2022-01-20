@@ -78,13 +78,13 @@ class JUMAgentMaster {
                 socket.emit("messages", "Connected!");
                 //Configurar los elementos a escuchar.
                 this.configureJUMEvents(socket);
-
+                //Instala las dependencias en el agente
                 const libraries = await new LibraryService().list();
                 await this.service.addAgentDependencies(agent, libraries.data);
                 //Finalizada la instalación se marca como online
                 agent.status = JUMAgent.STATUS_ONLINE;
                 await this.service.update(agent.id, agent);
-                
+
                 //Recargar estados de los canales
                 await this.service.loadAgentStatus(agent);
 

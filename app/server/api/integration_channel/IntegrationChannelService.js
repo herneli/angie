@@ -2,117 +2,16 @@ import { Utils, BaseService } from "lisco";
 
 import Handlebars from "handlebars";
 import lodash from "lodash";
-import * as queryString from "query-string";
 import { ConfigurationService } from "../configuration/ConfigurationService";
 import { IntegrationDao } from "../integration/IntegrationDao";
 import { JUMAgentService } from "../jum_agents";
 import { IntegrationService } from "../integration";
 import { MessageService } from "../messages";
+import { ChannelHandlebarsHelpers } from "./";
 
 export class IntegrationChannelService {
     constructor() {
-        /**
-         * FROM here: https://gist.github.com/servel333/21e1eedbd70db5a7cfff327526c72bc5
-         */
-        const reduceOp = function (args, reducer) {
-            args = Array.from(args);
-            args.pop(); // => options
-            var first = args.shift();
-            return args.reduce(reducer, first);
-        };
-        Handlebars.registerHelper({
-            eq: function () {
-                return reduceOp(arguments, (a, b) => a === b);
-            },
-            ne: function () {
-                return reduceOp(arguments, (a, b) => a !== b);
-            },
-            lt: function () {
-                return reduceOp(arguments, (a, b) => a < b);
-            },
-            gt: function () {
-                return reduceOp(arguments, (a, b) => a > b);
-            },
-            lte: function () {
-                return reduceOp(arguments, (a, b) => a <= b);
-            },
-            gte: function () {
-                return reduceOp(arguments, (a, b) => a >= b);
-            },
-            and: function () {
-                return reduceOp(arguments, (a, b) => a && b);
-            },
-            or: function () {
-                return reduceOp(arguments, (a, b) => a || b);
-            },
-        });
-        
-        Handlebars.registerHelper("switch", function (inputData, options) {
-            this.switch_value = inputData;
-            return options.fn(this);
-        });
-
-        Handlebars.registerHelper("case", function (inputData, options) {
-            if (inputData == this.switch_value) {
-                return options.fn(this);
-            }
-        });
-
-        Handlebars.registerHelper("default", function (inputData) {
-            return; ///We can add condition if needs
-        });
-
-        Handlebars.registerHelper("safe", function (inputData) {
-            return new Handlebars.SafeString(inputData);
-        });
-        Handlebars.registerHelper("safeMessage", function (inputData) {
-            return new Handlebars.SafeString(inputData.replace(/\r\n|\n\r|\n|\r/g, "\\r\\n"));
-        });
-        Handlebars.registerHelper("jsonStringSafe", function (inputData) {
-            try {
-                return new Handlebars.SafeString(JSON.stringify(inputData));
-            } catch (ex) {
-                console.error(ex);
-            }
-            return "";
-        });
-
-        Handlebars.registerHelper("applyUnmarshal", function (format) {
-            switch (format) {
-                case "json":
-                    return new Handlebars.SafeString("<unmarshal><json/></unmarshal>");
-                case "hl7":
-                    return new Handlebars.SafeString("<unmarshal><hl7/></unmarshal>");
-                default:
-                    return "";
-            }
-        });
-        Handlebars.registerHelper("applyMarshal", function (format) {
-            switch (format) {
-                case "json":
-                    return "<marshal><json/></marshal>";
-                case "hl7":
-                    return "<marshal><hl7/></marshal>";
-                default:
-                    return "";
-            }
-        });
-
-        Handlebars.registerHelper("querystring", function (inputData, extraData) {
-            let data = inputData;
-            if (Array.isArray(inputData)) {
-                data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
-            }
-            let extra = extraData;
-            if (Array.isArray(extra) && !lodash.isEmpty(extra)) {
-                extra = lodash.mapValues(lodash.keyBy(extra, "code"), "value");
-                data = { ...data, ...extra };
-            }
-
-            return new Handlebars.SafeString(
-                !lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : ""
-            );
-        });
+        ChannelHandlebarsHelpers.configure();
 
         this.dao = new IntegrationDao();
         this.messageService = new MessageService();
