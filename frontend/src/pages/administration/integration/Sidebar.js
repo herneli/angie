@@ -38,6 +38,10 @@ const Sidebar = ({ nodeTypes }) => {
                         <div
                             key={type.id}
                             className={"dndnode " + type.react_component_type}
+                            style={{
+                                borderColor: type.custom_color && type.component_border_color,
+                                background: type.custom_color && type.component_bg_color,
+                            }}
                             onDragStart={(event) =>
                                 onDragStart(event, type.code, {
                                     label: type.name,

@@ -40,6 +40,10 @@ class Transformer {
                 elements.push({
                     id: node.id,
                     position: node.position,
+                    style: {
+                        "border-color": nodeType.custom_color && nodeType.component_border_color,
+                        background: nodeType.custom_color && nodeType.component_bg_color,
+                    },
                     data: {
                         label: node.custom_name,
                         ...node.data,

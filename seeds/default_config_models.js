@@ -781,6 +781,11 @@ exports.seed = async function (knex) {
                         field: "group",
                         key: "data->>'group'",
                     },
+                    {
+                        title: "Tipo",
+                        field: "react_component_type",
+                        key: "data->>'react_component_type'",
+                    },
                 ],
                 schema: {
                     type: "object",
@@ -789,14 +794,17 @@ exports.seed = async function (knex) {
                         code: { title: "Código", type: "string" },
                         name: { title: "Nombre", type: "string" },
                         group: { title: "Grupo", type: "string" },
-                        handles: { title: "Handles", type: "string" },
+                        // handles: { title: "Handles", type: "string" },
+                        alt_codes: { title: "Códigos Alternativos", type: "string" },
                         react_component_type: {
                             title: "Tipo Componente",
                             type: "string",
                             enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode"],
                             enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode"],
                         },
-                        alt_codes: { title: "Códigos Alternativos", type: "string" },
+                        custom_color: { title: "Personalizar", type: "boolean" },
+                        component_border_color: { title: "Borde", type: "string" },
+                        component_bg_color: { title: "Fondo", type: "string" },
                         json_data_schema: { title: "Formulario", type: "string" },
                         json_ui_schema: { title: "UiSchema", type: "string" },
                         xml_template: { title: "Plantilla Camel", type: "string" },
@@ -805,17 +813,17 @@ exports.seed = async function (knex) {
                 },
                 uiSchema: {
                     code: {
-                        "ui:columnSize": "3",
+                        "ui:columnSize": "4",
                     },
                     name: {
                         "ui:columnSize": "4",
                     },
                     group: {
-                        "ui:columnSize": "3",
+                        "ui:columnSize": "4",
                     },
-                    handles: {
-                        "ui:columnSize": "2",
-                    },
+                    // handles: {
+                    //     "ui:columnSize": "2",
+                    // },
                     json_data_schema: {
                         "ui:columnSize": "6",
                         "ui:widget": "AceEditorWidget",
@@ -847,11 +855,28 @@ exports.seed = async function (knex) {
                     },
 
                     react_component_type: {
-                        "ui:columnSize": "6",
+                        "ui:columnSize": "2.5",
+                    },
+
+                    custom_color: {
+                        "ui:widget": "checkbox",
+                        "ui:columnSize": "1.5",
+                    },
+                    component_border_color: {
+                        condition: "custom_color=true",
+                        "ui:widget": "ColorField",
+                        "ui:colors": ["#000000", "#0041d0", "#237a52", "#ff0072"],
+                        "ui:columnSize": "1.5",
+                    },
+                    component_bg_color: {
+                        condition: "custom_color=true",
+                        "ui:widget": "ColorField",
+                        "ui:colors": ["#000000", "#0041d0", "#237a52", "#ff0072"],
+                        "ui:columnSize": "1.5",
                     },
                     alt_codes: {
-                        "ui:help": "Util para mantener compatibilidad con codigos cambiados",
-                        "ui:columnSize": "6",
+                        "ui:help": "Util para mantener compatibilidad con codigos cambiados. Separar por (,)",
+                        "ui:columnSize": "5",
                     },
                 },
             },

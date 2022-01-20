@@ -2,7 +2,6 @@ import { Button, Modal } from "antd";
 
 import lodash from "lodash";
 import { useEffect, useRef, useState } from "react";
-import Form from "@rjsf/antd";
 
 import formConfig from "../../../components/rjsf";
 
@@ -70,7 +69,7 @@ export default function NodeEditModal({
     };
     return (
         <Modal
-            width={"80vw"}
+            width={"70vw"}
             title={T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
             visible={editNodeVisible}
             onOk={onFormSubmit}

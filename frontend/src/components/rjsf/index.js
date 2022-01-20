@@ -5,12 +5,13 @@ import SelectRemoteWithPackageWidget from "./SelectRemoteWithPackageWidget";
 import AceEditorWidget from "./AceEditorWidget";
 import ScriptField from "./ScriptField";
 import SwitchField from "./SwitchField";
-import MultipleSelectWidget from "./MultipleSelectWidget";
+import ColorField from "./ColorField";
 
 const formOptions = {
     widgets: {
         SelectRemoteWidget,
         SelectRemoteWithPackageWidget,
+        ColorField,
         CheckboxWidget: SwitchField, //Se sobreescribe el checkbox ya que no se puede personalizar un boolean
         AceEditorWidget,
     },

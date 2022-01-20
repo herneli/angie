@@ -6,6 +6,7 @@ import T from "i18n-react";
 import { useEffect } from "react";
 import axios from "axios";
 import formConfig from "../../../components/rjsf";
+import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 
 const useStyles = createUseStyles({
     tableWrapper: {
@@ -66,7 +67,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
     return (
         <div className={classes.tableWrapper}>
             <Button onClick={onCancel}>{T.translate("configuration.return")}</Button>
-            <Form
+            <ConditionalForm
                 ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                 ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                 widgets={formConfig.widgets}
@@ -86,7 +87,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
                         </Button>
                     </Space>
                 </Row>
-            </Form>
+            </ConditionalForm>
         </div>
     );
 }
