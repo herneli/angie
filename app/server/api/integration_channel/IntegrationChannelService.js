@@ -93,6 +93,14 @@ export class IntegrationChannelService {
             );
         });
 
+        Handlebars.registerHelper("groovyList", function (inputData) {
+            if (lodash.isEmpty(inputData)) {
+                return "[]";
+            }
+            let data = inputData;
+            return new Handlebars.SafeString(JSON.stringify(data).replace(/{/g, "[").replace(/}/g, "]"));
+        });
+
         this.dao = new IntegrationDao();
         this.messageService = new MessageService();
         this.agentService = new JUMAgentService();
