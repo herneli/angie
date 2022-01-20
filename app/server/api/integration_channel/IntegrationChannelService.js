@@ -46,6 +46,21 @@ export class IntegrationChannelService {
                 return reduceOp(arguments, (a, b) => a || b);
             },
         });
+        
+        Handlebars.registerHelper("switch", function (inputData, options) {
+            this.switch_value = inputData;
+            return options.fn(this);
+        });
+
+        Handlebars.registerHelper("case", function (inputData, options) {
+            if (inputData == this.switch_value) {
+                return options.fn(this);
+            }
+        });
+
+        Handlebars.registerHelper("default", function (inputData) {
+            return; ///We can add condition if needs
+        });
 
         Handlebars.registerHelper("safe", function (inputData) {
             return new Handlebars.SafeString(inputData);
@@ -83,11 +98,17 @@ export class IntegrationChannelService {
             }
         });
 
-        Handlebars.registerHelper("querystring", function (inputData) {
+        Handlebars.registerHelper("querystring", function (inputData, extraData) {
             let data = inputData;
             if (Array.isArray(inputData)) {
                 data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
             }
+            let extra = extraData;
+            if (Array.isArray(extra) && !lodash.isEmpty(extra)) {
+                extra = lodash.mapValues(lodash.keyBy(extra, "code"), "value");
+                data = { ...data, ...extra };
+            }
+
             return new Handlebars.SafeString(
                 !lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : ""
             );

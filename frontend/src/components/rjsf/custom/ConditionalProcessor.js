@@ -3,7 +3,7 @@ import lodash from "lodash";
 import { JSONPath } from "jsonpath-plus";
 
 // Advanced conditional fields example
-// 
+//
 // Control the visibility of any field by adding a "condition" property to the
 // field's UI Schema. The condition should evaluate to either true or false
 // based on the current value(s) of other field(s), e.g. someField=someValue.
@@ -23,9 +23,7 @@ import { JSONPath } from "jsonpath-plus";
 //
 // You can access nested fields via ".". Example: foo.bar[0].foo.
 // This are achieved via JSONPath with $.{expression} (Ex: $.foo.bar[0].foo)
-// it can be tested on jsonpath.com or similar 
-
-
+// it can be tested on jsonpath.com or similar
 
 function getConditionRule(conditionRule) {
     let rule = [];
@@ -152,14 +150,13 @@ export default function processForm(schema, uiSchema, formData, parentProp) {
             formData,
         };
     }
-
-    let conditionalFields = lodash.pickBy(uiSchema, (field) => field.hasOwnProperty("condition"));
     //Clonar para evitar modificar la referencia
     newSchema = lodash.cloneDeep(schema);
     newUISchema = lodash.cloneDeep(uiSchema);
     newFormData = lodash.cloneDeep(formData);
-    //Recorrer las condiciones
-    lodash.each(conditionalFields, (dependantSchema, dependant) => {
+
+    //Recorrer el schema
+    lodash.each(uiSchema, (dependantSchema, dependant) => {
         let modifiedUiSchema = dependantSchema;
         //Buscar las condiciones hijas
         let hasChildConditions = JSONPath({ path: "$..condition", json: dependantSchema, resultType: "path" });
@@ -179,25 +176,28 @@ export default function processForm(schema, uiSchema, formData, parentProp) {
             modifiedUiSchema = childUISchema;
         }
 
-        //En base a la condicion y los datos, obtener los matches
-        const { matches, allHaveToMatch } = getMatches(modifiedUiSchema.condition, newFormData);
+        //Si tiene una condicion en este nivel, aplicarla
+        if (dependantSchema.condition) {
+            //En base a la condicion y los datos, obtener los matches
+            const { matches, allHaveToMatch } = getMatches(modifiedUiSchema.condition, newFormData);
 
-        let shouldBeVisible = false;
-        if (matches.length) {
-            //every -> foo=bar && bar=foo ~//~ some -> foo=bar || bar=foo
-            shouldBeVisible = allHaveToMatch ? lodash.every(matches, Boolean) : lodash.some(matches, Boolean);
-        }
-        //Quitar aquellos que no han de ser visibles de los schemas
-        if (!shouldBeVisible) {
-            //Quitar los valores previos para no interferir con el nuevo schema
-            if (parentProp) {
-                newFormData[parentProp] = lodash.omit(newFormData[parentProp], [dependant]);
-            } else {
-                newFormData = lodash.omit(newFormData, [dependant]);
+            let shouldBeVisible = false;
+            if (matches.length) {
+                //every -> foo=bar && bar=foo ~//~ some -> foo=bar || bar=foo
+                shouldBeVisible = allHaveToMatch ? lodash.every(matches, Boolean) : lodash.some(matches, Boolean);
             }
+            //Quitar aquellos que no han de ser visibles de los schemas
+            if (!shouldBeVisible) {
+                //Quitar los valores previos para no interferir con el nuevo schema
+                if (parentProp) {
+                    newFormData[parentProp] = lodash.omit(newFormData[parentProp], [dependant]);
+                } else {
+                    newFormData = lodash.omit(newFormData, [dependant]);
+                }
 
-            newUISchema = lodash.omit(newUISchema, [dependant]);
-            newSchema.properties = lodash.omit(newSchema.properties, [dependant]);
+                newUISchema = lodash.omit(newUISchema, [dependant]);
+                newSchema.properties = lodash.omit(newSchema.properties, [dependant]);
+            }
         }
     });
 

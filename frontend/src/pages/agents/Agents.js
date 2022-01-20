@@ -272,9 +272,11 @@ const Agents = () => {
                             {!record.approved && (
                                 <Popconfirm
                                     title={T.translate("common.question")}
-                                    onConfirm={async () => {
-                                        await approveAgent(record);
-                                        await search();
+                                    onConfirm={() => {
+                                        (async () => {
+                                            await approveAgent(record);
+                                            await search();
+                                        })();
                                     }}>
                                     <Button
                                         key="approve"
@@ -293,9 +295,11 @@ const Agents = () => {
                             {record.approved && (
                                 <Popconfirm
                                     title={T.translate("common.question")}
-                                    onConfirm={async () => {
-                                        await deleteAgent(record);
-                                        await search();
+                                    onConfirm={() => {
+                                        (async () => {
+                                            await deleteAgent(record);
+                                            await search();
+                                        })();
                                     }}>
                                     <Button
                                         key="unapprove"
@@ -325,7 +329,7 @@ const Agents = () => {
 
     const cancelLibraries = () => {
         setLibrariesVisible(false);
-    }
+    };
 
     const saveAgent = async ({ formData }) => {
         //TODo
@@ -354,7 +358,7 @@ const Agents = () => {
         }
 
         cancelLibraries();
-    }
+    };
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
@@ -381,7 +385,7 @@ const Agents = () => {
                 </Col>
                 <Col flex={1}>
                     <Row justify="end">
-                    <IconButton
+                        <IconButton
                             key="dependencies"
                             onClick={() => setLibrariesVisible(true)}
                             icon={{

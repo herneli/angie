@@ -1,47 +1,57 @@
 import { default as DefaultAceEditor } from "react-ace";
 
-import "ace-builds/src-noconflict/mode-groovy";
+import "ace-builds/webpack-resolver";
 import "ace-builds/src-min-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/mode-html";
-import "ace-builds/src-noconflict/mode-xml";
-import "ace-builds/src-noconflict/mode-sql";
-import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-github";
 
+import Beautify from "ace-builds/src-noconflict/ext-beautify";
+
 import { default as beautifier } from "xml-beautifier";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const AceEditor = (props) => {
-    console.log(props);
-    const { mode, beautify, value } = props;
-    let { commands } = props;
+    const editorRef = useRef(null);
+    let { commands, mode, beautify } = props;
 
-    useEffect(() => {
-        if (beautify && mode) {
-            beautifyCode(value);
-        }
-    }, []);
-
-    const beautifyCode = (val) => {
+    const beautifyCode = (editor) => {
+        var val = editor.session.getValue();
         let newValue = val;
         try {
             switch (mode) {
                 case "json":
                     newValue = JSON.stringify(JSON.parse(val), null, 4);
+                    editor.session.setValue(newValue);
                     break;
                 case "xml":
                 case "html":
                     newValue = beautifier(val);
+                    editor.session.setValue(newValue);
                     break;
 
+                case "groovy":
+                    //TODO el por defecto hace alguna cosilla rara
+                    break;
                 default:
+                    //por defecto se utiliza el validador de Ace
+                    Beautify.beautify(editor.session);
             }
-            setTimeout(() => props.onChange && props.onChange(newValue), 100); //Force rerender beautified
         } catch (ex) {
             // console.error(ex);
         }
     };
+
+    useEffect(() => {
+        if (editorRef) {
+            if (mode) {
+                require(`ace-builds/src-noconflict/mode-${props.mode}`);
+            }
+
+            if (beautify) {
+                beautifyCode(editorRef.current.editor);
+            }
+        }
+    }, []);
+
     if (!commands) {
         commands = [];
     }
@@ -51,11 +61,10 @@ const AceEditor = (props) => {
         name: "beautify", //name for the key binding.
         bindKey: { win: "Alt-Shift-f", mac: "Shift-Alt-f" }, //key combination used for the command.
         exec: (editor) => {
-            console.log("wii");
-            beautifyCode(editor.getValue());
+            beautifyCode(editor);
         }, //function to execute when keys are pressed.
     });
-    return <DefaultAceEditor {...props} commands={commands} />;
+    return <DefaultAceEditor ref={editorRef} {...props} commands={commands} />;
 };
 
 export default AceEditor;

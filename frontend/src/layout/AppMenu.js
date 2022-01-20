@@ -80,13 +80,17 @@ const AppMenu = ({ app }) => {
             onChange={handleOrgChange}
             filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
             {AuthorizedFunction(["admin"]) && ( //Solo los usuarios admin pueden ver la opción todos
-                <Select.Option value={"all"}>{T.translate("application.user_info.organizations.all")}</Select.Option>
+                <Select.Option key={"all"} value={"all"}>
+                    {T.translate("application.user_info.organizations.all")}
+                </Select.Option>
             )}
-            <Select.Option value={"assigned"}>
+            <Select.Option key={"assigned"} value={"assigned"}>
                 {T.translate("application.user_info.organizations.assigned")}
             </Select.Option>
             {filterOrganizations().map((org) => (
-                <Select.Option value={org.id}>{org?.name}</Select.Option>
+                <Select.Option key={org.id} value={org.id}>
+                    {org?.name}
+                </Select.Option>
             ))}
         </Select>
     );
@@ -139,6 +143,7 @@ const AppMenu = ({ app }) => {
                     <>
                         {currentUser && (
                             <Popover
+                                key="orgPop"
                                 title={T.translate("application.user_info.change_org")}
                                 content={organizationSelect()}
                                 trigger="click">
@@ -151,6 +156,7 @@ const AppMenu = ({ app }) => {
                             </Popover>
                         )}
                         <Popover
+                            key="logoutPop"
                             content={userPopup()}
                             title={T.translate("application.user_info.title")}
                             trigger="click">

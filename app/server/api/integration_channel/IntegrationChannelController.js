@@ -177,7 +177,7 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
-    async converNodetToCamel(request, response, next) {
+    async convertNodeToCamel(request, response, next) {
         try {
             let service = new IntegrationChannelService();
             let node = request.body.node_type;

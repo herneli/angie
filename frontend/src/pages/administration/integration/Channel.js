@@ -15,10 +15,16 @@ import NodeEditModal from "./NodeEditModal";
 
 import lodash from "lodash";
 import useEventListener from "../../../common/useEventListener";
-import { Dropdown, Menu } from "antd";
+import { Dropdown, Menu, Space, Tabs } from "antd";
 import Icon from "@mdi/react";
-import { mdiClipboard, mdiCogs, mdiContentCopy, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
+import { mdiClipboard, mdiCogs, mdiContentCopy, mdiRefresh, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
 import ChannelContextProvider from "../../../components/channels/ChannelContext";
+import AceEditor from "../../../components/ace-editor/AceEditor";
+import IconButton from "../../../components/button/IconButton";
+
+import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
+
+const { TabPane } = Tabs;
 
 const customNodes = {
     MultiTargetNode: MultiTargetNode,
@@ -26,7 +32,18 @@ const customNodes = {
     CommentNode: CommentNode,
 };
 
-const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeTypes }) => {
+const Channel = ({
+    channel,
+    channelStatus,
+    undo,
+    redo,
+    onChannelUpdate,
+    nodeTypes,
+    debugData,
+    debugVisible,
+    debugClose,
+    reloadDebug,
+}) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState(undefined);
@@ -402,6 +419,7 @@ const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeType
         );
     };
 
+    const editorHeight = "calc(100vh - 430px)";
     return (
         <div>
             <div className="dndflow">
@@ -470,6 +488,81 @@ const Channel = ({ channel, channelStatus, undo, redo, onChannelUpdate, nodeType
                             onNodeEditEnd={onNodeEditEnd}
                         />
                     </ReactFlowProvider>
+
+                    <ResizableDrawer
+                        placement={"right"}
+                        title={"Channel Debug"}
+                        closable={true}
+                        mask={false}
+                        getContainer={false}
+                        width={500}
+                        onClose={() => debugClose()}
+                        visible={debugVisible}
+                        headerStyle={{ padding: "5px 10px" }}
+                        bodyStyle={{ padding: 12 }}
+                        key={"debugDrawer"}
+                        extra={
+                            <Space size="small">
+                                <IconButton
+                                    key="refresh"
+                                    onClick={() => reloadDebug()}
+                                    icon={{
+                                        path: mdiRefresh,
+                                        size: 0.6,
+                                        title: T.translate("common.button.reload"),
+                                    }}
+                                />
+                            </Space>
+                        }
+                        style={{ position: "absolute" }}>
+                        <Tabs defaultActiveKey={debugData?.channel?.agent?.id}>
+                            {debugData &&
+                                debugData.logs &&
+                                debugData.logs.map((agent) => (
+                                    <Tabs.TabPane tab={"Logs: " + agent.agentName} key={agent.agentId}>
+                                        <AceEditor
+                                            setOptions={{
+                                                useWorker: false,
+                                            }}
+                                            width="100%"
+                                            height={editorHeight}
+                                            value={agent.data + ""}
+                                            name="chann.log"
+                                            theme="github"
+                                        />
+                                    </Tabs.TabPane>
+                                ))}
+
+                            <TabPane tab="Canal JSON" key="1">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    beautify
+                                    width="100%"
+                                    height={editorHeight}
+                                    value={debugData && debugData.channelJson}
+                                    name="DB.code"
+                                    mode="json"
+                                    theme="github"
+                                />
+                            </TabPane>
+                            <TabPane tab="Camel XML" key="2">
+                                <AceEditor
+                                    setOptions={{
+                                        useWorker: false,
+                                    }}
+                                    beautify
+                                    width="100%"
+                                    height={editorHeight}
+                                    value={debugData && debugData.channelXml}
+                                    name="camel.code"
+                                    mode="xml"
+                                    theme="github"
+                                />
+                            </TabPane>
+                        </Tabs>
+                    </ResizableDrawer>
                 </ChannelContextProvider>
             </div>
         </div>
