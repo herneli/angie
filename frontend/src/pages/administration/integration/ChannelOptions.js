@@ -67,7 +67,7 @@ const editTabFormSchema = {
                     },
 
                     traced_headers: {
-                        title: "Almacenar Cabeceras",
+                        title: "Trazar Campos Personalizados (headers)",
                         type: "array",
                         items: {
                             type: "string",
@@ -125,6 +125,11 @@ const editTabFormSchema = {
             trace_outgoing_message: {
                 "ui:widget": "checkbox",
                 "ui:columnSize": "4",
+            },
+            traced_headers: {
+                condition: "deployment_options.trace_headers=true",
+                "ui:help":
+                    "Clave de las cabeceras que serán almacenadas en el índice de mensajes para su búsqueda o visualización.",
             },
         },
     },
