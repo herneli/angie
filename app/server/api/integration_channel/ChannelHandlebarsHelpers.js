@@ -25,6 +25,21 @@ class ChannelHandlebarsHelpers {
         Handlebars.registerHelper("querystring", (inputData, extraData) => this.parseQueryString(inputData, extraData));
         Handlebars.registerHelper("setHeader", (code, value, format) => this.setHeader(code, value, format));
         Handlebars.registerHelper("setHeaderList", (list) => this.setHeaderList(list));
+        Handlebars.registerHelper("groovyList", (inputData) => this.groovyList(inputData));
+    }
+
+    /**
+     * Convierte una lista de elementos JS en una lista Groovy como String para enviar a Camel
+     *
+     * @param {*} inputData
+     * @returns
+     */
+    groovyList(inputData) {
+        if (lodash.isEmpty(inputData)) {
+            return "[]";
+        }
+        let data = inputData;
+        return this.safe(JSON.stringify(data).replace(/{/g, "[").replace(/}/g, "]"));
     }
 
     /**
