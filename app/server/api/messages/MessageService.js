@@ -8,7 +8,12 @@ export class MessageService {
     getChannelMessages(channel, filters) {
         return this.dao.getChannelMessages(channel, filters);
     }
+
     getChannelMessageCount(channel) {
         return this.dao.getChannelMessageCount(channel);
+    }
+
+    getMessageTraces(channel, messageId) {
+        return this.dao.getMessageTraces(channel, messageId);
     }
 }
