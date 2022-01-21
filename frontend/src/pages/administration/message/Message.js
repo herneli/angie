@@ -9,29 +9,25 @@ import { mdiTimelinePlus, mdiTimelineMinus, mdiMessagePlus } from "@mdi/js";
 import MessageDataModal from "./MessageDataModal";
 
 export default function Message({ visible, onCancel, messageData, integration, channel }) {
-    const { breadcrumb_id: messageId, traces } = messageData;
+    const { breadcrumb_id: messageId } = messageData;
     const [nodes, setNodes] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [displayed, setDisplayed] = useState({});
     const [showData, setShowData] = useState(null);
 
-    useEffect(() => {
-        getChannelData();
-    }, []);
-
-    const getChannelData = async () => {
-        try {
-            const response = await axios.get(`/integration/${integration}/channel/${channel}`);
-            if (response?.data?.data?.nodes) {
-                setNodes(response.data.data.nodes);
-            }
-            setLoading(false);
-        } catch (error) {
-            console.error(error);
-        }
+    const setData = async () => {
+        const channelNodes = await getChannelNodes(integration, channel);
+        const traces = await getMessageTraces(channel, messageId);
+        setNodes(channelNodes);
+        setMessages(traces);
+        setLoading(false);
     };
 
-    const messages = traces.map((item) => item._source);
+    useEffect(() => {
+        setData();
+    }, []);
+
     const groupedMessages = groupNodes(messages, nodes);
 
     const timelineItems = groupedMessages.map((item, msgIndex) => {
@@ -214,7 +210,7 @@ const groupNodes = (messages, nodes) => {
             }
             if (!acc.node) {
                 const node = lodash.find(nodes, { id: currentMessage.current_route });
-                acc.node = node?.data.label || currentMessage.current_route;
+                acc.node = node?.label || currentMessage.current_route;
             }
             if (currentMessage.event === "ERROR") {
                 acc.error = true;
@@ -226,4 +222,32 @@ const groupNodes = (messages, nodes) => {
     }
 
     return result;
+};
+
+const getChannelNodes = async (integration, channel) => {
+    try {
+        const response = await axios.get(`/integration/${integration}/channel/${channel}`);
+
+        if (response.data?.data?.nodes) {
+            return response.data.data.nodes.map((node) => {
+                return { id: node.id, label: node.data.label };
+            });
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const getMessageTraces = async (channel, messageId) => {
+    try {
+        const response = await axios.get(`/messages/${channel}/traces/${messageId}`);
+        if (response.data?.hits?.hits) {
+            return response.data.hits.hits.map((trace) => trace._source);
+        }
+        return [];
+    } catch (error) {
+        console.error(error);
+    }
 };
