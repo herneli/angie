@@ -21,13 +21,19 @@ export class MessageController extends BaseController {
             })
         );
 
+        this.router.get(
+            `/messages/:channel/traces/:message`,
+            expressAsyncHandler((request, response, next) => {
+                this.getMessageTraces(request, response, next);
+            })
+        );
+
         return this.router;
     }
 
     async getChannelMessages(req, res, next) {
         const channel = req.params.channel;
         const filters = req.body;
-
         try {
             const data = await this.service.getChannelMessages(channel, filters);
             res.json(data.body);
@@ -52,6 +58,16 @@ export class MessageController extends BaseController {
             } else {
                 next(e);
             }
+        }
+    }
+
+    async getMessageTraces(req, res, next) {
+        const { channel, message } = req.params;
+        try {
+            const data = await this.service.getMessageTraces(channel, message);
+            res.json(data.body);
+        } catch (e) {
+            next(e);
         }
     }
 }
