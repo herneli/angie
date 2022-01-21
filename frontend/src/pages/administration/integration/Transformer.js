@@ -41,7 +41,7 @@ class Transformer {
                     id: node.id,
                     position: node.position,
                     style: {
-                        "border-color": nodeType.custom_color && nodeType.component_border_color,
+                        borderColor: nodeType.custom_color && nodeType.component_border_color,
                         background: nodeType.custom_color && nodeType.component_bg_color,
                     },
                     data: {
