@@ -117,34 +117,55 @@ export default function Packages({ history }) {
                                     type="text"
                                     onClick={() =>
                                         history.push("packages/" + record.code + "/versions/" + record.version)
-                                    }>
-                                    <Icon
-                                        path={mdiApplicationCogOutline}
-                                        size={0.9}
-                                        title={T.translate("packages.configure")}
-                                    />
-                                </Button>
+                                    }
+                                    icon={
+                                        <Icon
+                                            path={mdiApplicationCogOutline}
+                                            title={T.translate("packages.configure")}
+                                            className={classes.icon}
+                                        />
+                                    }></Button>
                             ) : null}
                             {packageData.remote &&
                             record.remote_commit &&
                             record.remote_commit !== record.local_commit ? (
-                                <Button type="text" onClick={handleOnImport(record.code, record.version)}>
-                                    <Icon path={mdiCloudDownload} size={0.9} title={T.translate("packages.import")} />
-                                </Button>
+                                <Button
+                                    type="text"
+                                    onClick={handleOnImport(record.code, record.version)}
+                                    icon={
+                                        <Icon
+                                            path={mdiCloudDownload}
+                                            title={T.translate("packages.import")}
+                                            className={classes.icon}
+                                        />
+                                    }></Button>
                             ) : null}
                             {packageData.remote &&
                             record.local_commit &&
                             record.remote_commit === record.local_commit ? (
-                                <Button type="text" onClick={handleOnPublish(record.code, record.version)}>
-                                    <Icon path={mdiCloudUpload} size={0.9} title={T.translate("packages.publish")} />
-                                </Button>
+                                <Button
+                                    type="text"
+                                    onClick={handleOnPublish(record.code, record.version)}
+                                    icon={
+                                        <Icon
+                                            path={mdiCloudUpload}
+                                            title={T.translate("packages.publish")}
+                                            className={classes.icon}
+                                        />
+                                    }></Button>
                             ) : null}
                             <Popconfirm
                                 title={T.translate("packages.delete_package_version_confirmation")}
                                 onConfirm={handleOnDeletePackageVersion(record.code, record.version)}>
-                                <Button type="text">
-                                    <Icon path={mdiDelete} size={0.9} title={T.translate("packages.delete_package")} />
-                                </Button>
+                                <Button
+                                    type="text"
+                                    icon={
+                                        <Icon
+                                            path={mdiDelete}
+                                            title={T.translate("packages.delete_package")}
+                                            className={classes.icon}
+                                        />
+                                    }></Button>
                             </Popconfirm>
                         </>
                     );
@@ -212,16 +233,29 @@ export default function Packages({ history }) {
                 return (
                     <>
                         {record.remote ? (
-                            <Button type="text" onClick={handleOnRefreshStatus(record.code)}>
-                                <Icon path={mdiRefresh} size={0.9} title={T.translate("packages.refresh_status")} />
-                            </Button>
+                            <Button
+                                type="text"
+                                onClick={handleOnRefreshStatus(record.code)}
+                                icon={
+                                    <Icon
+                                        path={mdiRefresh}
+                                        title={T.translate("packages.refresh_status")}
+                                        className={classes.icon}
+                                    />
+                                }></Button>
                         ) : null}
                         <Popconfirm
                             title={T.translate("packages.delete_package_confirmation")}
                             onConfirm={handleOnDeletePackage(record.code)}>
-                            <Button type="text">
-                                <Icon path={mdiDelete} size={0.9} title={T.translate("packages.delete_package")} />
-                            </Button>
+                            <Button
+                                type="text"
+                                icon={
+                                    <Icon
+                                        path={mdiDelete}
+                                        title={T.translate("packages.delete_package")}
+                                        className={classes.icon}
+                                    />
+                                }></Button>
                         </Popconfirm>
                     </>
                 );
