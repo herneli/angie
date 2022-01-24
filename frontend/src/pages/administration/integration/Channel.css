@@ -62,19 +62,35 @@
 }
 
 .dndflow .react-flow__handle {
-    height: 15px;
-    width: 8px;
     border: none;
 }
 
 .dndflow .react-flow__handle-left {
+    height: 15px;
+    width: 8px;
     left: -8px;
     border-radius: 3px 0px 0px 3px;
 }
 
 .dndflow .react-flow__handle-right {
+    height: 15px;
+    width: 8px;
     right: -8px;
     border-radius: 0px 3px 3px 0px;
+}
+
+.dndflow .react-flow__handle-bottom {
+    bottom: -8px;
+    height: 8px;
+    width: 15px;
+    border-radius: 0px 0px 3px 3px;
+}
+
+.dndflow .react-flow__handle-top {
+    top: -8px;
+    height: 8px;
+    width: 15px;
+    border-radius: 3px 3px 0px  0px;
 }
 
 .dndflow .react-flow__node {
@@ -106,7 +122,7 @@
     border-color: #237a52;
 }
 
-.dndflow  .react-flow__node-CommentNode .react-flow__handle {
+.dndflow .react-flow__node-CommentNode .react-flow__handle {
     background: #7a7423;
 }
 
