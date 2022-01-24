@@ -64,7 +64,6 @@ export default function PackageNew({ onCancel, onCreate }) {
                 code: packageData.code,
                 name: packageData.name,
                 remote: packageData.remote,
-                createVersion: true,
             };
             axios
                 .post("/packages", newPackageData)

@@ -124,7 +124,7 @@ export class PackageVersionService extends BaseService {
             if (!firstVersion) {
                 this.dao.updatePackageVersionStatus(code, "1.0.0", {
                     local_commit: "initial",
-                    ƒimporemote_commit: "initial",
+                    remote_commit: "initial",
                 });
             }
         }
