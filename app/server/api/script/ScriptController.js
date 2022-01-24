@@ -49,7 +49,7 @@ export class ScriptController extends BaseController {
 
     async getNewScript(request, response) {
         let service = new ScriptService();
-        let script = await service.newScript(request.params.id);
+        let script = await service.newScript(request.params.contextCode);
         response.json(new JsonResponse(true, script));
     }
 }

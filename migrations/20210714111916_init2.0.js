@@ -48,8 +48,6 @@ exports.up = async function (knex) {
         });
     }
 
-    
-
     if (!(await knex.schema.hasTable("script_config"))) {
         await knex.schema.createTable("script_config", function (table) {
             table.increments();
@@ -70,7 +68,7 @@ exports.up = async function (knex) {
             table.string("document_type").notNullable();
             table.string("code").notNullable();
             table.jsonb("data");
-            table.unique(["document_type", "code"]);
+            table.unique(["package_code", "package_version", "document_type", "code"]);
         });
     }
 
