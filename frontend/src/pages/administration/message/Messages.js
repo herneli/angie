@@ -164,7 +164,7 @@ const Messages = ({ packageUrl }, props) => {
         {
             title: "Id Mensaje",
             dataIndex: "breadcrumb_id",
-            key: "breadcrumb_id.keyword",
+            key: "_id",
             width: 200,
             ellipsis: true,
             sorter: true,
@@ -173,6 +173,7 @@ const Messages = ({ packageUrl }, props) => {
             title: "Fecha de inicio",
             dataIndex: "start",
             key: "date_reception",
+            defaultSortOrder: "descend",
             sorter: true,
             width: 120,
             render: (text, record) => {
@@ -183,6 +184,7 @@ const Messages = ({ packageUrl }, props) => {
             title: "Fecha de finalización",
             dataIndex: "end",
             key: "date_processed",
+            sorter: true,
             width: 120,
             render: (text) => {
                 return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
