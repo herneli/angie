@@ -67,43 +67,28 @@ const Messages = ({ packageUrl }, props) => {
             const channelResponse = await axios.post(`/messages/${channel}`, filters);
             // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
 
-            if (
-                channelResponse &&
-                channelResponse.data &&
-                channelResponse.data.hits &&
-                channelResponse.data.hits.hits
-            ) {
+            if (channelResponse?.data?.hits?.hits) {
                 const messages = channelResponse.data.hits.hits;
-                const totalMessages = channelResponse.data.aggregations.messages.value;
+                const totalMessages = channelResponse.data.hits.total.value;
+                console.log(messages);
 
-                const parsedMessages = messages.reduce((acc, message) => {
-                    const messageData = message._source;
-                    const messageId = messageData.breadcrumb_id;
-                    const messageStart = message.inner_hits.first.hits.hits[0]._source.date_time;
-                    const messageEnd = message.inner_hits.last.hits.hits[0]._source.date_time;
-                    const elapsed = moment(messageEnd) - moment(messageStart);
+                const parsedMessages = messages.map((messageData) => {
+                    const messageId = messageData._id;
+                    const message = messageData._source;
+                    const { status, date_processed, date_reception } = message;
+                    const elapsed = moment(date_processed) - moment(date_reception);
 
-                    const errorCount = message.inner_hits.all.hits.hits.reduce((acc, innerMessage) => {
-                        if (innerMessage._source.event === "ERROR") {
-                            acc++;
-                        }
-                        return acc;
-                    }, 0);
-                    acc.push({
+                    return {
                         breadcrumb_id: messageId,
-                        start: messageStart,
-                        end: messageEnd,
-                        errors: errorCount,
+                        start: date_reception,
+                        end: date_processed,
                         elapsed: elapsed,
-                        traces: message.inner_hits.all.hits.hits,
-                    });
-                    return acc;
-                }, []);
+                        status: status,
+                    };
+                });
 
                 setPagination({ ...pagination, total: totalMessages });
                 setDataSource(parsedMessages);
-                // setDataSourceKeys(lodash.map(messages, "_source"));
-                // setDataSource(response.data.hits.hits);
             }
         } catch (ex) {
             notification.error({
@@ -125,11 +110,6 @@ const Messages = ({ packageUrl }, props) => {
         link.href = url;
         link.click();
     };
-
-    /* const handleOnDownloadModel = (e, row) => {
-        const data = [row];
-        downloadJsonFile(data, `Integration-${row.name}.json`);
-    }; */
 
     const handleDownloadTable = (data) => {
         downloadJsonFile(data, `channel_${channel}_messages.json`);
@@ -167,26 +147,20 @@ const Messages = ({ packageUrl }, props) => {
         //TODO: Traducir nombres de los campos
         {
             title: "Estado",
-            dataIndex: "errors",
-            key: "msg_error",
+            dataIndex: "status",
+            key: "status",
             width: 25,
             align: "center",
 
             render: (text, record) => {
-                if (text) {
+                if (text === "error") {
                     return <Icon path={mdiEmailOff} size="1.5rem" color="red" title="Error" />;
                 }
 
                 return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title="Enviado" />;
             },
         },
-        {
-            title: "Errores",
-            dataIndex: "errors",
-            key: "error_count",
-            width: 25,
-            align: "center",
-        },
+
         {
             title: "Id Mensaje",
             dataIndex: "breadcrumb_id",
@@ -195,33 +169,10 @@ const Messages = ({ packageUrl }, props) => {
             ellipsis: true,
             sorter: true,
         },
-
-        /*  {
-            title: "Ruta de origen",
-            dataIndex: "origin_route",
-            key: "origin_route",
-            ellipsis: true,
-            sorter: true,
-        },
-        {
-            title: "Ruta actual",
-            dataIndex: "current_route",
-            key: "current_route",
-            ellipsis: true,
-            sorter: true,
-        },
-        {
-            title: "Nodo endpoint",
-            dataIndex: "node_endpoint",
-            key: "node_endpoint",
-            ellipsis: true,
-            sorter: true,
-        }, */
-
         {
             title: "Fecha de inicio",
             dataIndex: "start",
-            key: "date_time",
+            key: "date_reception",
             sorter: true,
             width: 120,
             render: (text, record) => {
@@ -231,7 +182,7 @@ const Messages = ({ packageUrl }, props) => {
         {
             title: "Fecha de finalización",
             dataIndex: "end",
-            key: "end_date",
+            key: "date_processed",
             width: 120,
             render: (text) => {
                 return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
@@ -287,6 +238,7 @@ const Messages = ({ packageUrl }, props) => {
             });
         }
     };
+
     return (
         <Content>
             <Row className={classes.card}>
@@ -318,7 +270,6 @@ const Messages = ({ packageUrl }, props) => {
                     bordered
                     sort
                     size="small"
-                    // expandable={{ expandedRowKeys: dataSourceKeys }}
                 />
             )}
             {messageModalVisible && (

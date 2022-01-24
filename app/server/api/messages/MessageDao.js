@@ -2,98 +2,22 @@ import BaseDao from "../../integration/elastic/BaseDao";
 
 export class MessageDao extends BaseDao {
     getChannelMessages(channelId, filters) {
-        const { start = 0, limit = 10, sort } = filters;
+        //TODO: añadir búsqueda y ordenación
+        const { start = 0, limit = 10 } = filters;
 
-        const orders = { ascend: "asc", descend: "desc" };
-        let customSort = [
-            {
-                date_time: {
-                    order: "desc",
-                },
-            },
-        ];
+        this.tableName = `messages_${channelId}`;
+        return this.loadAllData({}, start, limit);
+    }
 
-        if (sort) {
-            customSort = [
-                {
-                    [sort.field]: {
-                        order: orders[sort.direction],
-                    },
-                },
-            ];
-        }
-
-        const staticFilters = {
-            size: limit,
-            from: start,
-            body: {
-                collapse: {
-                    field: "breadcrumb_id.keyword",
-                    inner_hits: [
-                        {
-                            name: "all",
-                            /*
-                             ! Un size demasiado alto en inner_hits podría afectar al rendimiento
-                             En este caso el size es preciso que sea alto para poder detectar errores en mensajes con muchos pasos
-                             TODO: Encontrar otra forma de averiguar si un mensaje tiene o no errores a lo largo de su recorrido
-                                  */
-                            size: 200,
-                            from: 0,
-                            sort: [
-                                {
-                                    date_time: {
-                                        order: "asc",
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            name: "first",
-                            size: 1,
-                            from: 0,
-                            sort: [
-                                {
-                                    date_time: {
-                                        order: "asc",
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            name: "last",
-                            size: 1,
-                            from: 0,
-                            sort: [
-                                {
-                                    date_time: {
-                                        order: "desc",
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
-                aggs: {
-                    messages: {
-                        cardinality: {
-                            field: "breadcrumb_id.keyword",
-                        },
-                    },
-                },
-                sort: customSort,
-            },
+    getMessageTraces(channelId, messageId) {
+        const filter = {
+            ["breadcrumb_id.keyword"]: messageId,
         };
 
         this.tableName = `stats_${channelId}`;
-        return this.search(staticFilters);
+        // El limit en este caso debe ser alto para poder cargar todas las trazas que pueda tener un mensaje
+        return this.loadAllData(filter, 0, 9999);
     }
-
-    /* getChannelMessages(channelId, filters) {
-        const { start = 1, limit = 10 } = filters;
-
-        this.tableName = `stats_${channelId}`;
-        return this.loadAllData({}, start, limit);
-    } */
 
     async getChannelMessageCount(channelId) {
         this.tableName = `stats_${channelId}`;
