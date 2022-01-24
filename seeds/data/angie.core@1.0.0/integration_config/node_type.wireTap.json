@@ -8,7 +8,7 @@
     "handles": "in,out",
     "defaults": "{\n    \"handles\": [\n        {\n            \"id\": \"out0\",\n            \"to\": \"\",\n            \"title\": \"Clonar Mensaje\",\n            \"position\": \"top\",\n            \"color\": \"blue\"\n        },\n        {\n            \"id\": \"out1\",\n            \"to\": \"\",\n            \"title\": \"Continuar Flujo\"\n            \n        }\n    ]\n}",
     "package_code": "angie.core",
-    "xml_template": "<route  id=\"{{source}}\">\r\n    <from uri=\"direct:{{source}}\"/>\r\n    <wireTap uri=\"direct:{{handles.[0].to}}\"/>\r\n    <multicast>\r\n        {{#each handles.[1].to}}\r\n        <to uri=\"direct:{{this}}\"/>\r\n        {{/each}}\r\n    </multicast>\r\n    <to uri=\"mock:ending\"/>\r\n</route>",
+    "xml_template": "<route  id=\"{{source}}\">\r\n    <from uri=\"direct:{{source}}\"/>\r\n    {{#if (not_empty handles.[0].to)}}\r\n        <wireTap uri=\"direct:{{handles.[0].to}}\"/>\r\n    {{/if}}\r\n    {{generateDestination handles.[1].to}}\r\n    \r\n    <to uri=\"mock:ending\"/>\r\n</route>",
     "json_ui_schema": "{}",
     "package_version": "1.0.0",
     "json_data_schema": "{\n    \"title\": \"Wire Tap\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"type\": \"string\"\n        }\n    }\n}",

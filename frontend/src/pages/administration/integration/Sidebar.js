@@ -32,12 +32,12 @@ const Sidebar = ({ nodeTypes }) => {
 
             result.push(
                 <div key={group}>
-                    <span>{group}</span>
+                    <span className="avoid-selection">{group}</span>
                     <hr />
                     {child.map((type) => (
                         <div
                             key={type.id}
-                            className={"dndnode " + type.react_component_type}
+                            className={"avoid-selection dndnode " + type.react_component_type}
                             style={{
                                 borderColor: type.custom_color && type.component_border_color,
                                 background: type.custom_color && type.component_bg_color,
@@ -61,7 +61,7 @@ const Sidebar = ({ nodeTypes }) => {
 
     return (
         <aside>
-            <div className="description">{T.translate("integrations.channel.sidebar.title")}</div>
+            <div className="description avoid-selection">{T.translate("integrations.channel.sidebar.title")}</div>
 
             {drawGroupedTypes(nodeTypes)}
         </aside>
