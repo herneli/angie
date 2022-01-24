@@ -12,6 +12,10 @@ export class MessageDao extends BaseDao {
     getMessageTraces(channelId, messageId) {
         const filter = {
             ["breadcrumb_id.keyword"]: messageId,
+            sort: {
+                field: "date_time",
+                direction: "ascend",
+            },
         };
 
         this.tableName = `stats_${channelId}`;
