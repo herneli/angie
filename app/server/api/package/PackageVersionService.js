@@ -108,12 +108,24 @@ export class PackageVersionService extends BaseService {
         let packageData = await packageDao.getPackage(code);
         await git.clone(packageData.remote, packagePath);
         const branchSummary = await git.branch({ "--all": null });
+        let remoteBranchCount = 0;
         for (let branchCode in branchSummary.branches) {
             let remotePrefix = "remotes/origin/";
             if (branchCode.startsWith("remotes/origin")) {
+                remoteBranchCount++;
                 let branchData = branchSummary.branches[branchCode];
                 const version = branchCode.substring(remotePrefix.length);
                 this.dao.updatePackageVersionStatus(code, version, { remote_commit: branchData.commit });
+            }
+        }
+
+        if (remoteBranchCount === 0) {
+            let firstVersion = await this.dao.getPackageVersion(code, "1.0.0");
+            if (!firstVersion) {
+                this.dao.updatePackageVersionStatus(code, "1.0.0", {
+                    local_commit: "initial",
+                    ƒimporemote_commit: "initial",
+                });
             }
         }
         return { git, packagePath, branchSummary };
@@ -122,7 +134,11 @@ export class PackageVersionService extends BaseService {
     async publishAngiePackage(packageVersion) {
         let status = await this.updateRemoteStatus(packageVersion.code);
         const { git, packagePath } = status;
-        const brachSummary = await git.checkout(packageVersion.version);
+        if (packageVersion.remote_commit === "initial") {
+            await git.branch(["-M", packageVersion.version]);
+        } else {
+            const brachSummary = await git.checkout(packageVersion.version);
+        }
         await this.generatePackageComponents(packageVersion, packagePath, git);
 
         let commitSummary = await git.commit("Update package: " + packageVersion.code + "-" + packageVersion.version);

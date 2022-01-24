@@ -16,7 +16,7 @@ export class PackageService extends BaseService {
 
     async createPackage(packageData) {
         await this.dao.save(packageData);
-        if (!packageData.remote) {
+        if (!packageData.remote || createVersion) {
             let packageVersionService = new PackageVersionService();
             await packageVersionService.createPackageVersion({ code: packageData.code, version: "1.0.0" });
         }
