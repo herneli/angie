@@ -28,6 +28,7 @@ export default class BaseDao {
         if (this.documentType) {
             filter.type = this.documentType;
         }
+
         return ElasticConnector.getConnection().search(filter);
     }
 
@@ -219,21 +220,15 @@ export default class BaseDao {
     }
 
     parseSorts(sorts) {
-        const result = [];
-        let parsedSorts = sorts;
-        try {
-            parsedSorts = JSON.parse(sorts);
-        } catch (e) {}
-        for (const idx in parsedSorts) {
-            const elm = parsedSorts[idx];
-            let obj = {};
-            obj[elm.property] = {
-                order: elm.direction.toLowerCase(),
-            };
-            result.push(obj);
-        }
+        const orders = { ascend: "asc", descend: "desc" };
 
-        return result;
+        return [
+            {
+                [sorts.field]: {
+                    order: orders[sorts.direction],
+                },
+            },
+        ];
     }
 
     addDocument(id, data) {
