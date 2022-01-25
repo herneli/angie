@@ -2,17 +2,18 @@ import { Modal } from "antd";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 
 export default function MessageDataModal({ visible, onCancel, messageData, integration, channel }) {
-    const { node, content } = messageData;
-
+    const { node, content, type } = messageData;
+    const title = type === "error" ? `Execepción (${node})` : `Body (${node})`;
+    const width = type === "error" ? 1000 : 800;
     return (
         <Modal
-            title={`Body (${node})`}
+            title={title}
             visible={visible}
             onCancel={onCancel}
             cancelButtonProps={{ style: { display: "none" } }}
             onOk={onCancel}
             destroyOnClose={true}
-            width={800}>
+            width={width}>
             <AceEditor
                 width="100%"
                 beautify
