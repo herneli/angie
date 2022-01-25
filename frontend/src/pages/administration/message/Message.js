@@ -5,16 +5,29 @@ import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import T from "i18n-react";
-import { mdiTimelinePlus, mdiTimelineMinus, mdiMessagePlus } from "@mdi/js";
+import {
+    mdiTimelinePlus,
+    mdiTimelineMinus,
+    mdiMessagePlus,
+    mdiEmailReceiveOutline,
+    mdiEmailSendOutline,
+    mdiEmailRemoveOutline,
+} from "@mdi/js";
 import MessageDataModal from "./MessageDataModal";
 
-export default function Message({ visible, onCancel, messageData, integration, channel }) {
+export default function MessageGroup({ visible, onCancel, messageData, integration, channel }) {
     const { breadcrumb_id: messageId } = messageData;
     const [nodes, setNodes] = useState([]);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [displayed, setDisplayed] = useState({});
     const [showData, setShowData] = useState(null);
+
+    const timelineTypes = {
+        send: <Icon path={mdiEmailSendOutline} size="20px" color="#52C41A"></Icon>,
+        receive: <Icon path={mdiEmailReceiveOutline} size="20px" color="#1976D2"></Icon>,
+        error: <Icon path={mdiEmailRemoveOutline} size="20px" color="#FF4D4F"></Icon>,
+    };
 
     const setData = async () => {
         const channelNodes = await getChannelNodes(integration, channel);
@@ -34,7 +47,9 @@ export default function Message({ visible, onCancel, messageData, integration, c
         let messageStart = "";
         let exchange = "";
         let messageEnd = "";
+        let errorException = "";
         let messageContent = "";
+        let type = "";
         const nodeName = item.node ? item.node : item.error ? "Error" : "Nodo eliminado";
         const timelineContent = item.data.map((message, index, array) => {
             const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
@@ -42,11 +57,21 @@ export default function Message({ visible, onCancel, messageData, integration, c
                 messageStart = date;
                 exchange = message.exchange_id;
             }
+            type =
+                message.arrow === "****"
+                    ? "error"
+                    : message.arrow === "*<--" || message.arrow === "<---"
+                    ? "receive"
+                    : "send";
             if (index === array.length - 1) {
                 messageEnd = date;
             }
             if (!messageContent) {
                 messageContent = message.in_msg;
+            }
+
+            if (!errorException) {
+                errorException = message.error_stack;
             }
             //TODO: Mostrar el detalle del error (error_stack)(?)
             const errorContent =
@@ -56,10 +81,16 @@ export default function Message({ visible, onCancel, messageData, integration, c
                             <b>Mensaje de error:</b>
                             {` ${message.error_msg}`}
                         </p>
-                        {/*  <p>
-                            <b>Excepción:</b>
-                            {` ${message.error_stack}`}
-                        </p> */}
+                        <p>
+                            <a
+                                href="#null"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setShowData({ node: nodeName, content: errorException, type: "error" });
+                                }}>
+                                Mostrar excepción
+                            </a>
+                        </p>
                     </>
                 ) : null;
 
@@ -75,9 +106,10 @@ export default function Message({ visible, onCancel, messageData, integration, c
 
             return (
                 <>
+                    {timelineTypes[type]}
                     <p>
                         <b>Evento:</b>
-                        {` ${message.event} ${message.arrow ? " | " + message.arrow : ""}`}
+                        {` ${message.event}`}
                     </p>
 
                     <p>
@@ -186,48 +218,27 @@ export default function Message({ visible, onCancel, messageData, integration, c
 }
 
 /**
- * Agrupa los mensajes por el nodo correspondiente en orden de aparición
- * @param {*} messages
- * @param {*} nodes
+ * Agrupa los mensajes por el nodo correspondiente
+ * @param {Array} messages Trazas de un mensaje
+ * @param {Array} nodes Nodos del canal
  * @returns
  */
 const groupNodes = (messages, nodes) => {
-    const result = [];
-    let acc = { node: "", data: [] };
-    const restartAcc = () => {
-        acc.node = "";
-        acc.data = [];
-        acc.error = false;
-    };
+    const groupedByNodeId = lodash.groupBy(messages, "current_route");
+    const result = Object.keys(groupedByNodeId).map((nodeId) => {
+        const nodeLabel = lodash.find(nodes, { id: nodeId })?.label || "Nodo eliminado";
+        const hasError = Boolean(lodash.find(groupedByNodeId[nodeId], { event: "ERROR" }));
 
-    for (let i = 0; i <= messages.length; i++) {
-        if (i !== messages.length) {
-            const currentMessage = messages[i];
-            const prevMessage = messages[i - 1];
-            if (prevMessage && currentMessage.current_route !== prevMessage?.current_route) {
-                result.push({ ...acc });
-                restartAcc();
-            }
-            if (!acc.node) {
-                const node = lodash.find(nodes, { id: currentMessage.current_route });
-                acc.node = node?.label || currentMessage.current_route;
-            }
-            if (currentMessage.event === "ERROR") {
-                acc.error = true;
-            }
-            acc.data.push(currentMessage);
-        } else {
-            result.push({ ...acc });
-        }
-    }
+        return { node: nodeLabel, error: hasError, data: groupedByNodeId[nodeId] };
+    });
 
     return result;
 };
 
 /**
  * Obtiene los nodos de un canal
- * @param {*} integration Id de la integración
- * @param {*} channel Id del canal
+ * @param {String} integration Id de la integración
+ * @param {String} channel Id del canal
  * @returns
  */
 const getChannelNodes = async (integration, channel) => {
