@@ -44,7 +44,6 @@ const Messages = ({ debugData }, props) => {
     let integration = "";
 
     if (debugData) {
-        console.log(debugData);
         channel = params.channel;
         integration = params.id;
     } else {
@@ -161,10 +160,10 @@ const Messages = ({ debugData }, props) => {
         {
             title: "Estado",
             dataIndex: "status",
-            key: "status",
+            key: "status.keyword",
             width: 50,
             align: "center",
-
+            sorter: true,
             render: (text, record) => {
                 if (text === "error") {
                     return <Icon path={mdiEmailOff} size="1.5rem" color="red" title="Error" />;
@@ -255,42 +254,36 @@ const Messages = ({ debugData }, props) => {
         }
     };
 
-    const MessageTable = () => {
-        return (
-            <>
-                {dataSource && (
-                    <Table
-                        loading={loading}
-                        key="messages-table"
-                        dataSource={dataSource}
-                        columns={columns}
-                        onChange={search}
-                        pagination={pagination}
-                        rowKey={"id"}
-                        childrenColumnName={"channels"}
-                        bordered
-                        sort
-                        scroll={{ x: 1100 }}
-                        size="small"
-                    />
-                )}
-                {messageModalVisible && (
-                    <Message
-                        visible={messageModalVisible}
-                        messageData={detailedMessage}
-                        integration={integration}
-                        channel={channel}
-                        onCancel={() => {
-                            setDetailedMessage([]);
-                            setMessageModalVisible(false);
-                        }}></Message>
-                )}
-            </>
-        );
-    };
-
     return debugData ? (
-        <MessageTable />
+        <>
+            {dataSource && (
+                <Table
+                    loading={loading}
+                    key="messages-table"
+                    dataSource={dataSource}
+                    columns={columns}
+                    onChange={search}
+                    pagination={pagination}
+                    rowKey={"id"}
+                    childrenColumnName={"channels"}
+                    bordered
+                    sort
+                    scroll={{ x: 1100 }}
+                    size="small"
+                />
+            )}
+            {messageModalVisible && (
+                <Message
+                    visible={messageModalVisible}
+                    messageData={detailedMessage}
+                    integration={integration}
+                    channel={channel}
+                    onCancel={() => {
+                        setDetailedMessage([]);
+                        setMessageModalVisible(false);
+                    }}></Message>
+            )}
+        </>
     ) : (
         <Content>
             <Row className={classes.card}>
@@ -309,7 +302,33 @@ const Messages = ({ debugData }, props) => {
                     </Row>
                 </Col>
             </Row>
-            <MessageTable />
+            {dataSource && (
+                <Table
+                    loading={loading}
+                    key="messages-table"
+                    dataSource={dataSource}
+                    columns={columns}
+                    onChange={search}
+                    pagination={pagination}
+                    rowKey={"id"}
+                    childrenColumnName={"channels"}
+                    bordered
+                    sort
+                    scroll={{ x: 1100 }}
+                    size="small"
+                />
+            )}
+            {messageModalVisible && (
+                <Message
+                    visible={messageModalVisible}
+                    messageData={detailedMessage}
+                    integration={integration}
+                    channel={channel}
+                    onCancel={() => {
+                        setDetailedMessage([]);
+                        setMessageModalVisible(false);
+                    }}></Message>
+            )}
         </Content>
     );
 };
