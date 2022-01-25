@@ -31,8 +31,9 @@ const AntdArrayFieldTemplate = ({
     let expanded;
     let {
         columns: optionsColumns,
-        canAdd: optionsCanAdd = true,
-        canDelete: optionsCanDelete = true,
+        addable: optionsCanAdd = true,
+        removable: optionsCanDelete = true,
+        orderable: optionsCanSort = true,
     } = uiSchema["ui:options"] || {};
 
     if (schema.items.type === "object") {
@@ -106,19 +107,21 @@ const AntdArrayFieldTemplate = ({
             },
         ];
     }
-    columns = [
-        ...columns,
-        {
-            title: T.translate("sort"),
-            dataIndex: "sort",
-            fixed: "right",
-            width: 50,
-            className: "drag-handle",
-            render: (text, record, index) => (
-                <MenuOutlined style={{ cursor: "pointer", color: "#999" }} />
-            ),
-        },
-    ];
+    if (optionsCanSort) {
+        columns = [
+            ...columns,
+            {
+                title: T.translate("sort"),
+                dataIndex: "sort",
+                fixed: "right",
+                width: 50,
+                className: "drag-handle",
+                render: (text, record, index) => (
+                    <MenuOutlined style={{ cursor: "pointer", color: "#999" }} />
+                ),
+            },
+        ];
+    }
 
     const dragProps = {
         onDragEnd(fromIndex, toIndex) {

@@ -3,30 +3,33 @@ import React, { useEffect, useState } from "react";
 import processForm from "./ConditionalProcessor";
 import lodash from "lodash";
 
-let originalSchema;
-let originalUISchema;
-
 const ConditionalForm = React.forwardRef((props, ref) => {
     const { schema, uiSchema, formData } = props;
+    const [initialValues, setInitialValues] = useState();
+
     const [state, setState] = useState();
 
     useEffect(() => {
         //Guardar el schema original ya que siempre se procesará a través de el y no del current
-        initialLoad()
+        initialLoad();
     }, [schema, uiSchema, formData]);
 
+    
     const initialLoad = () => {
-        originalSchema = lodash.cloneDeep(schema);
-        originalUISchema = lodash.cloneDeep(uiSchema);
+        const initValues = {
+            originalSchema: lodash.cloneDeep(schema),
+            originalUISchema: lodash.cloneDeep(uiSchema),
+        };
+        setInitialValues(initValues);
 
-        const initialState = processForm(originalSchema, originalUISchema, formData);
+        const initialState = processForm(initValues.originalSchema, initValues.originalUISchema, formData);
         setState(initialState);
-    }
+    };
 
     const onChange = (e) => {
         const { formData } = e;
 
-        const newState = processForm(originalSchema, originalUISchema, formData);
+        const newState = processForm(initialValues.originalSchema, initialValues.originalUISchema, formData);
         setState(newState);
 
         if (props.onChange) props.onChange(e);

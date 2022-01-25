@@ -32,6 +32,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
     }, [data]);
 
     useEffect(() => {
+        console.log('wii')
         window.scrollTo(0, 0);
     }, []);
 
@@ -77,7 +78,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
                 onSubmit={handleOnSave}
                 onChange={(e) => {
                     setCurrentData({ ...currentData, ...e.formData });
-                    onChange(e);
+                    if(onChange) onChange(e);
                 }}>
                 <Row justify="end">
                     <Space>

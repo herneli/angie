@@ -56,8 +56,8 @@ const registry = {
     uiSchema: () => ({
         nestedStatements: {
             "ui:options": {
-                canAdd: false,
-                canDelete: false,
+                addable: false,
+                removable: false,
             },
         },
     }),
