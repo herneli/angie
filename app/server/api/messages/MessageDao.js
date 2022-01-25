@@ -7,7 +7,7 @@ export class MessageDao extends BaseDao {
         delete filters.start;
         delete filters.limit;
 
-        if (!filters.sort) {
+        if (!filters.sort || !filters.sort.direction) {
             filters.sort = {
                 field: "date_reception",
                 direction: "descend",
