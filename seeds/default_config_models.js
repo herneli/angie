@@ -365,6 +365,7 @@ exports.seed = async function (knex) {
                         },
                     },
                     isActive: {
+                        "ui:widget": "checkbox",
                         "ui:columnSize": "12",
                     },
                     parentType: {
@@ -637,6 +638,7 @@ exports.seed = async function (knex) {
                                 "ui:columnSize": "3",
                             },
                             required: {
+                                "ui:widget": "checkbox",
                                 "ui:columnSize": "3",
                             },
                             path: { "ui:columnSize": "6" },
