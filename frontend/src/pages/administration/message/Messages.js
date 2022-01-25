@@ -3,6 +3,7 @@ import { Button, Col, Input, notification, Row, Table, Space } from "antd";
 import axios from "axios";
 import moment from "moment";
 import Message from "./Message";
+import { getMessageTraces } from "./Message";
 import T from "i18n-react";
 import { useParams } from "react-router";
 // import { v4 as uuid_v4 } from "uuid";
@@ -30,7 +31,7 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Messages = ({ packageUrl }, props) => {
+const Messages = ({ debugData }, props) => {
     const [dataSource, setDataSource] = useState([]);
     // const [dataSourceKeys, setDataSourceKeys] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -39,11 +40,21 @@ const Messages = ({ packageUrl }, props) => {
     const [detailedMessage, setDetailedMessage] = useState([]);
 
     const params = useParams();
-    const { channel_id: channel, integration_id: integration } = params;
+    let channel = "";
+    let integration = "";
+
+    if (debugData) {
+        console.log(debugData);
+        channel = params.channel;
+        integration = params.id;
+    } else {
+        channel = params.channel_id;
+        integration = params.integration_id;
+    }
 
     useEffect(() => {
         search();
-    }, []);
+    }, [debugData]);
 
     const classes = useStyles();
 
@@ -70,7 +81,6 @@ const Messages = ({ packageUrl }, props) => {
             if (channelResponse?.data?.hits?.hits) {
                 const messages = channelResponse.data.hits.hits;
                 const totalMessages = channelResponse.data.hits.total.value;
-                console.log(messages);
 
                 const parsedMessages = messages.map((messageData) => {
                     const messageId = messageData._id;
@@ -115,8 +125,10 @@ const Messages = ({ packageUrl }, props) => {
         downloadJsonFile(data, `channel_${channel}_messages.json`);
     };
 
-    const handleDownloadMessage = (data) => {
-        downloadJsonFile(data, `channel_${channel}_message${data.breadcrumb_id}.json`);
+    const handleDownloadMessage = async (record) => {
+        const data = await getMessageTraces(channel, record.breadcrumb_id);
+
+        downloadJsonFile(data, `channel_${channel}_message${record.breadcrumb_id}_traces.json`);
     };
 
     const drawMessageActions = (record) => {
@@ -124,6 +136,7 @@ const Messages = ({ packageUrl }, props) => {
             <Space size="middle">
                 <Button
                     key="showMessage"
+                    title="Ver trazas del mensaje"
                     type="text"
                     onClick={(e) => {
                         setDetailedMessage(record);
@@ -149,7 +162,7 @@ const Messages = ({ packageUrl }, props) => {
             title: "Estado",
             dataIndex: "status",
             key: "status",
-            width: 25,
+            width: 50,
             align: "center",
 
             render: (text, record) => {
@@ -200,37 +213,38 @@ const Messages = ({ packageUrl }, props) => {
             title: T.translate("integrations.columns.actions"),
             key: "action",
             width: 50,
+            fixed: "right",
             render: (text, record) => {
                 return drawMessageActions(record);
             },
         },
     ];
 
-    // const getFiltersByPairs = (str) => {
-    //     const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
-    //     let m;
+    const getFiltersByPairs = (str) => {
+        const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
+        let m;
 
-    //     let data = {};
-    //     while ((m = regex.exec(str)) !== null) {
-    //         // This is necessary to avoid infinite loops with zero-width matches
-    //         if (m.index === regex.lastIndex) {
-    //             regex.lastIndex++;
-    //         }
-    //         let { key, value } = m.groups;
-    //         if (key) {
-    //             data[key] = {
-    //                 type: "likeI",
-    //                 value: `%${value}%`,
-    //             };
-    //         }
-    //     }
-    //     return data;
-    // };
+        let data = {};
+        while ((m = regex.exec(str)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+            let { key, value } = m.groups;
+            if (key) {
+                data[key] = {
+                    type: "likeI",
+                    value: `${value}`,
+                };
+            }
+        }
+        return data;
+    };
 
     const onSearch = (value) => {
-        // if (value.indexOf(":") !== -1) {
-        //     return search(null, getFiltersByPairs(value));
-        // }
+        if (value.indexOf(":") !== -1) {
+            return search(null, getFiltersByPairs(value));
+        }
         if (value) {
             search(null, {
                 "integration.data::text": {
@@ -241,7 +255,43 @@ const Messages = ({ packageUrl }, props) => {
         }
     };
 
-    return (
+    const MessageTable = () => {
+        return (
+            <>
+                {dataSource && (
+                    <Table
+                        loading={loading}
+                        key="messages-table"
+                        dataSource={dataSource}
+                        columns={columns}
+                        onChange={search}
+                        pagination={pagination}
+                        rowKey={"id"}
+                        childrenColumnName={"channels"}
+                        bordered
+                        sort
+                        scroll={{ x: 1100 }}
+                        size="small"
+                    />
+                )}
+                {messageModalVisible && (
+                    <Message
+                        visible={messageModalVisible}
+                        messageData={detailedMessage}
+                        integration={integration}
+                        channel={channel}
+                        onCancel={() => {
+                            setDetailedMessage([]);
+                            setMessageModalVisible(false);
+                        }}></Message>
+                )}
+            </>
+        );
+    };
+
+    return debugData ? (
+        <MessageTable />
+    ) : (
         <Content>
             <Row className={classes.card}>
                 <Col flex={1}>
@@ -259,32 +309,7 @@ const Messages = ({ packageUrl }, props) => {
                     </Row>
                 </Col>
             </Row>
-            {dataSource && (
-                <Table
-                    loading={loading}
-                    key="messages-table"
-                    dataSource={dataSource}
-                    columns={columns}
-                    onChange={search}
-                    pagination={pagination}
-                    rowKey={"id"}
-                    childrenColumnName={"channels"}
-                    bordered
-                    sort
-                    size="small"
-                />
-            )}
-            {messageModalVisible && (
-                <Message
-                    visible={messageModalVisible}
-                    messageData={detailedMessage}
-                    integration={integration}
-                    channel={channel}
-                    onCancel={() => {
-                        setDetailedMessage([]);
-                        setMessageModalVisible(false);
-                    }}></Message>
-            )}
+            <MessageTable />
         </Content>
     );
 };

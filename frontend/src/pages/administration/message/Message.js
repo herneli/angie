@@ -224,6 +224,12 @@ const groupNodes = (messages, nodes) => {
     return result;
 };
 
+/**
+ * Obtiene los nodos de un canal
+ * @param {*} integration Id de la integración
+ * @param {*} channel Id del canal
+ * @returns
+ */
 const getChannelNodes = async (integration, channel) => {
     try {
         const response = await axios.get(`/integration/${integration}/channel/${channel}`);
@@ -240,7 +246,13 @@ const getChannelNodes = async (integration, channel) => {
     }
 };
 
-const getMessageTraces = async (channel, messageId) => {
+/**
+ * Obtiene las trazas de un mensaje
+ * @param {*} channel Id del canal
+ * @param {*} messageId Id del mensaje (breadcrumb_id)
+ * @returns
+ */
+export const getMessageTraces = async (channel, messageId) => {
     try {
         const response = await axios.get(`/messages/${channel}/traces/${messageId}`);
         if (response.data?.hits?.hits) {
