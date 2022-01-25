@@ -26,9 +26,17 @@ const resizerStyleLeft = {
     backgroundColor: "#fff",
 };
 
-const ResizableDrawer = ({ children, ...props }) => {
+const ResizableDrawer = ({ children, customWidth, ...props }) => {
     const [isResizing, setIsResizing] = useState(false);
     const [width, setWidth] = useState(props.width);
+
+    useEffect(() => {
+        if (customWidth) {
+            setWidth(customWidth);
+        } else {
+            setWidth(props.width);
+        }
+    }, [customWidth]);
 
     const onMouseDown = (e) => {
         setIsResizing(true);
@@ -47,7 +55,7 @@ const ResizableDrawer = ({ children, ...props }) => {
                 currentOffset = e.clientX - document.body.offsetLeft;
             }
             const minWidth = 50;
-            const maxWidth = 800;
+            const maxWidth = customWidth || 800;
             if (currentOffset > minWidth && currentOffset < maxWidth) {
                 setWidth(currentOffset);
             }
