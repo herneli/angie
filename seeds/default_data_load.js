@@ -52,7 +52,7 @@ const readTableFolder = async (knex, basedir, table, package_code, package_versi
 
         try {
             let data = JSON.parse(file);
-            if(!Array.isArray(data)){
+            if (!Array.isArray(data)) {
                 data = [data];
             }
             let parsedData = data.map((el) => {
@@ -60,8 +60,12 @@ const readTableFolder = async (knex, basedir, table, package_code, package_versi
                     id: el.id,
                     code: el.code,
                     document_type: document_type,
-                    data: { ...el },
                 };
+                if (el.data) {
+                    obj.data = { ...el.data };
+                } else {
+                    obj.data = { ...el };
+                }
 
                 if (package_code) obj.package_code = package_code;
                 if (package_version) obj.package_version = package_version;
