@@ -13,9 +13,10 @@ services:
             - 3132:5432/tcp
         
     angie_elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
         environment:
             - discovery.type=single-node
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
         ports:
             - 3103:3103
         volumes:
@@ -23,7 +24,7 @@ services:
             - ./elastic/data:/usr/share/elasticsearch/data
 
     angie_kibana:
-        image: docker.elastic.co/kibana/kibana:7.14.1
+        image: docker.elastic.co/kibana/kibana:7.16.3
         ports:
             - 3108:5601
         volumes:
