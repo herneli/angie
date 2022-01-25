@@ -1,34 +1,36 @@
 {
-    "id": 1045,
+    "id": 124,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "logInfo",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 124,
+        "code": "logInfo",
+        "name": "Log información",
         "type": {
-            "type": "$self"
+            "type": "void"
         },
         "isActive": true,
         "language": "groovy",
         "parentType": {
-            "type": "string"
+            "type": "object",
+            "objectCode": "angie.core.functions"
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "println(params.message);",
         "description": "",
         "package_code": "angie.core",
         "paramMembers": [
             {
-                "code": "value",
-                "name": "Valor",
+                "code": "message",
+                "name": "Mensaje",
                 "type": {
-                    "type": "$self"
+                    "type": "string"
                 },
                 "required": false
             }
         ],
+        "renderTemplate": "Log {{message}}",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""

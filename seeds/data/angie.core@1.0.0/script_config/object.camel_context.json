@@ -1,0 +1,44 @@
+{
+    "id": 22454,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "object",
+    "code": "camel_context",
+    "data": {
+        "id": 22454,
+        "code": "camel_context",
+        "name": "Camel context",
+        "properties": [
+            {
+                "code": "exchange",
+                "name": "Exchange",
+                "type": {
+                    "type": "object",
+                    "objectCode": "angie.core.camel_exchange"
+                },
+                "complexityLevel": 1
+            },
+            {
+                "code": "functions",
+                "name": "Funciones",
+                "type": {
+                    "type": "object",
+                    "objectCode": "angie.core.functions"
+                },
+                "complexityLevel": 1
+            },
+            {
+                "code": "request",
+                "name": "Request",
+                "type": {
+                    "type": "object",
+                    "objectCode": "angie.core.camel_request"
+                },
+                "complexityLevel": 1
+            }
+        ],
+        "customGroup": "",
+        "package_code": "angie.core",
+        "package_version": "1.0.0"
+    }
+}

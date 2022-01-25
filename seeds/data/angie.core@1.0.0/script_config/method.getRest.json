@@ -1,0 +1,43 @@
+{
+    "id": 22434,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "getRest",
+    "data": {
+        "id": 22434,
+        "code": "getRest",
+        "name": "Get rest",
+        "type": {
+            "type": "object",
+            "items": {
+                "type": "string"
+            },
+            "objectCode": "angie.core.genetic_object"
+        },
+        "name_": "Get Scrum members CLONED",
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "object",
+            "objectCode": "angie.core.functions"
+        },
+        "sourceCode": "def res = params.url.toURL().text;\ndef json = new groovy.json.JsonSlurper().parseText(res)\nreturn json",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "url",
+                "name": "URL",
+                "type": {
+                    "type": "string"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Get rest {{url}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

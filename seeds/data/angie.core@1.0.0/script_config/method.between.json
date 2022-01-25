@@ -1,0 +1,46 @@
+{
+    "id": 126,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "between",
+    "data": {
+        "id": 126,
+        "code": "between",
+        "name": "Entre",
+        "type": {
+            "type": "boolean"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "integer"
+        },
+        "sourceCode": "return (self >= params.from && self <= params.to);",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "from",
+                "name": "Desde",
+                "type": {
+                    "type": "integer"
+                },
+                "required": false
+            },
+            {
+                "code": "to",
+                "name": "Hasta",
+                "type": {
+                    "type": "integer"
+                },
+                "required": false
+            }
+        ],
+        "renderOperator": "entre",
+        "renderTemplate": "{{from}} y {{to}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

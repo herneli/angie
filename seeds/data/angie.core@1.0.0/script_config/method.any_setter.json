@@ -1,22 +1,23 @@
 {
-    "id": 1045,
+    "id": 146,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "any_setter",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 146,
+        "code": "any_setter",
+        "name": "Asignar valor",
         "type": {
-            "type": "$self"
+            "type": "void"
         },
+        "color": "green",
         "isActive": true,
         "language": "groovy",
         "parentType": {
-            "type": "string"
+            "type": "$any"
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "nestedSet(context.variables, variablePath, params.value);",
         "description": "",
         "package_code": "angie.core",
         "paramMembers": [
@@ -29,6 +30,7 @@
                 "required": false
             }
         ],
+        "renderTemplate": "Asignar valor {{value}}",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""

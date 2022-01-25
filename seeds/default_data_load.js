@@ -51,7 +51,10 @@ const readTableFolder = async (knex, basedir, table, package_code, package_versi
         const file = await fs.readFile(path.join(basedir, table, file_name), "utf-8");
 
         try {
-            const data = JSON.parse(file);
+            let data = JSON.parse(file);
+            if(!Array.isArray(data)){
+                data = [data];
+            }
             let parsedData = data.map((el) => {
                 const obj = {
                     id: el.id,

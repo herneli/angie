@@ -1,0 +1,49 @@
+{
+    "id": 23763,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "setJson_setter",
+    "data": {
+        "id": 23763,
+        "code": "setJson_setter",
+        "name": "Asignar JSON",
+        "type": {
+            "type": "void",
+            "objectCode": "genetic_object"
+        },
+        "imports": [
+            "groovy.json.JsonSlurper"
+        ],
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$any",
+            "objectCode": "functions"
+        },
+        "sourceCode": "params.json = resolveTemplate(params.json, context);\ndef value = new groovy.json.JsonSlurper().parseText(params.json);\nnestedSet(context.variables, variablePath, value);\n",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "json",
+                "name": "JSON template",
+                "type": {
+                    "type": "string",
+                    "widget": "AceEditorWidget"
+                },
+                "options": [
+                    {
+                        "code": "mode",
+                        "value": "json_text"
+                    }
+                ],
+                "required": false
+            }
+        ],
+        "renderTemplate": "JSON {{json}} ",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

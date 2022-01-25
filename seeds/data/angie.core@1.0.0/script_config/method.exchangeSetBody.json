@@ -1,34 +1,37 @@
 {
-    "id": 1045,
+    "id": 22457,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "exchangeSetBody",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 22457,
+        "code": "exchangeSetBody",
+        "name": "Set body",
         "type": {
-            "type": "$self"
+            "type": "void"
         },
+        "name_": "Test CLONED",
         "isActive": true,
         "language": "groovy",
         "parentType": {
-            "type": "string"
+            "type": "object",
+            "objectCode": "angie.core.camel_exchange"
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "self.getIn().setBody(params.body);",
         "description": "",
         "package_code": "angie.core",
         "paramMembers": [
             {
-                "code": "value",
-                "name": "Valor",
+                "code": "body",
+                "name": "Cuerpo",
                 "type": {
-                    "type": "$self"
+                    "type": "string"
                 },
                 "required": false
             }
         ],
+        "renderTemplate": "Modificar cuerpo {{body}}",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""

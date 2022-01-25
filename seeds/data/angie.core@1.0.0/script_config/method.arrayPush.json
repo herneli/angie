@@ -1,34 +1,39 @@
 {
-    "id": 1045,
+    "id": 23764,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "arrayPush",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 23764,
+        "code": "arrayPush",
+        "name": "Añadir elemento",
         "type": {
-            "type": "$self"
+            "type": "void"
         },
+        "imports": [],
         "isActive": true,
         "language": "groovy",
         "parentType": {
-            "type": "string"
+            "type": "array",
+            "items": {
+                "type": "$any"
+            }
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "self.add(params.item);",
         "description": "",
         "package_code": "angie.core",
         "paramMembers": [
             {
-                "code": "value",
-                "name": "Valor",
+                "code": "item",
+                "name": "Elemento",
                 "type": {
-                    "type": "$self"
+                    "type": "$item"
                 },
                 "required": false
             }
         ],
+        "renderTemplate": "Añadir {{item}}",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""

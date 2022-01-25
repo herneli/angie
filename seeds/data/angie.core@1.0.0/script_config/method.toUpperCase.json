@@ -1,34 +1,25 @@
 {
-    "id": 1045,
+    "id": 22459,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "toUpperCase",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 22459,
+        "code": "toUpperCase",
+        "name": "Mayúsculas",
         "type": {
-            "type": "$self"
+            "type": "string"
         },
         "isActive": true,
         "language": "groovy",
         "parentType": {
             "type": "string"
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "return self.toUpperCase();",
         "description": "",
         "package_code": "angie.core",
-        "paramMembers": [
-            {
-                "code": "value",
-                "name": "Valor",
-                "type": {
-                    "type": "$self"
-                },
-                "required": false
-            }
-        ],
+        "renderTemplate": "Mayúsculas",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""

@@ -1,22 +1,22 @@
 {
-    "id": 1045,
+    "id": 117,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
-    "code": "concat",
+    "code": "eq",
     "data": {
-        "id": 1045,
-        "code": "concat",
-        "name": "Concatenar",
+        "id": 117,
+        "code": "eq",
+        "name": "=",
         "type": {
-            "type": "$self"
+            "type": "boolean"
         },
         "isActive": true,
         "language": "groovy",
         "parentType": {
-            "type": "string"
+            "type": "$anyPrimitive"
         },
-        "sourceCode": "return self + params.value;",
+        "sourceCode": "// Check git very last\nreturn self == params.value;",
         "description": "",
         "package_code": "angie.core",
         "paramMembers": [
@@ -29,6 +29,8 @@
                 "required": false
             }
         ],
+        "renderOperator": "=",
+        "renderTemplate": "{{value}}",
         "complexityLevel": 1,
         "package_version": "1.0.0",
         "sourceCodeForBinaryOperator": ""
