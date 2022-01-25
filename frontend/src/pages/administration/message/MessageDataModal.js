@@ -5,6 +5,7 @@ export default function MessageDataModal({ visible, onCancel, messageData, integ
     const { node, content, type } = messageData;
     const title = type === "error" ? `Execepción (${node})` : `Body (${node})`;
     const width = type === "error" ? 1000 : 800;
+    const mode = type === "error" ? null : "json";
     return (
         <Modal
             title={title}
@@ -21,7 +22,7 @@ export default function MessageDataModal({ visible, onCancel, messageData, integ
                     useWorker: false,
                 }}
                 value={content}
-                mode="json"
+                mode={mode}
                 theme="github"
                 readOnly
             />
