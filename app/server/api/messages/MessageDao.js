@@ -4,9 +4,18 @@ export class MessageDao extends BaseDao {
     getChannelMessages(channelId, filters) {
         //TODO: añadir búsqueda y ordenación
         const { start = 0, limit = 10 } = filters;
+        delete filters.start;
+        delete filters.limit;
+
+        if (!filters.sort) {
+            filters.sort = {
+                field: "date_reception",
+                direction: "descend",
+            };
+        }
 
         this.tableName = `messages_${channelId}`;
-        return this.loadAllData({}, start, limit);
+        return this.loadAllData(filters, start, limit);
     }
 
     getMessageTraces(channelId, messageId) {
