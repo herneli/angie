@@ -1,0 +1,38 @@
+{
+    "id": 146,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "any_setter",
+    "data": {
+        "id": 146,
+        "code": "any_setter",
+        "name": "Asignar valor",
+        "type": {
+            "type": "void"
+        },
+        "color": "green",
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$any"
+        },
+        "sourceCode": "nestedSet(context.variables, variablePath, params.value);",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "value",
+                "name": "Valor",
+                "type": {
+                    "type": "$self"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Asignar valor {{value}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

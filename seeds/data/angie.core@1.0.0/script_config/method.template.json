@@ -1,0 +1,38 @@
+{
+    "id": 23762,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "template",
+    "data": {
+        "id": 23762,
+        "code": "template",
+        "name": "Plantilla",
+        "type": {
+            "type": "string"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "object",
+            "objectCode": "angie.core.functions"
+        },
+        "sourceCode": "return resolveTemplate(params.template, context);",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "template",
+                "name": "Plantilla",
+                "type": {
+                    "type": "string"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Plantilla {{template}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

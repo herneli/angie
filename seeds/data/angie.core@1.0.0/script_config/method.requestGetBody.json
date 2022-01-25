@@ -1,0 +1,32 @@
+{
+    "id": 23769,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "requestGetBody",
+    "data": {
+        "id": 23769,
+        "code": "requestGetBody",
+        "name": "As HL7",
+        "type": {
+            "type": "object",
+            "objectCode": "angie.core.hl7_message"
+        },
+        "imports": [
+            "ca.uhn.hl7v2.model.Message"
+        ],
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "object",
+            "objectCode": "angie.core.camel_request"
+        },
+        "sourceCode": "return self.getBody(ca.uhn.hl7v2.model.Message.class);",
+        "description": "",
+        "package_code": "angie.core",
+        "renderTemplate": "As HL7",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

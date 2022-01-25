@@ -1,0 +1,38 @@
+{
+    "id": 117,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "eq",
+    "data": {
+        "id": 117,
+        "code": "eq",
+        "name": "=",
+        "type": {
+            "type": "boolean"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyPrimitive"
+        },
+        "sourceCode": "// Check git very last\nreturn self == params.value;",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "value",
+                "name": "Valor",
+                "type": {
+                    "type": "$self"
+                },
+                "required": false
+            }
+        ],
+        "renderOperator": "=",
+        "renderTemplate": "{{value}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

@@ -1,0 +1,45 @@
+{
+    "id": 23767,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "setProperty",
+    "data": {
+        "id": 23767,
+        "code": "setProperty",
+        "name": "Asignar propiedad",
+        "type": {
+            "type": "void"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyObject"
+        },
+        "sourceCode": "self[params.property] = params.value;",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "property",
+                "name": "Propiedad",
+                "type": {
+                    "type": "string"
+                },
+                "required": false
+            },
+            {
+                "code": "value",
+                "name": "Valor",
+                "type": {
+                    "type": "$any"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "{{property}} <- {{value}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

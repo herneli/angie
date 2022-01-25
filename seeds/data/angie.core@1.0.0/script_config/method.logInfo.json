@@ -1,0 +1,38 @@
+{
+    "id": 124,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "logInfo",
+    "data": {
+        "id": 124,
+        "code": "logInfo",
+        "name": "Log información",
+        "type": {
+            "type": "void"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "object",
+            "objectCode": "angie.core.functions"
+        },
+        "sourceCode": "println(params.message);",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "message",
+                "name": "Mensaje",
+                "type": {
+                    "type": "string"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Log {{message}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

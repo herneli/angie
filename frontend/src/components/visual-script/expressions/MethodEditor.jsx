@@ -77,7 +77,7 @@ export default function MethodEditor({ member, variables, onParametersEntered, o
             if (member.type.type === "array") {
                 uiSchema.items = {
                     "ui:widget": "SelectRemoteWidget",
-                    "ui:remoteValues": member.type.selectOptions,
+                    "ui:selectOptions": member.type.selectOptions,
                 };
             } else {
                 uiSchema = {

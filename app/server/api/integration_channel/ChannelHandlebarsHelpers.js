@@ -16,6 +16,8 @@ class ChannelHandlebarsHelpers {
             gte: (...args) => this.reduceOp(args, (a, b) => a >= b),
             and: (...args) => this.reduceOp(args, (a, b) => a && b),
             or: (...args) => this.reduceOp(args, (a, b) => a || b),
+            not_empty: (...args) => this.reduceOp(args, (a) => !lodash.isEmpty(a)),
+            empty: (...args) => this.reduceOp(args, (a) => lodash.isEmpty(a)),
         });
         Handlebars.registerHelper("safe", (inputData) => this.safe(inputData));
         Handlebars.registerHelper("escapeMessage", (inputData) => this.processMessageCarriage(inputData));
@@ -26,6 +28,7 @@ class ChannelHandlebarsHelpers {
         Handlebars.registerHelper("setHeader", (code, value, format) => this.setHeader(code, value, format));
         Handlebars.registerHelper("setHeaderList", (list) => this.setHeaderList(list));
         Handlebars.registerHelper("groovyList", (inputData) => this.groovyList(inputData));
+        Handlebars.registerHelper("generateDestination", (target, mode) => this.generateDestination(target, mode));
     }
 
     /**
@@ -64,6 +67,28 @@ class ChannelHandlebarsHelpers {
             return "";
         }
         return this.safe(`<setHeader name="${code}"><${format}>${value}</${format}></setHeader>`);
+    }
+
+    /**
+     *
+     * @param {*} target
+     * @param {*} mode
+     * @returns
+     */
+    generateDestination(target, mode) {
+        if (lodash.isObject(mode)) {
+            mode = "direct";
+        }
+
+        if (Array.isArray(target) && target.length > 1) {
+            return this.safe(`<multicast>
+                ${target.map((el) => `<to uri="${mode}:${el}" />`).join('\n')}
+            </multicast>`);
+        }
+        if (!Array.isArray(target) || target.length == 1) {
+            return this.safe(`<to uri="${mode}:${target}" />`);
+        }
+        return "";
     }
 
     /**

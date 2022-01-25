@@ -1,0 +1,15 @@
+{
+    "id": 23768,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "object",
+    "code": "camel_request",
+    "data": {
+        "id": 23768,
+        "code": "camel_request",
+        "name": "Camel request",
+        "customGroup": "",
+        "package_code": "angie.core",
+        "package_version": "1.0.0"
+    }
+}

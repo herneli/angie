@@ -1,0 +1,49 @@
+{
+    "id": 125,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "range",
+    "data": {
+        "id": 125,
+        "code": "range",
+        "name": "Nuevo rango de números",
+        "type": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "object",
+            "objectCode": "angie.core.functions"
+        },
+        "sourceCode": "if (params.fromOne){\n    return (1..(params.size)).toList();\n}else{\n    return (0..(params.size-1)).toList();\n}",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "size",
+                "name": "Tamaño",
+                "type": {
+                    "type": "integer"
+                },
+                "required": false
+            },
+            {
+                "code": "fromOne",
+                "name": "Primer valor 1",
+                "type": {
+                    "type": "boolean"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Lista de {{size}} elementos",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "id": 22433,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "object",
+    "code": "genetic_object",
+    "data": {
+        "id": 22433,
+        "code": "genetic_object",
+        "name": "Objeto genérico",
+        "customGroup": ""
+    }
+}

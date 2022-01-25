@@ -1,0 +1,27 @@
+{
+    "id": 22459,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "toUpperCase",
+    "data": {
+        "id": 22459,
+        "code": "toUpperCase",
+        "name": "Mayúsculas",
+        "type": {
+            "type": "string"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "string"
+        },
+        "sourceCode": "return self.toUpperCase();",
+        "description": "",
+        "package_code": "angie.core",
+        "renderTemplate": "Mayúsculas",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

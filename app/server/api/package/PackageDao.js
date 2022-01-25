@@ -6,7 +6,7 @@ export class PackageDao extends BaseKnexDao {
 
     async getPackageList() {
         let knex = KnexConnector.connection;
-        let packageList = await knex("package");
+        let packageList = await knex("package").orderBy("code");
         let packageVersionService = new PackageVersionService();
         let newPackageList = [];
         for (const packageData of packageList) {
@@ -28,5 +28,14 @@ export class PackageDao extends BaseKnexDao {
             let packageVersions = await packageVersionService.getPackageVersionList(packageData.code);
             return { ...packageData, versions: packageVersions };
         }
+    }
+
+    async deletePackage(code) {
+        let knex = KnexConnector.connection;
+        await knex("package")
+            .where({
+                code: code,
+            })
+            .del();
     }
 }

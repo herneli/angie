@@ -41,7 +41,7 @@ class Transformer {
                     id: node.id,
                     position: node.position,
                     style: {
-                        "border-color": nodeType.custom_color && nodeType.component_border_color,
+                        borderColor: nodeType.custom_color && nodeType.component_border_color,
                         background: nodeType.custom_color && nodeType.component_bg_color,
                     },
                     data: {
@@ -53,6 +53,7 @@ class Transformer {
                     targetPosition: "left",
                 });
                 if (node.links) {
+                    let i = 0;
                     for (const link of node.links) {
                         const existTarget = lodash.find(bdModel?.nodes, { id: link.node_id });
                         if (!existTarget) {
@@ -63,10 +64,11 @@ class Transformer {
                             sourceHandle: link.handle,
                             target: link.node_id,
                             targetHandle: null,
-                            label: "",
+                            label: node.links && node.links.length > 1 && "idx: " + i,
                             // "type": 'smoothstep',
                             id: `reactflow__edge-${node.id}${link.handle}-${link.node_id}null`,
                         });
+                        i++;
                     }
                 }
             }

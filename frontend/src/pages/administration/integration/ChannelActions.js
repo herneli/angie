@@ -5,10 +5,10 @@ import AceEditor from "../../../components/ace-editor/AceEditor";
 
 class ChannelActions {
     /**
-     * 
-     * @param {*} Transformer 
-     * @param {*} channel 
-     * @returns 
+     *
+     * @param {*} Transformer
+     * @param {*} channel
+     * @returns
      */
     getChannelDebug = async (Transformer, channel) => {
         if (channel) {
@@ -26,10 +26,10 @@ class ChannelActions {
     };
 
     /**
-     * 
-     * @param {*} integrationId 
-     * @param {*} channelId 
-     * @returns 
+     *
+     * @param {*} integrationId
+     * @param {*} channelId
+     * @returns
      */
     getChannelLog = async (integrationId, channelId) => {
         const response = await axios.get(`/integration/${integrationId}/channel/${channelId}/log`);
@@ -50,19 +50,21 @@ class ChannelActions {
                 centered: true,
                 content: (
                     <Tabs defaultActiveKey={activeAgent}>
-                        {agentLogs.map((agent) => (
-                            <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
-                                <AceEditor
-                                    setOptions={{
-                                        useWorker: false,
-                                    }}
-                                    width="100%"
-                                    value={agent.data + ""}
-                                    name="chann.log"
-                                    theme="github"
-                                />
-                            </Tabs.TabPane>
-                        ))}
+                        {agentLogs &&
+                            Array.isArray(agentLogs) &&
+                            agentLogs.map((agent) => (
+                                <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
+                                    <AceEditor
+                                        setOptions={{
+                                            useWorker: false,
+                                        }}
+                                        width="100%"
+                                        value={agent.data + ""}
+                                        name="chann.log"
+                                        theme="github"
+                                    />
+                                </Tabs.TabPane>
+                            ))}
                     </Tabs>
                 ),
                 onOk() {},

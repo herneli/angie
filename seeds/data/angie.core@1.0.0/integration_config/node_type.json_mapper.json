@@ -9,7 +9,7 @@
     "defaults": "{\n    \"code\": \"\"\n}",
     "alt_codes": "core.utils.json_mapper",
     "package_code": "angie.core",
-    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{{JSONStringify code}}]]>\n        </simple>\n    </setBody>\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    <setBody>\n        <simple trim=\"false\">\n<![CDATA[{{JSONStringify code}}]]>\n        </simple>\n    </setBody>\n    {{generateDestination target}}\n</route>",
     "json_ui_schema": "{\n    \"code\": {\n        \"ui:columnSize\": \"12\"\n    }\n}",
     "package_version": "1.0.0",
     "json_data_schema": "{\n    \"description\": \"Create simple JSON objects from input message.\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\",\n        \"code\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"type\": \"string\"\n        },\n        \"code\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"type\": \"string\"\n            }\n        }\n    }\n}",

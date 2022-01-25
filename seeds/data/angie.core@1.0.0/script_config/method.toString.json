@@ -1,0 +1,27 @@
+{
+    "id": 122,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "toString",
+    "data": {
+        "id": 122,
+        "code": "toString",
+        "name": "Convertir a texto",
+        "type": {
+            "type": "string"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyPrimitive"
+        },
+        "sourceCode": "return self?.toString();",
+        "description": "",
+        "package_code": "angie.core",
+        "renderTemplate": "Como texto",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

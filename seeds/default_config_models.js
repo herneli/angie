@@ -180,7 +180,7 @@ exports.seed = async function (knex) {
                                     enumNames: [
                                         "Cualquier tipo",
                                         "Cualquier tipo primitivo",
-                                        "Cualquier objecto",
+                                        "Cualquier objeto",
                                         "Lista",
                                         "Boleano",
                                         "Fecha",
@@ -365,22 +365,23 @@ exports.seed = async function (knex) {
                         },
                     },
                     isActive: {
+                        "ui:widget": "checkbox",
                         "ui:columnSize": "12",
                     },
                     parentType: {
                         "ui:columnSize": "6",
                         "ui:withBorder": true,
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                         items: {
                             "ui:withBorder": true,
                             objectCode: {
-                                "ui:widget": "SelectRemoteWidget",
+                                "ui:widget": "SelectRemoteWithPackageWidget",
                                 "ui:selectOptions":
-                                    "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                    "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                             },
                         },
                     },
@@ -388,16 +389,16 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                         "ui:withBorder": true,
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                         items: {
                             "ui:withBorder": true,
                             objectCode: {
-                                "ui:widget": "SelectRemoteWidget",
+                                "ui:widget": "SelectRemoteWithPackageWidget",
                                 "ui:selectOptions":
-                                    "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                    "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                             },
                         },
                     },
@@ -443,16 +444,16 @@ exports.seed = async function (knex) {
                                 "ui:columnSize": "12",
                                 "ui:withBorder": true,
                                 objectCode: {
-                                    "ui:widget": "SelectRemoteWidget",
+                                    "ui:widget": "SelectRemoteWithPackageWidget",
                                     "ui:selectOptions":
-                                        "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                        "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                 },
                                 items: {
                                     "ui:withBorder": true,
                                     objectCode: {
-                                        "ui:widget": "SelectRemoteWidget",
+                                        "ui:widget": "SelectRemoteWithPackageWidget",
                                         "ui:selectOptions":
-                                            "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                            "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                     },
                                 },
                             },
@@ -637,6 +638,7 @@ exports.seed = async function (knex) {
                                 "ui:columnSize": "3",
                             },
                             required: {
+                                "ui:widget": "checkbox",
                                 "ui:columnSize": "3",
                             },
                             path: { "ui:columnSize": "6" },
@@ -648,9 +650,9 @@ exports.seed = async function (knex) {
                                 "ui:withBorder": true,
                                 "ui:columnSize": "12",
                                 objectCode: {
-                                    "ui:widget": "SelectRemoteWidget",
+                                    "ui:widget": "SelectRemoteWithPackageWidget",
                                     "ui:selectOptions":
-                                        "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                        "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                                 },
                             },
                         },
@@ -1012,9 +1014,9 @@ exports.seed = async function (knex) {
                     },
                     type: {
                         objectCode: {
-                            "ui:widget": "SelectRemoteWidget",
+                            "ui:widget": "SelectRemoteWithPackageWidget",
                             "ui:selectOptions":
-                                "/configuration/model/script_object/data#path=data&value=code&label=data.name",
+                                "/configuration/model/script_object/data#path=data&value=fullCode&label=data.name",
                         },
                     },
                     startCode: { "ui:widget": "textarea", "ui:options": { rows: 5 } },

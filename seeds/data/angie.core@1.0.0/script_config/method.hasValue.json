@@ -1,0 +1,27 @@
+{
+    "id": 123,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "hasValue",
+    "data": {
+        "id": 123,
+        "code": "hasValue",
+        "name": "¿Tiene valor?",
+        "type": {
+            "type": "boolean"
+        },
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyPrimitive"
+        },
+        "sourceCode": "return !!self;",
+        "description": "",
+        "package_code": "angie.core",
+        "renderOperator": "¿Tiene valor?",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

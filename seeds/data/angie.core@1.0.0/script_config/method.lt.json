@@ -1,0 +1,39 @@
+{
+    "id": 120,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "lt",
+    "data": {
+        "id": 120,
+        "code": "lt",
+        "name": "<",
+        "type": {
+            "type": "boolean"
+        },
+        "name_": "> CLONED",
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyPrimitive"
+        },
+        "sourceCode": "return self < params.value;",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "value",
+                "name": "Valor",
+                "type": {
+                    "type": "$self"
+                },
+                "required": false
+            }
+        ],
+        "renderOperator": "<",
+        "renderTemplate": "{{value}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

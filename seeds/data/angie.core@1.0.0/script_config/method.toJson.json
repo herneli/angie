@@ -1,0 +1,30 @@
+{
+    "id": 23771,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "toJson",
+    "data": {
+        "id": 23771,
+        "code": "toJson",
+        "name": "To Json",
+        "type": {
+            "type": "string"
+        },
+        "imports": [
+            "com.fasterxml.jackson.databind.ObjectMapper"
+        ],
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "$anyObject"
+        },
+        "sourceCode": "return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(self)",
+        "description": "",
+        "package_code": "angie.core",
+        "renderTemplate": "To JSON",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}

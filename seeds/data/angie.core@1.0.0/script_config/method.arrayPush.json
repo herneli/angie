@@ -1,0 +1,41 @@
+{
+    "id": 23764,
+    "package_code": "angie.core",
+    "package_version": "1.0.0",
+    "document_type": "method",
+    "code": "arrayPush",
+    "data": {
+        "id": 23764,
+        "code": "arrayPush",
+        "name": "Añadir elemento",
+        "type": {
+            "type": "void"
+        },
+        "imports": [],
+        "isActive": true,
+        "language": "groovy",
+        "parentType": {
+            "type": "array",
+            "items": {
+                "type": "$any"
+            }
+        },
+        "sourceCode": "self.add(params.item);",
+        "description": "",
+        "package_code": "angie.core",
+        "paramMembers": [
+            {
+                "code": "item",
+                "name": "Elemento",
+                "type": {
+                    "type": "$item"
+                },
+                "required": false
+            }
+        ],
+        "renderTemplate": "Añadir {{item}}",
+        "complexityLevel": 1,
+        "package_version": "1.0.0",
+        "sourceCodeForBinaryOperator": ""
+    }
+}
