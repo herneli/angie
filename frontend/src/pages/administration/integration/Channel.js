@@ -6,6 +6,7 @@ import MultiTargetNode from "./custom_nodes/MultiTargetNode";
 import ButtonNode from "./custom_nodes/ButtonNode";
 import CommentNode from "./custom_nodes/CommentNode";
 import Transformer from "./Transformer";
+import Messages from "../message/Messages";
 
 import T from "i18n-react";
 import { v4 as uuid_v4 } from "uuid";
@@ -49,7 +50,7 @@ const Channel = ({
     const [elements, setElements] = useState(undefined);
     const [selectedType, changeSelection] = useState(null);
     const [editNodeVisible, setEditNodeVisible] = useState(false);
-
+    const [drawerWidth, setDraweWidth] = useState(null);
     const [selectedNodes, changeSelectedNodes] = useState(null);
 
     /**
@@ -495,6 +496,7 @@ const Channel = ({
                         closable={true}
                         mask={false}
                         getContainer={false}
+                        customWidth={drawerWidth}
                         width={500}
                         onClose={() => debugClose()}
                         visible={debugVisible}
@@ -515,7 +517,15 @@ const Channel = ({
                             </Space>
                         }
                         style={{ position: "absolute" }}>
-                        <Tabs defaultActiveKey={debugData?.channel?.agent?.id}>
+                        <Tabs
+                            defaultActiveKey={debugData?.channel?.agent?.id}
+                            onChange={(tab) => {
+                                if (tab === "messageTab") {
+                                    setDraweWidth(1000);
+                                } else if (drawerWidth) {
+                                    setDraweWidth(null);
+                                }
+                            }}>
                             {debugData &&
                                 debugData.logs &&
                                 debugData.logs.map((agent) => (
@@ -560,6 +570,9 @@ const Channel = ({
                                     mode="xml"
                                     theme="github"
                                 />
+                            </TabPane>
+                            <TabPane tab="Mensajes" key="messageTab">
+                                <Messages origin="channel" debugData={debugData} />
                             </TabPane>
                         </Tabs>
                     </ResizableDrawer>
