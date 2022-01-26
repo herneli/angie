@@ -68,6 +68,13 @@ export class PackageController extends BaseController {
                 this.importVersion(req, res, next);
             })
         );
+
+        this.router.post(
+            "/packages/:package_code/versions/:version_code/copy",
+            expressAsyncHandler((req, res, next) => {
+                this.copyVersion(req, res, next);
+            })
+        );
         this.router.get(
             "/packages/:package_code/check_remote_status",
             expressAsyncHandler((req, res, next) => {
@@ -170,8 +177,18 @@ export class PackageController extends BaseController {
     async importVersion(req, res, next) {
         try {
             let service = new PackageVersionService();
-            let importResponse = await service.importVersion(req.params.package_code, req.params.version_code);
+            let importResponse = await service.importAngiePackage(req.params.package_code, req.params.version_code);
             res.json(new JsonResponse(true, importResponse));
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async copyVersion(req, res, next) {
+        try {
+            let service = new PackageVersionService();
+            let copyResponse = await service.copyVersion(req.params.package_code, req.params.version_code, req.body);
+            res.json(new JsonResponse(true, copyResponse));
         } catch (e) {
             next(e);
         }

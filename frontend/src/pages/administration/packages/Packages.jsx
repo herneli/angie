@@ -4,10 +4,19 @@ import T from "i18n-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Icon from "@mdi/react";
-import { mdiApplicationCogOutline, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiPlus, mdiRefresh } from "@mdi/js";
+import {
+    mdiApplicationCogOutline,
+    mdiCloudDownload,
+    mdiCloudUpload,
+    mdiContentCopy,
+    mdiDelete,
+    mdiPlus,
+    mdiRefresh,
+} from "@mdi/js";
 import { createUseStyles } from "react-jss";
 
 import PackageNew from "./PackageNew";
+import PackageVersionNew from "./PackageVersionNew";
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -28,7 +37,7 @@ const useStyles = createUseStyles({
 export default function Packages({ history }) {
     const classes = useStyles();
     const [packages, setPackages] = useState();
-    const [dialogActive, setDialogActive] = useState(null);
+    const [dialogActive, setDialogActive] = useState();
     const loadPackages = () => {
         axios.get("/packages").then((response) => {
             setPackages(response.data.data.map((item) => ({ ...item, key: item.id })));
@@ -48,6 +57,10 @@ export default function Packages({ history }) {
             .catch((error) => {
                 notification.error({ message: T.translate("packages.publish_error") });
             });
+    };
+
+    const handleOnCopy = (packageVersion) => () => {
+        setDialogActive({ code: "copyVersion", payload: packageVersion });
     };
 
     const handleOnImport = (code, version) => () => {
@@ -74,7 +87,7 @@ export default function Packages({ history }) {
     };
 
     const handleOnAddPackage = () => {
-        setDialogActive("newPackage");
+        setDialogActive({ code: "newPackage", payload: null });
     };
 
     const handleOnDeletePackage = (code) => () => {
@@ -154,6 +167,18 @@ export default function Packages({ history }) {
                                         />
                                     }></Button>
                             ) : null}
+                            {record.remote_commit && record.remote_commit !== "initial" ? (
+                                <Button
+                                    type="text"
+                                    onClick={handleOnCopy(record)}
+                                    icon={
+                                        <Icon
+                                            path={mdiContentCopy}
+                                            title={T.translate("packages.copy_version")}
+                                            className={classes.icon}
+                                        />
+                                    }></Button>
+                            ) : null}
                             <Popconfirm
                                 title={T.translate("packages.delete_package_version_confirmation")}
                                 onConfirm={handleOnDeletePackageVersion(record.code, record.version)}>
@@ -181,6 +206,7 @@ export default function Packages({ history }) {
                         columns={extendedColumns}
                         dataSource={packageData.versions}
                         pagination={false}
+                        rowKey="version"
                     />
                 </Col>
             </Row>
@@ -191,15 +217,24 @@ export default function Packages({ history }) {
         setDialogActive(null);
     };
 
-    const handleOnCreatePackage = () => {
+    const handleOnDialogComplete = () => {
         setDialogActive(null);
         loadPackages();
     };
 
     const renderDialog = (dialog) => {
-        switch (dialog) {
+        switch (dialog.code) {
             case "newPackage":
-                return <PackageNew onCancel={handleOnDialogCancel} onCreate={handleOnCreatePackage} />;
+                return <PackageNew onCancel={handleOnDialogCancel} onCreate={handleOnDialogComplete} />;
+            case "copyVersion":
+                return (
+                    <PackageVersionNew
+                        baseVersion={dialog.payload}
+                        onCancel={handleOnDialogCancel}
+                        onOk={handleOnDialogComplete}
+                    />
+                );
+
             default:
                 return null;
         }

@@ -1,4 +1,5 @@
 import { BaseKnexDao, KnexConnector } from "lisco";
+import { PackageDao } from "./PackageDao";
 
 export class PackageVersionDao extends BaseKnexDao {
     tableName = "package_version";
@@ -13,13 +14,18 @@ export class PackageVersionDao extends BaseKnexDao {
     }
 
     async getPackageVersion(code, version) {
+        const packageDao = new PackageDao();
         let knex = KnexConnector.connection;
-        return await knex("package_version")
+        let packageVersion = await knex("package_version")
             .where({
                 code: code,
                 version: version,
             })
             .first();
+        if (packageVersion) {
+            packageVersion.packageData = await packageDao.getPackage(code);
+        }
+        return packageVersion;
     }
 
     async deletePackageVersion(code, version) {
