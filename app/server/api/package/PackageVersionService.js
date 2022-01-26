@@ -176,6 +176,53 @@ export class PackageVersionService extends BaseService {
         });
     }
 
+    async copyVersionLocal(packageVersion, newVersion) {
+        for (const component of packageComponent) {
+            if (component.document_types) {
+                for (const documentType of component.document_types) {
+                    let documents = await this.dao.getDocumentTypeItems(
+                        component.table,
+                        documentType,
+                        packageVersion.code,
+                        packageVersion.version
+                    );
+                    for (const document of documents) {
+                        if (component.id_mode === "uuid") {
+                            document.id = uuid_v4();
+                        } else {
+                            delete document.id;
+                        }
+                        await this.dao.insertDocumentTypeItem(
+                            component.table,
+                            documentType,
+                            packageVersion.code,
+                            newVersion.version,
+                            document
+                        );
+                    }
+                }
+            } else {
+                let documents = await this.dao.getTableItems(
+                    component.table,
+                    packageVersion.code,
+                    packageVersion.version
+                );
+
+                for (const document of documents) {
+                    if (component.id_mode === "uuid") {
+                        document.id = uuid_v4();
+                    } else {
+                        delete document.id;
+                    }
+                    await this.dao.insertTableItem(component.table, packageVersion.code, newVersion.version, document);
+                }
+            }
+        }
+        this.dao.updatePackageVersionStatus(packageVersion.code, newVersion.version, {
+            dependencies: JSON.stringify(packageVersion.dependencies),
+        });
+    }
+
     async generatePackageComponents(packageVersion, packagePath, git) {
         let gitPath = DOCS_FOLDER;
         await git.raw("rm", "-r", "--ignore-unmatch", gitPath);

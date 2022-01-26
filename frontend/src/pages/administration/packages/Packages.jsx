@@ -167,7 +167,7 @@ export default function Packages({ history }) {
                                         />
                                     }></Button>
                             ) : null}
-                            {record.remote_commit && record.remote_commit !== "initial" ? (
+                            {!packageData.remote || (record.remote_commit && record.remote_commit !== "initial") ? (
                                 <Button
                                     type="text"
                                     onClick={handleOnCopy(record)}
