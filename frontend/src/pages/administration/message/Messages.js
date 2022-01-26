@@ -31,9 +31,8 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Messages = ({ debugData }, props) => {
+const Messages = ({ debugData, ...props }) => {
     const [dataSource, setDataSource] = useState([]);
-    // const [dataSourceKeys, setDataSourceKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({});
     const [messageModalVisible, setMessageModalVisible] = useState(false);
@@ -44,7 +43,7 @@ const Messages = ({ debugData }, props) => {
     let integration = "";
 
     if (debugData) {
-        channel = params.channel;
+        channel = props.channel.id;
         integration = params.id;
     } else {
         channel = params.channel_id;
@@ -53,7 +52,7 @@ const Messages = ({ debugData }, props) => {
 
     useEffect(() => {
         search();
-    }, [debugData]);
+    }, []);
 
     const classes = useStyles();
 
@@ -135,30 +134,30 @@ const Messages = ({ debugData }, props) => {
             <Space size="middle">
                 <Button
                     key="showMessage"
-                    title="Ver trazas del mensaje"
+                    title={T.translate("messages.show_traces")}
                     type="text"
                     onClick={(e) => {
                         setDetailedMessage(record);
                         setMessageModalVisible(true);
                     }}
-                    icon={<Icon path={mdiMagnifyPlus} className={classes.icon} title={"Ver en detalle"} />}
+                    icon={<Icon path={mdiMagnifyPlus} className={classes.icon} />}
                 />
                 <Button
                     key="downloadMessage"
+                    title={T.translate("messages.download_traces")}
                     type="text"
                     onClick={(e) => {
                         handleDownloadMessage(record);
                     }}
-                    icon={<Icon path={mdiDownload} className={classes.icon} title={"Descargar"} />}
+                    icon={<Icon path={mdiDownload} className={classes.icon} />}
                 />
             </Space>
         );
     };
 
     const columns = [
-        //TODO: Traducir nombres de los campos
         {
-            title: "Estado",
+            title: T.translate("messages.status"),
             dataIndex: "status",
             key: "status.keyword",
             width: 50,
@@ -166,15 +165,15 @@ const Messages = ({ debugData }, props) => {
             sorter: true,
             render: (text, record) => {
                 if (text === "error") {
-                    return <Icon path={mdiEmailOff} size="1.5rem" color="red" title="Error" />;
+                    return <Icon path={mdiEmailOff} size="1.5rem" color="red" title={T.translate("common.error")} />;
                 }
 
-                return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title="Enviado" />;
+                return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title={T.translate("messages.sent")} />;
             },
         },
 
         {
-            title: "Id Mensaje",
+            title: T.translate("messages.message_id"),
             dataIndex: "breadcrumb_id",
             key: "_id",
             width: 200,
@@ -182,7 +181,7 @@ const Messages = ({ debugData }, props) => {
             sorter: true,
         },
         {
-            title: "Fecha de inicio",
+            title: T.translate("messages.date_reception"),
             dataIndex: "start",
             key: "date_reception",
             defaultSortOrder: "descend",
@@ -193,7 +192,7 @@ const Messages = ({ debugData }, props) => {
             },
         },
         {
-            title: "Fecha de finalización",
+            title: T.translate("messages.date_processed"),
             dataIndex: "end",
             key: "date_processed",
             sorter: true,
@@ -203,7 +202,7 @@ const Messages = ({ debugData }, props) => {
             },
         },
         {
-            title: "Elapsed",
+            title: T.translate("messages.elapsed"),
             dataIndex: "elapsed",
             key: "elapsed'",
             width: 80,
@@ -274,6 +273,7 @@ const Messages = ({ debugData }, props) => {
             )}
             {messageModalVisible && (
                 <Message
+                    classes={classes}
                     visible={messageModalVisible}
                     messageData={detailedMessage}
                     integration={integration}
@@ -320,6 +320,7 @@ const Messages = ({ debugData }, props) => {
             )}
             {messageModalVisible && (
                 <Message
+                    classes={classes}
                     visible={messageModalVisible}
                     messageData={detailedMessage}
                     integration={integration}
