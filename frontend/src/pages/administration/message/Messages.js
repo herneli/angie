@@ -31,7 +31,7 @@ const useStyles = createUseStyles({
 
 // const channelActions = new ChannelActions();
 
-const Messages = ({ debugData, ...props }) => {
+const Messages = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({});
@@ -42,7 +42,7 @@ const Messages = ({ debugData, ...props }) => {
     let channel = "";
     let integration = "";
 
-    if (debugData) {
+    if (props.channel) {
         channel = props.channel.id;
         integration = params.id;
     } else {
@@ -253,7 +253,7 @@ const Messages = ({ debugData, ...props }) => {
         }
     };
 
-    return debugData ? (
+    return props.channel ? (
         <>
             {dataSource && (
                 <Table
