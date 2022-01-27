@@ -169,7 +169,7 @@ export class PackageVersionService extends BaseService {
         await git.checkout(packageVersion.version);
         await git.branch(["-c", packageVersion.version, newVersion.version]);
         await git.push(["-u", "origin", newVersion.version]);
-        await this.importPackageComponents(packageVersion, packagePath, git);
+        await this.importPackageComponents({ ...packageVersion, ...newVersion }, packagePath, git);
         this.dao.updatePackageVersionStatus(packageVersion.code, newVersion.version, {
             remote_commit: packageVersion.remote_commit,
             local_commit: packageVersion.remote_commit,
