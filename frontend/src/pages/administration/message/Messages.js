@@ -52,7 +52,7 @@ const Messages = (props) => {
 
     useEffect(() => {
         search();
-    }, []);
+    }, [props.debugData]);
 
     const classes = useStyles();
 

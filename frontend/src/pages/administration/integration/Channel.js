@@ -572,7 +572,7 @@ const Channel = ({
                                 />
                             </TabPane>
                             <TabPane tab="Mensajes" key="messageTab">
-                                <Messages channel={channel} />
+                                <Messages channel={channel} debugData={debugData} />
                             </TabPane>
                         </Tabs>
                     </ResizableDrawer>
