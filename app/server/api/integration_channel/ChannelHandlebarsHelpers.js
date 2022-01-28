@@ -199,6 +199,8 @@ class ChannelHandlebarsHelpers {
                 return "<marshal><json/></marshal>";
             case "hl7":
                 return "<marshal><hl7/></marshal>";
+            case "xml":
+                return "<marshal><jacksonxml/></marshal>";
             default:
                 return "";
         }
@@ -218,6 +220,8 @@ class ChannelHandlebarsHelpers {
                 return this.safe("<unmarshal><json/></unmarshal>");
             case "hl7":
                 return this.safe("<unmarshal><hl7/></unmarshal>");
+            case "xml":
+                return this.safe("<unmarshal><jacksonxml/></unmarshal>");
             default:
                 return "";
         }

@@ -5,12 +5,12 @@
     "name": "XML to JSON",
     "group": "Utilidades",
     "handles": "in,out",
-    "defaults": "{\n    \n}",
+    "defaults": "{\n    \"applyUnmarshal\": true\n}",
     "package_code": "angie.core",
-    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\" />\n    <process ref=\"processorXMLtoJSON\"/>\n    {{applyUnmarshal \"json\"}}\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
-    "json_ui_schema": "{\n    \n}",
+    "xml_template": "<route id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\" />\n    <process ref=\"processorXMLtoJSON\"/>\n    {{#if (eq applyUnmarshal true)}}\n        {{applyUnmarshal \"json\"}}\n    {{/if}}\n    <multicast>\n        {{#each target}}\n        <to uri=\"direct:{{this}}\"/>\n        {{/each}}\n    </multicast>\n</route>",
+    "json_ui_schema": "{\n    \"applyUnmarshal\": {\n        \"ui:widget\": \"checkbox\"\n    }\n}",
     "package_version": "1.0.0",
-    "json_data_schema": "{\n    \"description\": \"XML to JSON\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"title\": \"Name\",\n            \"type\": \"string\"\n        }\n    }\n}",
+    "json_data_schema": "{\n    \"description\": \"XML to JSON\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\",\n        \"applyUnmarshal\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"title\": \"Name\",\n            \"type\": \"string\"\n        },\n        \"applyUnmarshal\": {\n            \"title\": \"Aplicar Unmarshal en salida\",\n            \"type\": \"boolean\"\n        }\n    }\n}",
     "react_component_type": "default"
   }
 ]
