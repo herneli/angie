@@ -2,6 +2,8 @@ import { AgentActionsCache, AgentSocketManager, JUMAgent, JUMAgentService } from
 import { IntegrationChannelService } from "../integration_channel";
 
 import moment from "moment";
+import lodash from "lodash";
+
 import { Utils } from "lisco";
 import { LibraryService } from "../library/LibraryService";
 
@@ -50,7 +52,7 @@ class JUMAgentMaster {
 
                     const prevAgent = await this.service.disconnectAgent(agent.id);
 
-                    if (prevAgent.options && prevAgent.options.redistribute_on_lost) {
+                    if (prevAgent && prevAgent.options && prevAgent.options.redistribute_on_lost) {
                         //Crear un timer para, pasado un tiempo, redistribuir el trabajo del agente si no se ha reconectado.
                         setTimeout(async () => {
                             try {
@@ -66,7 +68,7 @@ class JUMAgentMaster {
                     }
                 });
 
-                //Se pone como Online
+                //Se pone como Installing
                 agent.status = JUMAgent.STATUS_INSTALLING;
                 agent.last_socket_id = socket.id;
                 agent.last_online_date = moment().toISOString();
@@ -79,8 +81,7 @@ class JUMAgentMaster {
                 //Configurar los elementos a escuchar.
                 this.configureJUMEvents(socket);
                 //Instala las dependencias en el agente
-                const libraries = await new LibraryService().list();
-                await this.service.addAgentDependencies(agent, libraries.data);
+                await this.service.reloadDependencies(agent);
                 //Finalizada la instalación se marca como online
                 agent.status = JUMAgent.STATUS_ONLINE;
                 await this.service.update(agent.id, agent);

@@ -3,7 +3,7 @@
     "id": "1d7967be-1722-4c4b-9f3c-cceb725d6b15",
     "code": "enrich",
     "name": "Enrich",
-    "group": "Utilidades",
+    "group": "Flujo",
     "handles": "in,out",
     "defaults": "{\n    \"handles\": [\n        {\n            \"id\": \"out0\",\n            \"to\": \"\",\n            \"title\": \"Datos\",\n            \"color\": \"blue\"\n        },\n        {\n            \"id\": \"out1\",\n            \"to\": \"\",\n            \"title\": \"Siguiente\",\n            \"color\": \"red\"\n        }\n    ],\n    \"output_scope\": \"BODY\",\n    \"format\": \"json\"\n}",
     "package_code": "angie.core",

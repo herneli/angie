@@ -1,7 +1,11 @@
-import Handlebars from "handlebars";
+import { default as DefHandlebars } from "handlebars";
 import lodash from "lodash";
 import * as queryString from "query-string";
+import { ApplicationService } from "../application";
 
+import promisedHandlebars from "promised-handlebars";
+
+const Handlebars = promisedHandlebars(DefHandlebars);
 class ChannelHandlebarsHelpers {
     /**
      * Carga los helpers necesarios para las conversiones en los canales
@@ -29,6 +33,9 @@ class ChannelHandlebarsHelpers {
         Handlebars.registerHelper("setHeaderList", (list) => this.setHeaderList(list));
         Handlebars.registerHelper("groovyList", (inputData) => this.groovyList(inputData));
         Handlebars.registerHelper("generateDestination", (target, mode) => this.generateDestination(target, mode));
+        Handlebars.registerHelper("generateEntityCreation", (object) => this.generateEntityCreation(object));
+
+        return Handlebars;
     }
 
     /**
@@ -43,6 +50,61 @@ class ChannelHandlebarsHelpers {
         }
         let data = inputData;
         return this.safe(JSON.stringify(data).replace(/{/g, "[").replace(/}/g, "]"));
+    }
+
+    /**
+     *
+     * @param {*} target
+     * @param {*} mode
+     * @returns
+     */
+    generateDestination(target, mode) {
+        if (lodash.isObject(mode)) {
+            mode = "direct";
+        }
+
+        if (Array.isArray(target) && target.length > 1) {
+            return this.safe(`<multicast>
+                ${target.map((el) => `<to uri="${mode}:${el}" />`).join("\n")}
+            </multicast>`);
+        }
+        if (!Array.isArray(target) || target.length == 1) {
+            return this.safe(`<to uri="${mode}:${target}" />`);
+        }
+        return "";
+    }
+
+    /**
+     * 
+     * @param {*} object 
+     * @returns 
+     */
+    async generateEntityCreation(object) {
+        const appServ = new ApplicationService();
+
+        const app = await appServ.getAppplication(object.app);
+
+        const conditions = (app && app.data && app.data.entities) || [];
+
+        return this.safe(`<choice>
+            ${conditions.map(
+                (cond) => `<when>
+                    <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
+                    ${this.setHeader("entity_type", cond.code, "constant")}
+                    <setBody><simple>${cond.entity_extraction}</simple></setBody>
+                    <unmarshal><json/></unmarshal>
+                    <process ref="entityGenerator"/>
+                    <to uri="mock:elastic"/>
+                </when>`
+            ).join('\n')}
+            <otherwise>
+                ${this.setHeader("entity_type", "unknown", "constant")}
+                <setBody><simple>{}</simple></setBody>
+                <unmarshal><json/></unmarshal>
+                <process ref="entityGenerator"/>
+                <to uri="mock:elastic"/>
+            </otherwise>
+        </choice>`);
     }
 
     /**
@@ -67,28 +129,6 @@ class ChannelHandlebarsHelpers {
             return "";
         }
         return this.safe(`<setHeader name="${code}"><${format}>${value}</${format}></setHeader>`);
-    }
-
-    /**
-     *
-     * @param {*} target
-     * @param {*} mode
-     * @returns
-     */
-    generateDestination(target, mode) {
-        if (lodash.isObject(mode)) {
-            mode = "direct";
-        }
-
-        if (Array.isArray(target) && target.length > 1) {
-            return this.safe(`<multicast>
-                ${target.map((el) => `<to uri="${mode}:${el}" />`).join('\n')}
-            </multicast>`);
-        }
-        if (!Array.isArray(target) || target.length == 1) {
-            return this.safe(`<to uri="${mode}:${target}" />`);
-        }
-        return "";
     }
 
     /**

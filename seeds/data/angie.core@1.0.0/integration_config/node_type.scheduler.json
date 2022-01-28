@@ -3,7 +3,7 @@
     "id": "1a9df1f0-69b5-4a8f-b4f2-ea0e1e6bd739",
     "code": "scheduler",
     "name": "Scheduler",
-    "group": "Utilidades",
+    "group": "Tiempo",
     "handles": "in",
     "defaults": "{\n    \"timeUnit\": \"MILLISECONDS\",\n    \"initialDelay\": 1000\n}",
     "alt_codes": "core.utils.scheduler",

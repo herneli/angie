@@ -74,6 +74,12 @@
                         "title": "packages.node_types"
                     },
                     {
+                        "key": "applications",
+                        "value": "/applications",
+                        "icon": "mdiFunctionVariant",
+                        "title": "packages.applications"
+                    },
+                    {
                         "key": "script_context",
                         "value": "/script_context",
                         "icon": "mdiScriptTextKeyOutline",

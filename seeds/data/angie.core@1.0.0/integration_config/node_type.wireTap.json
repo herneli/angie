@@ -3,7 +3,7 @@
     "id": "8a452697-eb88-44a8-9b70-84ec56957065",
     "code": "wireTap",
     "name": "Wire Tap",
-    "group": "Utilidades",
+    "group": "Flujo",
     "name_": "Enrich CLONED",
     "handles": "in,out",
     "defaults": "{\n    \"handles\": [\n        {\n            \"id\": \"out0\",\n            \"to\": \"\",\n            \"title\": \"Clonar Mensaje\",\n            \"position\": \"top\",\n            \"color\": \"blue\"\n        },\n        {\n            \"id\": \"out1\",\n            \"to\": \"\",\n            \"title\": \"Continuar Flujo\"\n            \n        }\n    ]\n}",

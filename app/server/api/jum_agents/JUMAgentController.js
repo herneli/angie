@@ -26,6 +26,20 @@ export class JUMAgentController extends BaseController {
             })
         );
 
+        this.router.post(
+            "/jum_agent/:id/reload_dependencies",
+            expressAsyncHandler((req, res, next) => {
+                this.reloadDependencies(req, res, next);
+            })
+        );
+
+        this.router.get(
+            "/jum_agent/:id/get_dependencies",
+            expressAsyncHandler((req, res, next) => {
+                this.getDependencies(req, res, next);
+            })
+        );
+
         return this.router;
     }
 
@@ -37,6 +51,34 @@ export class JUMAgentController extends BaseController {
             await service.loadAgentStatus(agent);
 
             response.json(new JsonResponse(true));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+
+    async reloadDependencies(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            const agent = await service.loadById(request.params.id);
+
+            await service.reloadDependencies(agent);
+
+            response.json(new JsonResponse(true));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async getDependencies(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            const agent = await service.loadById(request.params.id);
+
+            const res = await service.getAgentDependencies(agent);
+
+            
+            response.json(new JsonResponse(true,res));
         } catch (ex) {
             next(ex);
         }

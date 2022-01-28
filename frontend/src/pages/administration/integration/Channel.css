@@ -54,6 +54,7 @@
     padding: 4px;
 }
 
+.dndflow .react-flow__handle,
 .dndflow .react-flow__node-output .react-flow__handle,
 .dndflow .react-flow__node-input .react-flow__handle {
     background-color: #555;
@@ -74,26 +75,26 @@
 .dndflow .react-flow__handle-left {
     height: 15px;
     width: 8px;
-    left: -8px;
+    left: -9px;
     border-radius: 3px 0px 0px 3px;
 }
 
 .dndflow .react-flow__handle-right {
     height: 15px;
     width: 8px;
-    right: -8px;
+    right: -9px;
     border-radius: 0px 3px 3px 0px;
 }
 
 .dndflow .react-flow__handle-bottom {
-    bottom: -8px;
+    bottom: -9px;
     height: 8px;
     width: 15px;
     border-radius: 0px 0px 3px 3px;
 }
 
 .dndflow .react-flow__handle-top {
-    top: -8px;
+    top: -9px;
     height: 8px;
     width: 15px;
     border-radius: 3px 3px 0px 0px;
@@ -120,17 +121,11 @@
     user-select: none;
 }
 
-.dndflow .react-flow__node-ButtonNode .react-flow__handle {
-    background: #237a52;
-}
 
 .dndflow .react-flow__node-ButtonNode {
     border-color: #237a52;
 }
 
-.dndflow .react-flow__node-CommentNode .react-flow__handle {
-    background: #7a7423;
-}
 
 .dndflow .react-flow__node-CommentNode {
     border-color: #7a7423;
