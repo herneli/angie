@@ -215,7 +215,7 @@
         "placement_remote": "Remoto",
         "publish": "Publicar",
         "publish_successful": "Versión publicada con éxito",
-        "publish_error": "Versión publicada con éxito",
+        "publish_error": "Versión publicada con error",
         "refresh_status": "Actualizar status",
         "remote": "Remoto",
         "remote_package": "Paquete remoto",
