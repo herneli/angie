@@ -521,7 +521,7 @@ const Channel = ({
                             defaultActiveKey={debugData?.channel?.agent?.id}
                             onChange={(tab) => {
                                 if (tab === "messageTab") {
-                                    setDraweWidth(1000);
+                                    setDraweWidth(800);
                                 } else if (drawerWidth) {
                                     setDraweWidth(null);
                                 }

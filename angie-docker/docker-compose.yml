@@ -30,6 +30,8 @@ services:
         volumes:
             - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
         
+        depends_on:
+            - angie_elasticsearch
         links:
             - "angie_elasticsearch:angie_elasticsearch"
 

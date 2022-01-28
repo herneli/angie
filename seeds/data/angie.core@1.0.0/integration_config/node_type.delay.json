@@ -3,7 +3,7 @@
     "id": "954a2e9a-3f04-4e69-a11b-fb97158cc46c",
     "code": "delay",
     "name": "Delay",
-    "group": "Utilidades",
+    "group": "Tiempo",
     "name_": "Template CLONED",
     "handles": "in,out",
     "defaults": "{\n    \"delay\": 1000\n}",

@@ -1,5 +1,5 @@
 import { App, KnexConnector } from "lisco";
-import { UserController } from "./app/server/api/user";
+import { UserController, UserService } from "./app/server/api/user";
 import { MainController } from "./app/server/api/main";
 import { Settings, Utils } from "./app/server/common";
 import { handleResponses, handleRequests, SPEC_OUTPUT_FILE_BEHAVIOR } from "express-oas-generator";
@@ -119,11 +119,12 @@ module.exports = async () => {
 
         //Acciones a ejecutar sobre el mainWorker
         console.log("MainThread");
-        console.log("Import Users From Keycloak");
 
-        App.events.emit("config_import_users");
-
-        console.log("Import Process has being completed.");
+        setTimeout(async () => {
+            console.log("Import Users From Keycloak");
+            await UserService.importKeycloakUsers();
+            console.log("Import Process has being completed.");
+        }, 2 * 1000);
     };
 
     await Cache.resetAll();

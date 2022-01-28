@@ -1,0 +1,19 @@
+[
+  {
+    "id": "499a8155-0fed-40cc-94a4-c685c6ea07d1",
+    "code": "entity_extractor",
+    "name": "Crear Entidad",
+    "group": "Entidades",
+    "name_": "Comment CLONED",
+    "defaults": "{}",
+    "custom_color": true,
+    "package_code": "angie.core",
+    "xml_template": "<route  id=\"{{source}}\">\n    <from uri=\"direct:{{source}}\"/>\n    {{generateEntityCreation this}}\n    <to uri=\"log:entity_creation\"/>\n</route>",
+    "json_ui_schema": "{\n    \"label\": {\n        \"ui:columnSize\": \"4\"\n    },\n    \"app\": {\n        \"ui:widget\": \"SelectRemoteWithPackageWidget\",\n        \"ui:selectOptions\": \"/configuration/model/applications/data#path=data&value=fullCode&label=data.name\",\n        \"ui:columnSize\": \"4\"\n    },\n    \"entity_type\": {\n        \"ui:columnSize\": \"4\"\n    }\n}",
+    "package_version": "1.0.0",
+    "json_data_schema": "{\n    \"description\": \"Comment\",\n    \"type\": \"object\",\n    \"required\": [\n        \"label\"\n    ],\n    \"properties\": {\n        \"label\": {\n            \"type\": \"string\"\n        },\n        \"app\": {\n            \"type\": \"string\"\n        },\n        \"entity_type\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"order\",\n                \"patient\"\n            ],\n            \"enumNames\": [\n                \"Petición\",\n                \"Paciente\"\n            ]\n\n        }\n    }\n}",
+    "component_bg_color": "#ffffff",
+    "react_component_type": "output",
+    "component_border_color": "#313030"
+  }
+]

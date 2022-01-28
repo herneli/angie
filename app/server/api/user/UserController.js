@@ -38,10 +38,6 @@ export class UserController extends BaseController {
             // this.updateUser(data.model, data.body, data.id);
         });
 
-        App.events.on("config_import_users", async () => {
-            const service = new UserService();
-            await service.importKeycloakUsers();
-        });
 
         return this.router;
     }
