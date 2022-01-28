@@ -58,7 +58,7 @@ export default function PackageNew({ onCancel, onCreate }) {
                 });
         } else {
             if (!packageData.code || !packageData.name) {
-                message.info(T.translate("packages.enter_required_fields"));
+                message.error(T.translate("packages.enter_required_fields"));
             }
             let newPackageData = {
                 code: packageData.code,

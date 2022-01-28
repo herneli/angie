@@ -57,18 +57,18 @@ export class PackageVersionService extends BaseService {
     }
 
     async publishVersion(code, version) {
-        const packageDao = new PackageDao();
         let packageVersion = await this.dao.getPackageVersion(code, version);
-        if (packageVersion) {
-            packageVersion.packageData = await packageDao.getPackage(code);
-        }
         await this.publishAngiePackage(packageVersion);
         return true;
     }
 
-    async importVersion(code, version) {
-        await this.importAngiePackage(code, version);
-        return true;
+    async copyVersion(code, version, newVersion) {
+        let packageVersion = await this.dao.getPackageVersion(code, version);
+        if (packageVersion.packageData.remote) {
+            return await this.copyVersionRemote(packageVersion, newVersion);
+        } else {
+            return await this.copyVersionLocal(packageVersion, newVersion);
+        }
     }
 
     async getRemoteList() {
@@ -154,16 +154,72 @@ export class PackageVersionService extends BaseService {
     async importAngiePackage(code, version) {
         let status = await this.updateRemoteStatus(code);
         const { git, packagePath } = status;
-        const packageDao = new PackageDao();
         let packageVersion = await this.dao.getPackageVersion(code, version);
-        if (packageVersion) {
-            packageVersion.packageData = await packageDao.getPackage(code);
-        }
         const brachSummary = await git.checkout(packageVersion.version);
         await this.importPackageComponents(packageVersion, packagePath, git);
         console.log(brachSummary);
         this.dao.updatePackageVersionStatus(packageVersion.code, packageVersion.version, {
             local_commit: packageVersion.remote_commit,
+        });
+    }
+
+    async copyVersionRemote(packageVersion, newVersion) {
+        let status = await this.updateRemoteStatus(packageVersion.code);
+        const { git, packagePath } = status;
+        await git.checkout(packageVersion.version);
+        await git.branch(["-c", packageVersion.version, newVersion.version]);
+        await git.push(["-u", "origin", newVersion.version]);
+        await this.importPackageComponents({ ...packageVersion, ...newVersion }, packagePath, git);
+        this.dao.updatePackageVersionStatus(packageVersion.code, newVersion.version, {
+            remote_commit: packageVersion.remote_commit,
+            local_commit: packageVersion.remote_commit,
+        });
+    }
+
+    async copyVersionLocal(packageVersion, newVersion) {
+        for (const component of packageComponent) {
+            if (component.document_types) {
+                for (const documentType of component.document_types) {
+                    let documents = await this.dao.getDocumentTypeItems(
+                        component.table,
+                        documentType,
+                        packageVersion.code,
+                        packageVersion.version
+                    );
+                    for (const document of documents) {
+                        if (component.id_mode === "uuid") {
+                            document.id = uuid_v4();
+                        } else {
+                            delete document.id;
+                        }
+                        await this.dao.insertDocumentTypeItem(
+                            component.table,
+                            documentType,
+                            packageVersion.code,
+                            newVersion.version,
+                            document
+                        );
+                    }
+                }
+            } else {
+                let documents = await this.dao.getTableItems(
+                    component.table,
+                    packageVersion.code,
+                    packageVersion.version
+                );
+
+                for (const document of documents) {
+                    if (component.id_mode === "uuid") {
+                        document.id = uuid_v4();
+                    } else {
+                        delete document.id;
+                    }
+                    await this.dao.insertTableItem(component.table, packageVersion.code, newVersion.version, document);
+                }
+            }
+        }
+        this.dao.updatePackageVersionStatus(packageVersion.code, newVersion.version, {
+            dependencies: JSON.stringify(packageVersion.dependencies),
         });
     }
 
