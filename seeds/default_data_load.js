@@ -91,7 +91,7 @@ const createPackage = async (knex, package_code, package_version) => {
     const exists = await knex(table).where({ code: package_code }).first();
 
     if (!exists) {
-        await knex(table).insert({ code: package_code });
+        await knex(table).insert({ code: package_code, name: package_code });
     }
 
     await createVersion(knex, package_code, package_version);
