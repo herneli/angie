@@ -8,7 +8,9 @@ export class UserService extends BaseService {
         super(UserDao);
     }
 
-    async importKeycloakUsers() {
+    static async importKeycloakUsers() {
+        const service = new UserService();
+
         let usersTosave = [];
         let users = App.keycloakAdmin.users ? await App.keycloakAdmin.users.find() : [];
         for await (let e of users) {
@@ -37,7 +39,7 @@ export class UserService extends BaseService {
             // });
 
             let userRecord = { id: user.id, document_type: "user", code: user.username, data: { ...user } };
-            let exists = await this.loadById(user.id);
+            let exists = await service.loadById(user.id);
             if (exists) {
                 //Si existe se actualiza
                 userRecord.data = { ...exists.data, ...user };
@@ -46,7 +48,7 @@ export class UserService extends BaseService {
                 }
                 userRecord = { ...exists, ...userRecord };
 
-                await this.update(user.id, userRecord);
+                await service.update(user.id, userRecord);
                 continue;
             } else {
                 userRecord.data.current_organization = "assigned";
@@ -56,7 +58,7 @@ export class UserService extends BaseService {
         }
 
         if (usersTosave.length > 0) {
-            await this.save(usersTosave);
+            await service.save(usersTosave);
         }
     }
 
