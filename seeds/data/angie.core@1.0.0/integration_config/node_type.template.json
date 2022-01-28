@@ -1,5 +1,6 @@
 [
   {
+    "id": "0968f42e-7fb1-4abf-aae8-beeb66e63426",
     "code": "template",
     "name": "Template",
     "group": "Utilidades",
@@ -11,7 +12,6 @@
     "json_ui_schema": "{\r\n    \"code\": {\r\n        \"ui:columnSize\": \"12\",\r\n        \"ui:widget\": \"AceEditorWidget\",\r\n        \"ui:mode\": \"json\",\r\n        \"ui:beautify\": true,\r\n        \"ui:height\": 400\r\n    }\r\n    \r\n}\r\n",
     "package_version": "1.0.0",
     "json_data_schema": "{\r\n    \"description\": \"Create simple JSON objects from input message.\",\r\n    \"type\": \"object\",\r\n    \"required\": [\r\n        \"label\",\r\n        \"code\"\r\n    ],\r\n    \"properties\": {\r\n        \"label\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \r\n        \"code\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}",
-    "react_component_type": "default",
-    "id": "0968f42e-7fb1-4abf-aae8-beeb66e63426"
+    "react_component_type": "default"
   }
 ]

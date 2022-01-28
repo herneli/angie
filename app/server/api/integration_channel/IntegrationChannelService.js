@@ -1,6 +1,5 @@
 import { Utils, BaseService } from "lisco";
 
-import Handlebars from "handlebars";
 import lodash from "lodash";
 import { ConfigurationService } from "../configuration/ConfigurationService";
 import { IntegrationDao } from "../integration/IntegrationDao";
@@ -9,9 +8,11 @@ import { IntegrationService } from "../integration";
 import { MessageService } from "../messages";
 import { ChannelHandlebarsHelpers } from "./";
 
+let Handlebars;
+
 export class IntegrationChannelService {
     constructor() {
-        ChannelHandlebarsHelpers.configure();
+        Handlebars = ChannelHandlebarsHelpers.configure();
 
         this.dao = new IntegrationDao();
         this.messageService = new MessageService();
@@ -151,7 +152,7 @@ export class IntegrationChannelService {
             if (!type) continue;
             if (type.data.handles === "none") continue;
 
-            camelStr += this.convertNodeTypeToCamel(type, element);
+            camelStr += await this.convertNodeTypeToCamel(type, element);
         }
 
         return `<routes xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
@@ -164,15 +165,15 @@ export class IntegrationChannelService {
      * @param {*} data
      * @returns
      */
-    convertNodeTypeToCamel(node, data) {
+    async convertNodeTypeToCamel(node, data) {
         if (node.data.xml_template) {
-            const template = Handlebars.compile(node.data.xml_template);
+            const template = await Handlebars.compile(node.data.xml_template);
 
             if (data.data.handles) {
                 //Calcular los links de los diferentes handles para la conversion
                 data.data.handles = this.linkHandles(data.data.handles, data.links);
             }
-            return template({
+            return await template({
                 source: data.id,
                 target: data.links && data.links.length !== 0 ? lodash.map(data.links, "node_id") : ["empty"],
                 ...data.data,

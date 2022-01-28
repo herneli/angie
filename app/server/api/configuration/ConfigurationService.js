@@ -11,6 +11,9 @@ export class ConfigurationService extends BaseService {
         return this.dao.getModel(code);
     }
 
+    getModelDataByCode(code, docCode) {
+        return this.dao.getModelDataByCode(code, docCode);
+    }
     getModelData(code, id) {
         return this.dao.getModelData(code, id);
     }

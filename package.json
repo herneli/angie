@@ -41,6 +41,7 @@
     "nconf": "^0.11.3",
     "optimist": "^0.6.1",
     "pg": "^8.7.1",
+    "promised-handlebars": "^2.0.1",
     "query-string": "^7.1.0",
     "shelljs": "^=0.8.5",
     "simple-git": "^2.48.0",
