@@ -7,6 +7,7 @@ import AgentActionsCache from "./AgentActionsCache";
 
 import lodash from "lodash";
 import { AgentSocketManager } from "./";
+import { LibraryService } from "../library/LibraryService";
 
 const status_pick_keys = ["status", "messages_sent", "messages_error", "messages_total", "uptime"];
 export class JUMAgentService extends BaseService {
@@ -268,7 +269,6 @@ export class JUMAgentService extends BaseService {
      */
     async setAgentChannelStatus(agentId, channelId, status) {
         const agent = await this.loadById(agentId);
-
         const channel = lodash.find(agent.current_channels.list, { id: channelId });
         channel.status = lodash.pick(status, status_pick_keys);
 
@@ -613,16 +613,61 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Envia al agente las dependencias configuradas para que las añada a su classpath
+     * 
      *
-     * @param {*} agentDependencies
+     * @param {*}
      * @returns
      */
-    async addAgentDependencies(agent, agentDependencies) {
-        if (!agentDependencies) {
-            return false;
+    async getAgentDependencies(agent) {
+            const service = new JUMAgentService();
+            const response = await this.sendCommand(agent.id, "/agent/get_dependencies");
+
+            await service.update(agent.id, agent);
+
+            if(response.data == null){
+                return []
+            }
+            if(response.data){
+                return response.data;
+            }
+    
+            if (!response.success) {
+                throw new Error(response.data);
+            }
+    }
+    /**
+     * 
+     *
+     * @param {*}
+     * @returns
+     */
+    async reloadDependencies(agent) {
+        const libraries = await new LibraryService().list();
+        let response;
+        let prev_dependencies = await this.getAgentDependencies(agent);
+        let addedDependencies = []
+        
+        if (prev_dependencies && prev_dependencies.length > 0) {
+            let libraries_to_add = lodash.differenceWith(libraries.data, prev_dependencies, lodash.isEqual);
+            if(libraries_to_add.length > 0){
+                 response = await this.sendCommand(agent.id, "/agent/load_dependencies", libraries_to_add);
+                 addedDependencies = [...addedDependencies, ...libraries.data];
+            }else{
+                response = {}
+                return response.data = prev_dependencies;
+            }
+        } else {
+            response = await this.sendCommand(agent.id, "/agent/load_dependencies", libraries.data);
         }
-        const response = await this.sendCommand(agent.id, "/agent/load_dependencies", agentDependencies);
+        
+
+        if(response && response.data){
+            return response.data;
+        }
+
+        if (!response) {
+            throw new Error("No response from the Reload of dependencies")
+        }
 
         if (!response.success) {
             throw new Error(response.data);

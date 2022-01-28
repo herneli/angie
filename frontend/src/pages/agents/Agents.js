@@ -15,6 +15,7 @@ import {
     mdiReload,
     mdiTextLong,
     mdiTrashCan,
+    mdiCastAudioVariant,
     mdiLibrary,
 } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -50,6 +51,7 @@ const Agents = () => {
     let [loading, setLoading] = useState(false);
     let [optionsVisible, setOptionsVisible] = useState(false);
     let [librariesVisible, setLibrariesVisible] = useState(false);
+    let [agentDependenciesVisible, setAgentDependenciesVisible] = useState(false);
     let [currentAgent, setCurrentAgent] = useState(null);
 
     const [pagination, setPagination] = useState({});
@@ -124,6 +126,23 @@ const Agents = () => {
     const deleteAgent = async (agent) => {
         try {
             await axios.delete(`/jum_agent/${agent.id}`);
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
+    };
+
+    const reloadDependencies = async (agent) => {
+        try {
+            await axios.post(`/jum_agent/${agent.id}/reload_dependencies`);
+            await search();
+            notification.success({
+                message: T.translate("common.messages.reloaded.title"),
+                description: T.translate("common.messages.reloaded.ok_desc"),
+            });
+
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -224,7 +243,7 @@ const Agents = () => {
         {
             title: T.translate("agents.columns.actions"),
             key: "action",
-            width: 200,
+            width: 300,
             render: (text, record) => {
                 if (record.meta) {
                     return (
@@ -239,6 +258,35 @@ const Agents = () => {
                                 icon={
                                     <Icon
                                         path={mdiCogs}
+                                        className={classes.icon}
+                                        title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+                            <Button
+                                key="options"
+                                type="text"
+                                onClick={() => {
+                                    setCurrentAgent(record);
+                                    setAgentDependenciesVisible(true);
+                                }}
+                                icon={
+                                    <Icon
+                                        path={mdiLibrary}
+                                        className={classes.icon}
+                                        title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+                            <Button
+                                key="options"
+                                type="text"
+                                onClick={() => {
+                                    reloadDependencies(record)
+                                }}
+                                icon={
+                                    <Icon
+                                        path={mdiCastAudioVariant}
                                         className={classes.icon}
                                         title={T.translate("common.button.log")}
                                     />
@@ -329,6 +377,7 @@ const Agents = () => {
 
     const cancelLibraries = () => {
         setLibrariesVisible(false);
+        setAgentDependenciesVisible(false);
     };
 
     const saveAgent = async ({ formData }) => {
@@ -421,6 +470,9 @@ const Agents = () => {
                 size="small"
                 expandable={{ expandedRowKeys: dataSourceKeys }}
             />
+            {agentDependenciesVisible && (
+                <AgentLibraries agent={currentAgent} child visible={agentDependenciesVisible} onOk={saveLibraries} onCancel={cancelLibraries} />
+            )}
             {optionsVisible && (
                 <AgentOptions agent={currentAgent} visible={optionsVisible} onOk={saveAgent} onCancel={cancelOptions} />
             )}

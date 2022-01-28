@@ -74,23 +74,53 @@ const editTabFormSchema = {
         libraries: {
             library: {
                 "ui:columnSize": "4",
+           
             },
             is_camel: {
                 "ui:widget":"checkbox",
-            }
+            },
+         
         },
     },
 };
 
-const AgentLibraries = ({ visible, onOk, onCancel }) => {
+const agentSchema ={
+    libraries: {
+        library: {
+            "ui:columnSize": "4",
+       
+        },
+        is_camel: {
+            "ui:widget":"checkbox",
+        },   
+        "ui:options": {
+            "addable": false,
+            "removable": false
+        }
+     
+    },
+}
+
+const AgentLibraries = ({ visible, onOk, onCancel,child,agent }) => {
     const editTabFormEl = useRef(null);
 
     const [editingData, setEditingData] = useState({});
 
     const loadLibraries = async () => {
-        const response = await axios.get(`/library`);
-        response.data.data.map(elto => elto.is_camel = elto.group_id === 'org.apache.camel' ? 'yes' : 'no')
-        setEditingData({ libraries: response.data.data });
+        if(agent){
+            //Si es del agente coge las dependencias del agente (boton tabla)
+            let response = await axios.get(`/jum_agent/${agent.id}/get_dependencies`);
+            if(response.data){
+                response.data.data.map(elto => elto.is_camel = elto.group_id === 'org.apache.camel' ? 'yes' : 'no')
+                setEditingData({ libraries: response.data.data });
+            }
+        }else{
+
+            let response = await axios.get(`/library`);
+            response.data.data.map(elto => elto.is_camel = elto.group_id === 'org.apache.camel' ? 'yes' : 'no')
+            setEditingData({ libraries: response.data.data });
+
+        }
     }
 
     const handleChange = (formData) => {
@@ -119,9 +149,11 @@ const AgentLibraries = ({ visible, onOk, onCancel }) => {
             onOk={onOk}
             onCancel={onCancel}
             footer={[
+                agent ? false:
                 <Button key="cancel" type="dashed" onClick={onCancel}>
                     {T.translate("common.button.cancel")}
                 </Button>,
+                agent ? false:
                 <Button
                     key="accept"
                     type="primary"
@@ -143,7 +175,7 @@ const AgentLibraries = ({ visible, onOk, onCancel }) => {
                 ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                 schema={editTabFormSchema.schema}
                 formData={editingData}
-                uiSchema={editTabFormSchema.uiSchema}
+                uiSchema={ agent ? agentSchema : editTabFormSchema.uiSchema}
                 widgets={formConfig.widgets}
                 onChange={(e) => setEditingData(e.formData)}
                 onSubmit={(e) => onOk(e)}
