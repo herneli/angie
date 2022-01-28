@@ -288,5 +288,31 @@
         "select_end": "Fin",
         "start": "Inico",
         "variables": "Variables"
+    },
+    "messages": {
+        "status": "Estado",
+        "message_id": "Id Mensaje",
+        "date_reception": "Fecha de recepción",
+        "date_processed": "Fecha de finalización",
+        "elapsed": "Transcurrido",
+        "actions": "Acciones",
+        "download_json_item": "Exportar como JSON",
+        "show_timeline": "Mostrar timeline",
+        "show_traces": "Mostrar trazas",
+        "hide_traces": "Ocultar trazas",
+        "download_traces": "Descargar trazas",
+        "body": "Body del mensaje",
+        "body_undefined": "Este mensaje no tiene body almacenado",
+        "node_unknown": "Nodo eliminado",
+        "sent": "Enviado",
+        "received": "Recibido",
+        "event": "Evento",
+        "date_time": "Fecha",
+        "error_message": "Mensaje de error",
+        "show_exception": "Mostrar excepción",
+        "messages_from_channel": "Mensajes del canal",
+        "traces_from_message": "Trazas del mensaje",
+        "start": "Inicio",
+        "end": "Fin"
     }
 }

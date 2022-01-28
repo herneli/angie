@@ -24,9 +24,17 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
     const [showData, setShowData] = useState(null);
 
     const timelineTypes = {
-        send: <Icon path={mdiEmailSendOutline} size="20px" color="#52C41A"></Icon>,
-        receive: <Icon path={mdiEmailReceiveOutline} size="20px" color="#1976D2"></Icon>,
-        error: <Icon path={mdiEmailRemoveOutline} size="20px" color="#FF4D4F"></Icon>,
+        send: <Icon path={mdiEmailSendOutline} size="20px" color="#52C41A" title={T.translate("messages.sent")}></Icon>,
+        receive: (
+            <Icon
+                path={mdiEmailReceiveOutline}
+                size="20px"
+                color="#1976D2"
+                title={T.translate("messages.received")}></Icon>
+        ),
+        error: (
+            <Icon path={mdiEmailRemoveOutline} size="20px" color="#FF4D4F" title={T.translate("common.error")}></Icon>
+        ),
     };
 
     const setData = async () => {
@@ -50,7 +58,11 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
         let errorException = "";
         let messageContent = "";
         let type = "";
-        const nodeName = item.node ? item.node : item.error ? "Error" : "Nodo eliminado";
+        const nodeName = item.node
+            ? item.node
+            : item.error
+            ? T.translate("common.error")
+            : T.translate("messages.node_unknown");
         const timelineContent = item.data.map((message, index, array) => {
             const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
             if (index === 0) {
@@ -73,14 +85,15 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             if (!errorException) {
                 errorException = message.error_stack;
             }
-            //TODO: Mostrar el detalle del error (error_stack)(?)
             const errorContent =
                 message.event === "ERROR" ? (
                     <>
-                        <p>
-                            <b>Mensaje de error:</b>
-                            {` ${message.error_msg}`}
-                        </p>
+                        {message.error_msg && (
+                            <p>
+                                <b>{`${T.translate("messages.error_message")}:`}</b>
+                                {` ${message.error_msg}`}
+                            </p>
+                        )}
                         <p>
                             <a
                                 href="#null"
@@ -88,7 +101,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                                     e.preventDefault();
                                     setShowData({ node: nodeName, content: errorException, type: "error" });
                                 }}>
-                                Mostrar excepción
+                                {`${T.translate("messages.show_exception")}`}
                             </a>
                         </p>
                     </>
@@ -108,16 +121,16 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                 <>
                     {timelineTypes[type]}
                     <p>
-                        <b>Evento:</b>
+                        <b>{`${T.translate("messages.event")}:`}</b>
                         {` ${message.event}`}
                     </p>
 
                     <p>
-                        <b>Fecha: </b>
+                        <b>{`${T.translate("messages.date_time")}:`}</b>
                         {" " + date}
                     </p>
                     <p>
-                        <b>Elapsed: </b>
+                        <b>{`${T.translate("messages.elapsed")}:`}</b>
                         {" " + message.elapsed}
                     </p>
                     <p>
@@ -140,10 +153,10 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     <b>Excahge Id:</b> {exchange}
                 </p> */}
                 <p>
-                    <b>Inicio:</b> {messageStart}
+                    <b>{`${T.translate("messages.start")}:`}</b> {messageStart}
                 </p>
                 <p>
-                    <b>Fin:</b> {messageEnd}
+                    <b>{`${T.translate("messages.end")}:`}</b> {messageEnd}
                 </p>
                 <Divider></Divider>
             </>
@@ -156,6 +169,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                         <p>
                             <Button
                                 icon={<Icon size="20px" path={mdiTimelineMinus} />}
+                                title={T.translate("messages.hide_traces")}
                                 onClick={() => {
                                     setDisplayed({ ...displayed, ["message" + msgIndex]: false });
                                 }}></Button>
@@ -166,7 +180,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     <Space style={{ marginBottom: "5rem" }} size="middle">
                         <Button
                             icon={<Icon size="20px" path={mdiTimelinePlus} />}
-                            title="Ver trazas"
+                            title={T.translate("messages.show_traces")}
                             onClick={() => {
                                 setDisplayed({ ...displayed, ["message" + msgIndex]: true });
                             }}
@@ -175,7 +189,9 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                         <Button
                             icon={<Icon size="20px" path={mdiMessagePlus} />}
                             disabled={!messageContent}
-                            title={messageContent ? "Body del mensaje" : "No hay body para mostrar"}
+                            title={
+                                messageContent ? T.translate("messages.body") : T.translate("messages.body_undefined")
+                            }
                             onClick={() => {
                                 setShowData({ node: nodeName, content: messageContent });
                             }}
@@ -189,7 +205,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
     return (
         <>
             <Modal
-                title={`Mensaje ${messageId}`}
+                title={`${T.translate("messages.traces_from_message")} ${messageId}`}
                 visible={visible}
                 onCancel={onCancel}
                 cancelButtonProps={{ style: { display: "none" } }}
@@ -226,7 +242,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
 const groupNodes = (messages, nodes) => {
     const groupedByNodeId = lodash.groupBy(messages, "current_route");
     const result = Object.keys(groupedByNodeId).map((nodeId) => {
-        const nodeLabel = lodash.find(nodes, { id: nodeId })?.label || "Nodo eliminado";
+        const nodeLabel = lodash.find(nodes, { id: nodeId })?.label || T.translate("messages.node_unknown");
         const hasError = Boolean(lodash.find(groupedByNodeId[nodeId], { event: "ERROR" }));
 
         return { node: nodeLabel, error: hasError, data: groupedByNodeId[nodeId] };
