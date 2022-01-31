@@ -1,11 +1,9 @@
 {
-    "id": 146,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "any_setter",
     "data": {
-        "id": 146,
         "code": "any_setter",
         "name": "Asignar valor",
         "type": {

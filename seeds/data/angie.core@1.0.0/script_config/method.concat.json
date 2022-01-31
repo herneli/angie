@@ -1,11 +1,9 @@
 {
-    "id": 1045,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "concat",
     "data": {
-        "id": 1045,
         "code": "concat",
         "name": "Concatenar",
         "type": {

@@ -1,11 +1,9 @@
 {
-    "id": 122,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "toString",
     "data": {
-        "id": 122,
         "code": "toString",
         "name": "Convertir a texto",
         "type": {

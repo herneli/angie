@@ -71,9 +71,7 @@ export class UserController extends BaseController {
      */
     async importUsers(request, response, next) {
         try {
-            const service = new UserService();
-
-            await service.importKeycloakUsers();
+            await UserService.importKeycloakUsers();
 
             const jsRes = new JsonResponse(true);
             response.status(200).json(jsRes);

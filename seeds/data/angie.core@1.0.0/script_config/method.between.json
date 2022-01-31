@@ -1,11 +1,9 @@
 {
-    "id": 126,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "between",
     "data": {
-        "id": 126,
         "code": "between",
         "name": "Entre",
         "type": {

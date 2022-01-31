@@ -1,11 +1,9 @@
 {
-    "id": 23769,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "requestGetBody",
     "data": {
-        "id": 23769,
         "code": "requestGetBody",
         "name": "As HL7",
         "type": {

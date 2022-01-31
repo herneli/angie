@@ -1,11 +1,9 @@
 {
-    "id": 23767,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "setProperty",
     "data": {
-        "id": 23767,
         "code": "setProperty",
         "name": "Asignar propiedad",
         "type": {

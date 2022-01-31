@@ -1,11 +1,9 @@
 {
-    "id": 22459,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "toUpperCase",
     "data": {
-        "id": 22459,
         "code": "toUpperCase",
         "name": "Mayúsculas",
         "type": {

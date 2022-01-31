@@ -1,11 +1,9 @@
 {
-    "id": 117,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "eq",
     "data": {
-        "id": 117,
         "code": "eq",
         "name": "=",
         "type": {

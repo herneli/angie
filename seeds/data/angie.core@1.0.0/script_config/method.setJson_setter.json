@@ -1,11 +1,9 @@
 {
-    "id": 23763,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "setJson_setter",
     "data": {
-        "id": 23763,
         "code": "setJson_setter",
         "name": "Asignar JSON",
         "type": {

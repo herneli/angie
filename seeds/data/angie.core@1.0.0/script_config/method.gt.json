@@ -1,11 +1,9 @@
 {
-    "id": 119,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "gt",
     "data": {
-        "id": 119,
         "code": "gt",
         "name": ">",
         "type": {

@@ -73,8 +73,10 @@ export class ConfigurationController extends BaseController {
         try {
             let service = new ConfigurationService();
             let filters = request && request.query && request.query.filters ? JSON.parse(request.query.filters) : {};
-            let dependencies =
-                request && request.query && request.query.dependencies ? JSON.parse(request.query.dependencies) : null;
+            if(filters && filters.params && filters.params.filters){
+                filters = filters.params.filters
+            }
+            let dependencies = request && request.query && request.query.dependencies ? JSON.parse(request.query.dependencies) : null;
             let modelList = [];
 
             

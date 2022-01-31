@@ -1,11 +1,9 @@
 {
-    "id": 14219,
     "package_code": "angie.core",
     "package_version": "1.0.0",
     "document_type": "method",
     "code": "arrayIndex",
     "data": {
-        "id": 14219,
         "code": "arrayIndex",
         "name": "Posición",
         "type": {

@@ -43,32 +43,39 @@ class ChannelActions {
         if (channelId) {
             const agentLogs = await this.getChannelLog(integrationId, channelId);
 
-            Modal.info({
-                title: "Log Channel",
-                width: "60vw",
-                closable: true,
-                centered: true,
-                content: (
-                    <Tabs defaultActiveKey={activeAgent}>
-                        {agentLogs &&
-                            Array.isArray(agentLogs) &&
-                            agentLogs.map((agent) => (
-                                <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
-                                    <AceEditor
-                                        setOptions={{
-                                            useWorker: false,
-                                        }}
-                                        width="100%"
-                                        value={agent.data + ""}
-                                        name="chann.log"
-                                        theme="github"
-                                    />
-                                </Tabs.TabPane>
-                            ))}
-                    </Tabs>
-                ),
-                onOk() {},
-            });
+            if(agentLogs != ""){
+                Modal.info({
+                    title: "Log Channel",
+                    width: "60vw",
+                    closable: true,
+                    centered: true,
+                    content: (
+                        <Tabs defaultActiveKey={activeAgent}>
+                            {agentLogs &&
+                                Array.isArray(agentLogs) &&
+                                agentLogs.map((agent) => (
+                                    <Tabs.TabPane tab={agent.agentName} key={agent.agentId}>
+                                        <AceEditor
+                                            setOptions={{
+                                                useWorker: false,
+                                            }}
+                                            width="100%"
+                                            value={agent.data + ""}
+                                            name="chann.log"
+                                            theme="github"
+                                        />
+                                    </Tabs.TabPane>
+                                ))}
+                        </Tabs>
+                    ),
+                    onOk() {},
+                });
+            }else{
+                notification.error({
+                    message: "channel.not.log",
+                    description: "channel.not.log",
+                });
+            }
         }
     };
 
