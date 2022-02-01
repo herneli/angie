@@ -7,6 +7,7 @@ import formConfig from "../../../components/rjsf";
 
 import T from "i18n-react";
 import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
+import AddableTags from "../../../components/tags/AddableTags";
 
 export default function NodeEditModal({
     children,
@@ -70,7 +71,24 @@ export default function NodeEditModal({
     return (
         <Modal
             width={"70vw"}
-            title={T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
+            title={
+                <div>
+                    {T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
+                    {formData && formData.data && (
+                        <AddableTags
+                            style={{ float: "right", marginRight: 40 }}
+                            addButtonText="Etiquetas"
+                            initialTags={formData.data.tags}
+                            onChange={(tags) => {
+                                let newFormData = { ...formData };
+                                newFormData.data.tags = tags;
+                                setFormData(newFormData);
+                                if (onDataChange) onDataChange(newFormData);
+                            }}
+                        />
+                    )}
+                </div>
+            }
             visible={editNodeVisible}
             onOk={onFormSubmit}
             onCancel={onEditCancel}
@@ -95,25 +113,27 @@ export default function NodeEditModal({
                 </Button>,
             ]}>
             {editNodeVisible && formData && formData.data && (
-                <ConditionalForm
-                    ref={formEl}
-                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                    schema={formData.schema}
-                    formData={formData.data}
-                    uiSchema={formData.uiSchema}
-                    liveOmit={formData?.schema?.liveOmit || false}
-                    omitExtraData={formData?.schema?.omitExtraData || false}
-                    widgets={formConfig.widgets}
-                    fields={formConfig.fields}
-                    onChange={(e) => {
-                        setFormData({ ...formData, data: e.formData });
-                        if (onDataChange) onDataChange(e.formData);
-                    }}
-                    onSubmit={() => onFormSubmit()}
-                    onError={(e) => console.log(e)}>
-                    <></>
-                </ConditionalForm>
+                <div>
+                    <ConditionalForm
+                        ref={formEl}
+                        ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                        ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+                        schema={formData.schema}
+                        formData={formData.data}
+                        uiSchema={formData.uiSchema}
+                        liveOmit={formData?.schema?.liveOmit || false}
+                        omitExtraData={formData?.schema?.omitExtraData || false}
+                        widgets={formConfig.widgets}
+                        fields={formConfig.fields}
+                        onChange={(e) => {
+                            setFormData({ ...formData, data: e.formData });
+                            if (onDataChange) onDataChange(e.formData);
+                        }}
+                        onSubmit={() => onFormSubmit()}
+                        onError={(e) => console.log(e)}>
+                        <></>
+                    </ConditionalForm>
+                </div>
             )}
             {children}
         </Modal>

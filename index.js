@@ -21,6 +21,7 @@ import lodash from "lodash";
 import { JUMAgentController, JUMAgentMaster } from "./app/server/api/jum_agents";
 import Cache from "./app/server/common/Cache";
 import { LibraryController } from "./app/server/api/library/LibraryController";
+import { EntityController } from "./app/server/api/entity";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -90,6 +91,7 @@ module.exports = async () => {
         new SectionController(),
         new MessageController(),
         new LibraryController(),
+        new EntityController(),
     ];
 
     const directives = {

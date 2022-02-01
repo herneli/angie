@@ -1131,9 +1131,7 @@ exports.seed = async function (knex) {
                             type: "array",
                             items: {
                                 type: "string",
-                                enum: [],
                             },
-                            uniqueItems: true,
                         },
                         // childrens: {
                         //     title: "SubMenu",
@@ -1199,10 +1197,11 @@ exports.seed = async function (knex) {
                         type: "string",
                     },
                     roles: {
-                        "ui:columnSize": "6",
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:mode": "multiple",
-                        "ui:selectOptions": "/roles/#path=data&value=name&label=name",
+                        items: {
+                            "ui:columnSize": "6",
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:selectOptions": "/roles/#path=data&value=name&label=name",
+                        },
                     },
                     // "childrens": {
                     //     "ui:options": {

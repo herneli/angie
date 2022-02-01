@@ -167,7 +167,10 @@ export class IntegrationChannelService {
      */
     async convertNodeTypeToCamel(node, data) {
         if (node.data.xml_template) {
-            const template = await Handlebars.compile(node.data.xml_template);
+            //Add TagHeader
+            let procTemplate = node.data.xml_template.replace(/<route[^>]+\sid\b[^>]*>/gm, '<route id="{{source}}" group="{{getTags tags}}">')
+
+            const template = await Handlebars.compile(procTemplate);
 
             if (data.data.handles) {
                 //Calcular los links de los diferentes handles para la conversion

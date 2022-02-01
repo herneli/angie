@@ -10,6 +10,22 @@ export default class BaseDao {
         //ElasticConnector
     }
 
+    /*
+     * --> Compatibilidad con BaseService
+     */
+    loadById(id) {
+        return this.get(id);
+    }
+    save(data) {
+        return this.addDocument(data.id, data);
+    }
+    update(id, data) {
+        return this.addOrUpdateDocumentNoMerge(id, data);
+    }
+    delete(id) {
+        return this.remove(id);
+    }
+
     count(filter) {
         if (!filter) {
             filter = {};
@@ -33,7 +49,11 @@ export default class BaseDao {
     }
 
     loadAllData(filter, start, limit) {
+        // global.esstats.searchCount++;
         var params = {};
+        delete filter.start;
+        delete filter.limit;
+        
         if (start) {
             params.from = start;
         }
@@ -61,7 +81,6 @@ export default class BaseDao {
             }
             params.body.sort = this.parseSorts(filter.sort);
         }
-        // global.esstats.searchCount++;
 
         return this.search(params);
     }

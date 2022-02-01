@@ -225,7 +225,8 @@
         "remote_status_error": "Error al actualizar",
         "select_package": "Seleccione un paquete",
         "version": "Versión",
-        "versions": "Versiones"
+        "versions": "Versiones",
+        "entity_mapper": "Mapeo Entidades"
     },
     "configuration": {
         "actions": "Acciones",

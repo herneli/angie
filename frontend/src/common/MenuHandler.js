@@ -15,6 +15,7 @@ import {
     mdiScriptTextKeyOutline,
     mdiFunctionVariant,
     mdiAccountMultiple,
+    mdiChartGantt,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
@@ -38,6 +39,7 @@ export default class MenuHandler {
         mdiSourceBranch: mdiSourceBranch,
         mdiDatabaseOutline: mdiDatabaseOutline,
         mdiPackageVariantClosed: mdiPackageVariantClosed,
+        mdiChartGantt: mdiChartGantt,
     };
 
     static drawSubMenu = async (item, baseUrl) => {

@@ -4,6 +4,12 @@
         "code": "menu",
         "menu": [
             {
+                "key": "entity",
+                "title": "Entidades",
+                "icon": "mdiConnection",
+                "value": "/entity/list"
+            },
+            {
                 "key": "integrations",
                 "title": "Integraciones",
                 "icon": "mdiConnection",
@@ -74,10 +80,10 @@
                         "title": "packages.node_types"
                     },
                     {
-                        "key": "applications",
-                        "value": "/applications",
-                        "icon": "mdiFunctionVariant",
-                        "title": "packages.applications"
+                        "key": "entity_mapper",
+                        "value": "/entity_mapper",
+                        "icon": "mdiChartGantt",
+                        "title": "packages.entity_mapper"
                     },
                     {
                         "key": "script_context",

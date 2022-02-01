@@ -1,7 +1,7 @@
 import { default as DefHandlebars } from "handlebars";
 import lodash from "lodash";
 import * as queryString from "query-string";
-import { ApplicationService } from "../application";
+import { EntityMapperService } from "../entity_mapper";
 
 import promisedHandlebars from "promised-handlebars";
 
@@ -34,6 +34,7 @@ class ChannelHandlebarsHelpers {
         Handlebars.registerHelper("groovyList", (inputData) => this.groovyList(inputData));
         Handlebars.registerHelper("generateDestination", (target, mode) => this.generateDestination(target, mode));
         Handlebars.registerHelper("generateEntityCreation", (object) => this.generateEntityCreation(object));
+        Handlebars.registerHelper("getTags", (tags) => this.getTags(tags));
 
         return Handlebars;
     }
@@ -75,20 +76,21 @@ class ChannelHandlebarsHelpers {
     }
 
     /**
-     * 
-     * @param {*} object 
-     * @returns 
+     *
+     * @param {*} object
+     * @returns
      */
     async generateEntityCreation(object) {
-        const appServ = new ApplicationService();
+        const appServ = new EntityMapperService();
 
-        const app = await appServ.getAppplication(object.app);
+        const app = await appServ.getEntityMappers(object.app);
 
         const conditions = (app && app.data && app.data.entities) || [];
 
         return this.safe(`<choice>
-            ${conditions.map(
-                (cond) => `<when>
+            ${conditions
+                .map(
+                    (cond) => `<when>
                     <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
                     ${this.setHeader("entity_type", cond.code, "constant")}
                     <setBody><simple>${cond.entity_extraction}</simple></setBody>
@@ -96,7 +98,8 @@ class ChannelHandlebarsHelpers {
                     <process ref="entityGenerator"/>
                     <to uri="mock:elastic"/>
                 </when>`
-            ).join('\n')}
+                )
+                .join("\n")}
             <otherwise>
                 ${this.setHeader("entity_type", "unknown", "constant")}
                 <setBody><simple>{}</simple></setBody>
@@ -105,6 +108,18 @@ class ChannelHandlebarsHelpers {
                 <to uri="mock:elastic"/>
             </otherwise>
         </choice>`);
+    }
+
+    /**
+     * Genera headers en base a los tags del componente
+     *
+     * @param {*} key
+     * @param {*} value
+     * @param {*} format
+     * @returns
+     */
+    getTags(tags) {
+        return tags && Array.isArray(tags) ? tags.join(",") : "";
     }
 
     /**
@@ -125,7 +140,7 @@ class ChannelHandlebarsHelpers {
         if (!format) {
             format = "constant";
         }
-        if (!code || !value) {
+        if (!code) {
             return "";
         }
         return this.safe(`<setHeader name="${code}"><${format}>${value}</${format}></setHeader>`);

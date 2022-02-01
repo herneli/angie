@@ -18,7 +18,7 @@ const packageComponent = [
     },
     {
         table: "integration_config",
-        document_types: ["node_type"],
+        document_types: ["node_type", "entity_mapper"],
         id_mode: "uuid",
     },
     {
