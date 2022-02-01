@@ -61,7 +61,6 @@ const editTabFormSchema = {
                         title: "Agentes Asignados",
                         items: {
                             type: "string",
-                            enum: [],
                         },
                         uniqueItems: true,
                     },
@@ -101,10 +100,11 @@ const editTabFormSchema = {
             },
             assigned_agent: {
                 condition: "deployment_options.agent_assign_mode=fixed",
-                "ui:columnSize": "8",
-                "ui:widget": "SelectRemoteWidget",
-                "ui:mode": "multiple",
-                "ui:selectOptions": "/jum_agent#path=data&value=id&label=name",
+                items: {
+                    "ui:columnSize": "8",
+                    "ui:widget": "SelectRemoteWidget",
+                    "ui:selectOptions": "/jum_agent#path=data&value=id&label=name",
+                },
             },
             trace_file: {
                 "ui:widget": "checkbox",

@@ -727,7 +727,6 @@ exports.seed = async function (knex) {
                             title: "Organization",
                             items: {
                                 type: "string",
-                                enum: [],
                             },
                             uniqueItems: true,
                         },
@@ -748,10 +747,12 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                     },
                     organization_id: {
-                        "ui:columnSize": "6",
-                        "ui:widget": "SelectRemoteWidget",
-                        "ui:mode": "multiple",
-                        "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
+                        items: {
+                            "ui:columnSize": "6",
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:selectOptions":
+                                "/configuration/model/organization/data#path=data&value=id&label=data.name",
+                        },
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",
@@ -1246,13 +1247,13 @@ exports.seed = async function (knex) {
         },
         {
             name: "Aplicaciones",
-            code: "applications",
+            code: "entity_mapper",
             data: {
-                code: "applications",
-                name: "Aplicaciones",
+                code: "entity_mapper",
+                name: "Mapeo Entidades",
                 table: "integration_config",
                 id_mode: "uuid",
-                documentType: "application",
+                documentType: "entity_mapper",
                 listFields: [
                     {
                         title: "Código",
@@ -1282,21 +1283,6 @@ exports.seed = async function (knex) {
                                 },
                             },
                         },
-                        // // handles: { title: "Handles", type: "string" },
-                        // alt_codes: { title: "Códigos Alternativos", type: "string" },
-                        // react_component_type: {
-                        //     title: "Tipo Componente",
-                        //     type: "string",
-                        //     enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode"],
-                        //     enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode"],
-                        // },
-                        // custom_color: { title: "Personalizar", type: "boolean" },
-                        // component_border_color: { title: "Borde", type: "string" },
-                        // component_bg_color: { title: "Fondo", type: "string" },
-                        // json_data_schema: { title: "Formulario", type: "string" },
-                        // json_ui_schema: { title: "UiSchema", type: "string" },
-                        // xml_template: { title: "Plantilla Camel", type: "string" },
-                        // defaults: { title: "Valores por defecto", type: "string" },
                     },
                 },
                 uiSchema: {
@@ -1309,71 +1295,12 @@ exports.seed = async function (knex) {
                     entities: {
                         items: {
                             entity_extraction: {
-                                // "ui:columnSize": "6",
                                 "ui:widget": "AceEditorWidget",
                                 "ui:mode": "json",
                                 "ui:beautify": false,
                             },
                         },
                     },
-                    // group: {
-                    //     "ui:columnSize": "4",
-                    // },
-
-                    // json_data_schema: {
-                    //     "ui:columnSize": "6",
-                    //     "ui:widget": "AceEditorWidget",
-                    //     "ui:height": "600px",
-                    //     "ui:mode": "json",
-                    //     "ui:beautify": true,
-                    // },
-                    // json_ui_schema: {
-                    //     "ui:columnSize": "6",
-                    //     "ui:widget": "AceEditorWidget",
-                    //     "ui:height": "600px",
-                    //     "ui:mode": "json",
-                    //     "ui:beautify": true,
-                    // },
-                    // xml_template: {
-                    //     "ui:columnSize": "6",
-                    //     "ui:widget": "AceEditorWidget",
-                    //     "ui:mode": "html",
-                    //     "ui:height": "300px",
-                    //     "ui:beautify": true,
-                    //     "ui:disableValidation": true,
-                    // },
-                    // defaults: {
-                    //     "ui:columnSize": "6",
-                    //     "ui:widget": "AceEditorWidget",
-                    //     "ui:mode": "json",
-                    //     "ui:height": "300px",
-                    //     "ui:beautify": true,
-                    // },
-
-                    // react_component_type: {
-                    //     "ui:columnSize": "2.5",
-                    // },
-
-                    // custom_color: {
-                    //     "ui:widget": "checkbox",
-                    //     "ui:columnSize": "1.5",
-                    // },
-                    // component_border_color: {
-                    //     condition: "custom_color=true",
-                    //     "ui:widget": "ColorField",
-                    //     "ui:colors": ["#000000", "#0041d0", "#237a52", "#ff0072"],
-                    //     "ui:columnSize": "1.5",
-                    // },
-                    // component_bg_color: {
-                    //     condition: "custom_color=true",
-                    //     "ui:widget": "ColorField",
-                    //     "ui:colors": ["#000000", "#0041d0", "#237a52", "#ff0072"],
-                    //     "ui:columnSize": "1.5",
-                    // },
-                    // alt_codes: {
-                    //     "ui:help": "Util para mantener compatibilidad con codigos cambiados. Separar por (,)",
-                    //     "ui:columnSize": "5",
-                    // },
                 },
             },
         },
