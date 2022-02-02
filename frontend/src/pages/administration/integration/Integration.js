@@ -39,6 +39,7 @@ import {
     mdiTextLong,
     mdiSourceBranchPlus,
     mdiCogs,
+    mdiAlertOutline 
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -116,6 +117,8 @@ const Integration = () => {
     const [editingChannelVisible, setEditingChannelVisible] = useState(false);
 
     const [debugVisible, setDebugVisible] = useState(false);
+    const [warningNodeVisible, setWarningNodeVisible] = useState(false);
+    const [warningIcon, setWarningIcon] = useState(false);
     const [debugData, setDebugData] = useState(null);
 
     const [editHistory, setEditHistory] = useState([]);
@@ -490,6 +493,16 @@ const Integration = () => {
 
         let buttons = [];
 
+        let nodeError=[]
+        if(warningIcon){
+            nodeError.push(<IconButton
+                key="nodeWarning"
+                onClick={() => showWarningVisible()}
+                icon={{ path: mdiAlertOutline  ,color: "RED", size: 0.6, title: T.translate("common.button.warning"),spin:true }}
+            >{T.translate("integrations.channel.node.type_modal")}</IconButton>)
+        }
+
+
         if (currentStatus === "Started" && activeChannel.enabled) {
             buttons.push(
                 <Popconfirm
@@ -566,7 +579,11 @@ const Integration = () => {
                 />
             );
         }
+
+      
+
         return [
+            ...nodeError,
             <IconButton
                 key="log"
                 onClick={() => showChannelDebug()}
@@ -609,6 +626,18 @@ const Integration = () => {
                 channelXml,
             });
             setDebugVisible(true);
+        }
+    };
+
+ 
+    const showWarningVisible = async () => {
+        const channel = lodash.find(channels, { id: activeTab });
+        if (channel) {
+        
+            setDebugData({
+                channel
+            });
+            setWarningNodeVisible(true);
         }
     };
 
@@ -796,7 +825,11 @@ const Integration = () => {
                             undo={undo}
                             redo={redo}
                             debugVisible={debugVisible}
+                            warningNodeVisible={warningNodeVisible}
+                            warningIcon={() => setWarningIcon(true)}
+                            notWarningIcon={() => setWarningIcon(false)}
                             debugData={debugData}
+                            warningClose={() => setWarningNodeVisible(false)}
                             debugClose={() => setDebugVisible(false)}
                             reloadDebug={() => showChannelDebug()}
                         />

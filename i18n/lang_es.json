@@ -157,7 +157,9 @@
                 "title": "*Paleta Nodos*"
             },
             "node": {
-                "settings_title": "Opciónes Nodo: {label}"
+                "settings_title": "Opciónes Nodo: {label}",
+                "info":"Los siguientes nodos son aquellos cuyo codigo de referencia no se ha encontrado en los Nodos del paquete/versión, por favor seleccione el tipo de nodo adecuado por cada Nodo no encontrado.",
+                "type_modal":"Nodos con errores"
             }
         }
     },
@@ -225,8 +227,7 @@
         "remote_status_error": "Error al actualizar",
         "select_package": "Seleccione un paquete",
         "version": "Versión",
-        "versions": "Versiones",
-        "entity_mapper": "Mapeo Entidades"
+        "versions": "Versiones"
     },
     "configuration": {
         "actions": "Acciones",
