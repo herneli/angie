@@ -668,8 +668,7 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery:
-                    "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
                 group_by: "users.id",
                 relation_schema: [
                     {
@@ -727,6 +726,7 @@ exports.seed = async function (knex) {
                             title: "Organization",
                             items: {
                                 type: "string",
+                                enum: [],
                             },
                             uniqueItems: true,
                         },
@@ -747,12 +747,10 @@ exports.seed = async function (knex) {
                         "ui:columnSize": "6",
                     },
                     organization_id: {
-                        items: {
-                            "ui:columnSize": "6",
-                            "ui:widget": "SelectRemoteWidget",
-                            "ui:selectOptions":
-                                "/configuration/model/organization/data#path=data&value=id&label=data.name",
-                        },
+                        "ui:columnSize": "6",
+                        "ui:widget": "SelectRemoteWidget",
+                        "ui:mode": "multiple",
+                        "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
                     },
                     created_time_stamp: {
                         "ui:columnSize": "12",

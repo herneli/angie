@@ -155,7 +155,7 @@ const Integration = () => {
      * Metodo encargado de cargar la integración ya sea desde el state de la navegación o desde el servidor
      */
     const loadIntegration = async () => {
-        setCurrentIntegration(null); //Resetear primero
+        //setCurrentIntegration(null); //Resetear primero
         setChannels([]);
 
         if (id === "new") {
@@ -223,7 +223,10 @@ const Integration = () => {
     const fetchIntegration = async (identifier) => {
         setPendingChanges(false);
         try {
-            const response = await axios.get("/integration/" + identifier);
+            let response;
+            if(identifier != "integrations"){
+                response = await axios.get("/integration/" + identifier);    
+            }
 
             if (response?.data?.data) {
                 let { data: integration } = response.data.data;

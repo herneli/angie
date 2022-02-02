@@ -59,10 +59,17 @@ exports.up = async function(knex) {
         });
         await knex.from("library").insert({
             id: v4(),
+            group_id: "org.apache.camel",
+            artifact_id: "camel-rabbitmq",
+            version: null
+        });
+        await knex.from("library").insert({
+            id: v4(),
             group_id: "ca.uhn.hapi",
             artifact_id: "hapi-structures-v25",
             version: "2.2"
         });
+   
     }
 };
 

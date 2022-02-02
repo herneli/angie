@@ -6,7 +6,7 @@ import lodash from "lodash";
 const ConditionalForm = React.forwardRef((props, ref) => {
     const { schema, uiSchema, formData } = props;
     const [initialValues, setInitialValues] = useState();
-
+    const [emptyField, setEmptyField] = useState(false);
     const [state, setState] = useState();
 
     useEffect(() => {
@@ -14,7 +14,6 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         initialLoad();
     }, [schema, uiSchema, formData]);
 
-    
     const initialLoad = () => {
         const initValues = {
             originalSchema: lodash.cloneDeep(schema),
@@ -26,14 +25,52 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         setState(initialState);
     };
 
+    //Manejo de los errores
+    const transformErrors = (errors) => {
+        console.log("Form Errors : " + JSON.stringify(errors));
+        var e = [];
+
+        errors.map((error) => {
+            if (error.message == "should NOT have fewer than 1 items") {
+                if(emptyField){
+                    e.push(error)
+                }
+                return;
+            }
+            if (error.message == "should be array") {
+                return;
+            }
+            if (error.message == "should match some schema in anyOf") {
+                return;
+            }
+            e.push(error);
+        });
+
+        return e;
+    };
+
     const onChange = (e) => {
-        const { formData } = e;
+        const { formData,schema } = e;
+
+        //Comprobación del Required en caso de los arrays.
+     
+        Object.keys(formData).forEach((element) => {
+            if(schema.required.includes(element)){
+                if(Array.isArray(formData[element]) && formData[element].length == 0){
+                    setEmptyField(true)
+                }
+                if(Array.isArray(formData[element]) && formData[element].length > 0){
+                    setEmptyField(false)
+                }
+            }
+        })
 
         const newState = processForm(initialValues.originalSchema, initialValues.originalUISchema, formData);
         setState(newState);
 
         if (props.onChange) props.onChange(e);
     };
+
     return (
         <>
             {state && (
@@ -44,6 +81,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
                     uiSchema={state.uiSchema}
                     formData={state.formData}
                     onChange={onChange}
+                    transformErrors={transformErrors}
                 />
             )}
         </>
