@@ -168,7 +168,7 @@ export class IntegrationChannelService {
     async convertNodeTypeToCamel(node, data) {
         if (node.data.xml_template) {
             //Add TagHeader
-            let procTemplate = node.data.xml_template.replace(/<route[^>]+\sid\b[^>]*>/gm, '<route id="{{source}}" group="{{getTags tags}}">')
+            let procTemplate = node.data.xml_template.replace(/<route\s+id\b[^>]*>/gm, '<route id="{{source}}" group="{{getTags tags}}"><description>{{label}}</description>')
 
             const template = await Handlebars.compile(procTemplate);
 
