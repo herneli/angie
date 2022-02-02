@@ -140,7 +140,7 @@ const AppMenu = ({ app }) => {
                 )}
 
                 {keycloak && keycloak.authenticated && (
-                    <>
+                    <span key={"MenuStandars"}>
                         {currentUser && (
                             <Popover
                                 key="orgPop"
@@ -167,7 +167,7 @@ const AppMenu = ({ app }) => {
                                 {keycloak.tokenParsed.preferred_username}
                             </Menu.Item>
                         </Popover>
-                        <Menu.Item key="logoutButton" className="logoutBtn">
+                        <Menu.Item key="logoutButton"  style={{marginTop : "-0.4%"}} className="logoutBtn">
                             <Button
                                 type="primary"
                                 size="middle"
@@ -182,7 +182,7 @@ const AppMenu = ({ app }) => {
                                 }
                             />
                         </Menu.Item>
-                    </>
+                    </span>
                 )}
             </Menu>
         </div>
