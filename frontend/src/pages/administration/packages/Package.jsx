@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout } from "antd";
+import { Layout, Tag } from "antd";
 import { Route, Switch } from "react-router";
 import { useRouteMatch } from "react-router-dom";
 import T from "i18n-react";
@@ -12,6 +12,7 @@ import Integrations from "../integration/Integrations";
 import ModelEdit from "../../configuration/ModelEdit";
 import SubMenu from "../../../layout/SubMenu";
 import NodeTypeEdit from "../nodeType/NodeTypeEdit";
+import Text from "antd/lib/typography/Text";
 
 const { Content, Header } = Layout;
 
@@ -44,8 +45,8 @@ export default function Package({ match }) {
     return (
         <PackageContextProvider currentPackage={currentPackage} dependencies={dependiencies}>
             <Layout>
-                <Header className={classes.header}>
-                    {currentPackage.name} ({currentPackage.code}/{currentPackage.version})
+                <Header className={classes.header} style={{ backgroundColor: "#deefff"}}>
+                    <Tag color={"geekblue"}>{currentPackage?.packageData?.name} ({currentPackage.code}/{currentPackage.version})</Tag>
                 </Header>
                 <Layout>
                     <SubMenu

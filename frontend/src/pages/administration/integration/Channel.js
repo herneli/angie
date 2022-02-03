@@ -16,14 +16,15 @@ import NodeEditModal from "./NodeEditModal";
 
 import lodash from "lodash";
 import useEventListener from "../../../common/useEventListener";
-import { Dropdown, Menu, Space, Tabs } from "antd";
+import { Modal, Dropdown, Menu, Space, Tabs, List, Select,Divider } from "antd";
 import Icon from "@mdi/react";
-import { mdiClipboard, mdiCogs, mdiContentCopy, mdiRefresh, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
+import { mdiClipboard, mdiCogs, mdiContentCopy, mdiInformation, mdiRefresh, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
 import ChannelContextProvider from "../../../components/channels/ChannelContext";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 import IconButton from "../../../components/button/IconButton";
 
 import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
+import Text from "antd/lib/typography/Text";
 
 const { TabPane } = Tabs;
 
@@ -42,7 +43,11 @@ const Channel = ({
     nodeTypes,
     debugData,
     debugVisible,
+    warningNodeVisible,
     debugClose,
+    warningIcon,
+    notWarningIcon,
+    warningClose,
     reloadDebug,
 }) => {
     const reactFlowWrapper = useRef(null);
@@ -52,6 +57,8 @@ const Channel = ({
     const [editNodeVisible, setEditNodeVisible] = useState(false);
     const [drawerWidth, setDraweWidth] = useState(null);
     const [selectedNodes, changeSelectedNodes] = useState(null);
+    const [notFoundedValues, setNotFoundedValues] = useState([]);
+    const [notFoundedNodes, setNotFoundedNodes] = useState([]);
 
     /**
      * Almacena la instancia actual del RFlow
@@ -70,10 +77,54 @@ const Channel = ({
     useEffect(() => {
         if (channel) {
             console.log("transform!");
+
             setElements(Transformer.transformFromBd(channel));
         }
         // console.log(channel);
     }, [channel]);
+
+
+    /**
+     * Comprobación de los codes de las cajas para ver si se encuentran en el package actual.
+     * 
+     * 
+     */
+    useEffect(() => {
+
+        if (channel.nodes && channel.nodes.length > 0 && nodeTypes.length > 0) {
+            let nodesChannel = channel.nodes
+            let notFoundedNodes = []
+
+            //Se comprueba si hay algun nodo con codigo que no este en los nodeTypes
+            nodesChannel.forEach((element) => {
+                let finded = lodash.filter(nodeTypes, { "code": element.type_id })
+
+                if (!finded[0]) {
+                    notFoundedNodes.push(element)
+                }
+            })
+
+            if (notFoundedNodes.length > 0) {
+
+
+                setNotFoundedNodes(notFoundedNodes)
+                //Se añade la label y el valor para el Select
+                nodeTypes.forEach(function (element) {
+                    element.value = element.name;
+                    element.label = element.name;
+                });
+
+                warningIcon(true)
+            }else{
+                notWarningIcon(["false"])
+            }
+        }
+
+    }, [channel, nodeTypes])
+
+
+
+
 
     /**
      * Metodo para crear una conexión entre dos nodos
@@ -577,7 +628,66 @@ const Channel = ({
                         </Tabs>
                     </ResizableDrawer>
                 </ChannelContextProvider>
+                    <Modal
+                        width={"40vw"}
+                        closable={true}
+                        visible={warningNodeVisible}
+                        onClose={warningClose}
+                        onCancel={warningClose}
+                        onOk={() => {
+                            let updatedNodes = []
+
+                            //Coge los nodos cuyo CODE no ha sido encontrado y le establece el de la selección.
+                            notFoundedNodes.forEach((element) => {
+                                let found = notFoundedValues.find((item) => { return item.item == element.id })
+                                if (found && found.value) {
+                                    element.type_id = found.value
+                                    updatedNodes.push(element)
+                                }
+                            })
+
+                            //Se unifica con el array de los nodos del canal.
+                            let value = lodash.unionBy(updatedNodes, channel.nodes, "id")
+                            channel.nodes = value
+
+                            //Se actualiza el canal.
+                            onChannelUpdate(channel)
+                            warningClose()
+                        }}
+                    >
+                        <h3>{T.translate("integrations.channel.node.type_modal")}</h3>
+                        <Divider > <Icon path={mdiInformation} color={"#4ab199"} size={1.2} /></Divider>
+
+                         { T.translate("integrations.channel.node.info")}
+                      
+                        <Divider > <Icon path={mdiInformation} color={"#4ab199"} size={1.2} /></Divider>
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={notFoundedNodes}
+                            renderItem={item => (
+                                <List.Item>
+                                    <List.Item.Meta
+                                        description={item.data && item.data.label ? item.data.label : item.type_id}
+                                    />
+                                    <Select showSearch style={{ width: 250 }} options={nodeTypes} onChange={(e, option) => {
+                                        let selection = { "value": option.code, "item": item.custom_name ? item.custom_name : item.id }
+                                        let modalValues = notFoundedValues
+
+                                        //Se comprueba que no haya duplicados si los hay elimina el elemento y le añade la modificación
+                                        let duplicated = lodash.find(modalValues, { "item": selection.item })
+                                        if (duplicated) modalValues = lodash.reject(modalValues, { "item": selection.item })
+
+                                        //Set Modal values on change
+                                        modalValues.push(selection)
+                                        setNotFoundedValues(modalValues)
+                                    }} />
+                                </List.Item>)}/>
+
+                           </Modal>
+                                
             </div>
+
+
         </div>
     );
 };
