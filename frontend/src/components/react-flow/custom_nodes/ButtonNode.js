@@ -4,7 +4,7 @@ import axios from "axios";
 import T from "i18n-react";
 
 import { Handle } from "react-flow-renderer";
-import { useCurrentChannel } from "../../../../components/channels/ChannelContext";
+import { useCurrentChannel } from "../../channels/ChannelContext";
 
 async function callApi(node, currentChannel, channelStatus) {
     const { data } = node;

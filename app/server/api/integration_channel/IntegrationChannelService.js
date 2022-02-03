@@ -133,6 +133,7 @@ export class IntegrationChannelService {
         const configService = new ConfigurationService();
 
         const { data: node_types } = await configService.list("node_type");
+        const integration = await this.getIntegrationByChannel(channel.id);
 
         const nodes = lodash.cloneDeep(channel.nodes);
 
@@ -152,7 +153,7 @@ export class IntegrationChannelService {
             if (!type) continue;
             if (type.data.handles === "none") continue;
 
-            camelStr += await this.convertNodeTypeToCamel(type, element);
+            camelStr += await this.convertNodeTypeToCamel(type, element, integration);
         }
 
         return `<routes xmlns=\"http://camel.apache.org/schema/spring\">${camelStr}</routes>`;
@@ -165,7 +166,7 @@ export class IntegrationChannelService {
      * @param {*} data
      * @returns
      */
-    async convertNodeTypeToCamel(node, data) {
+    async convertNodeTypeToCamel(node, data, integration) {
         if (node.data.xml_template) {
             //Add TagHeader
             let procTemplate = node.data.xml_template.replace(/<route[^>]+\sid\b[^>]*>/gm, '<route id="{{source}}" group="{{getTags tags}}">')
@@ -179,6 +180,7 @@ export class IntegrationChannelService {
             return await template({
                 source: data.id,
                 target: data.links && data.links.length !== 0 ? lodash.map(data.links, "node_id") : ["empty"],
+                organization: integration.deployment_config && integration.deployment_config.organization_id,
                 ...data.data,
             });
         }

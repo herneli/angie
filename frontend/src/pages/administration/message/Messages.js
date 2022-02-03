@@ -11,6 +11,7 @@ import Icon from "@mdi/react";
 import { mdiDownload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import { Content } from "antd/lib/layout/layout";
+import BasicFilter from "../../../components/basic-filter/BasicFilter";
 
 const useStyles = createUseStyles({
     card: {
@@ -29,7 +30,7 @@ const useStyles = createUseStyles({
     },
 });
 
-// const channelActions = new ChannelActions();
+const defaultDates = [moment().subtract(15, "day"), moment()];
 
 const Messages = (props) => {
     const [dataSource, setDataSource] = useState([]);
@@ -37,6 +38,7 @@ const Messages = (props) => {
     const [pagination, setPagination] = useState({});
     const [messageModalVisible, setMessageModalVisible] = useState(false);
     const [detailedMessage, setDetailedMessage] = useState([]);
+    const [currentDates, setCurrentDates] = useState(defaultDates);
 
     const params = useParams();
     let channel = "";
@@ -52,7 +54,7 @@ const Messages = (props) => {
 
     useEffect(() => {
         search();
-    }, [props.debugData]);
+    }, [props.debugData, currentDates]);
 
     const classes = useStyles();
 
@@ -69,6 +71,13 @@ const Messages = (props) => {
             filters.sort = Object.keys(sorts).length !== 0 && {
                 field: sorts.columnKey || sorts.field,
                 direction: sorts.order,
+            };
+        }
+        if (currentDates) {
+            filters["date_reception"] = {
+                type: "date",
+                start: currentDates[0].toISOString(),
+                end: currentDates[1].toISOString(),
             };
         }
 
@@ -218,39 +227,17 @@ const Messages = (props) => {
         },
     ];
 
-    const getFiltersByPairs = (str) => {
-        const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
-        let m;
-
-        let data = {};
-        while ((m = regex.exec(str)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            let { key, value } = m.groups;
-            if (key) {
-                data[key] = {
-                    type: "likeI",
-                    value: `${value}`,
-                };
-            }
-        }
-        return data;
+    const onDateChange = (dates) => {
+        setCurrentDates(dates);
     };
-
     const onSearch = (value) => {
-        if (value.indexOf(":") !== -1) {
-            return search(null, getFiltersByPairs(value));
-        }
-        if (value) {
-            search(null, {
-                "integration.data::text": {
-                    type: "jsonb",
-                    value: value,
-                },
-            });
-        }
+        const filter = {
+            "": {
+                type: "query_string",
+                value: value,
+            },
+        };
+        search(null, value ? filter : {});
     };
 
     return props.channel ? (
@@ -286,7 +273,15 @@ const Messages = (props) => {
         </>
     ) : (
         <Content>
-            <Row className={classes.card}>
+            <BasicFilter defaultDates={defaultDates} onDateChange={onDateChange} onSearch={onSearch}>
+                <Button
+                    icon={<Icon path={mdiDownload} className={classes.icon} />}
+                    type="text"
+                    onClick={() => handleDownloadTable(dataSource)}
+                />
+            </BasicFilter>
+            <br />
+            {/* <Row className={classes.card}>
                 <Col flex={1}>
                     <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
                 </Col>
@@ -301,7 +296,7 @@ const Messages = (props) => {
                         </Col>
                     </Row>
                 </Col>
-            </Row>
+            </Row> */}
             {dataSource && (
                 <Table
                     loading={loading}

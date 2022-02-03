@@ -18,6 +18,7 @@ import AgentInfo from "./AgentInfo";
 
 import * as api from "../../api/configurationApi";
 import { useAngieSession } from "../../components/security/UserContext";
+import BasicFilter from "../../components/basic-filter/BasicFilter";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -250,7 +251,6 @@ const DeployedIntegrations = () => {
             </div>
         );
     };
-
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
             return search(
@@ -409,24 +409,17 @@ const DeployedIntegrations = () => {
 
     return (
         <Content className={"deployedIntegrations"}>
-            <Row className={classes.card}>
-                <Col flex={4}>
-                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
-                </Col>
-                <Col flex={1}>
-                    <Row justify="end">
-                        <IconButton
-                            key="undeploy"
-                            onClick={() => search()}
-                            icon={{
-                                path: mdiRefresh,
-                                size: 0.7,
-                            }}
-                            title={T.translate("common.button.reload")}
-                        />
-                    </Row>
-                </Col>
-            </Row>
+            <BasicFilter hideDateFilter onSearch={onSearch}>
+                <IconButton
+                    key="undeploy"
+                    onClick={() => search()}
+                    icon={{
+                        path: mdiRefresh,
+                        size: 0.7,
+                    }}
+                    title={T.translate("common.button.reload")}
+                />
+            </BasicFilter>
 
             <List
                 itemLayout="vertical"

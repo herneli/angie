@@ -1,47 +1,67 @@
 import { useEffect, useState } from "react";
-import { Col, Input, Layout, notification, Row, Space, Table } from "antd";
+import { notification, Space, Table } from "antd";
 import axios from "axios";
 import moment from "moment";
 import T from "i18n-react";
-import { createUseStyles } from "react-jss";
 import { mdiMagnifyPlus } from "@mdi/js";
-import IconButton from "../../components/button/IconButton";
-import EntityDetail from "./EntityDetail";
+import IconButton from "../../../components/button/IconButton";
 import { useHistory } from "react-router";
 
-const { Content } = Layout;
-const useStyles = createUseStyles({
-    card: {
-        margin: 10,
-    },
-    search: {
-        marginBottom: 15,
-    },
-    button: {
-        fontSize: 10,
-    },
-    icon: {
-        color: "#3d99f6",
-        width: 20,
-        height: 20,
-    },
-});
+import lodash from "lodash";
 
-// const channelActions = new ChannelActions();
+import * as api from "../../../api/configurationApi";
 
-const EntityList = (props) => {
+import { useAngieSession } from "../../../components/security/UserContext";
+import BasicFilter from "../../../components/basic-filter/BasicFilter";
+
+const defaultDates = [moment().subtract(15, "day"), moment()];
+
+const EntityList = () => {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({});
+    const [organizations, setOrganizations] = useState([]);
+    const [currentDates, setCurrentDates] = useState(defaultDates);
+
+    const { currentUser } = useAngieSession();
 
     let history = useHistory();
 
+    const initialize = async () => {
+        await loadOrganizations();
+    };
+
     useEffect(() => {
-        search();
+        initialize();
     }, []);
 
-    const classes = useStyles();
+    useEffect(() => {
+        search();
+    }, [currentUser, currentDates]);
 
+    /**
+     * Obtiene una organización en base a su id
+     * @param {*} id
+     * @returns
+     */
+    const getOrganizationById = (id) => {
+        if (!id) return null;
+        const org = lodash.find(organizations, { id: id });
+        if (!org) return null;
+        return { ...org, ...org.data };
+    };
+
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadOrganizations = async () => {
+        try {
+            const organizations = await api.getModelDataList("organization");
+            setOrganizations(organizations);
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
@@ -57,6 +77,13 @@ const EntityList = (props) => {
                 direction: sorts.order,
             };
         }
+        if (currentDates) {
+            filters["date"] = {
+                type: "date",
+                start: currentDates[0].toISOString(),
+                end: currentDates[1].toISOString(),
+            };
+        }
 
         try {
             const response = await axios.post(`/entity/list`, filters);
@@ -68,6 +95,7 @@ const EntityList = (props) => {
                 message: T.translate("common.messages.error.title"),
                 description: T.translate("common.messages.error.description", { error: ex }),
             });
+            console.error(ex);
         }
         setLoading(false);
     };
@@ -82,27 +110,28 @@ const EntityList = (props) => {
         },
         {
             title: T.translate("entity.date"),
-            dataIndex: "date",
+            dataIndex: ["_source", "date"],
             key: "date",
             defaultSortOrder: "descend",
             sorter: true,
             render: (text, record) => {
-                const { date } = record._source;
-                return moment(date).format("DD/MM/YYYY HH:mm:ss:SSS");
+                return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
             },
         },
         {
             title: T.translate("entity.type"),
-            dataIndex: "type",
+            dataIndex: ["_source", "type"],
             key: "type.keyword",
             sorter: true,
-            render: (text, record) => {
-                const { type } = record._source;
-                return type;
-            },
         },
         {
-            title: T.translate("entity.actions"),
+            title: T.translate("entity.organization"),
+            dataIndex: ["_source", "organization"],
+            key: "organization.keyword",
+            sorter: true,
+            render: (text) => getOrganizationById(text)?.name,
+        },
+        {
             key: "action",
             width: 50,
             fixed: "right",
@@ -113,7 +142,7 @@ const EntityList = (props) => {
                             type="text"
                             onClick={(e) => {
                                 history.push({
-                                    pathname: `/entity/${record._id}`,
+                                    pathname: `/explore/entity/${record._id}`,
                                 });
                             }}
                             icon={{
@@ -129,37 +158,23 @@ const EntityList = (props) => {
         },
     ];
 
+    const onDateChange = (dates) => {
+        setCurrentDates(dates);
+    };
     const onSearch = (value) => {
-        if (value) {
-            search(null, {
-                "": {
-                    type: "query_string",
-                    value: value,
-                },
-            });
-        } else {
-            search();
-        }
+        const filter = {
+            "": {
+                type: "query_string",
+                value: value,
+            },
+        };
+        search(null, value ? filter : {});
     };
 
     return (
-        <Content>
-            <Row className={classes.card}>
-                <Col flex={1}>
-                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
-                </Col>
-                <Col flex={2}>
-                    <Row justify="end" gutter={10}>
-                        <Col>
-                            {/* <Button
-                                icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                type="text"
-                                onClick={() => handleDownloadTable(dataSource)}
-                            /> */}
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
+        <div>
+            <BasicFilter defaultDates={defaultDates} onDateChange={onDateChange} onSearch={onSearch} />
+            <br />
             {dataSource && (
                 <Table
                     loading={loading}
@@ -176,7 +191,7 @@ const EntityList = (props) => {
                     size="small"
                 />
             )}
-        </Content>
+        </div>
     );
 };
 

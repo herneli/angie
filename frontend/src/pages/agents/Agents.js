@@ -26,6 +26,7 @@ import AgentLibraries from "./AgentLibraries";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
 import AceEditor from "../../components/ace-editor/AceEditor";
+import BasicFilter from "../../components/basic-filter/BasicFilter";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -142,7 +143,6 @@ const Agents = () => {
                 message: T.translate("common.messages.reloaded.title"),
                 description: T.translate("common.messages.reloaded.ok_desc"),
             });
-
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -282,7 +282,7 @@ const Agents = () => {
                                 key="options"
                                 type="text"
                                 onClick={() => {
-                                    reloadDependencies(record)
+                                    reloadDependencies(record);
                                 }}
                                 icon={
                                     <Icon
@@ -428,34 +428,27 @@ const Agents = () => {
     };
     return (
         <Content>
-            <Row className={classes.card}>
-                <Col flex={4}>
-                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
-                </Col>
-                <Col flex={1}>
-                    <Row justify="end">
-                        <IconButton
-                            key="dependencies"
-                            onClick={() => setLibrariesVisible(true)}
-                            icon={{
-                                path: mdiLibrary, //mdi-folder-move, mdi-folder-plus, mdi-folder-upload, mdi-library-plus, mdi-library, mdi-basket-fill
-                                size: 0.7,
-                            }}
-                            title={T.translate("common.button.libraries")}
-                        />
-                        <IconButton
-                            key="undeploy"
-                            onClick={() => search()}
-                            icon={{
-                                path: mdiRefresh,
-                                size: 0.7,
-                            }}
-                            title={T.translate("common.button.refresh")}
-                        />
-                    </Row>
-                </Col>
-            </Row>
-
+            <BasicFilter hideDateFilter onSearch={onSearch}>
+                <IconButton
+                    key="dependencies"
+                    onClick={() => setLibrariesVisible(true)}
+                    icon={{
+                        path: mdiLibrary, //mdi-folder-move, mdi-folder-plus, mdi-folder-upload, mdi-library-plus, mdi-library, mdi-basket-fill
+                        size: 0.7,
+                    }}
+                    title={T.translate("common.button.libraries")}
+                />
+                <IconButton
+                    key="undeploy"
+                    onClick={() => search()}
+                    icon={{
+                        path: mdiRefresh,
+                        size: 0.7,
+                    }}
+                    title={T.translate("common.button.refresh")}
+                />
+            </BasicFilter>
+            <br />
             <Table
                 loading={loading}
                 key="agents-table"
@@ -471,7 +464,13 @@ const Agents = () => {
                 expandable={{ expandedRowKeys: dataSourceKeys }}
             />
             {agentDependenciesVisible && (
-                <AgentLibraries agent={currentAgent} child visible={agentDependenciesVisible} onOk={saveLibraries} onCancel={cancelLibraries} />
+                <AgentLibraries
+                    agent={currentAgent}
+                    child
+                    visible={agentDependenciesVisible}
+                    onOk={saveLibraries}
+                    onCancel={cancelLibraries}
+                />
             )}
             {optionsVisible && (
                 <AgentOptions agent={currentAgent} visible={optionsVisible} onOk={saveAgent} onCancel={cancelOptions} />

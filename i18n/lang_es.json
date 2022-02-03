@@ -161,22 +161,40 @@
             }
         }
     },
+    "menu": {
+        "explore": {
+            "title": "Explorar",
+            "entity": "Entidades",
+            "messages": "Mensajes"
+        },
+        "integrations": "Integraciones",
+        "dashboard": "Dashboard",
+        "agents": "Agentes",
+
+        "administration": {
+            "title": "Administración",
+            "management": "Gestión",
+            "users": "Usuarios",
+            "profiles": "Perfiles",
+            "organization": "Organizaciones",
+            "sections": "Secciones"
+        },
+        "packages": {
+            "title": "Paquetes",
+            "integrations": "Integraciones",
+            "node_types": "Tipos de Nodo",
+            "entity_mapper": "Mapeo Entidades",
+            "contexts": "Contextos",
+            "objects": "Objectos",
+            "methods": "Métodos"
+        }
+    },
     "administration": {
-        "management": "Gestión",
-        "users": "Usuarios",
         "user_actions": {
             "sync_users": "Sincronizar Usuarios",
             "manage_users": "Gestionar Usuarios"
         },
-        "profiles": "Perfiles",
-        "organization": "Organizaciones",
-        "sections": "Secciones",
-        "integration": "Integraciones",
-        "node_type": "Tipos Nodos ",
-        "config_context": "Contextos",
-        "config_method": "Métodos",
-        "config_object": "Objetos",
-        "test_groovy": "Script",
+
         "node_types": {
             "test_button": "Probar Formulario"
         }
@@ -299,6 +317,7 @@
         "message_id": "Id Mensaje",
         "date_reception": "Fecha de recepción",
         "date_processed": "Fecha de finalización",
+        "type": "Tipo",
         "elapsed": "Transcurrido",
         "actions": "Acciones",
         "download_json_item": "Exportar como JSON",
@@ -319,5 +338,15 @@
         "traces_from_message": "Trazas del mensaje",
         "start": "Inicio",
         "end": "Fin"
+    },
+    "entity": {
+        "id": "Identificador",
+        "type": "Tipo",
+        "date": "Fecha Creación",
+        "organization": "Organización",
+        "detail": {
+            "title": "Detalle Entidad",
+            "messages": "Mensajes"
+        }
     }
 }

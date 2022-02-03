@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactFlow, { ReactFlowProvider, Controls, MiniMap, Background } from "react-flow-renderer";
 
 import Sidebar from "./Sidebar";
-import MultiTargetNode from "./custom_nodes/MultiTargetNode";
-import ButtonNode from "./custom_nodes/ButtonNode";
-import CommentNode from "./custom_nodes/CommentNode";
+import MultiTargetNode from "../../../components/react-flow/custom_nodes/MultiTargetNode";
+import ButtonNode from "../../../components/react-flow/custom_nodes/ButtonNode";
+import CommentNode from "../../../components/react-flow/custom_nodes/CommentNode";
 import Transformer from "./Transformer";
 import Messages from "../message/Messages";
 

@@ -9,10 +9,9 @@ import Administration from "../pages/administration/Administration";
 import Package from "../pages/administration/packages/Package";
 import Agents from "../pages/agents/Agents";
 import DeployedIntegrations from "../pages/deployed_integrations/DeployedIntegrations";
-import EntityList from "../pages/entity/EntityList";
 import Messages from "../pages/administration/message/Messages";
 import Unauth from "../pages/Unauth";
-import EntityDetail from "../pages/entity/EntityDetail";
+import Explore from "../pages/explore/Explore";
 
 const AppMain = ({ location }) => {
     const { initialized } = useKeycloak();
@@ -49,20 +48,7 @@ const AppMain = ({ location }) => {
                 component={DeployedIntegrations}
                 {...defaultProps}
             />
-            <PrivateRoute
-                roles={["admin", "user"]}
-                exact
-                path="/entity/list"
-                component={EntityList}
-                {...defaultProps}
-            />
-            <PrivateRoute
-                roles={["admin", "user"]}
-                exact
-                path="/entity/:id"
-                component={EntityDetail}
-                {...defaultProps}
-            />
+            <PrivateRoute roles={["admin"]} path="/explore" component={Explore} {...defaultProps} />
             <PrivateRoute roles={["admin"]} path="/agents" component={Agents} {...defaultProps} />
         </Switch>
     );
