@@ -1,4 +1,4 @@
-import { Divider, notification, Typography } from "antd";
+import { Divider, notification, Spin, Typography } from "antd";
 import { useRef } from "react";
 import axios from "axios";
 import moment from "moment";
@@ -12,10 +12,11 @@ import T from "i18n-react";
 
 import * as api from "../../../api/configurationApi";
 
-const defaultDates = [moment().subtract(1, "day"), moment()];
+const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
 const EntityDetail = ({ record }) => {
     const detail = useRef(null);
+    const [loading, setLoading] = useState(false);
     const [currentRecord, setCurrentRecord] = useState(record);
     const [currentDates, setCurrentDates] = useState(defaultDates);
     const [organizations, setOrganizations] = useState([]);
@@ -65,6 +66,7 @@ const EntityDetail = ({ record }) => {
     }, [state, currentDates]);
 
     const loadElement = async (filter) => {
+        setLoading(true);
         try {
             const msg_filters = filter || {};
             if (currentDates) {
@@ -92,6 +94,7 @@ const EntityDetail = ({ record }) => {
             });
             console.error(ex);
         }
+        setLoading(false);
     };
 
     /**
@@ -147,7 +150,11 @@ const EntityDetail = ({ record }) => {
     return (
         <div style={{ height: "100%", display: "flex", flexDirection: "column", alignContent: "stretch" }}>
             {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
-
+            {loading && (
+                <div style={{ textAlign: "center", padding: "46vh" }}>
+                    <Spin />
+                </div>
+            )}
             <div ref={detail}>
                 <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
                 {currentRecord && (

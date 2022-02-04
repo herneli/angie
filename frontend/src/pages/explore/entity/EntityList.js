@@ -14,7 +14,7 @@ import * as api from "../../../api/configurationApi";
 import { useAngieSession } from "../../../components/security/UserContext";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
 
-const defaultDates = [moment().subtract(15, "day"), moment()];
+const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
 const EntityList = () => {
     const [dataSource, setDataSource] = useState([]);

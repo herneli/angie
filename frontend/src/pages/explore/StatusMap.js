@@ -6,7 +6,7 @@ import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
-const defaultDates = [moment().subtract(1, "day"), moment()];
+const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
 const StatusMap = ({ record, onDateChange, customDateRanges, onSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
@@ -65,9 +65,13 @@ const StatusMap = ({ record, onDateChange, customDateRanges, onSearch, height })
                                 })}
                                 pagination={false}
                                 columns={[
+                                    // {
+                                    //     title: T.translate("messages.message_id"),
+                                    //     dataIndex: ["_source", "message_id"],
+                                    // },
                                     {
                                         title: T.translate("messages.message_id"),
-                                        dataIndex: ["_source", "message_id"],
+                                        dataIndex: ["_id"],
                                     },
                                     {
                                         title: T.translate("messages.date_reception"),

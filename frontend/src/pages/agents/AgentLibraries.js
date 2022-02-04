@@ -18,110 +18,96 @@ const editTabFormSchema = {
                 type: "array",
                 items: {
                     type: "object",
-                    required: [
-                        "is_camel",
-                        "group_id",
-                        "artifact_id"
-                    ],
+                    required: ["is_camel", "group_id", "artifact_id"],
                     properties: {
                         is_camel: {
                             title: "Camel",
                             type: "string",
-                            enum: [
-                                "yes",
-                                "no"
-                            ],
-                            enumNames: [
-                                "Yes",
-                                "No"
-                            ]
+                            enum: ["yes", "no"],
+                            enumNames: ["Yes", "No"],
                         },
                         group_id: {
                             title: "groupId",
-                            type: "string"
+                            type: "string",
                         },
                         artifact_id: {
                             title: "artifactId",
-                            type: "string"
-                        }
+                            type: "string",
+                        },
                     },
                     dependencies: {
                         is_camel: {
                             oneOf: [
                                 {
                                     properties: {
-                                        is_camel: {"enum": ["yes"]},
-                                        group_id: {"enum": ["org.apache.camel"]}
-                                    }
+                                        is_camel: { enum: ["yes"] },
+                                        group_id: { enum: ["org.apache.camel"] },
+                                    },
                                 },
                                 {
                                     properties: {
-                                        is_camel: {"enum": ['no']},
+                                        is_camel: { enum: ["no"] },
                                         version: {
                                             title: "version",
-                                            type: "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                 }
+                                            type: "string",
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
             },
         },
     },
     uiSchema: {
-        libraries: {
-            library: {
-                "ui:columnSize": "4",
-           
+        
+    },
+};
+
+const agentSchema = {
+    libraries: {
+        items: {
+            artifact_id: {
+                "ui:readonly": true,
             },
             is_camel: {
-                "ui:widget":"checkbox",
+                "ui:readonly": true,
             },
-         
+            group_id: {
+                "ui:readonly": true,
+            },
+            version: {
+                "ui:readonly": true,
+            },
+        },
+        "ui:options": {
+            addable: false,
+            orderable: false,
+            removable: false,
         },
     },
 };
 
-const agentSchema ={
-    libraries: {
-        library: {
-            "ui:columnSize": "4",
-       
-        },
-        is_camel: {
-            "ui:widget":"checkbox",
-        },   
-        "ui:options": {
-            "addable": false,
-            "removable": false
-        }
-     
-    },
-}
-
-const AgentLibraries = ({ visible, onOk, onCancel,child,agent }) => {
+const AgentLibraries = ({ visible, onOk, onCancel, agent }) => {
     const editTabFormEl = useRef(null);
 
     const [editingData, setEditingData] = useState({});
 
     const loadLibraries = async () => {
-        if(agent){
+        if (agent) {
             //Si es del agente coge las dependencias del agente (boton tabla)
             let response = await axios.get(`/jum_agent/${agent.id}/get_dependencies`);
-            if(response.data){
-                response.data.data.map(elto => elto.is_camel = elto.group_id === 'org.apache.camel' ? 'yes' : 'no')
+            if (response.data) {
+                response.data.data.map((elto) => (elto.is_camel = elto.group_id === "org.apache.camel" ? "yes" : "no"));
                 setEditingData({ libraries: response.data.data });
             }
-        }else{
-
+        } else {
             let response = await axios.get(`/library`);
-            response.data.data.map(elto => elto.is_camel = elto.group_id === 'org.apache.camel' ? 'yes' : 'no')
+            response.data.data.map((elto) => (elto.is_camel = elto.group_id === "org.apache.camel" ? "yes" : "no"));
             setEditingData({ libraries: response.data.data });
-
         }
-    }
+    };
 
     const handleChange = (formData) => {
         if (formData.libraries) {
@@ -133,7 +119,7 @@ const AgentLibraries = ({ visible, onOk, onCancel,child,agent }) => {
             }
         }
         setEditingData(formData);
-    }
+    };
 
     useEffect(() => {
         if (visible) {
@@ -149,25 +135,31 @@ const AgentLibraries = ({ visible, onOk, onCancel,child,agent }) => {
             onOk={onOk}
             onCancel={onCancel}
             footer={[
-                agent ? false:
-                <Button key="cancel" type="dashed" onClick={onCancel}>
-                    {T.translate("common.button.cancel")}
-                </Button>,
-                agent ? false:
-                <Button
-                    key="accept"
-                    type="primary"
-                    onClick={(e) => {
-                        //Forzar el submit del FORM simulando el evento
-                        editTabFormEl.current.onSubmit({
-                            target: null,
-                            currentTarget: null,
-                            preventDefault: () => true,
-                            persist: () => true,
-                        });
-                    }}>
-                    {T.translate("common.button.accept")}
-                </Button>,
+                agent ? (
+                    false
+                ) : (
+                    <Button key="cancel" type="dashed" onClick={onCancel}>
+                        {T.translate("common.button.cancel")}
+                    </Button>
+                ),
+                agent ? (
+                    false
+                ) : (
+                    <Button
+                        key="accept"
+                        type="primary"
+                        onClick={(e) => {
+                            //Forzar el submit del FORM simulando el evento
+                            editTabFormEl.current.onSubmit({
+                                target: null,
+                                currentTarget: null,
+                                preventDefault: () => true,
+                                persist: () => true,
+                            });
+                        }}>
+                        {T.translate("common.button.accept")}
+                    </Button>
+                ),
             ]}>
             <Form
                 ref={editTabFormEl}
@@ -175,7 +167,7 @@ const AgentLibraries = ({ visible, onOk, onCancel,child,agent }) => {
                 ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                 schema={editTabFormSchema.schema}
                 formData={editingData}
-                uiSchema={ agent ? agentSchema : editTabFormSchema.uiSchema}
+                uiSchema={agent ? agentSchema : editTabFormSchema.uiSchema}
                 widgets={formConfig.widgets}
                 onChange={(e) => setEditingData(e.formData)}
                 onSubmit={(e) => onOk(e)}

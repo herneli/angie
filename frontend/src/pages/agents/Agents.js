@@ -259,7 +259,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiCogs}
                                         className={classes.icon}
-                                        title={T.translate("common.button.log")}
+                                        title={T.translate("agents.actions.configure")}
                                     />
                                 }
                             />
@@ -274,7 +274,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiLibrary}
                                         className={classes.icon}
-                                        title={T.translate("common.button.log")}
+                                        title={T.translate("agent.actions.view_libs")}
                                     />
                                 }
                             />
@@ -288,7 +288,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiCastAudioVariant}
                                         className={classes.icon}
-                                        title={T.translate("common.button.log")}
+                                        title={T.translate("agent.actions.reload_libs")}
                                     />
                                 }
                             />
@@ -313,7 +313,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiReload}
                                         className={classes.icon}
-                                        title={T.translate("common.button.reload")}
+                                        title={T.translate("agent.actions.reload_status")}
                                     />
                                 }
                             />
@@ -466,7 +466,6 @@ const Agents = () => {
             {agentDependenciesVisible && (
                 <AgentLibraries
                     agent={currentAgent}
-                    child
                     visible={agentDependenciesVisible}
                     onOk={saveLibraries}
                     onCancel={cancelLibraries}
