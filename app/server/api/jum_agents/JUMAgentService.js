@@ -14,6 +14,19 @@ export class JUMAgentService extends BaseService {
     constructor() {
         super(JUMAgentDao);
     }
+
+    async listToScrap() {
+        let targets = [];
+
+        let { data, total } = await super.list({}, null, null);
+
+        for (const agent of data) {
+            targets.push(agent.meta.ip + ":" + agent.meta.rest_api_port);
+        }
+
+        return [{ "targets": targets }];
+    }
+
     //Overwrite
     async list(filters, start, limit) {
         if (!filters) {

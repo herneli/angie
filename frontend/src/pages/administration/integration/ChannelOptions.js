@@ -20,7 +20,7 @@ const editTabFormSchema = {
             deployment_options: {
                 title: "Opciones",
                 type: "object",
-                required: ["agent_assign_mode"],
+                required: ["agent_assign_mode","assigned_agent"],
                 properties: {
                     trace_file: {
                         title: "Traza Completa (Archivo log)",

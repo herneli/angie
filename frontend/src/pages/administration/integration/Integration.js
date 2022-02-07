@@ -2,11 +2,13 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Drawer } from "antd";
+import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Drawer, Alert } from "antd";
 
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
 import { useHistory } from "react-router";
+import Marquee from 'react-fast-marquee';
+
 
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-xml";
@@ -493,22 +495,18 @@ const Integration = () => {
 
         let buttons = [];
 
-        let nodeError = [];
-        if (warningIcon) {
+        let nodeError=[]
+        if(warningIcon){
             nodeError.push(
+            <Marquee pauseOnHover  style={{width: 250}} gradient={false} warningIcon={false}>
                 <IconButton
                     key="nodeWarning"
+                    style={{backgroundColor: "white"}}
                     onClick={() => showWarningVisible()}
-                    icon={{
-                        path: mdiAlertOutline,
-                        color: "RED",
-                        size: 0.6,
-                        title: T.translate("common.button.warning"),
-                        spin: true,
-                    }}>
-                    {T.translate("integrations.channel.node.type_modal")}
-                </IconButton>
-            );
+                    icon={{ path: mdiAlertOutline  ,color: "RED", size: 0.6, title: T.translate("common.button.warning"),spin:true }}
+                >{T.translate("integrations.channel.node.type_modal")}</IconButton>
+            </Marquee>
+        )
         }
 
         if (currentStatus === "Started" && activeChannel.enabled) {

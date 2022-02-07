@@ -16,7 +16,7 @@ import NodeEditModal from "./NodeEditModal";
 
 import lodash from "lodash";
 import useEventListener from "../../../common/useEventListener";
-import { Modal, Dropdown, Menu, Space, Tabs, List, Select, Divider } from "antd";
+import { Modal, Dropdown, Menu, Space, Tabs, List, Select, Divider, Alert, Popconfirm, Button } from "antd";
 import Icon from "@mdi/react";
 import {
     mdiClipboard,
@@ -117,9 +117,9 @@ const Channel = ({
                     element.label = element.name;
                 });
 
-                setWarningIcon(true);
+                setWarningIcon(true)
             } else {
-                setWarningIcon(["false"]);
+                setWarningIcon(false)
             }
         }
     }, [channel, nodeTypes]);
@@ -632,73 +632,65 @@ const Channel = ({
                     visible={warningNodeVisible}
                     onClose={warningClose}
                     onCancel={warningClose}
+                    title={T.translate("integrations.channel.node.type_modal")}
                     onOk={() => {
-                        let updatedNodes = [];
+                        let updatedNodes = []
 
                         //Coge los nodos cuyo CODE no ha sido encontrado y le establece el de la selección.
                         notFoundedNodes.forEach((element) => {
-                            let found = notFoundedValues.find((item) => {
-                                return item.item == element.id;
-                            });
+                            let found = notFoundedValues.find((item) => { return item.item == element.id })
                             if (found && found.value) {
-                                element.type_id = found.value;
-                                updatedNodes.push(element);
+                                element.type_id = found.value
+                                updatedNodes.push(element)
                             }
-                        });
+                        })
 
                         //Se unifica con el array de los nodos del canal.
-                        let value = lodash.unionBy(updatedNodes, channel.nodes, "id");
-                        channel.nodes = value;
+                        let value = lodash.unionBy(updatedNodes, channel.nodes, "id")
+                        channel.nodes = value
 
                         //Se actualiza el canal.
-                        onChannelUpdate(channel);
-                        warningClose();
-                    }}>
-                    <h3>{T.translate("integrations.channel.node.type_modal")}</h3>
-                    <Divider>
-                        {" "}
-                        <Icon path={mdiInformation} color={"#4ab199"} size={1.2} />
-                    </Divider>
-
-                    {T.translate("integrations.channel.node.info")}
-
-                    <Divider>
-                        {" "}
-                        <Icon path={mdiInformation} color={"#4ab199"} size={1.2} />
-                    </Divider>
+                        onChannelUpdate(channel)
+                        warningClose()
+                    }}
+                >
+                    <Alert description={T.translate("integrations.channel.node.info")} color={"#4ab199"} />
+                    <Divider ></Divider>
                     <List
                         itemLayout="horizontal"
                         dataSource={notFoundedNodes}
-                        renderItem={(item) => (
+                        renderItem={item => (
                             <List.Item>
                                 <List.Item.Meta
                                     description={item.data && item.data.label ? item.data.label : item.type_id}
                                 />
-                                <Select
-                                    showSearch
-                                    style={{ width: 250 }}
-                                    options={nodeTypes}
-                                    onChange={(e, option) => {
-                                        let selection = {
-                                            value: option.code,
-                                            item: item.custom_name ? item.custom_name : item.id,
-                                        };
-                                        let modalValues = notFoundedValues;
 
-                                        //Se comprueba que no haya duplicados si los hay elimina el elemento y le añade la modificación
-                                        let duplicated = lodash.find(modalValues, { item: selection.item });
-                                        if (duplicated)
-                                            modalValues = lodash.reject(modalValues, { item: selection.item });
+                                <Popconfirm title={T.translate("common.question")}  onConfirm={() => {
+                                    let items = notFoundedNodes
+                                    items = lodash.remove(items, function (n) {
+                                        return n != item;
+                                    });
+                                    setNotFoundedNodes(items)
+                                }}>
+                                    <Button style={{ marginRight: 50 }} danger>{"Delete"}</Button>
+                                </Popconfirm>                                    
+                                
+                                <Select showSearch style={{ width: 250 }} options={nodeTypes} onChange={(e, option) => {
+                                    let selection = { "value": option.code, "item": item.custom_name ? item.custom_name : item.id }
+                                    let modalValues = notFoundedValues
 
-                                        //Set Modal values on change
-                                        modalValues.push(selection);
-                                        setNotFoundedValues(modalValues);
-                                    }}
-                                />
-                            </List.Item>
-                        )}
-                    />
+                                    //Se comprueba que no haya duplicados si los hay elimina el elemento y le añade la modificación
+                                    let duplicated = lodash.find(modalValues, { "item": selection.item })
+                                    if (duplicated) modalValues = lodash.reject(modalValues, { "item": selection.item })
+
+                                    //Set Modal values on change
+                                    modalValues.push(selection)
+                                    setNotFoundedValues(modalValues)
+                                }} />
+                            </List.Item>)} />
+
                 </Modal>
+
             </div>
         </div>
     );
