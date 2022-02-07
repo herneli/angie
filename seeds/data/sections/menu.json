@@ -4,38 +4,52 @@
         "code": "menu",
         "menu": [
             {
-                "key": "entity",
-                "title": "Entidades",
-                "icon": "mdiConnection",
-                "value": "/entity/list"
+                "key": "explore",
+                "title": "menu.explore.title",
+                "icon": "mdiCardSearchOutline",
+                "value": "/explore",
+                "children": [
+                    {
+                        "key": "entity",
+                        "title": "menu.explore.entity",
+                        "icon": "mdiFileDocumentOutline",
+                        "value": "/entity"
+                    },
+                    {
+                        "key": "messages",
+                        "title": "menu.explore.messages",
+                        "icon": "mdiMessage",
+                        "value": "/messages"
+                    }
+                ]
             },
             {
                 "key": "integrations",
-                "title": "Integraciones",
+                "title": "menu.integrations",
                 "icon": "mdiConnection",
                 "value": "/integrations/deployed"
             },
             {
                 "key": "dashboard",
-                "title": "Dashboard",
+                "title": "menu.dashboard",
                 "icon": "mdiSourceBranch",
                 "value": "/dashboard"
             },
             {
                 "key": "agents",
-                "title": "Agents",
+                "title": "menu.agents",
                 "icon": "mdiDatabaseOutline",
                 "value": "/agents"
             },
             {
                 "key": "admin",
-                "title": "Administracion",
+                "title": "menu.administration.title",
                 "icon": "mdiAccountMultiple",
                 "value": "/admin",
                 "children": [
                     {
                         "key": "management",
-                        "title": "administration.management",
+                        "title": "menu.administration.management",
                         "icon": "mdiAccountGroup",
                         "value": "/management",
                         "children": [
@@ -43,19 +57,19 @@
                                 "key": "users",
                                 "value": "/users",
                                 "icon": "mdiAccount",
-                                "title": "administration.users"
+                                "title": "menu.administration.users"
                             },
                             {
                                 "key": "sections",
                                 "value": "/sections",
                                 "icon": "mdiLock",
-                                "title": "administration.sections"
+                                "title": "menu.administration.sections"
                             },
                             {
                                 "key": "organization",
                                 "value": "/organization",
                                 "icon": "mdiHomeGroup",
-                                "title": "administration.organization"
+                                "title": "menu.administration.organization"
                             }
                         ]
                     }
@@ -63,7 +77,7 @@
             },
             {
                 "key": "packages",
-                "title": "Packages",
+                "title": "menu.packages.title",
                 "icon": "mdiPackageVariantClosed",
                 "value": "/packages",
                 "children": [
@@ -71,37 +85,37 @@
                         "key": "integrations",
                         "value": "/integrations",
                         "icon": "mdiConnection",
-                        "title": "packages.integrations"
+                        "title": "menu.packages.integrations"
                     },
                     {
                         "key": "node_type",
                         "value": "/node_type",
                         "icon": "mdiSourceBranch",
-                        "title": "packages.node_types"
+                        "title": "menu.packages.node_types"
                     },
                     {
                         "key": "entity_mapper",
                         "value": "/entity_mapper",
                         "icon": "mdiChartGantt",
-                        "title": "packages.entity_mapper"
+                        "title": "menu.packages.entity_mapper"
                     },
                     {
                         "key": "script_context",
                         "value": "/script_context",
                         "icon": "mdiScriptTextKeyOutline",
-                        "title": "packages.contexts"
+                        "title": "menu.packages.contexts"
                     },
                     {
                         "key": "script_object",
                         "value": "/script_object",
                         "icon": "mdiScriptText",
-                        "title": "packages.objects"
+                        "title": "menu.packages.objects"
                     },
                     {
                         "key": "script_method",
                         "value": "/script_method",
                         "icon": "mdiFunctionVariant",
-                        "title": "packages.methods"
+                        "title": "menu.packages.methods"
                     }
                 ]
             }

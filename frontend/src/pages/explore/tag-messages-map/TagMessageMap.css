@@ -1,0 +1,33 @@
+.tagMap .react-flow__handle {
+    display: none;
+}
+
+
+.ant-list-item.selected {
+    background: #e8f2fc;
+}
+
+.tagMap .react-flow__node {
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #222;
+    font-size: 12px;
+    padding: 13px;
+    text-align: center;
+    width: 150px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.tagMap .react-flow__node-TagNode .ant-badge.success {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+}
+
+.tagMap .react-flow__node-TagNode .ant-badge.error {
+    position: absolute;
+    top: 23px;
+    right: 1px;
+}

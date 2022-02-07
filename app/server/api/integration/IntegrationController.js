@@ -49,22 +49,13 @@ export class IntegrationController extends BaseController {
                     ? JSON.parse(request.query.filters)
                     : {};
 
-            const username = App.Utils.getUsername(request);
+            const organizationFilter = await App.Utils.getOrganizationFilter(request);
 
-            const userServ = new UserService();
-            const user = await userServ.loadByUsername(username);
-            if (!user) {
-                let jsRes = new JsonResponse(true, []);
-                return response.json(jsRes.toJson());
-            }
             //Filtrar en base a la organización del usuario
-            if (user.data.current_organization && user.data.current_organization !== "all") {
+            if (organizationFilter !== "all") {
                 filters["organization_id"] = {
                     type: "in",
-                    value:
-                        user.data.current_organization === "assigned"
-                            ? user.data.organization_id
-                            : user.data.current_organization,
+                    value: organizationFilter,
                 };
             }
 

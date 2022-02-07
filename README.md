@@ -158,29 +158,30 @@ Configuraciones necesarias:
 1. Crear realm **Angie**
 2. Crear usuario para la aplicación
 3. Crear cliente **angie-front**
-4. Crear cliente **angie-back**
-5. _Opcional:_ Establecer el tema **angie** en el realm.
+4. En la configuración de **angie-front** establecer `Valid Redirect URIs: http://localhost:3000/*` y `Web Origins: http://localhost:3000`
+5. Crear cliente **angie-back**
+6. _Opcional:_ Establecer el tema **angie** en el realm
 
-**Administrador**  
+**Administrador**
 
-6. Desde la pantalla Clients, en **angie-front** crear un rol 'admin'  
-7. Asignar al usuario creado ese rol  
-8. Crear un "Client Scope" llamado "client-roles-angie" (todo por defecto)  
-9. Crear un "Mapper" llamado **roles** asociado a **angie-front** con `Mapper Type: User Client Role`, con `Token Claim Name: roles` y `Claim JSON Type: String`  
-10. Ir al cliente **angie-front** y asociarle el Client Scope creado como Default (parte superior)
+7. Desde la pantalla Clients, en **angie-front** crear un rol 'admin'
+8. Asignar al usuario creado ese rol
+9. Crear un "Client Scope" llamado "client-roles-angie" (todo por defecto)
+10. Crear un "Mapper" llamado **roles** asociado a **angie-front** con `Mapper Type: User Client Role`, con `Token Claim Name: roles` y `Claim JSON Type: String`
+11. Ir al cliente **angie-front** y asociarle el Client Scope creado como Default (parte superior)
 
-**Acceso REST**  
+**Acceso REST**
 
-11. Seleccionar el cliente **admin-cli**  
-12. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential' 
-13. Guardar, aparecerá la pestaña Service Account Roles 
-14. En Client Roles seleccionar `realm_management`  
-15. Asociar el rol `view_users` mediante el botón **Add Selected** 
+12. Seleccionar el cliente **admin-cli**
+13. Habilitar el switch "Service Account Enabled" (para ello previamente hay que poner el Access Type a 'confidential')
+14. Guardar, aparecerá la pestaña Service Account Roles
+15. En Client Roles seleccionar `realm_management`
+16. Asociar el rol `view_users` mediante el botón **Add Selected**
 
-**Roles**  
+**Roles**
 
-16. Crear un Rol: 'admin' a nivel de Realm 
-17. Asignar el usuario de la aplicación a dicho rol
+17. Crear un Rol: 'admin' a nivel de Realm
+18. Asignar el usuario de la aplicación a dicho rol
 
 ## Tests
 

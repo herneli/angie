@@ -1,6 +1,12 @@
 import BaseDao from "../../integration/elastic/BaseDao";
 
 export class MessageDao extends BaseDao {
+    constructor() {
+        super();
+
+        this.tableName = `messages_*`;
+    }
+
     getChannelMessages(channelId, filters) {
         //TODO: añadir búsqueda y ordenación
         const { start = 0, limit = 10 } = filters;

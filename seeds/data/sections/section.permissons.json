@@ -40,5 +40,23 @@
         "code": "messages",
         "roles": ["admin"],
         "value": "/messages/(.*)"
+    },
+    {
+        "id": "495dae22-198d-42ac-8f58-1659c36dcd12",
+        "code": "entity",
+        "roles": ["admin"],
+        "value": "/entity"
+    },
+    {
+        "id": "495dae22-198d-42ac-8f58-1659c36dcd11",
+        "code": "explore/any",
+        "roles": ["admin"],
+        "value": "/explore/(.*)"
+    },
+    {
+        "id": "495dae54-198d-42ac-8f58-1659c36dcd11",
+        "code": "explore",
+        "roles": ["admin"],
+        "value": "/explore"
     }
 ]

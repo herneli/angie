@@ -21,6 +21,9 @@ import PackageVersionNew from "./PackageVersionNew";
 const { Search } = Input;
 const { Content } = Layout;
 const useStyles = createUseStyles({
+    card: {
+        margin: 10,
+    },
     search: {
         marginBottom: 15,
     },
@@ -303,14 +306,14 @@ export default function Packages({ history }) {
     }
 
     return (
-        <Layout>
+        <>
             <Content>
-                <Row span={24}>
-                    <Col flex={1}>
+                <Row className={classes.card}>
+                    <Col flex={4}>
                         <Search className={classes.search} enterButton />
                     </Col>
                     <Col flex={2}>
-                        <Row justify="end" gutter={10}>
+                        <Row justify="end">
                             <Col>
                                 <Button
                                     icon={<Icon path={mdiPlus} className={classes.icon} />}
@@ -321,21 +324,19 @@ export default function Packages({ history }) {
                         </Row>
                     </Col>
                 </Row>
-                <Row>
-                    <Col span={24}>
-                        <Table
-                            dataSource={packages}
-                            columns={columns}
-                            size="small"
-                            bordered
-                            expandable={{
-                                expandedRowRender: renderExpandable,
-                                rowExpandable: (record) => true,
-                            }}></Table>
-                    </Col>
-                </Row>
+
+                <Table
+                    style={{ margin: 10 }}
+                    dataSource={packages}
+                    columns={columns}
+                    size="small"
+                    bordered
+                    expandable={{
+                        expandedRowRender: renderExpandable,
+                        rowExpandable: (record) => true,
+                    }}></Table>
             </Content>
             {dialogActive ? renderDialog(dialogActive) : null}
-        </Layout>
+        </>
     );
 }

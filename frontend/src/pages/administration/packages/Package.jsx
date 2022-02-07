@@ -49,7 +49,11 @@ export default function Package({ match }) {
                     <Tag color={"geekblue"}>{currentPackage?.packageData?.name} ({currentPackage.code}/{currentPackage.version})</Tag>
                 </Header>
                 <Layout>
-                    <SubMenu parent={"/packages"} url={url}/>
+                    <SubMenu
+                        parent={"/packages"}
+                        url={url}
+                        packageInfo={currentPackage.code + "/versions/" + currentPackage.version + "/"}
+                    />
                     <Content className="packageContent">
                         <Switch>
                             <Route exact path={path}>
@@ -75,7 +79,7 @@ export default function Package({ match }) {
                                 exact
                                 path={path + "/node_type/:id"}
                                 render={({ match }) => {
-                                    return <NodeTypeEdit model={"node_type"} />
+                                    return <NodeTypeEdit model={"node_type"} />;
                                 }}
                             />
                             <Route

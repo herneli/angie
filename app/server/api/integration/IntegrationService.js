@@ -209,4 +209,22 @@ export class IntegrationService extends BaseService {
 
         return integration;
     }
+
+    async getChannelIdsByOrganization(organization) {
+        const filters = {
+            organization_id: {
+                type: "in",
+                value: organization,
+            },
+        };
+
+        const { data } = await this.list(filters, 0, 1000);
+
+        let identifiers = [];
+        for (const integ of data) {
+            identifiers = lodash.concat(identifiers, lodash.map(integ.data.channels, "id"));
+        }
+
+        return identifiers;
+    }
 }

@@ -1,8 +1,11 @@
+import { BaseService } from "../../integration/elastic";
+import { TagService } from "../tags";
 import { MessageDao } from "./MessageDao";
 
-export class MessageService {
+import lodash from 'lodash'
+export class MessageService extends BaseService {
     constructor() {
-        this.dao = new MessageDao();
+        super(MessageDao);
     }
 
     getChannelMessages(channel, filters) {
@@ -15,5 +18,29 @@ export class MessageService {
 
     getMessageTraces(channel, messageId) {
         return this.dao.getMessageTraces(channel, messageId);
+    }
+
+    async listMessagesWithTags(filters, start, limit) {
+        const { data: messages } = await this.list(filters, start, limit);
+
+        const identifiers = lodash.uniq(lodash.map(messages, "_id"));
+
+        let tags = [];
+        if (!lodash.isEmpty(identifiers)) {
+            const tagServ = new TagService();
+            const { data: tagData } = await tagServ.list(
+                {
+                    "messageId.keyword": {
+                        type: "termsi",
+                        value: identifiers,
+                    },
+                },
+                start,
+                limit
+            );
+            tags = tagData;
+        }
+
+        return { tags, raw_messages: messages };
     }
 }

@@ -1,6 +1,6 @@
 import BaseDao from "../../integration/elastic/BaseDao";
 
-export class EntityDao extends BaseDao {
+export class TagDao extends BaseDao {
     constructor() {
         super();
 
