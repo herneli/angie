@@ -194,7 +194,6 @@ export default class BaseDao {
                     case "exact":
                         body.filter("term", index, element.value);
                         break;
-                    case "in":
                     case "terms":
                         if (element.value && Array.isArray(element.value)) {
                             body.filter("terms", index, element.value.join().toLowerCase().split(","));
@@ -204,6 +203,7 @@ export default class BaseDao {
                             body.filter("terms", index, [element.value]);
                         }
                         break;
+                    case "in":
                     case "termsi":
                         Array.isArray(element.value)
                             ? body.filter("terms", index, element.value.join().split(","))

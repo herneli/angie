@@ -41,7 +41,7 @@ import {
     mdiTextLong,
     mdiSourceBranchPlus,
     mdiCogs,
-    mdiAlertOutline 
+    mdiAlertOutline,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -229,8 +229,8 @@ const Integration = () => {
         setPendingChanges(false);
         try {
             let response;
-            if(identifier != "integrations"){
-                response = await axios.get("/integration/" + identifier);    
+            if (identifier != "integrations") {
+                response = await axios.get("/integration/" + identifier);
             }
 
             if (response?.data?.data) {
@@ -509,7 +509,6 @@ const Integration = () => {
         )
         }
 
-
         if (currentStatus === "Started" && activeChannel.enabled) {
             buttons.push(
                 <Popconfirm
@@ -587,8 +586,6 @@ const Integration = () => {
             );
         }
 
-      
-
         return [
             ...nodeError,
             <IconButton
@@ -636,13 +633,11 @@ const Integration = () => {
         }
     };
 
- 
     const showWarningVisible = async () => {
         const channel = lodash.find(channels, { id: activeTab });
         if (channel) {
-        
             setDebugData({
-                channel
+                channel,
             });
             setWarningNodeVisible(true);
         }
@@ -833,8 +828,7 @@ const Integration = () => {
                             redo={redo}
                             debugVisible={debugVisible}
                             warningNodeVisible={warningNodeVisible}
-                            warningIcon={() => setWarningIcon(true)}
-                            notWarningIcon={() => setWarningIcon(false)}
+                            setWarningIcon={setWarningIcon}
                             debugData={debugData}
                             warningClose={() => setWarningNodeVisible(false)}
                             debugClose={() => setDebugVisible(false)}

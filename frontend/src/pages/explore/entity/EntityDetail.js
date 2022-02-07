@@ -1,4 +1,4 @@
-import { Divider, notification, Typography } from "antd";
+import { Breadcrumb, Divider, notification, Spin, Typography } from "antd";
 import { useRef } from "react";
 import axios from "axios";
 import moment from "moment";
@@ -11,11 +11,13 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import * as api from "../../../api/configurationApi";
+import { Link } from "react-router-dom";
 
-const defaultDates = [moment().subtract(1, "day"), moment()];
+const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
 const EntityDetail = ({ record }) => {
     const detail = useRef(null);
+    const [loading, setLoading] = useState(false);
     const [currentRecord, setCurrentRecord] = useState(record);
     const [currentDates, setCurrentDates] = useState(defaultDates);
     const [organizations, setOrganizations] = useState([]);
@@ -35,11 +37,11 @@ const EntityDetail = ({ record }) => {
             label: T.translate("entity.type"),
         },
         "_source.arrayTest": {
-            label: "test",
+            label: "Paciente",
         },
         "_source.entity": {
-            span: 2,
-            label: "test",
+            // span: 2,
+            label: "Origen",
         },
         "_source.date": {
             label: T.translate("entity.date"),
@@ -65,6 +67,7 @@ const EntityDetail = ({ record }) => {
     }, [state, currentDates]);
 
     const loadElement = async (filter) => {
+        setLoading(true);
         try {
             const msg_filters = filter || {};
             if (currentDates) {
@@ -92,6 +95,7 @@ const EntityDetail = ({ record }) => {
             });
             console.error(ex);
         }
+        setLoading(false);
     };
 
     /**
@@ -138,7 +142,7 @@ const EntityDetail = ({ record }) => {
 
     const getDetailHeight = () => {
         try {
-            return detail.current.clientHeight + 173;
+            return detail.current.clientHeight + 220;
         } catch (e) {
             return 430;
         }
@@ -146,21 +150,38 @@ const EntityDetail = ({ record }) => {
 
     return (
         <div style={{ height: "100%", display: "flex", flexDirection: "column", alignContent: "stretch" }}>
-            {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
+            <Breadcrumb>
+                <Breadcrumb.Item>
+                    <Link to="/explore/entity">{T.translate("menu.explore.entity")}</Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>
+                    {T.translate("entity.detail.breadcrumb", { id: currentRecord && currentRecord._id })}
+                </Breadcrumb.Item>
+            </Breadcrumb>
+            <br />
+            <Spin spinning={loading}>
+                {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
 
-            <div ref={detail}>
-                <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
-                {currentRecord && (
-                    <DynamicDetail
-                        options={{ size: "small", bordered: true, layout: "vertical" }}
-                        pattern={basePattern}
-                        data={currentRecord}
-                    />
-                )}
-                <br />
-                <Divider orientation="left">{T.translate("entity.detail.messages")}</Divider>
-            </div>
-            <StatusMap record={currentRecord} onDateChange={onDateChange} onSearch={onSearch} height={detailHeight} />
+                <div ref={detail}>
+                    <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
+                    {currentRecord && (
+                        <DynamicDetail
+                            options={{ size: "small", bordered: true, layout: "vertical" }}
+                            pattern={basePattern}
+                            data={currentRecord}
+                        />
+                    )}
+                    <br />
+                    <Divider orientation="left">{T.translate("entity.detail.messages")}</Divider>
+                </div>
+                <StatusMap
+                    defaultDates={defaultDates}
+                    record={currentRecord}
+                    onDateChange={onDateChange}
+                    onSearch={onSearch}
+                    height={detailHeight}
+                />
+            </Spin>
         </div>
     );
 };

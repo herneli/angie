@@ -39,7 +39,7 @@ export class EntityController extends BaseController {
             //Filtrar en base a la organización del usuario
             if (organizationFilter !== "all") {
                 filters["organization.keyword"] = {
-                    type: "termsi",
+                    type: "in",
                     value: organizationFilter,
                 };
             }

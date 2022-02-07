@@ -23,8 +23,8 @@ export class EntityService extends BaseService {
             const messageDao = new MessageService();
             const { data: msgData } = await messageDao.list(
                 {
-                    _id: {
-                        type: "termsi",
+                    "message_id.keyword": {
+                        type: "in",
                         value: messageIds,
                     },
                     ...msg_filters,
@@ -43,8 +43,8 @@ export class EntityService extends BaseService {
             const tagDao = new TagService();
             const { data: tagData } = await tagDao.list(
                 {
-                    "messageId.keyword": {
-                        type: "termsi",
+                    "message_id.keyword": {
+                        type: "in",
                         value: msgIdentifiers,
                     },
                 },

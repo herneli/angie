@@ -47,7 +47,15 @@
             "add_selection": "Seleccionar/Deseleccionar todas",
             "resend": "Reenviar",
             "confirm": "Confirmar",
-            "libraries": "Librerías"
+            "libraries": "Librerías",
+            "log": "Log"
+        },
+        "date_ranges": {
+            "today": "Hoy",
+            "last_24": "24 Horas",
+            "last_48": "48 Horas",
+            "week": "1 Semana",
+            "month": "1 Mes"
         },
         "messages": {
             "saved": {
@@ -88,7 +96,8 @@
         "columns": {
             "name": "Nombre",
             "status": "Estado",
-            "approved": "Aprobado"
+            "approved": "Aprobado",
+            "actions": "Acciones"
         },
         "options": {
             "edit_title": "Editar opciones agente"
@@ -158,8 +167,8 @@
             },
             "node": {
                 "settings_title": "Opciónes Nodo: {label}",
-                "info":"Los siguientes nodos son aquellos cuyo codigo de referencia no se ha encontrado en los Nodos del paquete/versión, por favor seleccione el tipo de nodo adecuado por cada Nodo no encontrado.",
-                "type_modal":"Nodos con errores"
+                "info": "Los siguientes nodos son aquellos cuyo codigo de referencia no se ha encontrado en los Nodos del paquete/versión, por favor seleccione el tipo de nodo adecuado por cada Nodo no encontrado.",
+                "type_modal": "Nodos con errores"
             }
         }
     },
@@ -314,6 +323,7 @@
         "variables": "Variables"
     },
     "messages": {
+        "channel": "Canal",
         "status": "Estado",
         "message_id": "Id Mensaje",
         "date_reception": "Fecha de recepción",
@@ -347,6 +357,7 @@
         "organization": "Organización",
         "detail": {
             "title": "Detalle Entidad",
+            "breadcrumb": "Entidad: *{id}*",
             "messages": "Mensajes"
         }
     }

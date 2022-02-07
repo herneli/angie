@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { notification, Spin } from "antd";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -8,9 +8,10 @@ import StatusMap from "../StatusMap";
 
 import T from "i18n-react";
 
-const defaultDates = [moment().subtract(1, "day"), moment()];
+const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
 const MessagesStatusMap = () => {
+    const [loading, setLoading] = useState(false);
     const [state, setState] = useState({});
     const [currentDates, setCurrentDates] = useState(defaultDates);
 
@@ -21,6 +22,7 @@ const MessagesStatusMap = () => {
     }, [currentDates, currentUser]);
 
     const loadData = async (customFilters) => {
+        setLoading(true);
         try {
             const filter = {
                 start: 0,
@@ -46,6 +48,7 @@ const MessagesStatusMap = () => {
             });
             console.error(ex);
         }
+        setLoading(false);
     };
 
     const onDateChange = (dates, dateStrings) => {
@@ -64,7 +67,9 @@ const MessagesStatusMap = () => {
     };
     return (
         <div>
-            <StatusMap record={state} onDateChange={onDateChange} onSearch={onSearch} />
+            <Spin spinning={loading}>
+                <StatusMap defaultDates={defaultDates} record={state} onDateChange={onDateChange} onSearch={onSearch} />
+            </Spin>
         </div>
     );
 };

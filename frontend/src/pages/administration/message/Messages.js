@@ -30,7 +30,7 @@ const useStyles = createUseStyles({
     },
 });
 
-const defaultDates = [moment().subtract(15, "day"), moment()];
+const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
 const Messages = (props) => {
     const [dataSource, setDataSource] = useState([]);

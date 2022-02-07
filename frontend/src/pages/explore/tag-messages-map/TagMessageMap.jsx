@@ -91,7 +91,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                 id: key,
                 animated: true,
                 type: "floating",
-                arrowHeadType: "arrowclosed",
+                arrowHeadType: "arrow",
                 style: { stroke: "green" },
             };
         }
@@ -105,9 +105,9 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
     const refitView = () => {
         setTimeout(() => {
             if (reactFlowInstance) {
-                reactFlowInstance.fitView({ padding: 0.5 });
+                reactFlowInstance.fitView();
             }
-        }, 100);
+        }, 20);
     };
 
     /**
@@ -119,7 +119,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
         if (!data) return;
 
         const { tags, raw_messages } = data;
-        const groupedMsg = lodash.groupBy(tags, "_source.messageId");
+        const groupedMsg = lodash.groupBy(tags, "_source.message_id");
         const nodes = {};
         //Recorrer los mensajes agrupados por identificador (diferentes posibles tags)
         for (const el in groupedMsg) {
@@ -130,7 +130,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
             const status = msg_data._source.status;
 
             //Ordenar por fecha para mirar las direcciones
-            const sorted = lodash.sortBy(tagList, "date");
+            const sorted = lodash.sortBy(tagList, "date_reception");
             for (let idx = 0; idx < sorted.length; idx++) {
                 let prevMsg = sorted[idx];
                 let msg = sorted[idx + 1];
@@ -156,7 +156,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
      * @returns
      */
     const createConnections = ({ tags, raw_messages }) => {
-        const groupedMsg = lodash.groupBy(tags, "_source.messageId");
+        const groupedMsg = lodash.groupBy(tags, "_source.message_id");
         const connections = {};
         //Recorrer los mensajes agrupados por identificador (diferentes posibles tags)
         for (const el in groupedMsg) {
@@ -167,7 +167,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
             const status = msg_data._source.status;
 
             //Ordenar por fecha para mirar las direcciones
-            const sorted = lodash.sortBy(tagList, "date");
+            const sorted = lodash.sortBy(tagList, "date_reception");
             for (let idx = 0; idx < sorted.length; idx++) {
                 let prevMsg = sorted[idx];
                 let msg = sorted[idx + 1];
@@ -180,6 +180,7 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                 };
                 if (status === "error") {
                     connection.style = { stroke: "red" };
+                    connection.arrowHeadType= "arrowclosed";
                 } else {
                     connection.style = { stroke: "green" };
                 }
@@ -219,10 +220,17 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                         onElementClick: (type) => {
                             switch (type) {
                                 case "error":
-                                    if (el.error) setSelection(el.error);
+                                    if (el.error) setSelection(lodash.uniq(el.error));
                                     break;
                                 case "success":
-                                    if (el.sent) setSelection(el.sent);
+                                    if (el.sent) setSelection(lodash.uniq(el.sent));
+                                    break;
+                                case "all":
+                                    let sel = [];
+                                    if (el.error) sel = [...sel, ...lodash.uniq(el.error)];
+                                    if (el.sent) sel = [...sel, ...lodash.uniq(el.sent)];
+
+                                    setSelection(sel);
                                     break;
                                 default:
                             }
@@ -239,12 +247,8 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
 
     const onElementSelection = (elements) => {
         if (record) {
-            const groupedTags = lodash.groupBy(record.tags, "_source.tag");
-
             if (!lodash.isEmpty(elements)) {
-                const id = elements[0].id;
-                const messages = lodash.map(groupedTags[id], "_source.messageId");
-                setSelection(messages);
+                elements[0].data.onElementClick("all"); //Utilizar el metodo definido para forzar la seleccion
             } else {
                 setSelection([]);
             }
@@ -264,10 +268,11 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                     TagNode: TagNode,
                 }}
                 onSelectionChange={onElementSelection}
-                zoomOnScroll={false}
+                // zoomOnScroll={false}
                 panOnScroll={false}
-                paneMoveable={false}
-                nodesDraggable={false}
+                // paneMoveable={false}
+                selectNodesOnDrag={false}
+                // nodesDraggable={false}
                 nodesConnectable={false}
                 elements={elements}
                 zoomOnDoubleClick={false}

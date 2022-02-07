@@ -10,6 +10,7 @@ import { BrowserRouter } from "react-router-dom";
 import Config from "./common/Config";
 import { ConfigProvider, notification } from "antd";
 
+import "moment/locale/es";
 import esEs from "antd/lib/locale/es_ES";
 
 notification.config({

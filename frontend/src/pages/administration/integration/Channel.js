@@ -18,7 +18,15 @@ import lodash from "lodash";
 import useEventListener from "../../../common/useEventListener";
 import { Modal, Dropdown, Menu, Space, Tabs, List, Select, Divider, Alert, Popconfirm, Button } from "antd";
 import Icon from "@mdi/react";
-import { mdiClipboard, mdiCogs, mdiContentCopy, mdiInformation, mdiRefresh, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
+import {
+    mdiClipboard,
+    mdiCogs,
+    mdiContentCopy,
+    mdiInformation,
+    mdiRefresh,
+    mdiScissorsCutting,
+    mdiTrashCan,
+} from "@mdi/js";
 import ChannelContextProvider from "../../../components/channels/ChannelContext";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 import IconButton from "../../../components/button/IconButton";
@@ -45,8 +53,7 @@ const Channel = ({
     debugVisible,
     warningNodeVisible,
     debugClose,
-    warningIcon,
-    notWarningIcon,
+    setWarningIcon,
     warningClose,
     reloadDebug,
 }) => {
@@ -83,48 +90,39 @@ const Channel = ({
         // console.log(channel);
     }, [channel]);
 
-
     /**
      * Comprobación de los codes de las cajas para ver si se encuentran en el package actual.
-     * 
-     * 
+     *
+     *
      */
     useEffect(() => {
-
         if (channel.nodes && channel.nodes.length > 0 && nodeTypes.length > 0) {
-            let nodesChannel = channel.nodes
-            let notFoundedNodes = []
+            let nodesChannel = channel.nodes;
+            let notFoundedNodes = [];
 
             //Se comprueba si hay algun nodo con codigo que no este en los nodeTypes
             nodesChannel.forEach((element) => {
-                let finded = lodash.filter(nodeTypes, { "code": element.type_id })
+                let finded = lodash.filter(nodeTypes, { code: element.type_id });
 
                 if (!finded[0]) {
-                    notFoundedNodes.push(element)
+                    notFoundedNodes.push(element);
                 }
-            })
+            });
 
             if (notFoundedNodes.length > 0) {
-
-
-                setNotFoundedNodes(notFoundedNodes)
+                setNotFoundedNodes(notFoundedNodes);
                 //Se añade la label y el valor para el Select
                 nodeTypes.forEach(function (element) {
                     element.value = element.name;
                     element.label = element.name;
                 });
 
-                warningIcon(true)
+                setWarningIcon(true)
             } else {
-                notWarningIcon(["false"])
+                setWarningIcon(false)
             }
         }
-
-    }, [channel, nodeTypes])
-
-
-
-
+    }, [channel, nodeTypes]);
 
     /**
      * Metodo para crear una conexión entre dos nodos
@@ -694,8 +692,6 @@ const Channel = ({
                 </Modal>
 
             </div>
-
-
         </div>
     );
 };

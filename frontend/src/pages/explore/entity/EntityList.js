@@ -13,8 +13,9 @@ import * as api from "../../../api/configurationApi";
 
 import { useAngieSession } from "../../../components/security/UserContext";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
+import { Link } from "react-router-dom";
 
-const defaultDates = [moment().subtract(15, "day"), moment()];
+const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
 const EntityList = () => {
     const [dataSource, setDataSource] = useState([]);
@@ -107,6 +108,7 @@ const EntityList = () => {
             key: "_id",
             ellipsis: true,
             sorter: true,
+            render: (text) => <Link to={`/explore/entity/${text}`}>{text}</Link>,
         },
         {
             title: T.translate("entity.date"),

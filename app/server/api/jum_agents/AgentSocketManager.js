@@ -168,8 +168,11 @@ class AgentSocketManagerPrivate {
 
         const socket = await this.getSocket(socketId);
 
-        //TODO implement timeout
-        return new Promise((resolve, reject) => {
+        const seconds = 30;
+        const timeout = new Promise((resolve, reject) =>
+            setTimeout(() => reject(`Timed out after ${seconds} s.`), seconds * 1000)
+        );
+        const promise = new Promise((resolve, reject) => {
             if (!socket) return reject("socket_not_connected");
 
             try {
@@ -184,6 +187,7 @@ class AgentSocketManagerPrivate {
                 reject(ex);
             }
         });
+        return Promise.race([promise, timeout]);
     }
 
     /**
