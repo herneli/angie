@@ -165,7 +165,7 @@ describe("parseFiltersObject (BaseDao)", () => {
         const values = ["A", "B", "C"];
         const result = await elm.parseFiltersObject(
             {
-                field: { type: "in", value: values },
+                field: { type: "terms", value: values },
             },
             10,
             1

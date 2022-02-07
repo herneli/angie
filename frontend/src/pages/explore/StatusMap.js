@@ -6,9 +6,8 @@ import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
-const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
-const StatusMap = ({ record, onDateChange, customDateRanges, onSearch, height }) => {
+const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
 
     const rowSelection = {
@@ -65,14 +64,14 @@ const StatusMap = ({ record, onDateChange, customDateRanges, onSearch, height })
                                 })}
                                 pagination={false}
                                 columns={[
-                                    // {
-                                    //     title: T.translate("messages.message_id"),
-                                    //     dataIndex: ["_source", "message_id"],
-                                    // },
                                     {
                                         title: T.translate("messages.message_id"),
-                                        dataIndex: ["_id"],
+                                        dataIndex: ["_source", "message_content_id"],
                                     },
+                                    // {
+                                    //     title: T.translate("messages.message_id"),
+                                    //     dataIndex: ["_id"],
+                                    // },
                                     {
                                         title: T.translate("messages.date_reception"),
                                         dataIndex: ["_source", "date_reception"],
@@ -86,7 +85,7 @@ const StatusMap = ({ record, onDateChange, customDateRanges, onSearch, height })
                                     },
                                     {
                                         title: T.translate("messages.type"),
-                                        dataIndex: ["_source", "message_type"],
+                                        dataIndex: ["_source", "message_content_type"],
                                     },
                                     {
                                         title: T.translate("messages.channel"),

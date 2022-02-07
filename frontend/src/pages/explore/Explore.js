@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import React from "react";
-import { Redirect, Switch, useRouteMatch } from "react-router";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router";
 import { PrivateRoute } from "../../components/security/PrivateRoute";
 import SubMenu from "../../layout/SubMenu";
 
@@ -19,10 +19,12 @@ const Explore = ({ app }) => {
     return (
         <Layout>
             <SubMenu parent={"/explore"} url={url} />
-            <Redirect to="/explore/entity" /> 
             <Layout>
                 <Content>
                     <Switch>
+                        <Route exact path={"/explore"}>
+                            <Redirect to="/explore/entity" />
+                        </Route>
                         <PrivateRoute
                             roles={["admin", "user"]}
                             exact

@@ -1,4 +1,4 @@
-import { Divider, notification, Spin, Typography } from "antd";
+import { Breadcrumb, Divider, notification, Spin, Typography } from "antd";
 import { useRef } from "react";
 import axios from "axios";
 import moment from "moment";
@@ -11,6 +11,7 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import * as api from "../../../api/configurationApi";
+import { Link } from "react-router-dom";
 
 const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
@@ -36,11 +37,11 @@ const EntityDetail = ({ record }) => {
             label: T.translate("entity.type"),
         },
         "_source.arrayTest": {
-            label: "test",
+            label: "Paciente",
         },
         "_source.entity": {
-            span: 2,
-            label: "test",
+            // span: 2,
+            label: "Origen",
         },
         "_source.date": {
             label: T.translate("entity.date"),
@@ -141,7 +142,7 @@ const EntityDetail = ({ record }) => {
 
     const getDetailHeight = () => {
         try {
-            return detail.current.clientHeight + 173;
+            return detail.current.clientHeight + 220;
         } catch (e) {
             return 430;
         }
@@ -149,25 +150,38 @@ const EntityDetail = ({ record }) => {
 
     return (
         <div style={{ height: "100%", display: "flex", flexDirection: "column", alignContent: "stretch" }}>
-            {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
-            {loading && (
-                <div style={{ textAlign: "center", padding: "46vh" }}>
-                    <Spin />
+            <Breadcrumb>
+                <Breadcrumb.Item>
+                    <Link to="/explore/entity">{T.translate("menu.explore.entity")}</Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>
+                    {T.translate("entity.detail.breadcrumb", { id: currentRecord && currentRecord._id })}
+                </Breadcrumb.Item>
+            </Breadcrumb>
+            <br />
+            <Spin spinning={loading}>
+                {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
+
+                <div ref={detail}>
+                    <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
+                    {currentRecord && (
+                        <DynamicDetail
+                            options={{ size: "small", bordered: true, layout: "vertical" }}
+                            pattern={basePattern}
+                            data={currentRecord}
+                        />
+                    )}
+                    <br />
+                    <Divider orientation="left">{T.translate("entity.detail.messages")}</Divider>
                 </div>
-            )}
-            <div ref={detail}>
-                <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
-                {currentRecord && (
-                    <DynamicDetail
-                        options={{ size: "small", bordered: true, layout: "vertical" }}
-                        pattern={basePattern}
-                        data={currentRecord}
-                    />
-                )}
-                <br />
-                <Divider orientation="left">{T.translate("entity.detail.messages")}</Divider>
-            </div>
-            <StatusMap record={currentRecord} onDateChange={onDateChange} onSearch={onSearch} height={detailHeight} />
+                <StatusMap
+                    defaultDates={defaultDates}
+                    record={currentRecord}
+                    onDateChange={onDateChange}
+                    onSearch={onSearch}
+                    height={detailHeight}
+                />
+            </Spin>
         </div>
     );
 };

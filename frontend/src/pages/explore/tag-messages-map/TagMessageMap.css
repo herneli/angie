@@ -31,3 +31,14 @@
     top: 23px;
     right: 1px;
 }
+
+
+#react-flow__arrowclosed polyline {
+    stroke: red;
+    stroke-width: 2.5;
+}
+
+#react-flow__arrow polyline {
+    stroke: green;
+    stroke-width: 2.5;
+}

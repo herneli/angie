@@ -67,12 +67,9 @@ const MessagesStatusMap = () => {
     };
     return (
         <div>
-            {loading && (
-                <div style={{ textAlign: "center", padding: "46vh" }}>
-                    <Spin />
-                </div>
-            )}
-            <StatusMap record={state} onDateChange={onDateChange} onSearch={onSearch} />
+            <Spin spinning={loading}>
+                <StatusMap defaultDates={defaultDates} record={state} onDateChange={onDateChange} onSearch={onSearch} />
+            </Spin>
         </div>
     );
 };

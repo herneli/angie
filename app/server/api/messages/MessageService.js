@@ -30,8 +30,8 @@ export class MessageService extends BaseService {
             const tagServ = new TagService();
             const { data: tagData } = await tagServ.list(
                 {
-                    "messageId.keyword": {
-                        type: "termsi",
+                    "message_id.keyword": {
+                        type: "in",
                         value: identifiers,
                     },
                 },

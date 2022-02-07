@@ -120,7 +120,7 @@ export class MessageController extends BaseController {
             const organizationFilter = await App.Utils.getOrganizationFilter(request);
             if (organizationFilter !== "all") {
                 filters["channel_id.keyword"] = {
-                    type: "termsi",
+                    type: "in",
                     value: await integService.getChannelIdsByOrganization(organizationFilter)
                 }
             }

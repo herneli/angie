@@ -50,6 +50,13 @@
             "libraries": "Librerías",
             "log": "Log"
         },
+        "date_ranges": {
+            "today": "Hoy",
+            "last_24": "24 Horas",
+            "last_48": "48 Horas",
+            "week": "1 Semana",
+            "month": "1 Mes"
+        },
         "messages": {
             "saved": {
                 "title": "Guardado Correctamente",
@@ -350,6 +357,7 @@
         "organization": "Organización",
         "detail": {
             "title": "Detalle Entidad",
+            "breadcrumb": "Entidad: *{id}*",
             "messages": "Mensajes"
         }
     }
