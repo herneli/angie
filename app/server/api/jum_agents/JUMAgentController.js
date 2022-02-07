@@ -7,6 +7,12 @@ export class JUMAgentController extends BaseController {
         super.configure("jum_agent", { service: JUMAgentService });
 
 
+        this.router.get(
+            "/jum_agent/list/scrape",
+            expressAsyncHandler((req, res, next) => {
+                this.listToScrap(req, res, next);
+            })
+        );
         this.router.put(
             "/jum_agent/:id/approve",
             expressAsyncHandler((req, res, next) => {
@@ -41,6 +47,16 @@ export class JUMAgentController extends BaseController {
         );
 
         return this.router;
+    }
+
+    async listToScrap(request, response, next) {
+        try {
+            let service = new this.service();
+            let data = await service.listToScrap();
+            response.json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 
     async forceReload(request, response, next) {

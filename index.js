@@ -22,6 +22,7 @@ import { JUMAgentController, JUMAgentMaster } from "./app/server/api/jum_agents"
 import Cache from "./app/server/common/Cache";
 import { LibraryController } from "./app/server/api/library/LibraryController";
 import { EntityController } from "./app/server/api/entity";
+import { MetricsController } from "./app/server/api/metrics/MetricsControler";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -92,6 +93,7 @@ module.exports = async () => {
         new MessageController(),
         new LibraryController(),
         new EntityController(),
+        new MetricsController()
     ];
 
     const directives = {

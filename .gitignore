@@ -20,3 +20,5 @@ coverage/
 *docker/elastic/data
 /test.sqlite3
 .DS_Store
+
+prometheus_data/
