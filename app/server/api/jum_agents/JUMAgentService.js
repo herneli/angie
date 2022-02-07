@@ -21,10 +21,16 @@ export class JUMAgentService extends BaseService {
         let { data, total } = await super.list({}, null, null);
 
         for (const agent of data) {
-            targets.push(agent.meta.ip + ":" + agent.meta.rest_api_port);
+            targets.push({
+                "targets": [(agent.meta.ip === "localhost" || agent.meta.ip === "::1" || agent.meta.ip === "127.0.0.1" ? "host.docker.internal" : agent.meta.ip) + ":" + agent.meta.rest_api_port],
+                "labels": { 
+                    "__metrics_path__": "/actuator/prometheus", 
+                    "jum_id": agent.id,
+                    "jum_name": agent.name
+                }
+            })
         }
-
-        return [{ "targets": targets }];
+        return targets
     }
 
     //Overwrite
