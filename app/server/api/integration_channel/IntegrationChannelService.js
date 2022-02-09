@@ -374,7 +374,7 @@ export class IntegrationChannelService {
     async channelApplyStatus(channel, remoteChannel) {
         let messages;
         try {
-            messages = await this.messageService.getChannelMessageCount(channel.id);
+            // messages = await this.messageService.getChannelMessageCount(channel.id);
         } catch (ex) {
             console.error(ex);
         }

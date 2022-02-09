@@ -19,7 +19,6 @@ const EntityDetail = ({ record }) => {
     const detail = useRef(null);
     const [loading, setLoading] = useState(false);
     const [currentRecord, setCurrentRecord] = useState(record);
-    const [currentDates, setCurrentDates] = useState(defaultDates);
     const [organizations, setOrganizations] = useState([]);
     const [detailHeight, setDetailHeight] = useState(0);
 
@@ -33,22 +32,22 @@ const EntityDetail = ({ record }) => {
                 // fontSize: "120%",
             },
         },
-        "type": {
+        type: {
             label: T.translate("entity.type"),
         },
-        "arrayTest": {
+        arrayTest: {
             label: "Paciente",
         },
-        "entity": {
+        entity: {
             // span: 2,
             label: "Origen",
         },
-        "date": {
+        date: {
             label: T.translate("entity.date"),
             type: "date",
             format: "DD/MM/YYYY HH:mm:ss.SSS",
         },
-        "organization": {
+        organization: {
             label: T.translate("entity.organization"),
             render: (value) => getOrganizationById(value)?.name,
         },
@@ -64,23 +63,29 @@ const EntityDetail = ({ record }) => {
 
     useEffect(() => {
         loadElement();
-    }, [state, currentDates]);
+    }, [state]);
 
-    const loadElement = async (filter) => {
+    const loadElement = async (pagination, filters = {}, sorts, selectedElements) => {
         setLoading(true);
         try {
-            const msg_filters = filter || {};
-            if (currentDates) {
-                msg_filters["date_reception"] = {
-                    type: "date",
-                    start: currentDates[0].toISOString(),
-                    end: currentDates[1].toISOString(),
+            if (pagination?.pageSize && pagination?.current) {
+                filters.limit = pagination.pageSize ? pagination.pageSize : 10;
+                filters.start =
+                    (pagination.current ? pagination.current - 1 : 0) *
+                    (pagination.pageSize ? pagination.pageSize : 10);
+            }
+
+            if (sorts) {
+                filters.sort = Object.keys(sorts).length !== 0 && {
+                    field: sorts.columnKey || sorts.field,
+                    direction: sorts.order,
                 };
             }
 
             const response = await axios.get("/entity/" + id, {
                 params: {
-                    msg_filters,
+                    msg_filters: filters,
+                    selection: selectedElements,
                 },
             });
 
@@ -126,20 +131,6 @@ const EntityDetail = ({ record }) => {
         }
     };
 
-    const onDateChange = (dates) => {
-        setCurrentDates(dates);
-    };
-    const onSearch = (value) => {
-        loadElement(
-            value && {
-                "": {
-                    type: "query_string",
-                    value: value,
-                },
-            }
-        );
-    };
-
     const getDetailHeight = () => {
         try {
             return detail.current.clientHeight + 220;
@@ -176,9 +167,8 @@ const EntityDetail = ({ record }) => {
                 </div>
                 <StatusMap
                     defaultDates={defaultDates}
-                    record={currentRecord}
-                    onDateChange={onDateChange}
-                    onSearch={onSearch}
+                    dataSource={currentRecord}
+                    doSearch={loadElement}
                     height={detailHeight}
                 />
             </Spin>

@@ -63,14 +63,10 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
     }, []);
 
     useEffect(() => {
-        if (record && record.tags) {
-            setCheckedNodes(defaultSelected(record));
+        if (record && record && record.nodes) {
+            setCheckedNodes(defaultSelected(record.nodes));
         }
     }, [tags, record]);
-
-    // useEffect(() => {
-    //     createNodes(record);
-    // }, [tags, record, checkedNodes]);
 
     useEffect(() => {
         createElements(record);
@@ -92,7 +88,12 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
         }
     };
 
-    const defaultSelected = (record) => lodash.uniq(lodash.map(record.tags, "tag"));
+    const defaultSelected = (nodes) => {
+        const selected = lodash.keys(nodes);
+        setCheckAllNodes(selected.length === tags.length)
+        setIndeterminate(!!selected.length && selected.length < tags.length);
+        return selected;
+    };
 
     /**
      * Almacena la instancia actual del RFlow
@@ -100,40 +101,6 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
      * @returns
      */
     const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
-
-    const addNode = (nodes, key, as) => {
-        if (!key) return;
-        if (!nodes[key]) {
-            nodes[key] = {};
-        }
-        nodes[key][as] = true;
-    };
-
-    const addNodeMessage = (nodes, key, type, id) => {
-        if (!key) return;
-        if (!nodes[key]) {
-            nodes[key] = {};
-        }
-        if (!nodes[key][type]) {
-            nodes[key][type] = [];
-        }
-        if (checkedNodes.indexOf(key) !== -1) {
-            nodes[key][type].push(id);
-        }
-    };
-
-    const addConnection = (connections, key, data) => {
-        if (!connections[key]) {
-            connections[key] = {
-                id: key,
-                animated: true,
-                type: "floating",
-                arrowHeadType: "arrow",
-                style: { stroke: "green" },
-            };
-        }
-        connections[key] = { ...connections[key], ...data };
-    };
 
     useEventListener("resize", () => {
         refitView();
@@ -148,72 +115,13 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
     };
 
     /**
-     * Crear las conexiones entre nodos
-     *
-     * @param {*} param0
-     * @returns
-     */
-    const createConnections = ({ tags }) => {
-        const tags_filtered = lodash.filter(tags, ({ tag }) => checkedNodes.indexOf(tag) !== -1);
-
-        const groupedMsg = lodash.groupBy(tags_filtered, "message_id");
-        const connections = {};
-        const nodes = {};
-        //Recorrer los mensajes agrupados por identificador (diferentes posibles tags)
-        for (const el in groupedMsg) {
-            const tagList = groupedMsg[el];
-
-            //Obtener los datos principales del mensaje
-            //Ordenar por fecha para mirar las direcciones
-            const sorted = lodash.sortBy(tagList, "date_reception");
-            for (let idx = 0; idx < sorted.length; idx++) {
-                let prevMsg = sorted[idx];
-                let msg = sorted[idx + 1];
-                const sourceTag = prevMsg?.tag;
-                const targetTag = msg?.tag;
-                //El anterior se obtiene como source y el actual como target
-                addNode(nodes, sourceTag, "source");
-                addNode(nodes, targetTag, "target");
-
-                //Si no hay target es porque es el ultimo, el destino final.
-                //En caso de que el listado tenga un solo elemento se cuenta tambien (errores, y flujos de solo 1 tag)
-                addNodeMessage(nodes, sourceTag, msg?.status + "_sent", el); //Contar los "source"
-                addNodeMessage(nodes, targetTag, msg?.status + "_rec", el); //Contar los "target"
-
-                const connection = {
-                    source: sourceTag,
-                    target: targetTag,
-                };
-                if (msg?.status === "error") {
-                    connection.style = { stroke: "red" };
-                    connection.arrowHeadType = "arrowclosed";
-                } else {
-                    connection.style = { stroke: "green" };
-                }
-
-                const id = sourceTag + "-" + targetTag;
-                const selected = selection.indexOf(msg?.message_id) !== -1;
-                if (selected) {
-                }
-                //Solo añade la conexion si hay nodos que conectar o si se esta intentando visualizar uno/varios mensajes concretos
-                if (prevMsg && msg && (lodash.isEmpty(selection) || selected)) {
-                    addConnection(connections, id, connection);
-                }
-            }
-        }
-
-        return { connections, nodes };
-    };
-
-
-    /**
      * Convertir los calculos realizados en componentes para pintar en el ReactFlow
      *
      * @param {*} data
      */
     const createElements = async (data) => {
         if (data) {
-            const { connections, nodes } = createConnections(data);
+            const { connections, nodes } = data;
 
             //Crear los nodos
             const elems = [];
@@ -223,7 +131,6 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                     continue;
                 }
 
-                
                 elems.push({
                     id: tag.code,
                     type: "TagNode",
@@ -238,18 +145,19 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
                         success_rec: el && lodash.uniq(el.sent_rec).length,
                         onElementClick: (type) => {
                             switch (type) {
-                                case "error_sent":
-                                    if (el) setSelection(lodash.uniq(el.error_sent));
-                                    break;
-                                case "error_rec":
-                                    if (el) setSelection(lodash.uniq(el.error_rec));
-                                    break;
-                                case "success_sent":
-                                    if (el) setSelection(lodash.uniq(el.sent_sent));
-                                    break;
-                                case "success_rec":
-                                    if (el) setSelection(lodash.uniq(el.sent_rec));
-                                    break;
+                                // case "error_sent":
+                                //TODO selection!
+                                //     if (el) setSelection(lodash.uniq(el.error_sent));
+                                //     break;
+                                // case "error_rec":
+                                //     if (el) setSelection(lodash.uniq(el.error_rec));
+                                //     break;
+                                // case "success_sent":
+                                //     if (el) setSelection(lodash.uniq(el.sent_sent));
+                                //     break;
+                                // case "success_rec":
+                                //     if (el) setSelection(lodash.uniq(el.sent_rec));
+                                //     break;
                                 // case "all":
                                 //     let sel = [];
                                 //     if (el.error_sent) sel = [...sel, ...lodash.uniq(el.error_sent)];

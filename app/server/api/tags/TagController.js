@@ -29,22 +29,21 @@ export class TagController extends BaseController {
     async listEntity(request, response, next) {
         try {
             let service = new TagService();
-            let filters =
-                request.method === "POST"
-                    ? request.body
-                    : request.query && request.query.filters
-                    ? JSON.parse(request.query.filters)
-                    : {};
+            let { selection, filters } = request.body;
+
+            if (!filters) {
+                filters = {};
+            }
             const integService = new IntegrationService();
             const organizationFilter = await App.Utils.getOrganizationFilter(request);
             if (organizationFilter !== "all") {
-                filters["ztags.channel_id"] = {
+                filters["channel_id"] = {
                     type: "in",
                     value: await integService.getChannelIdsByOrganization(organizationFilter),
                 };
             }
 
-            let data = await service.list(filters, filters.start, filters.limit);
+            let data = await service.list(filters, filters.start, filters.limit, selection);
             let jsRes = new JsonResponse(true, data.data, null, data.total);
 
             response.json(jsRes.toJson());
@@ -53,8 +52,6 @@ export class TagController extends BaseController {
         }
     }
 
-
-    
     async healthcheck(request, response, next) {
         try {
             const service = new TagService();
@@ -66,5 +63,4 @@ export class TagController extends BaseController {
             next(ex);
         }
     }
-
 }

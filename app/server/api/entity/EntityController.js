@@ -61,10 +61,10 @@ export class EntityController extends BaseController {
     async getEntity(request, response, next) {
         try {
             let service = new EntityService();
-            const msg_filters = request.query && request.query.msg_filters ? JSON.parse(request.query.msg_filters) : {};
+            const query = request.query ? JSON.parse(request.query) : {};
 
-            let data = await service.loadById(request.params.id, msg_filters);
-            let jsRes = new JsonResponse(true, data);
+            let data = await service.loadById(request.params.id, query.msg_filters, query.selection);
+            let jsRes = new JsonResponse(true, data, "", data.total);
             let code = 200;
             if (data == null) {
                 code = 404;

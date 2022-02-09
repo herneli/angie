@@ -14,14 +14,16 @@ export class EntityService extends BaseService {
     // /**
     //  * Obtencion de un elemento mediante su identificador
     //  */
-    async loadById(id, msg_filters) {
+    async loadById(id, msg_filters, selection) {
         const entity = await super.loadById(id);
 
         const messageIds = lodash.map(entity.data.messages, "id");
         const tagService = new TagService();
-        const tags = await tagService.getWithMessages(messageIds);
+        const { data, total } = await tagService.getWithMessages(messageIds, msg_filters, selection);
 
-        entity.data.tags = tags;
+        entity.data.tags = data.tags;
+        entity.data.messages = data.messages;
+        entity.data.total = total;
 
         return entity.data;
     }

@@ -6,24 +6,23 @@ import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
-import lodash from "lodash";
+import Utils from "../../common/Utils";
 
-const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSearch, height }) => {
+const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
 
-    const [dataSource, setDataSource] = useState([]);
+    const [filters, setFilters] = useState({});
+    const [pagination, setPagination] = useState({});
+    const [sort, setSort] = useState({});
+    // const [dataSource, setDataSource] = useState([]);
 
     useEffect(() => {
-        if (record?.tags) {
-            const grouped = lodash.groupBy(record?.tags, "message_id");
+        setPagination({ total: dataSource?.total, showSizeChanger: true });
+    }, [dataSource.total]);
 
-            setDataSource(
-                lodash.map(grouped, (grp) => {
-                    return { ...grp[0] };
-                })
-            );
-        }
-    }, [record?.tags]);
+    useEffect(() => {
+        doSearch(pagination, filters, sort);
+    }, [filters]);
 
     const rowSelection = {
         selectedRowKeys: selectedElements,
@@ -41,8 +40,34 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
         setSelectedElements(selectedRowKeys);
     };
 
+    const onSearch = (value) => {
+        if (value.indexOf(":") !== -1) {
+            return setFilters(Utils.getFiltersByPairs((key) => `${key}`, value));
+        }
+        const filter = {
+            tagged_messages: {
+                type: "full-text-psql",
+                value: value,
+            },
+        };
+        setFilters(value ? filter : {});
+    };
+
+    const onDateChange = (dates) => {
+        if (dates) {
+            setFilters({
+                ...filters,
+                date_reception: {
+                    type: "date",
+                    start: dates[0].toISOString(),
+                    end: dates[1].toISOString(),
+                },
+            });
+        }
+    };
+
     const baseHeight = `calc(100vh - ${height || 165}px)`;
-    const tableHeight = `calc(100vh - ${(height || 165) + 100}px)`;
+    const tableHeight = `calc(100vh - ${(height || 165) + 170}px)`;
     return (
         <div>
             <BasicFilter
@@ -57,14 +82,14 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                 <Row style={{}}>
                     <Col span={10}>
                         <TagMessageMap
-                            record={record}
+                            record={dataSource?.tags}
                             selection={selectedElements}
                             setSelection={setSelectedElements}
                         />
                     </Col>
                     <Col span={14} style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 15, height: baseHeight }}>
                         <Typography.Title level={5}>{T.translate("entity.detail.messages")}</Typography.Title>
-                        {record && (
+                        {dataSource && (
                             <Table
                                 rowKey="message_id"
                                 rowSelection={{
@@ -77,15 +102,21 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                         selectRow(record);
                                     },
                                 })}
-                                pagination={false}
+                                onChange={(pagination, tableFilters, sort) => {
+                                    setSort(sort);
+                                    setPagination(pagination);
+                                    doSearch(pagination, filters, sort);
+                                }}
+                                pagination={pagination}
                                 columns={[
                                     {
                                         title: T.translate("messages.message_id"),
                                         dataIndex: ["message_content_id"],
+                                        sorter: true,
                                     },
                                     {
                                         title: T.translate("messages.date_reception"),
-                                        dataIndex: ["msg_date_reception"],
+                                        dataIndex: ["date_reception"],
                                         render: (text) => {
                                             return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
                                         },
@@ -96,14 +127,17 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                     {
                                         title: T.translate("messages.type"),
                                         dataIndex: ["message_content_type"],
+                                        sorter: true,
                                     },
                                     {
                                         title: T.translate("messages.channel"),
                                         dataIndex: ["channel_name"],
+                                        sorter: true,
                                     },
                                     {
                                         title: "",
                                         dataIndex: ["status"],
+                                        sorter: true,
                                         width: 50,
                                         render: (text) => {
                                             if (text === "error") {
@@ -113,7 +147,7 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                         },
                                     },
                                 ]}
-                                dataSource={dataSource}
+                                dataSource={dataSource?.messages}
                             />
                         )}
                     </Col>
