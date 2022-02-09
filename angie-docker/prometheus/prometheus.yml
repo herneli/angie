@@ -15,17 +15,17 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'angie_node'
+  - job_name: 'angie'
     scrape_interval: 5s
     static_configs:
       - targets: ['host.docker.internal:3105']
-  - job_name: 'angie'
+  - job_name: 'jumangie'
     scrape_interval: 5s
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['host.docker.internal:6100']
-    # http_sd_config:
-    #   - url: 'http://host.docker.internal:3105/jum_agent/list/scrape'
+    # metrics_path: '/actuator/prometheus'
+    # static_configs:
+    #   - targets: ['host.docker.internal:6100']
+    http_sd_configs:
+      - url: 'http://host.docker.internal:3105/jum_agent/list/scrape'
 
   # - job_name: "node"
   #   scrape_interval: 5s
