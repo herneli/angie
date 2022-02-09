@@ -88,34 +88,56 @@
                         "title": "menu.packages.integrations"
                     },
                     {
-                        "key": "node_type",
-                        "value": "/node_type",
-                        "icon": "mdiSourceBranch",
-                        "title": "menu.packages.node_types"
-                    },
-                    {
-                        "key": "entity_mapper",
-                        "value": "/entity_mapper",
-                        "icon": "mdiChartGantt",
-                        "title": "menu.packages.entity_mapper"
-                    },
-                    {
-                        "key": "script_context",
-                        "value": "/script_context",
-                        "icon": "mdiScriptTextKeyOutline",
-                        "title": "menu.packages.contexts"
-                    },
-                    {
-                        "key": "script_object",
-                        "value": "/script_object",
-                        "icon": "mdiScriptText",
-                        "title": "menu.packages.objects"
-                    },
-                    {
-                        "key": "script_method",
-                        "value": "/script_method",
+                        "key": "integration_config",
+                        "title": "menu.packages.integration_config",
                         "icon": "mdiFunctionVariant",
-                        "title": "menu.packages.methods"
+                        "value": "/integration_config",
+                        "children": [
+                            {
+                                "key": "node_type",
+                                "value": "/node_type",
+                                "icon": "mdiSourceBranch",
+                                "title": "menu.packages.node_types"
+                            },
+                            {
+                                "key": "entity_mapper",
+                                "value": "/entity_mapper",
+                                "icon": "mdiChartGantt",
+                                "title": "menu.packages.entity_mapper"
+                            },
+                            {
+                                "key": "tag",
+                                "value": "/tag",
+                                "icon": "mdiTagMultiple",
+                                "title": "menu.packages.tag"
+                            }
+                        ]
+                    },
+                    {
+                        "key": "scripting",
+                        "title": "menu.packages.scripting",
+                        "icon": "mdiFunctionVariant",
+                        "value": "/scripting",
+                        "children": [
+                            {
+                                "key": "script_context",
+                                "value": "/script_context",
+                                "icon": "mdiScriptTextKeyOutline",
+                                "title": "menu.packages.contexts"
+                            },
+                            {
+                                "key": "script_object",
+                                "value": "/script_object",
+                                "icon": "mdiScriptText",
+                                "title": "menu.packages.objects"
+                            },
+                            {
+                                "key": "script_method",
+                                "value": "/script_method",
+                                "icon": "mdiFunctionVariant",
+                                "title": "menu.packages.methods"
+                            }
+                        ]
                     }
                 ]
             }

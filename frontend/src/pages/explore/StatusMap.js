@@ -1,14 +1,29 @@
 import { Col, Row, Typography, Table, Input, Divider } from "antd";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BasicFilter from "../../components/basic-filter/BasicFilter";
 import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
+import lodash from "lodash";
 
 const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
+
+    const [dataSource, setDataSource] = useState([]);
+
+    useEffect(() => {
+        if (record?.tags) {
+            const grouped = lodash.groupBy(record?.tags, "message_id");
+
+            setDataSource(
+                lodash.map(grouped, (grp) => {
+                    return { ...grp[0] };
+                })
+            );
+        }
+    }, [record?.tags]);
 
     const rowSelection = {
         selectedRowKeys: selectedElements,
@@ -18,10 +33,10 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
     };
     const selectRow = (record) => {
         const selectedRowKeys = [...selectedElements];
-        if (selectedRowKeys.indexOf(record._id) >= 0) {
-            selectedRowKeys.splice(selectedRowKeys.indexOf(record._id), 1);
+        if (selectedRowKeys.indexOf(record.message_id) >= 0) {
+            selectedRowKeys.splice(selectedRowKeys.indexOf(record.message_id), 1);
         } else {
-            selectedRowKeys.push(record._id);
+            selectedRowKeys.push(record.message_id);
         }
         setSelectedElements(selectedRowKeys);
     };
@@ -51,7 +66,7 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                         <Typography.Title level={5}>{T.translate("entity.detail.messages")}</Typography.Title>
                         {record && (
                             <Table
-                                rowKey="_id"
+                                rowKey="message_id"
                                 rowSelection={{
                                     type: "checkbox",
                                     ...rowSelection,
@@ -66,34 +81,29 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                 columns={[
                                     {
                                         title: T.translate("messages.message_id"),
-                                        dataIndex: ["_source", "message_content_id"],
+                                        dataIndex: ["message_content_id"],
                                     },
-                                    // {
-                                    //     title: T.translate("messages.message_id"),
-                                    //     dataIndex: ["_id"],
-                                    // },
                                     {
                                         title: T.translate("messages.date_reception"),
-                                        dataIndex: ["_source", "date_reception"],
+                                        dataIndex: ["msg_date_reception"],
                                         render: (text) => {
                                             return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
                                         },
                                         defaultSortOrder: "descend",
                                         sorter: (a, b) =>
-                                            moment(a._source.date_reception).unix() -
-                                            moment(b._source.date_reception).unix(),
+                                            moment(a.date_reception).unix() - moment(b.date_reception).unix(),
                                     },
                                     {
                                         title: T.translate("messages.type"),
-                                        dataIndex: ["_source", "message_content_type"],
+                                        dataIndex: ["message_content_type"],
                                     },
                                     {
                                         title: T.translate("messages.channel"),
-                                        dataIndex: ["_source", "channel_name"],
+                                        dataIndex: ["channel_name"],
                                     },
                                     {
                                         title: "",
-                                        dataIndex: ["_source", "status"],
+                                        dataIndex: ["status"],
                                         width: 50,
                                         render: (text) => {
                                             if (text === "error") {
@@ -103,7 +113,7 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                         },
                                     },
                                 ]}
-                                dataSource={record.raw_messages}
+                                dataSource={dataSource}
                             />
                         )}
                     </Col>

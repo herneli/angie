@@ -193,8 +193,11 @@
         "packages": {
             "title": "Paquetes",
             "integrations": "Integraciones",
+            "integration_config": "Config. Integraciones",
             "node_types": "Tipos de Nodo",
             "entity_mapper": "Mapeo Entidades",
+            "tag": "Etiquetas",
+            "scripting": "Scripting",
             "contexts": "Contextos",
             "objects": "Objectos",
             "methods": "Métodos"
@@ -358,7 +361,15 @@
         "detail": {
             "title": "Detalle Entidad",
             "breadcrumb": "Entidad: *{id}*",
-            "messages": "Mensajes"
+            "messages": "Mensajes",
+            "count_error_rec": "Rec. Error",
+            "count_error_sent": "Env. Error",
+            "count_success_rec": "Rec. Ok",
+            "count_success_sent": "Env. Ok",
+            "tooltip_count_error_rec": "Recibidos con error",
+            "tooltip_count_error_sent": "Enviados con Error",
+            "tooltip_count_success_rec": "Recibidos Ok",
+            "tooltip_count_success_sent": "Enviados Ok"
         }
     }
 }

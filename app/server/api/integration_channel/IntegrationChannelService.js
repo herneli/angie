@@ -169,7 +169,10 @@ export class IntegrationChannelService {
     async convertNodeTypeToCamel(node, data, integration) {
         if (node.data.xml_template) {
             //Add TagHeader
-            let procTemplate = node.data.xml_template.replace(/<route\s+id\b[^>]*>/gm, '<route id="{{source}}" group="{{getTags tags}}"><description>{{label}}</description>')
+            let procTemplate = node.data.xml_template.replace(
+                /<route\s+id\b[^>]*>/gm,
+                '<route id="{{source}}" group="{{getTags tags}}"><description>{{label}}</description>'
+            );
 
             const template = await Handlebars.compile(procTemplate);
 
@@ -369,7 +372,12 @@ export class IntegrationChannelService {
      * @returns
      */
     async channelApplyStatus(channel, remoteChannel) {
-        const messages = await this.messageService.getChannelMessageCount(channel.id);
+        let messages;
+        try {
+            messages = await this.messageService.getChannelMessageCount(channel.id);
+        } catch (ex) {
+            console.error(ex);
+        }
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
         channel.messages_total = messages ? messages.total : (remoteChannel && remoteChannel.messages_total) || 0;
         channel.messages_error = messages ? messages.error : (remoteChannel && remoteChannel.messages_error) || 0;

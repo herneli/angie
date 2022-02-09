@@ -27,28 +27,28 @@ const EntityDetail = ({ record }) => {
     const { id } = useParams();
 
     const basePattern = {
-        _id: {
+        id: {
             label: T.translate("entity.id"),
             style: {
                 // fontSize: "120%",
             },
         },
-        "_source.type": {
+        "type": {
             label: T.translate("entity.type"),
         },
-        "_source.arrayTest": {
+        "arrayTest": {
             label: "Paciente",
         },
-        "_source.entity": {
+        "entity": {
             // span: 2,
             label: "Origen",
         },
-        "_source.date": {
+        "date": {
             label: T.translate("entity.date"),
             type: "date",
             format: "DD/MM/YYYY HH:mm:ss.SSS",
         },
-        "_source.organization": {
+        "organization": {
             label: T.translate("entity.organization"),
             render: (value) => getOrganizationById(value)?.name,
         },
@@ -155,7 +155,7 @@ const EntityDetail = ({ record }) => {
                     <Link to="/explore/entity">{T.translate("menu.explore.entity")}</Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                    {T.translate("entity.detail.breadcrumb", { id: currentRecord && currentRecord._id })}
+                    {T.translate("entity.detail.breadcrumb", { id: currentRecord && currentRecord.id })}
                 </Breadcrumb.Item>
             </Breadcrumb>
             <br />

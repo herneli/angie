@@ -79,8 +79,8 @@ const EntityList = () => {
             };
         }
         if (currentDates) {
-            filters["date"] = {
-                type: "date",
+            filters["data->>'date'"] = {
+                type: "dateraw",
                 start: currentDates[0].toISOString(),
                 end: currentDates[1].toISOString(),
             };
@@ -104,16 +104,16 @@ const EntityList = () => {
     const columns = [
         {
             title: T.translate("entity.id"),
-            dataIndex: "_id",
-            key: "_id",
+            dataIndex: "id",
+            key: "id",
             ellipsis: true,
             sorter: true,
             render: (text) => <Link to={`/explore/entity/${text}`}>{text}</Link>,
         },
         {
             title: T.translate("entity.date"),
-            dataIndex: ["_source", "date"],
-            key: "date",
+            dataIndex: ["data", "date"],
+            key: "data->>'date'",
             defaultSortOrder: "descend",
             sorter: true,
             render: (text, record) => {
@@ -122,14 +122,14 @@ const EntityList = () => {
         },
         {
             title: T.translate("entity.type"),
-            dataIndex: ["_source", "type"],
-            key: "type.keyword",
+            dataIndex: ["data", "type"],
+            key: "data->>'type'",
             sorter: true,
         },
         {
             title: T.translate("entity.organization"),
-            dataIndex: ["_source", "organization"],
-            key: "organization.keyword",
+            dataIndex: ["data", "organization"],
+            key: "data->>'organization'",
             sorter: true,
             render: (text) => getOrganizationById(text)?.name,
         },
@@ -144,7 +144,7 @@ const EntityList = () => {
                             type="text"
                             onClick={(e) => {
                                 history.push({
-                                    pathname: `/explore/entity/${record._id}`,
+                                    pathname: `/explore/entity/${record.id}`,
                                 });
                             }}
                             icon={{
@@ -165,8 +165,8 @@ const EntityList = () => {
     };
     const onSearch = (value) => {
         const filter = {
-            "": {
-                type: "query_string",
+            "data": {
+                type: "full-text-psql",
                 value: value,
             },
         };

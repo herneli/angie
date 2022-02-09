@@ -1,3 +1,7 @@
+.tagMap .react-flow {
+    height: 98%
+}
+
 .tagMap .react-flow__handle {
     display: none;
 }
@@ -13,24 +17,49 @@
     border-width: 1px;
     color: #222;
     font-size: 12px;
-    padding: 13px;
-    text-align: center;
-    width: 150px;
+    /* padding: 13px; */
+    /* text-align: center; */
+    min-height: 60px;
+    min-width: 160px;
     background-color: #fff;
+}
+
+.tagMap .react-flow__node-TagNode .info {
+    padding: 4px;
+    display: inline-block;
+    min-width: 80px;
+}
+
+.tagMap .react-flow__node-TagNode .info>div:first-child {
+    border-bottom: 1px solid silver;
+}
+
+.tagMap .react-flow__node-TagNode .info>div {
+    padding-left: 2px;
+}
+
+.tagMap .react-flow__node-TagNode .badges {
+    padding: 4px 8px;
+    border-left: 1px solid silver;
+    display: inline-block;
+    line-height: normal;
+    float: right;
+}
+
+.tagMap .react-flow__node-TagNode .badges>table td {
+    padding: 2px 4px;
     cursor: pointer;
 }
 
-.tagMap .react-flow__node-TagNode .ant-badge.success {
-    position: absolute;
-    top: 1px;
-    right: 1px;
+.tagMap .react-flow__node-TagNode .badges>table {
+    display: inline;
 }
 
-.tagMap .react-flow__node-TagNode .ant-badge.error {
-    position: absolute;
-    top: 23px;
-    right: 1px;
+.tagMap .ant-badge-status-text,
+.tagMap .aliveHealthcheck {
+    font-size: 10px;
 }
+
 
 
 #react-flow__arrowclosed polyline {

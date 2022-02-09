@@ -12,34 +12,34 @@ services:
         ports:
             - 3132:5432/tcp
         
-    angie_elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
-        environment:
-            - discovery.type=single-node
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ports:
-            - 3103:3103
-        volumes:
-            - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-            - ./elastic/data:/usr/share/elasticsearch/data
+    # angie_elasticsearch:
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    #     environment:
+    #         - discovery.type=single-node
+    #         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    #     ports:
+    #         - 3103:3103
+    #     volumes:
+    #         - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    #         - ./elastic/data:/usr/share/elasticsearch/data
 
-    angie_kibana:
-        image: docker.elastic.co/kibana/kibana:7.16.3
-        ports:
-            - 3108:5601
-        volumes:
-            - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    # angie_kibana:
+    #     image: docker.elastic.co/kibana/kibana:7.16.3
+    #     ports:
+    #         - 3108:5601
+    #     volumes:
+    #         - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
         
-        depends_on:
-            - angie_elasticsearch
-        links:
-            - "angie_elasticsearch:angie_elasticsearch"
+    #     depends_on:
+    #         - angie_elasticsearch
+    #     links:
+    #         - "angie_elasticsearch:angie_elasticsearch"
 
-    angie_rabbitmq: 
-        image: rabbitmq:management
-        ports: 
-            - 3111:5672
-            - 3112:15672
+    # angie_rabbitmq: 
+    #     image: rabbitmq:management
+    #     ports: 
+    #         - 3111:5672
+    #         - 3112:15672
 
 
     angie_keycloak:
@@ -61,8 +61,8 @@ services:
         depends_on:
             - angie_postgre
     
-    prometheus:
-      container_name: prometheus
+    angie_prometheus:
+      container_name: angie_prometheus
       image: prom/prometheus
       ports:
         - 3190:9090
@@ -77,8 +77,8 @@ services:
         - ./prometheus/prometheus_data:/prometheus
       # depends_on:
       #   - node_exporter
-    grafana:
-      container_name: grafana
+    angie_grafana:
+      container_name: angie_grafana
       image: grafana/grafana
       ports:
         - 3100:3000
@@ -88,7 +88,7 @@ services:
         - ./grafana/etc/grafana:/etc/grafana
       user: "1000"
       depends_on:
-            - prometheus
+            - angie_prometheus
     # node_exporter:
     #   image: quay.io/prometheus/node-exporter:latest
     #   container_name: node_exporter

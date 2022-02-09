@@ -668,7 +668,8 @@ exports.seed = async function (knex) {
                 name: "Usuarios",
                 table: "users",
                 id_mode: "uuid",
-                selectQuery: "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                selectQuery:
+                    "users.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
                 group_by: "users.id",
                 relation_schema: [
                     {
@@ -1298,6 +1299,101 @@ exports.seed = async function (knex) {
                             },
                         },
                     },
+                },
+            },
+        },
+        {
+            name: "Etiquetas",
+            code: "tag",
+            data: {
+                code: "tag",
+                name: "Etiquetas",
+                table: "integration_config",
+                id_mode: "uuid",
+                documentType: "tag",
+                // selectQuery:
+                //     "integration_config.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
+                // group_by: "integration_config.id",
+                // relation_schema: [
+                //     {
+                //         type: "LEFT JOIN",
+                //         with_table: "organization",
+                //         on_condition:
+                //             "organization.id::text =  ANY(TRANSLATE(integration_config.data->>'organization_id', '[]','{}')::TEXT[])",
+                //         relation_column: "organization_data",
+                //     },
+                // ],
+                listFields: [
+                    {
+                        title: "Código",
+                        field: "code",
+                    },
+                    {
+                        title: "Nombre",
+                        field: "name",
+                        key: "data->>'name'",
+                    },
+                    // {
+                    //     title: "Organization",
+                    //     field: ["organization_data"],
+                    // },
+                ],
+                schema: {
+                    type: "object",
+                    required: ["code", "name"],
+                    properties: {
+                        code: { title: "Código", type: "string" },
+                        name: { title: "Nombre", type: "string" },
+                        // organization_id: {
+                        //     type: "array",
+                        //     title: "Organization",
+                        //     items: {
+                        //         type: "string",
+                        //         enum: [],
+                        //     },
+                        //     uniqueItems: true,
+                        // },
+                        healthcheck: {
+                            type: "object",
+                            properties: {
+                                url: { title: "URL", type: "string" },
+                                method: {
+                                    title: "Método",
+                                    type: "string",
+                                    enum: ["POST", "GET"],
+                                },
+                                response_type: {
+                                    title: "Tipo Respuesta",
+                                    type: "string",
+                                    enum: ["alive", "data"],
+                                },
+                                response_property: { title: "Propiedad Respuesta", type: "string" },
+                            },
+                        },
+                    },
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "4",
+                    },
+                    name: {
+                        "ui:columnSize": "4",
+                    },
+                    healthcheck: {
+                        url: {
+                            "ui:columnSize": "8",
+                        },
+                        method: {
+                            "ui:columnSize": "4",
+                        },
+                    },
+
+                    // organization_id: {
+                    //     "ui:columnSize": "6",
+                    //     "ui:widget": "SelectRemoteWidget",
+                    //     "ui:mode": "multiple",
+                    //     "ui:selectOptions": "/configuration/model/organization/data#path=data&value=id&label=data.name",
+                    // },
                 },
             },
         },

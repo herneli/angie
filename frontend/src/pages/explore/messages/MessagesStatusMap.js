@@ -7,6 +7,7 @@ import { useAngieSession } from "../../../components/security/UserContext";
 import StatusMap from "../StatusMap";
 
 import T from "i18n-react";
+import Utils from '../../../common/Utils';
 
 const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
@@ -30,16 +31,16 @@ const MessagesStatusMap = () => {
                 ...customFilters,
             };
             if (currentDates) {
-                filter["date_reception"] = {
+                filter["ztags.date_reception"] = {
                     type: "date",
                     start: currentDates[0].toISOString(),
                     end: currentDates[1].toISOString(),
                 };
             }
-            const response = await axios.post("/messages/list/withTags", filter);
+            const response = await axios.post("/tag/list", filter);
 
             if (response?.data?.data) {
-                setState(response?.data?.data);
+                setState({tags: response?.data?.data});
             }
         } catch (ex) {
             notification.error({
@@ -55,15 +56,29 @@ const MessagesStatusMap = () => {
         setCurrentDates(dates);
     };
 
+    // const onSearch = (value) => {
+    //     loadData(
+    //         value && {
+    //             "": {
+    //                 type: "query_string",
+    //                 value: value,
+    //             },
+    //         }
+    //     );
+    // };
+    
     const onSearch = (value) => {
-        loadData(
-            value && {
-                "": {
-                    type: "query_string",
-                    value: value,
-                },
-            }
-        );
+        if (value.indexOf(":") !== -1) {
+            return loadData(
+                Utils.getFiltersByPairs((key) => `${key}`, value)
+            );
+        }
+        loadData(value && {
+            "ztags": {
+                type: "full-text-psql",
+                value: value,
+            },
+        });
     };
     return (
         <div>
