@@ -18,7 +18,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
 
     useEffect(() => {
         setPagination({ total: dataSource?.total, showSizeChanger: true });
-    }, [dataSource.total]);
+    }, [dataSource?.total]);
 
     useEffect(() => {
         doSearch(pagination, filters, sort);

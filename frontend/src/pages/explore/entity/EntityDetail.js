@@ -85,7 +85,7 @@ const EntityDetail = ({ record }) => {
             const response = await axios.get("/entity/" + id, {
                 params: {
                     msg_filters: filters,
-                    selection: selectedElements,
+                    // selection: selectedElements,
                 },
             });
 
