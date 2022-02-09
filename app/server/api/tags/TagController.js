@@ -29,7 +29,7 @@ export class TagController extends BaseController {
     async listEntity(request, response, next) {
         try {
             let service = new TagService();
-            let { selection, filters } = request.body;
+            let { checkedNodes, filters } = request.body;
 
             if (!filters) {
                 filters = {};
@@ -43,7 +43,7 @@ export class TagController extends BaseController {
                 };
             }
 
-            let data = await service.list(filters, filters.start, filters.limit, selection);
+            let data = await service.list(filters, filters.start, filters.limit, checkedNodes);
             let jsRes = new JsonResponse(true, data.data, null, data.total);
 
             response.json(jsRes.toJson());

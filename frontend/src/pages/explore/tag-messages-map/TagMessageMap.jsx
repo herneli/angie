@@ -47,14 +47,12 @@ const getLayoutedElements = (elements) => {
     });
 };
 
-const TagMessageMap = ({ record, selection, setSelection }) => {
+const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheckedNodes }) => {
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    const [currentNodes, setCurrentNodes] = useState({});
     const [elements, setElements] = useState([]);
     const [tags, setTags] = useState([]);
 
-    const [checkedNodes, setCheckedNodes] = useState([]);
     const [indeterminate, setIndeterminate] = useState(true);
     const [checkAllNodes, setCheckAllNodes] = useState(false);
 
@@ -63,14 +61,8 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
     }, []);
 
     useEffect(() => {
-        if (record && record && record.nodes) {
-            setCheckedNodes(defaultSelected(record.nodes));
-        }
-    }, [tags, record]);
-
-    useEffect(() => {
         createElements(record);
-    }, [selection, checkedNodes]);
+    }, [record]);
 
     useEffect(() => {
         refitView();
@@ -83,14 +75,15 @@ const TagMessageMap = ({ record, selection, setSelection }) => {
         try {
             const tags = await api.getModelDataList("tag");
             setTags(tags);
+            setCheckedNodes(defaultSelected(tags));
         } catch (ex) {
             console.error(ex);
         }
     };
 
-    const defaultSelected = (nodes) => {
-        const selected = lodash.keys(nodes);
-        setCheckAllNodes(selected.length === tags.length)
+    const defaultSelected = (tags) => {
+        const selected = lodash.map(tags, "code");
+        setCheckAllNodes(selected.length === tags.length);
         setIndeterminate(!!selected.length && selected.length < tags.length);
         return selected;
     };

@@ -12,18 +12,18 @@ export class TagService extends BaseService {
         super(TagDao);
     }
 
-    getWithMessages(identifiers, filters, selection) {
+    getWithMessages(identifiers, filters, checkedNodes) {
         return this.list(
             {
                 ...filters,
-                "message_id": {
+                message_id: {
                     type: "in",
                     value: identifiers,
                 },
             },
             filters.start,
             filters.limit,
-            selection
+            checkedNodes
         );
     }
 
@@ -32,8 +32,15 @@ export class TagService extends BaseService {
      *
      * filters, es opcional. Si no se pasan se devuelve lo que hay ;
      */
-    async list(filters, start, limit, selection) {
+    async list(filters, start, limit, checkedNodes) {
         //Pagination
+
+        if (!lodash.isEmpty(checkedNodes)) {
+            filters["tag"] = {
+                type: "in",
+                value: checkedNodes,
+            };
+        }
         const response = await super.list(filters, 0, 100000);
 
         const messageServ = new MessageService();
@@ -48,7 +55,7 @@ export class TagService extends BaseService {
             start,
             limit
         );
-        const tags = await this.getNodes(response.data, selection);
+        const tags = await this.getNodes(response.data);
 
         return {
             data: { messages, tags },
@@ -88,14 +95,14 @@ export class TagService extends BaseService {
         connections[key] = { ...connections[key], ...data };
     }
 
-    async getNodes(data, selection) {
-        return this.createConnectionsAndNodes(data, selection);
+    async getNodes(data) {
+        return this.createConnectionsAndNodes(data);
     }
 
-    createConnectionsAndNodes(tags, selection) {
-        const tags_filtered = tags; //lodash.filter(tags, ({ tag }) => checkedNodes.indexOf(tag) !== -1);
+    createConnectionsAndNodes(tags) {
+        // const tags_filtered = lodash.filter(tags, ({ tag }) => checkedNodes.indexOf(tag) !== -1);
 
-        const groupedMsg = lodash.groupBy(tags_filtered, "message_id");
+        const groupedMsg = lodash.groupBy(tags, "message_id");
         const connections = {};
         const nodes = {};
         //Recorrer los mensajes agrupados por identificador (diferentes posibles tags)
@@ -114,9 +121,10 @@ export class TagService extends BaseService {
                 this.addNode(nodes, sourceTag, "source");
                 this.addNode(nodes, targetTag, "target");
 
-                //Si no hay target es porque es el ultimo, el destino final.
-                //En caso de que el listado tenga un solo elemento se cuenta tambien (errores, y flujos de solo 1 tag)
-                this.addNodeMessage(nodes, sourceTag, msg && msg.status + "_sent", el); //Contar los "source"
+                //!FIXME  revisar porque si es de un solo nodo no va a contar bien nunca
+                if (prevMsg && msg) { //Solo cuenta los source si hay destino
+                    this.addNodeMessage(nodes, sourceTag, prevMsg && prevMsg.status + "_sent", el); //Contar los "source"
+                }
                 this.addNodeMessage(nodes, targetTag, msg && msg.status + "_rec", el); //Contar los "target"
 
                 const connection = {

@@ -10,6 +10,7 @@ import Utils from "../../common/Utils";
 
 const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
+    const [checkedNodes, setCheckedNodes] = useState([]);
 
     const [filters, setFilters] = useState({});
     const [pagination, setPagination] = useState({});
@@ -21,8 +22,8 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
     }, [dataSource?.total]);
 
     useEffect(() => {
-        doSearch(pagination, filters, sort);
-    }, [filters]);
+        doSearch(pagination, filters, sort, checkedNodes);
+    }, [filters, checkedNodes]);
 
     const rowSelection = {
         selectedRowKeys: selectedElements,
@@ -85,6 +86,8 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                             record={dataSource?.tags}
                             selection={selectedElements}
                             setSelection={setSelectedElements}
+                            checkedNodes={checkedNodes}
+                            setCheckedNodes={setCheckedNodes}
                         />
                     </Col>
                     <Col span={14} style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 15, height: baseHeight }}>
@@ -105,7 +108,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                 onChange={(pagination, tableFilters, sort) => {
                                     setSort(sort);
                                     setPagination(pagination);
-                                    doSearch(pagination, filters, sort);
+                                    doSearch(pagination, filters, sort, checkedNodes);
                                 }}
                                 pagination={pagination}
                                 columns={[

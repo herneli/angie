@@ -19,7 +19,7 @@ const MessagesStatusMap = () => {
         loadData();
     }, [currentUser]);
 
-    const loadData = async (pagination, filters = {}, sorts, selectedElements) => {
+    const loadData = async (pagination, filters = {}, sorts, checkedNodes) => {
         setLoading(true);
         try {
             if (pagination?.pageSize && pagination?.current) {
@@ -36,7 +36,7 @@ const MessagesStatusMap = () => {
                 };
             }
 
-            const response = await axios.post("/tag/list", { filters, selection: selectedElements });
+            const response = await axios.post("/tag/list", { filters, checkedNodes});
 
             if (response?.data?.data) {
                 setState({

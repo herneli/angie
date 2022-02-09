@@ -65,7 +65,7 @@ const EntityDetail = ({ record }) => {
         loadElement();
     }, [state]);
 
-    const loadElement = async (pagination, filters = {}, sorts, selectedElements) => {
+    const loadElement = async (pagination, filters = {}, sorts, checkedNodes) => {
         setLoading(true);
         try {
             if (pagination?.pageSize && pagination?.current) {
@@ -82,11 +82,9 @@ const EntityDetail = ({ record }) => {
                 };
             }
 
-            const response = await axios.get("/entity/" + id, {
-                params: {
-                    msg_filters: filters,
-                    // selection: selectedElements,
-                },
+            const response = await axios.post("/entity/" + id, {
+                msg_filters: filters,
+                checkedNodes
             });
 
             if (response) {
