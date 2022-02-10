@@ -7,14 +7,17 @@ import TagMessageMap from "./tag-messages-map/TagMessageMap";
 import T from "i18n-react";
 
 import Utils from "../../common/Utils";
+import { useAngieSession } from "../../components/security/UserContext";
 
 const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState([]);
 
     const [filters, setFilters] = useState({});
-    const [pagination, setPagination] = useState({});
+    const [pagination, setPagination] = useState();
     const [sort, setSort] = useState({});
+    const { currentUser } = useAngieSession();
+
     // const [dataSource, setDataSource] = useState([]);
 
     useEffect(() => {
@@ -23,7 +26,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
 
     useEffect(() => {
         doSearch(pagination, filters, sort, checkedNodes);
-    }, [filters, checkedNodes]);
+    }, [currentUser]);
 
     const rowSelection = {
         selectedRowKeys: selectedElements,
@@ -51,20 +54,29 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                 value: value,
             },
         };
-        setFilters(value ? { ...filters, ...filter } : { ...filters });
+        const newFilters = value ? { ...filters, ...filter } : { ...filters };
+        setFilters(newFilters);
+        doSearch(pagination, newFilters, sort, checkedNodes);
     };
 
     const onDateChange = (dates) => {
         if (dates) {
-            setFilters({
+            const newFilters = {
                 ...filters,
                 date_reception: {
                     type: "date",
                     start: dates[0].toISOString(),
                     end: dates[1].toISOString(),
                 },
-            });
+            };
+            setFilters(newFilters);
+            doSearch(pagination, newFilters, sort, checkedNodes);
         }
+    };
+
+    const onCheckedChange = (checkedNodes) => {
+        setCheckedNodes(checkedNodes);
+        doSearch(pagination, filters, sort, checkedNodes);
     };
 
     const baseHeight = `calc(100vh - ${height || 165}px)`;
@@ -86,8 +98,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                             record={dataSource?.tags}
                             selection={selectedElements}
                             setSelection={setSelectedElements}
-                            checkedNodes={checkedNodes}
-                            setCheckedNodes={setCheckedNodes}
+                            onCheckedChange={onCheckedChange}
                         />
                     </Col>
                     <Col span={14} style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 15, height: baseHeight }}>
@@ -123,9 +134,8 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                         render: (text) => {
                                             return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
                                         },
+                                        sorter: true,
                                         defaultSortOrder: "descend",
-                                        sorter: (a, b) =>
-                                            moment(a.date_reception).unix() - moment(b.date_reception).unix(),
                                     },
                                     {
                                         title: T.translate("messages.type"),

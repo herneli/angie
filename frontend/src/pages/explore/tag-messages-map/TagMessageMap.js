@@ -19,7 +19,7 @@ import axios from "axios";
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 220;
+const nodeWidth = 230;
 const nodeHeight = 110;
 const getLayoutedElements = (elements) => {
     dagreGraph.setGraph({ rankdir: "TB", acyclicer: "greedy", nodesep: 100, ranksep: 100 });
@@ -47,11 +47,12 @@ const getLayoutedElements = (elements) => {
     });
 };
 
-const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheckedNodes }) => {
+const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => {
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
     const [elements, setElements] = useState([]);
     const [tags, setTags] = useState([]);
+    const [checkedNodes, setCheckedNodes] = useState(null);
 
     const [indeterminate, setIndeterminate] = useState(true);
     const [checkAllNodes, setCheckAllNodes] = useState(false);
@@ -61,6 +62,9 @@ const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheck
     }, []);
 
     useEffect(() => {
+        if (record && record.nodes && checkedNodes == null) {
+            setCheckedNodes(defaultSelected(record));
+        }
         createElements(record);
     }, [record]);
 
@@ -75,15 +79,14 @@ const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheck
         try {
             const tags = await api.getModelDataList("tag");
             setTags(tags);
-            setCheckedNodes(defaultSelected(tags));
         } catch (ex) {
             console.error(ex);
         }
     };
 
-    const defaultSelected = (tags) => {
-        const selected = lodash.map(tags, "code");
-        setCheckAllNodes(selected.length === tags.length);
+    const defaultSelected = ({ nodes }) => {
+        const selected = lodash.keys(nodes);
+        setCheckAllNodes(selected.length >= tags.length);
         setIndeterminate(!!selected.length && selected.length < tags.length);
         return selected;
     };
@@ -120,7 +123,7 @@ const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheck
             const elems = [];
             for (const tag of tags) {
                 const el = nodes[tag.code];
-                if (checkedNodes.indexOf(tag.code) === -1) {
+                if (checkedNodes?.indexOf(tag.code) === -1) {
                     continue;
                 }
 
@@ -190,12 +193,15 @@ const TagMessageMap = ({ record, selection, setSelection, checkedNodes, setCheck
         setCheckedNodes(list);
         setIndeterminate(!!list.length && list.length < tags.length);
         setCheckAllNodes(list.length === tags.length);
+        onCheckedChange(list);
     };
 
     const onCheckAllChange = (e) => {
-        setCheckedNodes(e.target.checked ? lodash.map(tags, "code") : []);
+        const list = e.target.checked ? lodash.map(tags, "code") : [];
+        setCheckedNodes(list);
         setIndeterminate(false);
         setCheckAllNodes(e.target.checked);
+        onCheckedChange(list);
     };
     return (
         <span className="tagMap">

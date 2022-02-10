@@ -1,8 +1,7 @@
 import { notification, Spin } from "antd";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { useAngieSession } from "../../../components/security/UserContext";
+import { useState } from "react";
 
 import StatusMap from "../StatusMap";
 
@@ -13,11 +12,6 @@ const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 const MessagesStatusMap = () => {
     const [loading, setLoading] = useState(false);
     const [state, setState] = useState({});
-    const { currentUser } = useAngieSession();
-
-    useEffect(() => {
-        loadData();
-    }, [currentUser]);
 
     const loadData = async (pagination, filters = {}, sorts, checkedNodes) => {
         setLoading(true);
@@ -30,13 +24,16 @@ const MessagesStatusMap = () => {
             }
 
             if (sorts) {
-                filters.sort = Object.keys(sorts).length !== 0 && {
-                    field: sorts.columnKey || sorts.field,
-                    direction: sorts.order,
-                };
+                filters.sort =
+                    Object.keys(sorts).length !== 0
+                        ? {
+                              field: sorts.columnKey || sorts.field,
+                              direction: sorts.order,
+                          }
+                        : { field: "date_reception", direction: "descend" };
             }
 
-            const response = await axios.post("/tag/list", { filters, checkedNodes});
+            const response = await axios.post("/tag/list", { filters, checkedNodes });
 
             if (response?.data?.data) {
                 setState({
