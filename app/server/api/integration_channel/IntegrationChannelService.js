@@ -183,7 +183,8 @@ export class IntegrationChannelService {
             return await template({
                 source: data.id,
                 target: data.links && data.links.length !== 0 ? lodash.map(data.links, "node_id") : ["empty"],
-                organization: integration && integration.deployment_config && integration.deployment_config.organization_id,
+                organization:
+                    integration && integration.deployment_config && integration.deployment_config.organization_id,
                 ...data.data,
             });
         }
@@ -374,7 +375,7 @@ export class IntegrationChannelService {
     async channelApplyStatus(channel, remoteChannel) {
         let messages;
         try {
-            // messages = await this.messageService.getChannelMessageCount(channel.id);
+            messages = await this.messageService.getChannelMessageCount(channel.id);
         } catch (ex) {
             console.error(ex);
         }

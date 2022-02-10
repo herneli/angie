@@ -63,7 +63,10 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             : item.error
             ? T.translate("common.error")
             : T.translate("messages.node_unknown");
-        const timelineContent = item.data.map((message, index, array) => {
+
+        const timelineContent = item.data.map((trace, index, array) => {
+            const message = trace.data;
+
             const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
             if (index === 0) {
                 messageStart = date;
@@ -272,7 +275,6 @@ const getChannelNodes = async (integration, channel) => {
         console.error(error);
     }
 };
-
 /**
  * Obtiene las trazas de un mensaje
  * @param {*} channel Id del canal
@@ -282,10 +284,7 @@ const getChannelNodes = async (integration, channel) => {
 export const getMessageTraces = async (channel, messageId) => {
     try {
         const response = await axios.get(`/messages/${channel}/traces/${messageId}`);
-        if (response.data?.hits?.hits) {
-            return response.data.hits.hits.map((trace) => trace._source);
-        }
-        return [];
+        return response.data || [];
     } catch (error) {
         console.error(error);
     }

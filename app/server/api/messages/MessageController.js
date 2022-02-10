@@ -12,28 +12,27 @@ export class MessageController extends BaseController {
                 this.listMessages(request, response, next);
             })
         );
-        // this.router.post(
-        //     `/messages/:channel`,
-        //     expressAsyncHandler((request, response, next) => {
-        //         this.getChannelMessages(request, response, next);
-        //     })
-        // );
+        this.router.post(
+            `/messages/:channel`,
+            expressAsyncHandler((request, response, next) => {
+                this.getChannelMessages(request, response, next);
+            })
+        );
 
-        // // Obtiene  el número de mensajes del canal indicado
-        // this.router.get(
-        //     `/messages/:channel/count`,
-        //     expressAsyncHandler((request, response, next) => {
-        //         this.getChannelMessageCount(request, response, next);
-        //     })
-        // );
+        // Obtiene  el número de mensajes del canal indicado
+        this.router.get(
+            `/messages/:channel/count`,
+            expressAsyncHandler((request, response, next) => {
+                this.getChannelMessageCount(request, response, next);
+            })
+        );
 
-        // this.router.get(
-        //     `/messages/:channel/traces/:message`,
-        //     expressAsyncHandler((request, response, next) => {
-        //         this.getMessageTraces(request, response, next);
-        //     })
-        // );
-
+        this.router.get(
+            `/messages/:channel/traces/:message`,
+            expressAsyncHandler((request, response, next) => {
+                this.getMessageTraces(request, response, next);
+            })
+        );
 
         return this.router;
     }
@@ -57,45 +56,44 @@ export class MessageController extends BaseController {
         }
     }
 
-    // async getChannelMessages(req, res, next) {
-    //     const channel = req.params.channel;
-    //     const filters = req.body;
-    //     try {
-    //         const data = await this.service.getChannelMessages(channel, filters);
-    //         res.json(data.body);
-    //     } catch (e) {
-    //         if (e.body.status === 404) {
-    //             res.json({});
-    //         } else {
-    //             next(e);
-    //         }
-    //     }
-    // }
+    async getChannelMessages(req, res, next) {
+        const channel = req.params.channel;
+        const filters = req.body;
+        try {
+            const data = await this.service.getChannelMessages(channel, filters);
+            res.json(data);
+        } catch (e) {
+            if (e.body.status === 404) {
+                res.json({});
+            } else {
+                next(e);
+            }
+        }
+    }
 
-    // async getChannelMessageCount(req, res, next) {
-    //     const channel = req.params.channel;
+    async getChannelMessageCount(req, res, next) {
+        const channel = req.params.channel;
 
-    //     try {
-    //         const data = await this.service.getChannelMessageCount(channel);
-    //         res.json(data.body);
-    //     } catch (e) {
-    //         if (e.body.status === 404) {
-    //             res.json({});
-    //         } else {
-    //             next(e);
-    //         }
-    //     }
-    // }
+        try {
+            const data = await this.service.getChannelMessageCount(channel);
+            res.json(data.body);
+        } catch (e) {
+            if (e.body.status === 404) {
+                res.json({});
+            } else {
+                next(e);
+            }
+        }
+    }
 
-    // async getMessageTraces(req, res, next) {
-    //     const { channel, message } = req.params;
-    //     try {
-    //         const data = await this.service.getMessageTraces(channel, message);
-    //         res.json(data.body);
-    //     } catch (e) {
-    //         next(e);
-    //     }
-    // }
-
-    
+    async getMessageTraces(req, res, next) {
+        const { channel, message } = req.params;
+        try {
+            const data = await this.service.getMessageTraces(channel, message);
+            console.log(data);
+            res.json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
 }

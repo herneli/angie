@@ -26,15 +26,15 @@ export class MessageService extends BaseService {
         return response;
     }
 
-    // getChannelMessages(channel, filters) {
-    //     return this.dao.getChannelMessages(channel, filters);
-    // }
+    getChannelMessages(channel, filters) {
+        return this.dao.getChannelMessages(channel, filters);
+    }
 
-    // getChannelMessageCount(channel) {
-    //     return this.dao.getChannelMessageCount(channel);
-    // }
+    getChannelMessageCount(channel) {
+        return this.dao.getChannelMessageCount(channel);
+    }
 
-    // getMessageTraces(channel, messageId) {
-    //     return this.dao.getMessageTraces(channel, messageId);
-    // }
+    getMessageTraces(channel, messageId) {
+        return this.dao.getMessageTraces(channel, messageId);
+    }
 }
