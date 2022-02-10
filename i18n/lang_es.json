@@ -68,6 +68,7 @@
             },
             "error": {
                 "title": "Error",
+                "agent_not_connected": "El agente no esta conectado",
                 "description": "Se ha producido un error desconocido. Revise el log para mas información."
             }
         },
@@ -146,6 +147,14 @@
         },
         "channel": {
             "edit_title": "Editar Canal",
+            "trace_logs":"Trazar Logs",
+            "trace_levels": "Niveles de Traza",
+            "trace_properties": "Trazar Propiedades",
+            "trace_headers": "Trazar Cabezeras",
+            "additional_props": "Propiedades Adicionales",
+            "trace_stats":"Almacenar Estadisticas (Stats)",
+            "trace_incoming_message":"Almacenar Mensajes Entrada",
+            "trace_outgoing_message":"Almacenar Mensajes Salida",
             "button": {
                 "deploy": "Desplegar",
                 "undeploy": "Replegar",

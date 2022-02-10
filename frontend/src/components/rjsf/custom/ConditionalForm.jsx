@@ -55,7 +55,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         //Comprobación del Required en caso de los arrays.
      
         Object.keys(formData).forEach((element) => {
-            if(schema.required.includes(element)){
+            if(schema?.required?.includes(element)){
                 if(Array.isArray(formData[element]) && formData[element].length == 0){
                     setEmptyField(true)
                 }
