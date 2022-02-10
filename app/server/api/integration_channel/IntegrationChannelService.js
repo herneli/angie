@@ -183,7 +183,7 @@ export class IntegrationChannelService {
             return await template({
                 source: data.id,
                 target: data.links && data.links.length !== 0 ? lodash.map(data.links, "node_id") : ["empty"],
-                organization: integration.deployment_config && integration.deployment_config.organization_id,
+                organization: integration && integration.deployment_config && integration.deployment_config.organization_id,
                 ...data.data,
             });
         }
