@@ -24,6 +24,10 @@
     background-color: #fff;
 }
 
+.tagMap .react-flow__node-TagNode .ant-statistic-content-prefix {
+    float: left;
+}
+
 .tagMap .react-flow__node-TagNode .info {
     padding: 4px;
     display: inline-block;

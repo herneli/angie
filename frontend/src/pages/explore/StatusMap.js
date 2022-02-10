@@ -51,7 +51,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                 value: value,
             },
         };
-        setFilters(value ? filter : {});
+        setFilters(value ? { ...filters, ...filter } : { ...filters });
     };
 
     const onDateChange = (dates) => {
@@ -132,6 +132,11 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                         dataIndex: ["message_content_type"],
                                         sorter: true,
                                     },
+                                    // {
+                                    //     title: T.translate("messages.tags"),
+                                    //     dataIndex: ["tags"],
+                                    //     sorter: true,
+                                    // },
                                     {
                                         title: T.translate("messages.channel"),
                                         dataIndex: ["channel_name"],

@@ -11,6 +11,60 @@ export class MessageDao extends BaseKnexDao {
         this.tableName = `zmessages`;
     }
 
+    async loadFilteredDataTagged(filters, start, limit, tagFilter) {
+        let sorts = 1;
+        if (filters.sort) {
+            sorts = KnexFilterParser.parseSort(filters.sort);
+        }
+        const RELATION_TABLE = "ztags";
+        const knex = KnexConnector.connection;
+        const columns = [`${this.tableName}.*`, knex.raw(`string_agg("${RELATION_TABLE}"."tag", ',') as tags`)];
+
+        const self = this;
+        return knex
+            .from(function () {
+                this.columns(columns)
+                    .from(self.tableName)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .groupBy(`${self.tableName}.message_id`)
+                    .where((builder) =>
+                        KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
+                    )
+                    .as("tagged_messages");
+            })
+            .where((builder) =>
+                KnexFilterParser.parseFilters(builder, lodash.omit(filters, ["sort", "start", "limit"]))
+            )
+            .orderByRaw(sorts)
+            .limit(limit)
+            .offset(start);
+    }
+
+    async countFilteredDataTagged(filters, tagFilter) {
+        const RELATION_TABLE = "ztags";
+        const knex = KnexConnector.connection;
+        const columns = [`${this.tableName}.*`, knex.raw(`string_agg("${RELATION_TABLE}"."tag", ',') as tags`)];
+
+        const self = this;
+        let data = await knex
+            .from(function () {
+                this.columns(columns)
+                    .from(self.tableName)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .where((builder) =>
+                        KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
+                    )
+                    .groupBy(`${self.tableName}.message_id`)
+                    .as("tagged_messages");
+            })
+            .where((builder) =>
+                KnexFilterParser.parseFilters(builder, lodash.omit(filters, ["sort", "start", "limit"]))
+            )
+            .count(`*`, { as: "total" });
+
+        return data && data[0] ? data[0].total : 0;
+    }
+
     async countFilteredData(filters) {
         let data = await KnexConnector.connection
             .from(this.tableName)

@@ -34,27 +34,19 @@ export class TagService extends BaseService {
      */
     async list(filters, start, limit, checkedNodes) {
         //Pagination
-
+        let tagFilter = {};
         if (!lodash.isEmpty(checkedNodes)) {
-            filters["tag"] = {
-                type: "in",
-                value: checkedNodes,
+            tagFilter = {
+                tag: {
+                    type: "in",
+                    value: checkedNodes,
+                },
             };
         }
-        const response = await super.list(filters, 0, 100000);
+        const response = await super.list({ ...filters, ...tagFilter }, 0, 100000);
 
         const messageServ = new MessageService();
-        const messageFilter = {
-            message_id: {
-                type: "in",
-                value: lodash.uniq(lodash.map(response.data, "message_id")),
-            },
-        };
-        const { data: messages, total } = await messageServ.list(
-            { ...messageFilter, sort: filters.sort },
-            start,
-            limit
-        );
+        const { data: messages, total } = await messageServ.listTagged({ ...filters }, start, limit, tagFilter);
         const tags = await this.getNodes(response.data);
 
         return {
@@ -122,7 +114,8 @@ export class TagService extends BaseService {
                 this.addNode(nodes, targetTag, "target");
 
                 //!FIXME  revisar porque si es de un solo nodo no va a contar bien nunca
-                if (prevMsg && msg) { //Solo cuenta los source si hay destino
+                if (prevMsg && msg) {
+                    //Solo cuenta los source si hay destino
                     this.addNodeMessage(nodes, sourceTag, prevMsg && prevMsg.status + "_sent", el); //Contar los "source"
                 }
                 this.addNodeMessage(nodes, targetTag, msg && msg.status + "_rec", el); //Contar los "target"
