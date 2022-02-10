@@ -102,10 +102,19 @@ const Agents = () => {
             await axios.post(`/jum_agent/${agent.id}/forceReload`);
             await search();
         } catch (ex) {
-            notification.error({
-                message: T.translate("common.messages.error.title"),
-                description: T.translate("common.messages.error.description", { error: ex }),
-            });
+
+            if(ex?.response?.data?.message === 'agent_not_connected'){
+                notification.error({
+                    message: T.translate("common.messages.error.title"),
+                    description: T.translate("common.messages.error.agent_not_connected", { error: ex }),
+                });
+            }else{
+                notification.error({
+                    message: T.translate("common.messages.error.title"),
+                    description: T.translate("common.messages.error.description", { error: ex }),
+                });
+            }
+            
         }
     };
 
@@ -144,10 +153,17 @@ const Agents = () => {
                 description: T.translate("common.messages.reloaded.ok_desc"),
             });
         } catch (ex) {
-            notification.error({
-                message: T.translate("common.messages.error.title"),
-                description: T.translate("common.messages.error.description", { error: ex }),
-            });
+            if(ex?.response?.data?.message === 'agent_not_connected'){
+                notification.error({
+                    message: T.translate("common.messages.error.title"),
+                    description: T.translate("common.messages.error.agent_not_connected", { error: ex }),
+                });
+            }else{
+                notification.error({
+                    message: T.translate("common.messages.error.title"),
+                    description: T.translate("common.messages.error.description", { error: ex }),
+                });
+            }
         }
     };
 
