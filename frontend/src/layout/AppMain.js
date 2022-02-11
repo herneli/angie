@@ -12,6 +12,7 @@ import DeployedIntegrations from "../pages/deployed_integrations/DeployedIntegra
 import Messages from "../pages/administration/message/Messages";
 import Unauth from "../pages/Unauth";
 import Explore from "../pages/explore/Explore";
+import Monitoring from "../pages/monitoring/Monitoring";
 
 const AppMain = ({ location }) => {
     const { initialized } = useKeycloak();
@@ -50,6 +51,7 @@ const AppMain = ({ location }) => {
             />
             <PrivateRoute roles={["admin"]} path="/explore" component={Explore} {...defaultProps} />
             <PrivateRoute roles={["admin"]} path="/agents" component={Agents} {...defaultProps} />
+            <PrivateRoute roles={["admin"]} path="/monitoring" component={Monitoring} {...defaultProps} />
         </Switch>
     );
 };
