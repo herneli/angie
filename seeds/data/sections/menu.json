@@ -150,7 +150,7 @@
                     {
                         "key": "jum_contexts",
                         "value": "/jum_contexts",
-                        "icon": "mdiDatabaseOutline",
+                        "icon": "mdiSourceBranch",
                         "title": "menu.monitoring.jum_contexts"
                     },
                     {
