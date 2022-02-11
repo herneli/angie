@@ -201,7 +201,7 @@ export class TagDao extends BaseKnexDao {
 
     
 
-    countAllNodes(filters){
+    async countAllNodes(filters){
         const knex = KnexConnector.connection;
 
         let data = await knex
