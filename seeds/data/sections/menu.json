@@ -144,25 +144,25 @@
             {
                 "key": "monitoring",
                 "title": "menu.monitoring.title",
-                "icon": "mdiPackageVariantClosed",
+                "icon": "mdiMonitorEye",
                 "value": "/monitoring",
                 "children": [
                     {
                         "key": "jum_contexts",
                         "value": "/jum_contexts",
-                        "icon": "mdiConnection",
+                        "icon": "mdiDatabaseOutline",
                         "title": "menu.monitoring.jum_contexts"
                     },
                     {
                         "key": "jum_servers",
                         "value": "/jum_servers",
-                        "icon": "mdiSourceBranch",
+                        "icon": "mdiDatabaseOutline",
                         "title": "menu.monitoring.jum_servers"
                     },
                     {
                         "key": "angie_node",
                         "value": "/angie_node",
-                        "icon": "mdiChartGantt",
+                        "icon": "mdiDatabaseOutline",
                         "title": "menu.monitoring.angie_node"
                     }
                 ]
