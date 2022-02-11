@@ -88,6 +88,26 @@ export class IntegrationChannelService {
     }
 
     /**
+     * Obtiene una lista con los datos básicos de todos los canales de la aplicación agrupados por integración
+     *
+     * @returns
+     */
+         async listAllChannelsByIntegration() {
+            const integrationService = new IntegrationService();
+            const { data: integrations } = await integrationService.list();
+    
+            let result = [];
+            for (const integration of integrations) {
+                let channels = [];
+                for (const channel of integration.data.channels) {
+                    channels = [...channels, { id: channel.id, name: channel.name, enabled: channel.enabled, status: channel.status }];
+                }
+                result = [...result, { integration: { id: integration.id, name: integration.name, channels: channels }}];
+            }
+    
+            return result;
+        }
+    /**
      * Busca un canal mediante su identificador
      *
      * @param {*} channelId

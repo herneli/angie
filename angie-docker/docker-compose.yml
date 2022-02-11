@@ -1,6 +1,6 @@
 version: '3'
 services:
-    
+
     angie_postgre:
         image: postgres:13
         environment:
@@ -11,7 +11,7 @@ services:
             - ./dbinit:/docker-entrypoint-initdb.d/
         ports:
             - 3132:5432/tcp
-        
+
     angie_elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
         environment:
@@ -82,15 +82,15 @@ services:
       container_name: grafana
       image: grafana/grafana
       ports:
-        - 3100:3000
+        - 3100:3100
       volumes:
+        - ./grafana/etc/grafana:/etc/grafana
         - ./grafana/var/lib/grafana:/var/lib/grafana
         - ./grafana/var/log/grafana:/var/log/grafana
-        - ./grafana/etc/grafana:/etc/grafana
       user: "1000"
       depends_on:
             - prometheus
-            
+
     # node_exporter:
     #   image: quay.io/prometheus/node-exporter:latest
     #   container_name: node_exporter

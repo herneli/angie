@@ -118,6 +118,32 @@
                         "title": "menu.packages.methods"
                     }
                 ]
+            },
+            {
+                "key": "monitoring",
+                "title": "menu.monitoring.title",
+                "icon": "mdiPackageVariantClosed",
+                "value": "/monitoring",
+                "children": [
+                    {
+                        "key": "jum_contexts",
+                        "value": "/jum_contexts",
+                        "icon": "mdiConnection",
+                        "title": "menu.monitoring.jum_contexts"
+                    },
+                    {
+                        "key": "jum_servers",
+                        "value": "/jum_servers",
+                        "icon": "mdiSourceBranch",
+                        "title": "menu.monitoring.jum_servers"
+                    },
+                    {
+                        "key": "angie_node",
+                        "value": "/angie_node",
+                        "icon": "mdiChartGantt",
+                        "title": "menu.monitoring.angie_node"
+                    }
+                ]
             }
         ]
     }
