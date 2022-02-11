@@ -11,7 +11,7 @@ import TagNode from "../../../components/react-flow/custom_nodes/TagNode";
 import useEventListener from "../../../common/useEventListener";
 
 import * as api from "../../../api/configurationApi";
-import { Checkbox, Divider } from "antd";
+import { Checkbox, Divider, Spin } from "antd";
 
 import T from "i18n-react";
 import axios from "axios";
@@ -47,7 +47,7 @@ const getLayoutedElements = (elements) => {
     });
 };
 
-const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => {
+const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loading }) => {
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
     const [elements, setElements] = useState([]);
@@ -57,15 +57,22 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
     const [indeterminate, setIndeterminate] = useState(true);
     const [checkAllNodes, setCheckAllNodes] = useState(false);
 
+    const [availableChecks, setAvailableChecks] = useState(null);
+
     useEffect(() => {
         loadTags();
     }, []);
 
     useEffect(() => {
+        let checked = checkedNodes;
         if (record && record.nodes && checkedNodes == null) {
-            setCheckedNodes(defaultSelected(record));
+            checked = defaultSelected(record);
+            setCheckedNodes();
         }
-        createElements(record);
+        if (record && record.nodes && availableChecks == null) {
+            getCurrentOptions(record);
+        }
+        createElements(record, checked);
     }, [record]);
 
     useEffect(() => {
@@ -103,11 +110,11 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
     });
 
     const refitView = () => {
-        setTimeout(() => {
-            if (reactFlowInstance) {
-                reactFlowInstance.fitView();
-            }
-        }, 20);
+        // setTimeout(() => {
+        //     if (reactFlowInstance) {
+        //         reactFlowInstance.fitView();
+        //     }
+        // }, 50);
     };
 
     /**
@@ -115,7 +122,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
      *
      * @param {*} data
      */
-    const createElements = async (data) => {
+    const createElements = async (data, checked) => {
         if (data) {
             const { connections, nodes } = data;
 
@@ -123,7 +130,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
             const elems = [];
             for (const tag of tags) {
                 const el = nodes[tag.code];
-                if (checkedNodes?.indexOf(tag.code) === -1) {
+                if (checked?.indexOf(tag.code) === -1) {
                     continue;
                 }
 
@@ -135,10 +142,10 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
                         label: tag.name,
                         tagId: tag.id,
                         healthcheck: tag.healthcheck,
-                        error_sent: el && lodash.uniq(el.error_sent).length,
-                        success_sent: el && lodash.uniq(el.sent_sent).length,
-                        error_rec: el && lodash.uniq(el.error_rec).length,
-                        success_rec: el && lodash.uniq(el.sent_rec).length,
+                        error_sent: el && el.error_sent,
+                        success_sent: el && el.sent_sent,
+                        error_rec: el && el.error_rec,
+                        success_rec: el && el.sent_rec,
                         onElementClick: (type) => {
                             switch (type) {
                                 // case "error_sent":
@@ -203,19 +210,21 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange }) => 
         setCheckAllNodes(e.target.checked);
         onCheckedChange(list);
     };
+
+    const getCurrentOptions = (data) => {
+        let currentTags = lodash.filter(tags, (tag) => (data.nodes[tag.code] ? true : false));
+        setAvailableChecks(lodash.map(currentTags, (tag) => ({ label: tag.name, value: tag.code })));
+    };
     return (
         <span className="tagMap">
+            <Spin spinning={loading} />
             {tags && (
                 <div>
                     <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAllNodes}>
                         {T.translate("common.all")}
                     </Checkbox>
                     <Divider type="vertical" />
-                    <Checkbox.Group
-                        options={lodash.map(tags, (tag) => ({ label: tag.name, value: tag.code }))}
-                        value={checkedNodes}
-                        onChange={onChange}
-                    />
+                    <Checkbox.Group options={availableChecks || []} value={checkedNodes} onChange={onChange} />
                 </div>
             )}
             <ReactFlow

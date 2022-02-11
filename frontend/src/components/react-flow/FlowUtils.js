@@ -2,7 +2,7 @@ import { Position } from "react-flow-renderer";
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
-function getNodeIntersection(intersectionNode, targetNode) {
+export function getNodeIntersection(intersectionNode, targetNode) {
     // https://math.stackexchange.com/questions/1724792/an-algorithm-for-finding-the-intersection-point-between-a-center-of-vision-and-a
     const {
         width: intersectionNodeWidth,
@@ -63,12 +63,12 @@ export function getEdgeParams(source, target) {
     const targetPos = getEdgePosition(target, targetIntersectionPoint);
 
     if(sourcePos === Position.Top){
-        sourceIntersectionPoint.x -= 10;
-        targetIntersectionPoint.x -= 10;
+        sourceIntersectionPoint.x -= 20;
+        targetIntersectionPoint.x -= 20;
     }
     if(sourcePos === Position.Left){
-        sourceIntersectionPoint.y -= 10;
-        targetIntersectionPoint.y -= 10;
+        sourceIntersectionPoint.y -= 20;
+        targetIntersectionPoint.y -= 20;
     }
 
     return {

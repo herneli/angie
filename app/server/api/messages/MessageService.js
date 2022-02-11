@@ -23,6 +23,7 @@ export class MessageService extends BaseService {
         }
 
         response.data = [];
+        response.total = 0;
         return response;
     }
 

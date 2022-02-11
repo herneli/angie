@@ -9,9 +9,13 @@ exports.up = async (knex) => {
             table.string("channel_name", 100);
             table.string("message_content_id", 50);
             table.string("message_content_type", 50);
-            table.string("error_cause",  "longtext");
+            table.string("error_cause", "longtext");
             table.text("error_stack", "longtext");
             table.jsonb("meta");
+            
+            table.index(["status"]);
+            table.index(["message_id"]);
+            table.index(["date_reception"]);
         });
     }
 
@@ -46,6 +50,10 @@ exports.up = async (knex) => {
             table.string("channel_id", 50).notNullable();
             table.string("date_reception", 30).notNullable();
             table.primary(["tag", "message_id", "route_id"]);
+
+            table.index(["tag"]);
+            table.index(["message_id"]);
+            table.index(["date_reception"]);
         });
     }
 };

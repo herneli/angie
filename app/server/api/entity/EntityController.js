@@ -61,13 +61,9 @@ export class EntityController extends BaseController {
     async getEntity(request, response, next) {
         try {
             let service = new EntityService();
-            let { checkedNodes, msg_filters } = request.body;
 
-            if (!msg_filters) {
-                msg_filters = {};
-            }
-            let data = await service.loadById(request.params.id, msg_filters, checkedNodes);
-            let jsRes = new JsonResponse(true, data, "", data.total);
+            let data = await service.loadById(request.params.id);
+            let jsRes = new JsonResponse(true, data);
             let code = 200;
             if (data == null) {
                 code = 404;
