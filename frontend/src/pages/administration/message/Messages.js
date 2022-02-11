@@ -84,19 +84,17 @@ const Messages = (props) => {
         try {
             const channelResponse = await axios.post(`/messages/${channel}`, filters);
             // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
+            if (channelResponse?.data) {
+                const messages = channelResponse.data;
+                const totalMessages = 1000;
 
-            if (channelResponse?.data?.hits?.hits) {
-                const messages = channelResponse.data.hits.hits;
-                const totalMessages = channelResponse.data.hits.total.value;
+                const parsedMessages = messages.map((message) => {
+                    const { message_id, status, date_processed, date_reception } = message;
 
-                const parsedMessages = messages.map((messageData) => {
-                    const messageId = messageData._id;
-                    const message = messageData._source;
-                    const { status, date_processed, date_reception } = message;
-                    const elapsed = moment(date_processed) - moment(date_reception);
+                    const elapsed = moment(date_processed) - moment(date_reception) || "---";
 
                     return {
-                        breadcrumb_id: messageId,
+                        breadcrumb_id: message_id,
                         start: date_reception,
                         end: date_processed,
                         elapsed: elapsed,
@@ -176,7 +174,6 @@ const Messages = (props) => {
                 if (text === "error") {
                     return <Icon path={mdiEmailOff} size="1.5rem" color="red" title={T.translate("common.error")} />;
                 }
-
                 return <Icon path={mdiEmailCheck} size="1.5rem" color="green" title={T.translate("messages.sent")} />;
             },
         },
@@ -207,7 +204,10 @@ const Messages = (props) => {
             sorter: true,
             width: 120,
             render: (text) => {
-                return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
+                if (text) {
+                    return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
+                }
+                return "---";
             },
         },
         {

@@ -28,7 +28,10 @@ class ChannelHandlebarsHelpers {
         Handlebars.registerHelper("JSONStringify", (inputData) => this.processJsonAsString(inputData));
         Handlebars.registerHelper("applyUnmarshal", (format) => this.getUnmarshal(format));
         Handlebars.registerHelper("applyMarshal", (format) => this.getMarshal(format));
-        Handlebars.registerHelper("querystring", (inputData, extraData) => this.parseQueryString(inputData, extraData));
+        Handlebars.registerHelper("querystring", (inputData, extraData, ignoreQuestion) =>
+            this.parseQueryString(inputData, extraData, ignoreQuestion)
+        );
+        Handlebars.registerHelper("request_querystring", (inputData) => this.requestQueryString(inputData));
         Handlebars.registerHelper("setHeader", (code, value, format) => this.setHeader(code, value, format));
         Handlebars.registerHelper("setHeaderList", (list) => this.setHeaderList(list));
         Handlebars.registerHelper("groovyList", (inputData) => this.groovyList(inputData));
@@ -145,6 +148,9 @@ class ChannelHandlebarsHelpers {
         if (!code) {
             return "";
         }
+        if (value === null || value === undefined) {
+            return "";
+        }
         return this.safe(`<setHeader name="${code}"><${format}>${value}</${format}></setHeader>`);
     }
 
@@ -187,7 +193,7 @@ class ChannelHandlebarsHelpers {
      * @param {*} extraData
      * @returns
      */
-    parseQueryString(inputData, extraData) {
+    parseQueryString(inputData, extraData, ignoreQuestion) {
         let data = inputData;
         if (Array.isArray(inputData)) {
             data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
@@ -198,7 +204,26 @@ class ChannelHandlebarsHelpers {
             data = { ...extra, ...data };
         }
 
-        return this.safe(!lodash.isEmpty(inputData) ? "?" + encodeURIComponent(queryString.stringify(data)) : "");
+        let questionMark = "?";
+        if (ignoreQuestion === true) {
+            questionMark = "";
+        }
+        return this.safe(
+            !lodash.isEmpty(inputData) ? questionMark + encodeURIComponent(queryString.stringify(data)) : ""
+        );
+    }
+
+    /**
+     *
+     * @param {*} inputData
+     * @returns
+     */
+    requestQueryString(inputData) {
+        let data = inputData;
+        if (Array.isArray(inputData)) {
+            data = lodash.mapValues(lodash.keyBy(inputData, "code"), "value");
+        }
+        return this.safe(!lodash.isEmpty(inputData) ? queryString.stringify(data) : "");
     }
 
     /**

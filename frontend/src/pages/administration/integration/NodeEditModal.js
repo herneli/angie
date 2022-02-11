@@ -1,4 +1,4 @@
-import { Button, Modal } from "antd";
+import { Button, Modal, Select, Tag } from "antd";
 
 import lodash from "lodash";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,8 @@ import formConfig from "../../../components/rjsf";
 import T from "i18n-react";
 import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 import AddableTags from "../../../components/tags/AddableTags";
+
+import * as api from "../../../api/configurationApi";
 
 export default function NodeEditModal({
     children,
@@ -20,6 +22,11 @@ export default function NodeEditModal({
 }) {
     const formEl = useRef(null);
     const [formData, setFormData] = useState({});
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        loadTags();
+    }, []);
 
     /**
      * Se ejecuta cuando cambia la selección y carga en el state las propiedades del nodo actual
@@ -68,6 +75,19 @@ export default function NodeEditModal({
             });
         }
     };
+
+    /**
+     * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
+     */
+    const loadTags = async () => {
+        try {
+            const tags = await api.getModelDataList("tag");
+            setTags(tags);
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
+
     return (
         <Modal
             width={"70vw"}
@@ -75,16 +95,31 @@ export default function NodeEditModal({
                 <div>
                     {T.translate("integrations.channel.node.settings_title", selectedType && selectedType.data)}
                     {formData && formData.data && (
-                        <AddableTags
-                            style={{ float: "right", marginRight: 40 }}
-                            addButtonText="Etiquetas"
-                            initialTags={formData.data.tags}
+                        // <AddableTags
+                        //     style={{ float: "right", marginRight: 40 }}
+                        //     addButtonText="Etiquetas"
+                        //     initialTags={formData.data.tags}
+                        //     onChange={(tags) => {
+                        //         let newFormData = { ...formData };
+                        //         newFormData.data.tags = tags;
+                        //         setFormData(newFormData);
+                        //         if (onDataChange) onDataChange(newFormData);
+                        //     }}
+                        // />
+
+                        <Select
+                            mode="multiple"
+                            showArrow
+                            style={{ float: "right", marginRight: 40, width: 350 }}
+                            placeholder="Etiquetas"
+                            value={formData.data.tags}
                             onChange={(tags) => {
                                 let newFormData = { ...formData };
                                 newFormData.data.tags = tags;
                                 setFormData(newFormData);
                                 if (onDataChange) onDataChange(newFormData);
                             }}
+                            options={lodash.map(tags, (tag) => ({ value: tag.code, label: tag.name }))}
                         />
                     )}
                 </div>

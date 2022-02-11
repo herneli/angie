@@ -1,14 +1,32 @@
 import { Col, Row, Typography, Table, Input, Divider } from "antd";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BasicFilter from "../../components/basic-filter/BasicFilter";
 import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
+import Utils from "../../common/Utils";
+import { useAngieSession } from "../../components/security/UserContext";
 
-const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSearch, height }) => {
+const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, height }) => {
     const [selectedElements, setSelectedElements] = useState([]);
+    const [checkedNodes, setCheckedNodes] = useState([]);
+
+    const [filters, setFilters] = useState({});
+    const [pagination, setPagination] = useState();
+    const [sort, setSort] = useState({});
+    const { currentUser } = useAngieSession();
+
+    // const [dataSource, setDataSource] = useState([]);
+
+    useEffect(() => {
+        setPagination({ total: dataSource?.total, showSizeChanger: true });
+    }, [dataSource?.total]);
+
+    useEffect(() => {
+        doSearch(pagination, filters, sort, checkedNodes);
+    }, [currentUser]);
 
     const rowSelection = {
         selectedRowKeys: selectedElements,
@@ -18,16 +36,51 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
     };
     const selectRow = (record) => {
         const selectedRowKeys = [...selectedElements];
-        if (selectedRowKeys.indexOf(record._id) >= 0) {
-            selectedRowKeys.splice(selectedRowKeys.indexOf(record._id), 1);
+        if (selectedRowKeys.indexOf(record.message_id) >= 0) {
+            selectedRowKeys.splice(selectedRowKeys.indexOf(record.message_id), 1);
         } else {
-            selectedRowKeys.push(record._id);
+            selectedRowKeys.push(record.message_id);
         }
         setSelectedElements(selectedRowKeys);
     };
 
+    const onSearch = (value) => {
+        if (value.indexOf(":") !== -1) {
+            return setFilters(Utils.getFiltersByPairs((key) => `${key}`, value));
+        }
+        const filter = {
+            tagged_messages: {
+                type: "full-text-psql",
+                value: value,
+            },
+        };
+        const newFilters = value ? { ...filters, ...filter } : { ...filters };
+        setFilters(newFilters);
+        doSearch(pagination, newFilters, sort, checkedNodes);
+    };
+
+    const onDateChange = (dates) => {
+        if (dates) {
+            const newFilters = {
+                ...filters,
+                date_reception: {
+                    type: "date",
+                    start: dates[0].toISOString(),
+                    end: dates[1].toISOString(),
+                },
+            };
+            setFilters(newFilters);
+            doSearch(pagination, newFilters, sort, checkedNodes);
+        }
+    };
+
+    const onCheckedChange = (checkedNodes) => {
+        setCheckedNodes(checkedNodes);
+        doSearch(pagination, filters, sort, checkedNodes);
+    };
+
     const baseHeight = `calc(100vh - ${height || 165}px)`;
-    const tableHeight = `calc(100vh - ${(height || 165) + 100}px)`;
+    const tableHeight = `calc(100vh - ${(height || 165) + 170}px)`;
     return (
         <div>
             <BasicFilter
@@ -42,16 +95,17 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                 <Row style={{}}>
                     <Col span={10}>
                         <TagMessageMap
-                            record={record}
+                            record={dataSource?.tags}
                             selection={selectedElements}
                             setSelection={setSelectedElements}
+                            onCheckedChange={onCheckedChange}
                         />
                     </Col>
                     <Col span={14} style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 15, height: baseHeight }}>
                         <Typography.Title level={5}>{T.translate("entity.detail.messages")}</Typography.Title>
-                        {record && (
+                        {dataSource && (
                             <Table
-                                rowKey="_id"
+                                rowKey="message_id"
                                 rowSelection={{
                                     type: "checkbox",
                                     ...rowSelection,
@@ -62,38 +116,46 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                         selectRow(record);
                                     },
                                 })}
-                                pagination={false}
+                                onChange={(pagination, tableFilters, sort) => {
+                                    setSort(sort);
+                                    setPagination(pagination);
+                                    doSearch(pagination, filters, sort, checkedNodes);
+                                }}
+                                pagination={pagination}
                                 columns={[
                                     {
                                         title: T.translate("messages.message_id"),
-                                        dataIndex: ["_source", "message_content_id"],
+                                        dataIndex: ["message_content_id"],
+                                        sorter: true,
                                     },
-                                    // {
-                                    //     title: T.translate("messages.message_id"),
-                                    //     dataIndex: ["_id"],
-                                    // },
                                     {
                                         title: T.translate("messages.date_reception"),
-                                        dataIndex: ["_source", "date_reception"],
+                                        dataIndex: ["date_reception"],
                                         render: (text) => {
                                             return moment(text).format("DD/MM/YYYY HH:mm:ss:SSS");
                                         },
+                                        sorter: true,
                                         defaultSortOrder: "descend",
-                                        sorter: (a, b) =>
-                                            moment(a._source.date_reception).unix() -
-                                            moment(b._source.date_reception).unix(),
                                     },
                                     {
                                         title: T.translate("messages.type"),
-                                        dataIndex: ["_source", "message_content_type"],
+                                        dataIndex: ["message_content_type"],
+                                        sorter: true,
                                     },
+                                    // {
+                                    //     title: T.translate("messages.tags"),
+                                    //     dataIndex: ["tags"],
+                                    //     sorter: true,
+                                    // },
                                     {
                                         title: T.translate("messages.channel"),
-                                        dataIndex: ["_source", "channel_name"],
+                                        dataIndex: ["channel_name"],
+                                        sorter: true,
                                     },
                                     {
                                         title: "",
-                                        dataIndex: ["_source", "status"],
+                                        dataIndex: ["status"],
+                                        sorter: true,
                                         width: 50,
                                         render: (text) => {
                                             if (text === "error") {
@@ -103,7 +165,7 @@ const StatusMap = ({ record, defaultDates, onDateChange, customDateRanges, onSea
                                         },
                                     },
                                 ]}
-                                dataSource={record.raw_messages}
+                                dataSource={dataSource?.messages}
                             />
                         )}
                     </Col>

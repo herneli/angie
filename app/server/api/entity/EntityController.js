@@ -11,7 +11,7 @@ export class EntityController extends BaseController {
             })
         );
 
-        this.router.get(
+        this.router.post(
             `/entity/:id`,
             expressAsyncHandler((request, response, next) => {
                 this.getEntity(request, response, next);
@@ -38,8 +38,8 @@ export class EntityController extends BaseController {
 
             //Filtrar en base a la organización del usuario
             if (organizationFilter !== "all") {
-                filters["organization.keyword"] = {
-                    type: "in",
+                filters["data->>'organization'"] = {
+                    type: "inraw",
                     value: organizationFilter,
                 };
             }
@@ -61,10 +61,13 @@ export class EntityController extends BaseController {
     async getEntity(request, response, next) {
         try {
             let service = new EntityService();
-            const msg_filters = request.query && request.query.msg_filters ? JSON.parse(request.query.msg_filters) : {};
+            let { checkedNodes, msg_filters } = request.body;
 
-            let data = await service.loadById(request.params.id, msg_filters);
-            let jsRes = new JsonResponse(true, data);
+            if (!msg_filters) {
+                msg_filters = {};
+            }
+            let data = await service.loadById(request.params.id, msg_filters, checkedNodes);
+            let jsRes = new JsonResponse(true, data, "", data.total);
             let code = 200;
             if (data == null) {
                 code = 404;

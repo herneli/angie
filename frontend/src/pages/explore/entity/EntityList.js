@@ -20,7 +20,11 @@ const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 const EntityList = () => {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [pagination, setPagination] = useState({});
+
+    const [filters, setFilters] = useState({});
+    const [pagination, setPagination] = useState();
+    const [sort, setSort] = useState({});
+
     const [organizations, setOrganizations] = useState([]);
     const [currentDates, setCurrentDates] = useState(defaultDates);
 
@@ -36,9 +40,12 @@ const EntityList = () => {
         initialize();
     }, []);
 
+    // useEffect(() => {
+    //     search();
+    // }, [currentUser, currentDates]);
     useEffect(() => {
-        search();
-    }, [currentUser, currentDates]);
+        search(pagination, filters, sort);
+    }, [currentUser]);
 
     /**
      * Obtiene una organización en base a su id
@@ -73,19 +80,15 @@ const EntityList = () => {
         }
 
         if (sorts) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
-                field: sorts.columnKey || sorts.field,
-                direction: sorts.order,
-            };
+            filters.sort =
+                Object.keys(sorts).length !== 0
+                    ? {
+                          field: sorts.columnKey || sorts.field,
+                          direction: sorts.order,
+                      }
+                    : { field: "data->>'date'", direction: "descend" };
         }
-        if (currentDates) {
-            filters["date"] = {
-                type: "date",
-                start: currentDates[0].toISOString(),
-                end: currentDates[1].toISOString(),
-            };
-        }
-
+        
         try {
             const response = await axios.post(`/entity/list`, filters);
 
@@ -104,16 +107,16 @@ const EntityList = () => {
     const columns = [
         {
             title: T.translate("entity.id"),
-            dataIndex: "_id",
-            key: "_id",
+            dataIndex: "id",
+            key: "id",
             ellipsis: true,
             sorter: true,
             render: (text) => <Link to={`/explore/entity/${text}`}>{text}</Link>,
         },
         {
             title: T.translate("entity.date"),
-            dataIndex: ["_source", "date"],
-            key: "date",
+            dataIndex: ["data", "date"],
+            key: "data->>'date'",
             defaultSortOrder: "descend",
             sorter: true,
             render: (text, record) => {
@@ -122,14 +125,14 @@ const EntityList = () => {
         },
         {
             title: T.translate("entity.type"),
-            dataIndex: ["_source", "type"],
-            key: "type.keyword",
+            dataIndex: ["data", "type"],
+            key: "data->>'type'",
             sorter: true,
         },
         {
             title: T.translate("entity.organization"),
-            dataIndex: ["_source", "organization"],
-            key: "organization.keyword",
+            dataIndex: ["data", "organization"],
+            key: "data->>'organization'",
             sorter: true,
             render: (text) => getOrganizationById(text)?.name,
         },
@@ -144,7 +147,7 @@ const EntityList = () => {
                             type="text"
                             onClick={(e) => {
                                 history.push({
-                                    pathname: `/explore/entity/${record._id}`,
+                                    pathname: `/explore/entity/${record.id}`,
                                 });
                             }}
                             icon={{
@@ -161,16 +164,29 @@ const EntityList = () => {
     ];
 
     const onDateChange = (dates) => {
-        setCurrentDates(dates);
+        if (dates) {
+            const newFilters = {
+                ...filters,
+                "data->>'date'": {
+                    type: "dateraw",
+                    start: dates[0].toISOString(),
+                    end: dates[1].toISOString(),
+                },
+            };
+            setFilters(newFilters);
+            search(pagination, newFilters, sort);
+        }
     };
     const onSearch = (value) => {
         const filter = {
-            "": {
-                type: "query_string",
+            tagged_messages: {
+                type: "full-text-psql",
                 value: value,
             },
         };
-        search(null, value ? filter : {});
+        const newFilters = value ? { ...filters, ...filter } : { ...filters };
+        setFilters(newFilters);
+        search(pagination, newFilters, sort);
     };
 
     return (
@@ -183,7 +199,11 @@ const EntityList = () => {
                     key="messages-table"
                     dataSource={dataSource}
                     columns={columns}
-                    onChange={search}
+                    onChange={(pagination, tableFilters, sort) => {
+                        setSort(sort);
+                        setPagination(pagination);
+                        search(pagination, filters, sort);
+                    }}
                     pagination={pagination}
                     rowKey={"id"}
                     childrenColumnName={"channels"}

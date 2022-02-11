@@ -19,6 +19,7 @@ import {
     mdiCardSearchOutline,
     mdiFileDocumentOutline,
     mdiMessage,
+    mdiTagMultiple,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
@@ -46,6 +47,7 @@ export default class MenuHandler {
         mdiCardSearchOutline: mdiCardSearchOutline,
         mdiFileDocumentOutline: mdiFileDocumentOutline,
         mdiMessage: mdiMessage,
+        mdiTagMultiple: mdiTagMultiple,
     };
 
     static drawSubMenu = async (item, baseUrl) => {

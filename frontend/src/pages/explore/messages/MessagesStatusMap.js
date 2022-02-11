@@ -1,8 +1,7 @@
 import { notification, Spin } from "antd";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { useAngieSession } from "../../../components/security/UserContext";
+import { useState } from "react";
 
 import StatusMap from "../StatusMap";
 
@@ -13,33 +12,34 @@ const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 const MessagesStatusMap = () => {
     const [loading, setLoading] = useState(false);
     const [state, setState] = useState({});
-    const [currentDates, setCurrentDates] = useState(defaultDates);
 
-    const { currentUser } = useAngieSession();
-
-    useEffect(() => {
-        loadData();
-    }, [currentDates, currentUser]);
-
-    const loadData = async (customFilters) => {
+    const loadData = async (pagination, filters = {}, sorts, checkedNodes) => {
         setLoading(true);
         try {
-            const filter = {
-                start: 0,
-                limit: 1000,
-                ...customFilters,
-            };
-            if (currentDates) {
-                filter["date_reception"] = {
-                    type: "date",
-                    start: currentDates[0].toISOString(),
-                    end: currentDates[1].toISOString(),
-                };
+            if (pagination?.pageSize && pagination?.current) {
+                filters.limit = pagination.pageSize ? pagination.pageSize : 10;
+                filters.start =
+                    (pagination.current ? pagination.current - 1 : 0) *
+                    (pagination.pageSize ? pagination.pageSize : 10);
             }
-            const response = await axios.post("/messages/list/withTags", filter);
+
+            if (sorts) {
+                filters.sort =
+                    Object.keys(sorts).length !== 0
+                        ? {
+                              field: sorts.columnKey || sorts.field,
+                              direction: sorts.order,
+                          }
+                        : { field: "date_reception", direction: "descend" };
+            }
+
+            const response = await axios.post("/tag/list", { filters, checkedNodes });
 
             if (response?.data?.data) {
-                setState(response?.data?.data);
+                setState({
+                    ...response?.data?.data,
+                    total: response?.data?.total,
+                });
             }
         } catch (ex) {
             notification.error({
@@ -51,24 +51,10 @@ const MessagesStatusMap = () => {
         setLoading(false);
     };
 
-    const onDateChange = (dates, dateStrings) => {
-        setCurrentDates(dates);
-    };
-
-    const onSearch = (value) => {
-        loadData(
-            value && {
-                "": {
-                    type: "query_string",
-                    value: value,
-                },
-            }
-        );
-    };
     return (
         <div>
             <Spin spinning={loading}>
-                <StatusMap defaultDates={defaultDates} record={state} onDateChange={onDateChange} onSearch={onSearch} />
+                <StatusMap defaultDates={defaultDates} dataSource={state} doSearch={loadData} />
             </Spin>
         </div>
     );

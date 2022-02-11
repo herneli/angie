@@ -1,11 +1,29 @@
-import { BaseService } from "../../integration/elastic";
+// import { BaseService } from "../../integration/elastic";
 import { TagService } from "../tags";
 import { MessageDao } from "./MessageDao";
 
-import lodash from 'lodash'
+import lodash from "lodash";
+import { BaseService } from "lisco";
 export class MessageService extends BaseService {
     constructor() {
         super(MessageDao);
+    }
+
+    async listTagged(filters, start, limit, tagFilter) {
+        var start = start || 0;
+        var limit = limit || 1000; //Default limit
+
+        let response = {};
+        response.total = await this.dao.countFilteredDataTagged(filters, tagFilter);
+
+        if (filters && Object.keys(filters).length !== 0) {
+            let filteredData = await this.dao.loadFilteredDataTagged(filters, start, limit, tagFilter);
+            response.data = filteredData;
+            return response;
+        }
+
+        response.data = [];
+        return response;
     }
 
     getChannelMessages(channel, filters) {
@@ -18,29 +36,5 @@ export class MessageService extends BaseService {
 
     getMessageTraces(channel, messageId) {
         return this.dao.getMessageTraces(channel, messageId);
-    }
-
-    async listMessagesWithTags(filters, start, limit) {
-        const { data: messages } = await this.list(filters, start, limit);
-
-        const identifiers = lodash.uniq(lodash.map(messages, "_id"));
-
-        let tags = [];
-        if (!lodash.isEmpty(identifiers)) {
-            const tagServ = new TagService();
-            const { data: tagData } = await tagServ.list(
-                {
-                    "message_id.keyword": {
-                        type: "in",
-                        value: identifiers,
-                    },
-                },
-                start,
-                limit
-            );
-            tags = tagData;
-        }
-
-        return { tags, raw_messages: messages };
     }
 }
