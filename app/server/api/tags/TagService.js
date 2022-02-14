@@ -12,7 +12,6 @@ export class TagService extends BaseService {
         super(TagDao);
     }
 
-
     async listMessagesTagged(filters, start, limit, checkedNodes) {
         let tagFilter = {};
         if (!lodash.isEmpty(checkedNodes)) {
@@ -47,8 +46,15 @@ export class TagService extends BaseService {
         // const response = await super.list({ ...filters, ...tagFilter }, 0, 100000);
         // const tags = await this.getNodes(response.data);
 
-        const datatags = await this.dao.getProcessedTags({ ...filters, ...tagFilter });
-        const tags = await this.processNodes(datatags, { ...filters, ...tagFilter });
+        const [counters, datatags] = await Promise.all([
+            this.dao.countAllNodes({ ...filters, ...tagFilter }),
+            this.dao.getProcessedTags({ ...filters, ...tagFilter })
+        ])
+
+        // const counters = await this.countNodes({ ...filters, ...tagFilter });
+
+        // const datatags = await this.dao.getProcessedTags({ ...filters, ...tagFilter });
+        const tags = await this.processNodes(datatags, { ...filters, ...tagFilter }, counters);
 
         return {
             data: tags,
@@ -88,7 +94,7 @@ export class TagService extends BaseService {
         connections[key] = { ...connections[key], ...data };
     }
 
-    async processNodes(datatags, filters) {
+    async processNodes(datatags, filters, counters) {
         const connections = {};
         const nodes = {};
 
@@ -96,7 +102,7 @@ export class TagService extends BaseService {
             lodash.map(datatags, async (el) => {
                 const { datatags: tags } = el;
 
-                const tagList = tags.split("-");
+                const tagList = tags ? tags.split("-") : [];
                 for (let idx = 0; idx < tagList.length; idx++) {
                     let src = tagList[idx];
                     let tgt = tagList[idx + 1];
@@ -110,18 +116,31 @@ export class TagService extends BaseService {
                     };
                     const id = `${src}-${tgt}`;
                     if (src && tgt) {
-                        const [counters] = await this.dao.countMessagesByConnection(filters, id);
+                        //!FIXME quizas seria mejor hacer una sola query para contar todas las conexiones
+                        // const [counters] = await this.dao.countMessagesByConnection(filters, id);
                         this.addConnection(
                             connections,
                             id,
                             connection,
-                            parseInt(counters.sent) + parseInt(counters.error)
+                            0//parseInt(counters && counters.sent) + parseInt(counters && counters.error)
                         );
                     }
                 }
             })
         );
 
+        lodash.map(nodes, async (node, idx) => {
+            if (!lodash.isEmpty(counters)) {
+                const src = lodash.find(counters, { code: idx, type: "source" });
+                const tgt = lodash.find(counters, { code: idx, type: "target" });
+                node["error_sent"] = src.error;
+                node["sent_sent"] = src.sent;
+                node["error_rec"] = tgt.error;
+                node["sent_rec"] = tgt.sent;
+            }
+        });
+
+        //! Se obvia ya que requiere demasiado tiempo de procesado, se utiliza countNodes en su lugar
         // await Promise.all(
         //     lodash.map(nodes, async (node, idx) => {
         //         const nodeCounters = await this.dao.countMessagesByNode(filters, idx);

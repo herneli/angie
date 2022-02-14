@@ -45,15 +45,15 @@ exports.up = async (knex) => {
     if (!(await knex.schema.hasTable("ztags"))) {
         await knex.schema.createTable("ztags", function (table) {
             table.string("tag", 200).notNullable();
-            table.string("message_id", 50).notNullable();
-            table.string("route_id", 50).notNullable();
-            table.string("channel_id", 50).notNullable();
-            table.string("date_reception", 30).notNullable();
-            table.primary(["tag", "message_id", "route_id"]);
+            table.string("tag_message_id", 50).notNullable();
+            table.string("tag_route_id", 50).notNullable();
+            table.string("tag_channel_id", 50).notNullable();
+            table.string("tag_date", 30).notNullable();
+            table.primary(["tag", "tag_message_id", "tag_route_id"]);
 
             table.index(["tag"]);
-            table.index(["message_id"]);
-            table.index(["date_reception"]);
+            table.index(["tag_message_id"]);
+            table.index(["tag_date"]);
         });
     }
 };

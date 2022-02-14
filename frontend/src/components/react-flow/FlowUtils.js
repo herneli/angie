@@ -63,12 +63,12 @@ export function getEdgeParams(source, target) {
     const targetPos = getEdgePosition(target, targetIntersectionPoint);
 
     if(sourcePos === Position.Top){
-        sourceIntersectionPoint.x -= 20;
-        targetIntersectionPoint.x -= 20;
+        sourceIntersectionPoint.x -= 10;
+        targetIntersectionPoint.x -= 10;
     }
     if(sourcePos === Position.Left){
-        sourceIntersectionPoint.y -= 20;
-        targetIntersectionPoint.y -= 20;
+        sourceIntersectionPoint.y -= 10;
+        targetIntersectionPoint.y -= 5;
     }
 
     return {

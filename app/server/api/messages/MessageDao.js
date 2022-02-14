@@ -37,7 +37,7 @@ export class MessageDao extends BaseKnexDao {
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
                     .groupBy(`${self.tableName}.message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
@@ -74,7 +74,7 @@ export class MessageDao extends BaseKnexDao {
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
                     )
