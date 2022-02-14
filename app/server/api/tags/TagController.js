@@ -6,9 +6,15 @@ import { IntegrationService } from "../integration";
 export class TagController extends BaseController {
     configure() {
         this.router.post(
-            `/tag/list`,
+            `/tag/list/tags`,
             expressAsyncHandler((request, response, next) => {
-                this.listEntity(request, response, next);
+                this.listTags(request, response, next);
+            })
+        );
+        this.router.post(
+            `/tag/list/messages`,
+            expressAsyncHandler((request, response, next) => {
+                this.listMessagesTagged(request, response, next);
             })
         );
 
@@ -26,7 +32,7 @@ export class TagController extends BaseController {
      * Lista entidades en la aplicacion, es posible enviarle parametros de filtrado.
      *
      */
-    async listEntity(request, response, next) {
+    async listTags(request, response, next) {
         try {
             let service = new TagService();
             let { checkedNodes, filters } = request.body;
@@ -44,6 +50,36 @@ export class TagController extends BaseController {
             }
 
             let data = await service.list(filters, filters.start, filters.limit, checkedNodes);
+            let jsRes = new JsonResponse(true, data.data, null, data.total);
+
+            response.json(jsRes.toJson());
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * Lista entidades en la aplicacion, es posible enviarle parametros de filtrado.
+     *
+     */
+    async listMessagesTagged(request, response, next) {
+        try {
+            let service = new TagService();
+            let { checkedNodes, filters } = request.body;
+
+            if (!filters) {
+                filters = {};
+            }
+            const integService = new IntegrationService();
+            const organizationFilter = await App.Utils.getOrganizationFilter(request);
+            if (organizationFilter !== "all") {
+                filters["channel_id"] = {
+                    type: "in",
+                    value: await integService.getChannelIdsByOrganization(organizationFilter),
+                };
+            }
+
+            let data = await service.listMessagesTagged(filters, filters.start, filters.limit, checkedNodes);
             let jsRes = new JsonResponse(true, data.data, null, data.total);
 
             response.json(jsRes.toJson());
