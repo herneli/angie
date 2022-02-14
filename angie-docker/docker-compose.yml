@@ -89,7 +89,9 @@ services:
       user: "1000"
       depends_on:
             - angie_prometheus
-            
+            - angie_keycloak
+    
+
     # node_exporter:
     #   image: quay.io/prometheus/node-exporter:latest
     #   container_name: node_exporter

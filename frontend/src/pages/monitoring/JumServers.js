@@ -9,6 +9,7 @@ const JumContexts = () => {
     let [jumServers, setJumServers] = useState([]);
     let [jumServerSelected, setJumServerSelected] = useState('');
     let [loaded, setLoaded] = useState(false);
+    let [grafanaLogged, setGrafanaLogged] = useState(false);
 
     const handleJumServerChange = (value) => {
         if (value) {
@@ -51,14 +52,21 @@ const JumContexts = () => {
         }
     }
 
+    const updateGrafanaLogged = (event) => {
+        setGrafanaLogged(true);
+    }
+
     useEffect(() => {
         searchJumServers();
     }, []);
 
     return (
         <>
+            {grafanaLogged === false &&
+                <iframe src="http://localhost:3100" onLoad={updateGrafanaLogged}  style={{ display: 'none'}} />
+            }
             {drawJumServersSelect()}
-            {loaded &&
+            {loaded && grafanaLogged &&
                 <div style={{ diaplay: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', height: '250px' }}>
                         <iframe src={"http://localhost:3100/d-solo/7ajyUjt7k/jumangie-servers?orgId=1&refresh=5s&var-jum_name=" + jumServerSelected + "&var-jum_id=All&panelId=6&theme=light"} width='200px' height='100%' frameBorder="0" title="CPU System"></iframe>

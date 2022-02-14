@@ -9,6 +9,7 @@ const JumContexts = () => {
     let [channelsByIntegration, setChannelsByIntegration] = useState([]);
     let [channelSelected, setChannelSelected] = useState('');
     let [loaded, setLoaded] = useState(false);
+    let [grafanaLogged, setGrafanaLogged] = useState(false);
 
     const handleChannelChange = (value) => {
         if (value) {
@@ -63,21 +64,22 @@ const JumContexts = () => {
         }
     }
 
+    const updateGrafanaLogged = (event) => {
+        setGrafanaLogged(true);
+    }
+
     useEffect(() => {
         searchChannelsByIntegration();
     }, []);
 
     return (
         <>
+            {grafanaLogged === false &&
+                <iframe src="http://localhost:3100" onLoad={updateGrafanaLogged} style={{ display: 'none'}} />
+            }
             {drawChannelsSelect()}
-            {loaded &&
+            {loaded && grafanaLogged &&
                 <div style={{ diaplay: 'flex', flexDirection: 'column' }}>
-                    {/* <AuthIFrame src="http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=Channel&var-routeId=All&var-routeDescription=All&panelId=3&theme=light" 
-                type="text/html" /> */}
-                    {/* <iframe src="http://localhost:3000" frameborder="0"></iframe>
-            <iframe src="http://localhost:3100" frameborder="0"></iframe> */}
-                    {/* <iframe src="http://localhost:3100/grafana/d/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=Channel&var-routeId=All&var-routeDescription=All" width={1400} height={800} frameborder="0"></iframe>
-            <iframe src="http://localhost:3100/grafana/dashboard/snapshot/eBn0FMvg5lfaNAbcC7fP5BoWtSxHhj3a" width={1400} height={800} frameborder="0"></iframe> */}
 
                     <div style={{ display: 'flex', height: '125px' }}>
                         <iframe src={"http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" + channelSelected + "&var-routeId=All&var-routeDescription=All&panelId=3&theme=light"} width='100%' height='100%' frameBorder="0" title="Routes"></iframe>
