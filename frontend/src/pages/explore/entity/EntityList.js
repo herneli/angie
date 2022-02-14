@@ -70,6 +70,7 @@ const EntityList = () => {
             console.error(ex);
         }
     };
+    
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 

@@ -18,14 +18,26 @@ export class MessageDao extends BaseKnexDao {
         }
         const RELATION_TABLE = "ztags";
         const knex = KnexConnector.connection;
-        const columns = [`${this.tableName}.*`, knex.raw(`string_agg("${RELATION_TABLE}"."tag", ',') as tags`)];
+        const columns = [
+            `${this.tableName}.message_id`,
+            `${this.tableName}.status`,
+            `${this.tableName}.date_reception`,
+            `${this.tableName}.date_processed`,
+            `${this.tableName}.channel_id`,
+            `${this.tableName}.channel_name`,
+            `${this.tableName}.message_content_id`,
+            `${this.tableName}.message_content_type`,
+            `${this.tableName}.error_cause`,
+            `${this.tableName}.error_stack`,
+            `${this.tableName}.meta`,
+        ];
 
         const self = this;
         return knex
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
                     .groupBy(`${self.tableName}.message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
@@ -43,14 +55,26 @@ export class MessageDao extends BaseKnexDao {
     async countFilteredDataTagged(filters, tagFilter) {
         const RELATION_TABLE = "ztags";
         const knex = KnexConnector.connection;
-        const columns = [`${this.tableName}.*`, knex.raw(`string_agg("${RELATION_TABLE}"."tag", ',') as tags`)];
+        const columns = [
+            `${this.tableName}.message_id`,
+            `${this.tableName}.status`,
+            `${this.tableName}.date_reception`,
+            `${this.tableName}.date_processed`,
+            `${this.tableName}.channel_id`,
+            `${this.tableName}.channel_name`,
+            `${this.tableName}.message_content_id`,
+            `${this.tableName}.message_content_type`,
+            `${this.tableName}.error_cause`,
+            `${this.tableName}.error_stack`,
+            `${this.tableName}.meta`,
+        ];
 
         const self = this;
         let data = await knex
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
                     )

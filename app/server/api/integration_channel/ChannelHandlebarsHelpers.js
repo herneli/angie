@@ -90,27 +90,27 @@ class ChannelHandlebarsHelpers {
 
         const conditions = (app && app.data && app.data.entities) || [];
 
-        return this.safe(`<choice>
+        return this.safe(`
+        ${this.setHeader("organization", object.organization, "constant")}
+        <choice>
             ${conditions
                 .map(
                     (cond) => `<when>
                     <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
                     ${this.setHeader("entity_type", cond.code, "constant")}
-                    ${this.setHeader("organization", object.organization, "constant")}
                     <setBody><simple>${cond.entity_extraction}</simple></setBody>
                     <unmarshal><json/></unmarshal>
                     <process ref="entityGenerator"/>
-                    <to uri="mock:elastic"/>
+                    <to uri="mock:store"/>
                 </when>`
                 )
                 .join("\n")}
             <otherwise>
                 ${this.setHeader("entity_type", "unknown", "constant")}
-                ${this.setHeader("organization", object.organization, "constant")}
                 <setBody><simple>{}</simple></setBody>
                 <unmarshal><json/></unmarshal>
                 <process ref="entityGenerator"/>
-                <to uri="mock:elastic"/>
+                <to uri="mock:store"/>
             </otherwise>
         </choice>`);
     }

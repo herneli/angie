@@ -9,9 +9,13 @@ exports.up = async (knex) => {
             table.string("channel_name", 100);
             table.string("message_content_id", 50);
             table.string("message_content_type", 50);
-            table.string("error_cause",  "longtext");
+            table.string("error_cause", "longtext");
             table.text("error_stack", "longtext");
             table.jsonb("meta");
+            
+            table.index(["status"]);
+            table.index(["message_id"]);
+            table.index(["date_reception"]);
         });
     }
 
@@ -41,11 +45,15 @@ exports.up = async (knex) => {
     if (!(await knex.schema.hasTable("ztags"))) {
         await knex.schema.createTable("ztags", function (table) {
             table.string("tag", 200).notNullable();
-            table.string("message_id", 50).notNullable();
-            table.string("route_id", 50).notNullable();
-            table.string("channel_id", 50).notNullable();
-            table.string("date_reception", 30).notNullable();
-            table.primary(["tag", "message_id", "route_id"]);
+            table.string("tag_message_id", 50).notNullable();
+            table.string("tag_route_id", 50).notNullable();
+            table.string("tag_channel_id", 50).notNullable();
+            table.string("tag_date", 30).notNullable();
+            table.primary(["tag", "tag_message_id", "tag_route_id"]);
+
+            table.index(["tag"]);
+            table.index(["tag_message_id"]);
+            table.index(["tag_date"]);
         });
     }
 };

@@ -1,6 +1,6 @@
 version: '3'
 services:
-    
+
     angie_postgre:
         image: postgres:13
         environment:
@@ -81,15 +81,17 @@ services:
       container_name: angie_grafana
       image: grafana/grafana
       ports:
-        - 3100:3000
+        - 3100:3100
       volumes:
+        - ./grafana/etc/grafana:/etc/grafana
         - ./grafana/var/lib/grafana:/var/lib/grafana
         - ./grafana/var/log/grafana:/var/log/grafana
-        - ./grafana/etc/grafana:/etc/grafana
       user: "1000"
       depends_on:
             - angie_prometheus
-            
+            - angie_keycloak
+    
+
     # node_exporter:
     #   image: quay.io/prometheus/node-exporter:latest
     #   container_name: node_exporter

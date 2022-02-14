@@ -20,6 +20,7 @@ import {
     mdiFileDocumentOutline,
     mdiMessage,
     mdiTagMultiple,
+    mdiMonitorEye,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
@@ -48,6 +49,7 @@ export default class MenuHandler {
         mdiFileDocumentOutline: mdiFileDocumentOutline,
         mdiMessage: mdiMessage,
         mdiTagMultiple: mdiTagMultiple,
+        mdiMonitorEye: mdiMonitorEye,
     };
 
     static drawSubMenu = async (item, baseUrl) => {

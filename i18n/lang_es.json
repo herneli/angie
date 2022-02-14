@@ -210,6 +210,12 @@
             "contexts": "Contextos",
             "objects": "Objectos",
             "methods": "Métodos"
+        },
+        "monitoring": {
+            "title": "Monitorización",
+            "jum_contexts": "Contextos JUM",
+            "jum_servers": "Servidores JUM",
+            "angie_node": "Angie"
         }
     },
     "administration": {
@@ -360,7 +366,8 @@
         "messages_from_channel": "Mensajes del canal",
         "traces_from_message": "Trazas del mensaje",
         "start": "Inicio",
-        "end": "Fin"
+        "end": "Fin",
+        "jum_server": "Servidor JUM"
     },
     "entity": {
         "id": "Identificador",

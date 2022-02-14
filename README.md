@@ -183,6 +183,12 @@ Configuraciones necesarias:
 17. Crear un Rol: 'admin' a nivel de Realm
 18. Asignar el usuario de la aplicación a dicho rol
 
+**Autologin OAuth Grafana**
+
+19. Crear cliente **grafana**
+20. En la configuración del cliente **grafana** con el Access Type: public establecer `Root URL: http://localhost:3100/`, `Valid Redirect URIs: http://localhost:3100/*`, `Admin URL: http://localhost:3100/` y `Web Origins: *`.
+
+
 ## Tests
 
 La realización de tests se realiza utilizando la librería **mocha**, los ficheros se almacenan en la carpeta test

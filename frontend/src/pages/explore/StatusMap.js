@@ -9,7 +9,7 @@ import T from "i18n-react";
 import Utils from "../../common/Utils";
 import { useAngieSession } from "../../components/security/UserContext";
 
-const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, height }) => {
+const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad, doTableLoad, height, mapLoading, tableLoading }) => {
     const [selectedElements, setSelectedElements] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState([]);
 
@@ -25,7 +25,8 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
     }, [dataSource?.total]);
 
     useEffect(() => {
-        doSearch(pagination, filters, sort, checkedNodes);
+        doTableLoad(pagination, filters, sort, checkedNodes);
+        doMapLoad(filters, checkedNodes);
     }, [currentUser]);
 
     const rowSelection = {
@@ -56,7 +57,8 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
         };
         const newFilters = value ? { ...filters, ...filter } : { ...filters };
         setFilters(newFilters);
-        doSearch(pagination, newFilters, sort, checkedNodes);
+        doTableLoad(pagination, newFilters, sort, checkedNodes);
+        doMapLoad(newFilters, checkedNodes);
     };
 
     const onDateChange = (dates) => {
@@ -70,13 +72,15 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                 },
             };
             setFilters(newFilters);
-            doSearch(pagination, newFilters, sort, checkedNodes);
+            doTableLoad(pagination, newFilters, sort, checkedNodes);
+            doMapLoad(newFilters, checkedNodes);
         }
     };
 
     const onCheckedChange = (checkedNodes) => {
         setCheckedNodes(checkedNodes);
-        doSearch(pagination, filters, sort, checkedNodes);
+        doTableLoad(pagination, filters, sort, checkedNodes);
+        doMapLoad(filters, checkedNodes);
     };
 
     const baseHeight = `calc(100vh - ${height || 165}px)`;
@@ -95,10 +99,11 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                 <Row style={{}}>
                     <Col span={10}>
                         <TagMessageMap
-                            record={dataSource?.tags}
+                            record={tags}
                             selection={selectedElements}
                             setSelection={setSelectedElements}
                             onCheckedChange={onCheckedChange}
+                            loading={mapLoading}
                         />
                     </Col>
                     <Col span={14} style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 15, height: baseHeight }}>
@@ -110,6 +115,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                     type: "checkbox",
                                     ...rowSelection,
                                 }}
+                                loading={tableLoading}
                                 scroll={{ y: tableHeight }}
                                 onRow={(record) => ({
                                     onClick: () => {
@@ -119,7 +125,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                 onChange={(pagination, tableFilters, sort) => {
                                     setSort(sort);
                                     setPagination(pagination);
-                                    doSearch(pagination, filters, sort, checkedNodes);
+                                    doTableLoad(pagination, filters, sort, checkedNodes);
                                 }}
                                 pagination={pagination}
                                 columns={[
@@ -165,7 +171,7 @@ const StatusMap = ({ dataSource, defaultDates, customDateRanges, doSearch, heigh
                                         },
                                     },
                                 ]}
-                                dataSource={dataSource?.messages}
+                                dataSource={dataSource?.data}
                             />
                         )}
                     </Col>

@@ -1,19 +1,16 @@
 import { Breadcrumb, Divider, notification, Spin, Typography } from "antd";
 import { useRef } from "react";
 import axios from "axios";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import DynamicDetail from "../../../components/dynamic-detail/DynamicDetail";
-import StatusMap from "../StatusMap";
 import lodash from "lodash";
 
 import T from "i18n-react";
 
 import * as api from "../../../api/configurationApi";
 import { Link } from "react-router-dom";
-
-const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
+import MessagesStatusMap from "../messages/MessagesStatusMap";
 
 const EntityDetail = ({ record }) => {
     const detail = useRef(null);
@@ -65,27 +62,10 @@ const EntityDetail = ({ record }) => {
         loadElement();
     }, [state]);
 
-    const loadElement = async (pagination, filters = {}, sorts, checkedNodes) => {
+    const loadElement = async () => {
         setLoading(true);
         try {
-            if (pagination?.pageSize && pagination?.current) {
-                filters.limit = pagination.pageSize ? pagination.pageSize : 10;
-                filters.start =
-                    (pagination.current ? pagination.current - 1 : 0) *
-                    (pagination.pageSize ? pagination.pageSize : 10);
-            }
-
-            if (sorts) {
-                filters.sort = Object.keys(sorts).length !== 0 && {
-                    field: sorts.columnKey || sorts.field,
-                    direction: sorts.order,
-                };
-            }
-
-            const response = await axios.post("/entity/" + id, {
-                msg_filters: filters,
-                checkedNodes
-            });
+            const response = await axios.post("/entity/" + id);
 
             if (response) {
                 setCurrentRecord(response?.data?.data);
@@ -163,12 +143,7 @@ const EntityDetail = ({ record }) => {
                     <br />
                     <Divider orientation="left">{T.translate("entity.detail.messages")}</Divider>
                 </div>
-                <StatusMap
-                    defaultDates={defaultDates}
-                    dataSource={currentRecord}
-                    doSearch={loadElement}
-                    height={detailHeight}
-                />
+                {currentRecord && <MessagesStatusMap height={detailHeight} entity={currentRecord} />}
             </Spin>
         </div>
     );

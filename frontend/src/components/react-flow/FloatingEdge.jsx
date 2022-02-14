@@ -1,9 +1,22 @@
 import { useMemo } from "react";
-import { getMarkerEnd, useStoreState, getBezierPath } from "react-flow-renderer";
+import { getMarkerEnd, useStoreState, getBezierPath, Position, getEdgeCenter, EdgeText } from "react-flow-renderer";
 
-import { getEdgeParams } from "./FlowUtils";
+import { getEdgeParams, getNodeIntersection } from "./FlowUtils";
 
-const FloatingEdge = ({ id, source, target, arrowHeadType, markerEndId, style }) => {
+const FloatingEdge = ({
+    id,
+    source,
+    target,
+    arrowHeadType,
+    markerEndId,
+    style,
+    label,
+    labelStyle,
+    labelShowBg,
+    labelBgStyle,
+    labelBgPadding,
+    labelBgBorderRadius,
+}) => {
     const nodes = useStoreState((state) => state.nodes);
     const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
 
@@ -24,10 +37,29 @@ const FloatingEdge = ({ id, source, target, arrowHeadType, markerEndId, style })
         targetX: tx,
         targetY: ty,
     });
+    
+    const ax = Math.abs(sx + tx) / 2;
+    const ay = Math.abs(sy + ty) / 2;
+
+    const text = label ? (
+        <EdgeText
+            x={ax}
+            y={ay}
+            label={label}
+            labelStyle={labelStyle}
+            labelShowBg={labelShowBg}
+            labelBgStyle={labelBgStyle}
+            labelBgPadding={labelBgPadding}
+            labelBgBorderRadius={labelBgBorderRadius}
+        />
+    ) : (
+        "azs"
+    );
 
     return (
         <g className="react-flow__connection">
             <path id={id} className="react-flow__edge-path" d={d} markerEnd={markerEnd} style={style} />
+            {text}
         </g>
     );
 };

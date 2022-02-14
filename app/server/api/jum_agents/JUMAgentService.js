@@ -26,7 +26,8 @@ export class JUMAgentService extends BaseService {
                 "labels": { 
                     "__metrics_path__": "/actuator/prometheus", 
                     "jum_id": agent.id,
-                    "jum_name": agent.name
+                    "jum_name": agent.name,
+                    "status": agent.status
                 }
             })
         }

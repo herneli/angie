@@ -58,5 +58,17 @@
         "code": "explore",
         "roles": ["admin"],
         "value": "/explore"
+    },
+    {
+        "id": "f937eb02-dfcd-49ad-9362-f519237fd06c",
+        "code": "monitoring",
+        "roles": ["admin"],
+        "value": "/monitoring"
+    },
+    {
+        "id": "7bcc8d14-858f-43db-9b98-68d59820713d",
+        "code": "monitoring/any",
+        "roles": ["admin"],
+        "value": "/monitoring/(.*)"
     }
 ]
