@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Input, notification, Row, Table, Space } from "antd";
+import { Button, notification, Table, Space } from "antd";
 import axios from "axios";
 import moment from "moment";
 import Message from "./Message";
@@ -12,6 +12,7 @@ import { mdiDownload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js
 import { createUseStyles } from "react-jss";
 import { Content } from "antd/lib/layout/layout";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
+import Utils from "../../../common/Utils";
 
 const useStyles = createUseStyles({
     card: {
@@ -166,7 +167,7 @@ const Messages = (props) => {
         {
             title: T.translate("messages.status"),
             dataIndex: "status",
-            key: "status.keyword",
+            key: "status",
             width: 50,
             align: "center",
             sorter: true,
@@ -181,7 +182,7 @@ const Messages = (props) => {
         {
             title: T.translate("messages.message_id"),
             dataIndex: "breadcrumb_id",
-            key: "_id",
+            key: "message_id",
             width: 200,
             ellipsis: true,
             sorter: true,
@@ -230,14 +231,20 @@ const Messages = (props) => {
     const onDateChange = (dates) => {
         setCurrentDates(dates);
     };
+
     const onSearch = (value) => {
-        const filter = {
-            "": {
-                type: "query_string",
+        if (value.indexOf(":") !== -1) {
+            return search(
+                null,
+                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
+            );
+        }
+        search(null, {
+            "zmessages.data::text": {
+                type: "jsonb",
                 value: value,
             },
-        };
-        search(null, value ? filter : {});
+        });
     };
 
     return props.channel ? (
