@@ -105,12 +105,12 @@ export class MessageDao extends BaseKnexDao {
         delete filters.start;
         delete filters.limit;
 
-        /* if (!filters.sort || !filters.sort.direction) {
+        if (!filters.sort || !filters.sort.direction) {
             filters.sort = {
                 field: "date_reception",
-                 direction: "descend",
+                direction: "descend",
             };
-        } */
+        }
 
         this.tableName = `zmessages_${channelId}`;
 

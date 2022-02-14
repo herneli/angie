@@ -234,17 +234,23 @@ const Messages = (props) => {
 
     const onSearch = (value) => {
         if (value.indexOf(":") !== -1) {
-            return search(
+            search(
                 null,
-                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
+                Utils.getFiltersByPairs((key) => `${key}`, value)
             );
+        } else if (value !== "") {
+            const tableName = "zmessages_" + channel;
+            const filter = {
+                [`"${tableName}"`]: {
+                    type: "full-text-psql",
+                    value: value,
+                },
+            };
+
+            search(null, filter);
+        } else {
+            search(null, {});
         }
-        search(null, {
-            "zmessages.data::text": {
-                type: "jsonb",
-                value: value,
-            },
-        });
     };
 
     return props.channel ? (
