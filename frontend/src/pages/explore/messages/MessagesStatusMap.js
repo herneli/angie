@@ -11,7 +11,7 @@ const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 
 const MessagesStatusMap = ({ entity, height }) => {
     const [tableLoading, setTableLoading] = useState(false);
-    const [mapLoading, setMaLoading] = useState(false);
+    const [mapLoading, setMapLoading] = useState(false);
     const [tags, setTags] = useState({});
     const [dataSource, setDataSource] = useState({});
 
@@ -27,7 +27,7 @@ const MessagesStatusMap = ({ entity, height }) => {
     };
 
     const loadMap = async (filters = {}, checkedNodes) => {
-        setMaLoading(true);
+        setMapLoading(true);
         try {
             getEntityFilter(filters);
 
@@ -43,7 +43,7 @@ const MessagesStatusMap = ({ entity, height }) => {
             });
             console.error(ex);
         }
-        setMaLoading(false);
+        setMapLoading(false);
     };
 
     const loadData = async (pagination, filters = {}, sorts, checkedNodes) => {

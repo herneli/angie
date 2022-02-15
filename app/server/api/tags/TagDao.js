@@ -65,7 +65,7 @@ export class TagDao extends BaseKnexDao {
 
     async getProcessedTags(filters) {
         const knex = KnexConnector.connection;
-        const columns = [knex.raw(`string_agg("tag", '-' order by "date_reception") as datatags`)];
+        const columns = [knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`)];
 
         const RELATION_TABLE = "zmessages";
         const self = this;
@@ -83,7 +83,7 @@ export class TagDao extends BaseKnexDao {
             })
             .groupBy(`nodetags.datatags`);
 
-        console.log(qry.toSQL());
+        // console.log(qry.toSQL());
         return await qry;
     }
 
@@ -100,7 +100,7 @@ export class TagDao extends BaseKnexDao {
                 knex.raw("(array_agg(status))[1] as last_status"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "date_reception") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
                     .from(RELATION_TABLE)
                     .leftJoin(self.tableName, `${self.tableName}.tag_message_id`, `${RELATION_TABLE}.message_id`)
                     .where((builder) =>
@@ -128,7 +128,7 @@ export class TagDao extends BaseKnexDao {
                 knex.raw("count(CASE WHEN status = 'error' THEN 1 ELSE NULL END) as error"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "date_reception") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
                     .from(RELATION_TABLE)
                     .leftJoin(self.tableName, `${self.tableName}.tag_message_id`, `${RELATION_TABLE}.message_id`)
                     .where((builder) =>
@@ -157,7 +157,7 @@ export class TagDao extends BaseKnexDao {
                 knex.raw("count(CASE WHEN status = 'error' THEN 1 ELSE NULL END) as error"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "date_reception") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
                     .from(RELATION_TABLE)
                     .leftJoin(self.tableName, `${self.tableName}.tag_message_id`, `${RELATION_TABLE}.message_id`)
                     .where((builder) =>
