@@ -90,6 +90,9 @@ const EntityList = () => {
                     : { field: "data->>'date'", direction: "descend" };
         }
         
+        if(sorts.columnKey == "id"){
+            filters.sort.field = "id::bigint"
+        }
         try {
             const response = await axios.post(`/entity/list`, filters);
 
