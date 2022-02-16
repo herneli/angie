@@ -14,6 +14,12 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         initialLoad();
     }, [schema, uiSchema]);
 
+    useEffect(() => {
+        if (formData && schema) {
+            redraw({ formData, schema });
+        }
+    }, [formData]);
+
     const initialLoad = () => {
         const initValues = {
             originalSchema: lodash.cloneDeep(schema),
@@ -49,9 +55,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         return e;
     };
 
-    const onChange = (e) => {
-        const { formData, schema } = e;
-
+    const redraw = ({ formData, schema }) => {
         //Comprobación del Required en caso de los arrays.
         Object.keys(formData).forEach((element) => {
             if (schema?.required?.includes(element)) {
@@ -66,6 +70,10 @@ const ConditionalForm = React.forwardRef((props, ref) => {
 
         const newState = processForm(initialValues.originalSchema, initialValues.originalUISchema, formData);
         setState(newState);
+    };
+
+    const onChange = (e) => {
+        redraw(e);
 
         if (props.onChange) props.onChange(e);
     };

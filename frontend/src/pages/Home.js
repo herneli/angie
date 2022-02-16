@@ -12,7 +12,7 @@ const Home = () => {
   return (
     <Content style={{ backgroundColor: "rgb(240 242 245)" }}>
       
-    <Title level={2} style={{ margin: 5, marginLeft: 10,marginTop: "-0.5%" }}> [Angie] A Next Generation Integration Engine</Title>
+    <Title level={2} style={{ margin: 5, marginLeft: 10,marginTop: "-0.5%" }}> [Angie] Angie's Next Generation Integration Engine</Title>
       <Row span={24}>
         <Col span={16}>
           <Card style={{ margin: 5 }}>
