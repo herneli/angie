@@ -4,23 +4,11 @@ import processForm from "./ConditionalProcessor";
 import lodash from "lodash";
 
 const ConditionalForm = React.forwardRef((props, ref) => {
-    const { schema, uiSchema, formData } = props;
+    const { schema, formData } = props;
     const [initialValues, setInitialValues] = useState();
     const [emptyField, setEmptyField] = useState(false);
-    const [state, setState] = useState();
 
-    useEffect(() => {
-        //Guardar el schema original ya que siempre se procesará a través de el y no del current
-        initialLoad();
-    }, [schema, uiSchema]);
-
-    useEffect(() => {
-        if (formData && schema) {
-            redraw({ formData, schema });
-        }
-    }, [formData]);
-
-    const initialLoad = () => {
+    const initialLoad = ({ schema, uiSchema }) => {
         const initValues = {
             originalSchema: lodash.cloneDeep(schema),
             originalUISchema: lodash.cloneDeep(uiSchema),
@@ -28,8 +16,17 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         setInitialValues(initValues);
 
         const initialState = processForm(initValues.originalSchema, initValues.originalUISchema, formData);
-        setState(initialState);
+        // setState(initialState);
+        return initialState;
     };
+    //Se construye de esta forma para unicamente ejecutarlo una vez y al inicio del componente
+    const [state, setState] = useState(() => initialLoad(props));
+
+    useEffect(() => {
+        if (formData) {
+            redraw({ formData, schema });
+        }
+    }, [formData]);
 
     //Manejo de los errores
     const transformErrors = (errors) => {
