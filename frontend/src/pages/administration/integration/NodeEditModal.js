@@ -7,8 +7,6 @@ import formConfig from "../../../components/rjsf";
 
 import T from "i18n-react";
 import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
-import AddableTags from "../../../components/tags/AddableTags";
-
 import * as api from "../../../api/configurationApi";
 
 export default function NodeEditModal({

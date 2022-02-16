@@ -99,19 +99,16 @@ class ChannelHandlebarsHelpers {
                     <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
                     ${this.setHeader("entity_type", cond.code, "constant")}
                     <setBody><simple>${cond.entity_extraction}</simple></setBody>
-                    <unmarshal><json/></unmarshal>
-                    <process ref="entityGenerator"/>
-                    <to uri="mock:store"/>
                 </when>`
                 )
                 .join("\n")}
             <otherwise>
                 ${this.setHeader("entity_type", "unknown", "constant")}
                 <setBody><simple>{}</simple></setBody>
-                <unmarshal><json/></unmarshal>
-                <process ref="entityGenerator"/>
-                <to uri="mock:store"/>
             </otherwise>
+            <unmarshal><json/></unmarshal>
+            <process ref="entityGenerator"/>
+            <to uri="mock:store"/>
         </choice>`);
     }
 

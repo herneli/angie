@@ -12,7 +12,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
     useEffect(() => {
         //Guardar el schema original ya que siempre se procesará a través de el y no del current
         initialLoad();
-    }, [schema, uiSchema, formData]);
+    }, [schema, uiSchema]);
 
     const initialLoad = () => {
         const initValues = {
@@ -32,8 +32,8 @@ const ConditionalForm = React.forwardRef((props, ref) => {
 
         errors.map((error) => {
             if (error.message == "should NOT have fewer than 1 items") {
-                if(emptyField){
-                    e.push(error)
+                if (emptyField) {
+                    e.push(error);
                 }
                 return;
             }
@@ -50,20 +50,19 @@ const ConditionalForm = React.forwardRef((props, ref) => {
     };
 
     const onChange = (e) => {
-        const { formData,schema } = e;
+        const { formData, schema } = e;
 
         //Comprobación del Required en caso de los arrays.
-     
         Object.keys(formData).forEach((element) => {
-            if(schema?.required?.includes(element)){
-                if(Array.isArray(formData[element]) && formData[element].length == 0){
-                    setEmptyField(true)
+            if (schema?.required?.includes(element)) {
+                if (Array.isArray(formData[element]) && formData[element].length == 0) {
+                    setEmptyField(true);
                 }
-                if(Array.isArray(formData[element]) && formData[element].length > 0){
-                    setEmptyField(false)
+                if (Array.isArray(formData[element]) && formData[element].length > 0) {
+                    setEmptyField(false);
                 }
             }
-        })
+        });
 
         const newState = processForm(initialValues.originalSchema, initialValues.originalUISchema, formData);
         setState(newState);
