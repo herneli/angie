@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function CustomIframe(props) {
     const [loading, setLoading] = useState(true);
-    const { width, style, ...customProps } = props;
+    const { width, height, style, bordered, ...customProps } = props;
 
     useEffect(() => {
         setLoading(true);
@@ -18,7 +18,7 @@ export default function CustomIframe(props) {
     };
 
     return (
-        <div style={{ width: width, height: "100%", ...style }}>
+        <div style={{ width: width, height: height, ...style }}>
             {loading ? (
                 <div
                     style={{
@@ -26,7 +26,8 @@ export default function CustomIframe(props) {
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        border: "5px solid #F0F2F5",
+                        padding: loading ? "50px" : 0,
+                        border: bordered && "5px solid #F0F2F5",
                     }}>
                     <Spin tip={T.translate("application.loading")} />
                 </div>
