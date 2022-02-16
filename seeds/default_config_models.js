@@ -687,15 +687,15 @@ exports.seed = async function (knex) {
                     //     field: "id",
                     // },
                     {
-                        title: "username",
+                        title: "Usuario",
                         field: "username",
                     },
                     {
-                        title: "email",
+                        title: "Email",
                         field: "email",
                     },
                     {
-                        title: "roles",
+                        title: "Roles",
                         field: ["roles"],
                     },
                     {
@@ -703,7 +703,7 @@ exports.seed = async function (knex) {
                         field: ["organization_data"],
                     },
                     {
-                        title: "created_timestamp",
+                        title: "Fecha Creación",
                         field: "created_timestamp",
                     },
                 ],

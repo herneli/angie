@@ -4,13 +4,17 @@ const MAX_CONCURRENT_REQUESTS = 100;
 ConcurrencyManager(axios, MAX_CONCURRENT_REQUESTS);
 
 function frontendModelData(modelData) {
-    const extendedData = {
-        ...modelData.data,
-        id: modelData.id,
-        created_at: modelData.created_at,
-        modified_at: modelData.modified_at,
-    };
-    return extendedData;
+    if(modelData){
+        const extendedData = {
+            ...modelData.data,
+            id: modelData.id,
+            created_at: modelData.created_at,
+            modified_at: modelData.modified_at,
+        };
+        return extendedData;
+    }
+    return null;
+
 }
 
 function backendModelData(extendedData) {

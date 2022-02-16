@@ -1,6 +1,6 @@
 import Form from "@rjsf/antd";
 
-import { Button, Col, Collapse, Divider, Modal, Row, Slider, Switch } from "antd";
+import { Button, Card, Col, Collapse, Divider, Modal, Row, Slider, Switch } from "antd";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 
 
@@ -204,19 +204,19 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
             {editingData && (
                 <>   <Collapse accordion  defaultActiveKey="1">
                         <Panel header={T.translate("integrations.channel.trace_levels")}  key="1">
-                            <Row>
+                            <Row >
                                 <Col span={12}>  
                                     <div style={{display: 'block',height: 300,marginLeft: 70}}>
                                         <Slider vertical marks={marks} tooltipVisible={false} step={null} defaultValue={levelOfStorage} onChange={(e) =>{ setLevelsOfStorage(e)}} />
                                     </div>
                                 </Col>
-                                <Divider style={{height: 300}} type="vertical" />
                                 <Col span={10}>
-                                    <p>{T.translate("integrations.channel.additional_props")}</p>
-                                    <Divider/>
-                                    <p>{T.translate("integrations.channel.trace_logs")}</p><Switch defaultChecked={tracefile} onChange={(e) => { changeFile(e) }} />
-                                    <p>{T.translate("integrations.channel.trace_properties")}</p><Switch defaultChecked={traceProperties} onChange={(e) => { changeProperties(e) }} />
-                                 </Col>
+                                    <Card  type="inner" title={T.translate("integrations.channel.additional_props")} style={{height: 300}}>
+                                        <p>{T.translate("integrations.channel.trace_logs")}</p><Switch defaultChecked={tracefile} onChange={(e) => { changeFile(e) }} />
+                                        <Divider></Divider>
+                                        <p>{T.translate("integrations.channel.trace_properties")}</p><Switch defaultChecked={traceProperties} onChange={(e) => { changeProperties(e) }} />
+                                    </Card>
+                                </Col>
                             </Row>
                         </Panel>
                      </Collapse>

@@ -670,7 +670,8 @@ const Channel = ({
                                     items = lodash.remove(items, function (n) {
                                         return n != item;
                                     });
-                                    setNotFoundedNodes(items)
+                                    onElementsRemove(items)
+
                                 }}>
                                     <Button style={{ marginRight: 50 }} danger>{"Delete"}</Button>
                                 </Popconfirm>                                    

@@ -81,6 +81,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             if (index === array.length - 1) {
                 messageEnd = date;
             }
+
             if (!messageContent) {
                 messageContent = message.in_msg;
             }
@@ -88,6 +89,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             if (!errorException) {
                 errorException = message.error_stack;
             }
+
             const errorContent =
                 message.event === "ERROR" ? (
                     <>
@@ -100,9 +102,15 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                         <p>
                             <a
                                 href="#null"
+                                style={{ color: "red" }}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    setShowData({ node: nodeName, content: errorException, type: "error" });
+                                    setShowData({
+                                        title: `${T.translate("messages.exception")} (${nodeName})`,
+                                        node: nodeName,
+                                        content: errorException,
+                                        type: "error",
+                                    });
                                 }}>
                                 {`${T.translate("messages.show_exception")}`}
                             </a>
@@ -119,6 +127,23 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                         </p>
                     </>
                 ) : null;
+
+            const headersContent = message.headers && (
+                <p>
+                    <a
+                        href="#null"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowData({
+                                title: `${T.translate("messages.headers")} (${nodeName})`,
+                                node: nodeName,
+                                content: JSON.stringify(message.headers),
+                            });
+                        }}>
+                        {`${T.translate("messages.show_headers")}`}
+                    </a>
+                </p>
+            );
 
             return (
                 <>
@@ -142,6 +167,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     </p>
                     {successContent}
                     {errorContent}
+                    {headersContent}
                     <Divider></Divider>
                 </>
             );
@@ -153,7 +179,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     <b>{nodeName}</b>
                 </p>
                 {/*  <p>
-                    <b>Excahge Id:</b> {exchange}
+                    <b>Exchange Id:</b> {exchange}
                 </p> */}
                 <p>
                     <b>{`${T.translate("messages.start")}:`}</b> {messageStart}
@@ -193,10 +219,16 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                             icon={<Icon size="20px" path={mdiMessagePlus} />}
                             disabled={!messageContent}
                             title={
-                                messageContent ? T.translate("messages.body") : T.translate("messages.body_undefined")
+                                messageContent
+                                    ? T.translate("messages.show_body")
+                                    : T.translate("messages.body_undefined")
                             }
                             onClick={() => {
-                                setShowData({ node: nodeName, content: messageContent });
+                                setShowData({
+                                    title: `${T.translate("messages.body")} (${nodeName})`,
+                                    node: nodeName,
+                                    content: messageContent,
+                                });
                             }}
                         />
                     </Space>
@@ -275,6 +307,7 @@ const getChannelNodes = async (integration, channel) => {
         console.error(error);
     }
 };
+
 /**
  * Obtiene las trazas de un mensaje
  * @param {*} channel Id del canal

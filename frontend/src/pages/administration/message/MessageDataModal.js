@@ -2,10 +2,10 @@ import { Modal } from "antd";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 
 export default function MessageDataModal({ visible, onCancel, messageData, integration, channel }) {
-    const { node, content, type } = messageData;
-    const title = type === "error" ? `Execepción (${node})` : `Body (${node})`;
+    const { title, content, type } = messageData;
     const width = type === "error" ? 1000 : 800;
     const mode = type === "error" ? null : "json";
+
     return (
         <Modal
             title={title}
