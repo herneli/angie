@@ -12,7 +12,7 @@ import AppMenu from "./layout/AppMenu";
 import configureKeycloak from "./configureKeycloak";
 import { Layout, Spin } from "antd";
 import axios from "axios";
-import UserContextProvider from "./components/security/UserContext";
+import UserContextProvider from "./providers/security/UserContext";
 
 import * as api from "./api/configurationApi";
 

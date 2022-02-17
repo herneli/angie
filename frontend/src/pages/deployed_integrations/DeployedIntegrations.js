@@ -17,7 +17,7 @@ import Utils from "../../common/Utils";
 import AgentInfo from "./AgentInfo";
 
 import * as api from "../../api/configurationApi";
-import { useAngieSession } from "../../components/security/UserContext";
+import { useAngieSession } from "../../providers/security/UserContext";
 import BasicFilter from "../../components/basic-filter/BasicFilter";
 
 const { Content } = Layout;

@@ -8,7 +8,7 @@ import T from "i18n-react";
 
 import { mdiAccount, mdiHomeGroup, mdiHome, mdiLogout } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useAngieSession } from "../components/security/UserContext";
+import { useAngieSession } from "../providers/security/UserContext";
 import lodash from "lodash";
 
 import * as api from "../api/configurationApi";

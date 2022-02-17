@@ -11,7 +11,7 @@ import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
 import { mdiCancel, mdiCheck, mdiContentCopy, mdiDelete, mdiDownload, mdiPencil, mdiPlus, mdiUpload } from "@mdi/js";
 import { createUseStyles } from "react-jss";
-import { usePackage } from "../../../components/packages/PackageContext";
+import { usePackage } from "../../../providers/packages/PackageContext";
 import Utils from "../../../common/Utils";
 import { Link } from "react-router-dom";
 

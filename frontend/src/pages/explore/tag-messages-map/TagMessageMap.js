@@ -8,7 +8,7 @@ import FloatingEdge from "../../../components/react-flow/FloatingEdge";
 
 import "./TagMessageMap.css";
 import TagNode from "../../../components/react-flow/custom_nodes/TagNode";
-import useEventListener from "../../../common/useEventListener";
+import useEventListener from "../../../hooks/useEventListener";
 
 import * as api from "../../../api/configurationApi";
 import { Checkbox, Divider, Spin } from "antd";

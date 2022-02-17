@@ -11,7 +11,7 @@ import lodash from "lodash";
 
 import * as api from "../../../api/configurationApi";
 
-import { useAngieSession } from "../../../components/security/UserContext";
+import { useAngieSession } from "../../../providers/security/UserContext";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
 import { Link } from "react-router-dom";
 

@@ -7,7 +7,7 @@ import TagMessageMap from "./tag-messages-map/TagMessageMap";
 import T from "i18n-react";
 
 import Utils from "../../common/Utils";
-import { useAngieSession } from "../../components/security/UserContext";
+import { useAngieSession } from "../../providers/security/UserContext";
 
 const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad, doTableLoad, height, mapLoading, tableLoading }) => {
     const [selectedElements, setSelectedElements] = useState([]);

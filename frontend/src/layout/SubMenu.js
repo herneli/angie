@@ -1,7 +1,7 @@
 import { Layout, Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import MenuHandler from "../common/MenuHandler";
-import { useAngieSession } from "../components/security/UserContext";
+import { useAngieSession } from "../providers/security/UserContext";
 
 import lodash from "lodash";
 import { useLocation } from "react-router";

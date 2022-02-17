@@ -3,7 +3,7 @@ import { useHistory, useLocation, useParams } from "react-router";
 
 import * as api from "../../api/configurationApi";
 import errorHandler from "../../api/errorHandler";
-import { usePackage } from "../../components/packages/PackageContext";
+import { usePackage } from "../../providers/packages/PackageContext";
 import ModelEditor from "./components/ModelEditor";
 
 const ModelEdit = ({ model, onElementLoad }) => {

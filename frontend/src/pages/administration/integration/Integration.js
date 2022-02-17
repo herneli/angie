@@ -43,9 +43,9 @@ import {
     mdiCogs,
     mdiAlertOutline,
 } from "@mdi/js";
-import { useInterval } from "../../../common/useInterval";
+import { useInterval } from "../../../hooks/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
-import { usePackage } from "../../../components/packages/PackageContext";
+import { usePackage } from "../../../providers/packages/PackageContext";
 import EllipsisParagraph from "../../../components/text/EllipsisParagraph";
 import IconButton from "../../../components/button/IconButton";
 import ChannelOptions from "./ChannelOptions";

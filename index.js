@@ -9,7 +9,6 @@ import { Runtime } from "./app/server/common/";
 import { IntegrationController } from "./app/server/api/integration";
 import { IntegrationChannelController } from "./app/server/api/integration_channel";
 import { MessageController } from "./app/server/api/messages";
-import { OrganizationController } from "./app/server/api/organization";
 import { PackageController } from "./app/server/api/package";
 import { ScriptController } from "./app/server/api/script";
 import { ConfigurationController } from "./app/server/api/configuration/ConfigurationController";
@@ -85,7 +84,6 @@ module.exports = async () => {
         new MainController(),
         new IntegrationController(),
         new IntegrationChannelController(),
-        new OrganizationController(),
         new ConfigurationController(),
         new ScriptController(),
         new PackageController(),

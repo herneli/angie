@@ -8,7 +8,7 @@ import MethodEditor from "./MethodEditor";
 import T from "i18n-react";
 import areSameTypes from "../utils/areSameTypes";
 import getMembers from "../getMembers";
-import { usePackage } from "../../packages/PackageContext";
+import { usePackage } from "../../../providers/packages/PackageContext";
 
 export default function ExpressionMemberSelector({
     expression,

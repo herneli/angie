@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation } from "react-router";
 import { Redirect, Route } from "react-router-dom";
 import MenuHandler from "../../common/MenuHandler";
-import { useAngieSession } from "./UserContext";
+import { useAngieSession } from "../../providers/security/UserContext";
 
 export function PrivateRoute({ component: Component, render, roles, path, ...rest }) {
     const { keycloak } = useKeycloak();

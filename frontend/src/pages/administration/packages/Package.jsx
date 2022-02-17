@@ -6,7 +6,7 @@ import T from "i18n-react";
 import ModelAdmin from "../../configuration/ModelAdmin";
 import axios from "axios";
 import { createUseStyles } from "react-jss";
-import PackageContextProvider from "../../../components/packages/PackageContext";
+import PackageContextProvider from "../../../providers/packages/PackageContext";
 import Integration from "../integration/Integration";
 import Integrations from "../integration/Integrations";
 import ModelEdit from "../../configuration/ModelEdit";

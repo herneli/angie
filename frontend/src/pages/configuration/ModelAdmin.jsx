@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import * as api from "../../api/configurationApi";
 import errorHandler from "../../api/errorHandler";
-import { usePackage } from "../../components/packages/PackageContext";
+import { usePackage } from "../../providers/packages/PackageContext";
 import ModelTable from "./components/ModelTable";
 
 const ModelAdmin = ({ buttonsConfig, model }) => {

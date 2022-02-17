@@ -15,7 +15,7 @@ import "./Channel.css";
 import NodeEditModal from "./NodeEditModal";
 
 import lodash from "lodash";
-import useEventListener from "../../../common/useEventListener";
+import useEventListener from "../../../hooks/useEventListener";
 import { Modal, Dropdown, Menu, Space, Tabs, List, Select, Divider, Alert, Popconfirm, Button } from "antd";
 import Icon from "@mdi/react";
 import {
@@ -27,7 +27,7 @@ import {
     mdiScissorsCutting,
     mdiTrashCan,
 } from "@mdi/js";
-import ChannelContextProvider from "../../../components/channels/ChannelContext";
+import ChannelContextProvider from "../../../providers/channels/ChannelContext";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 import IconButton from "../../../components/button/IconButton";
 

@@ -7,7 +7,7 @@ import { createUseStyles } from "react-jss";
 import ScriptForm from "../rjsf/ScriptForm";
 import convertToExpressionSchema from "./convertToExpressionSchema";
 import getMembers from "../getMembers";
-import { usePackage } from "../../packages/PackageContext";
+import { usePackage } from "../../../providers/packages/PackageContext";
 
 const useStyles = createUseStyles({
     formFooter: {

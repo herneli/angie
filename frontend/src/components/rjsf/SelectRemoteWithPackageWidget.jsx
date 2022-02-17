@@ -1,5 +1,5 @@
 import React from "react";
-import { usePackage } from "../packages/PackageContext";
+import { usePackage } from "../../providers/packages/PackageContext";
 import SelectRemoteWidget from "./SelectRemoteWidget";
 
 export default function SelectRemoteWithPackageWidget(props) {

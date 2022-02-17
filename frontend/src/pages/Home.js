@@ -68,7 +68,7 @@ const Home = () => {
                             </Timeline.Item>
                         </Timeline>
                     </Card>
-                    <Image style={{ height: 400 }} preview={false} src="/front/logo512.png" />
+                    <Image style={{ height: 310, width: 310, margin: "0px 60px" }} preview={false} src="/front/logo512.png" />
                 </Col>
             </Row>
         </Content>
