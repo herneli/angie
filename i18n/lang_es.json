@@ -179,7 +179,8 @@
                 "settings_title": "Opciónes Nodo: {label}",
                 "info": "Los siguientes nodos son aquellos cuyo codigo de referencia no se ha encontrado en los Nodos del paquete/versión, por favor seleccione el tipo de nodo adecuado por cada Nodo no encontrado.",
                 "type_modal": "Nodos con errores"
-            }
+            },
+            "inject_channel_stopped": "Es necesario desplegar el canal para poder realizar esta acción."
         }
     },
     "menu": {
