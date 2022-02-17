@@ -6,7 +6,6 @@ import Message from "./Message";
 import { getMessageTraces } from "./Message";
 import T from "i18n-react";
 import { useParams } from "react-router";
-// import { v4 as uuid_v4 } from "uuid";
 import Icon from "@mdi/react";
 import { mdiDownload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
 import { createUseStyles } from "react-jss";
@@ -62,18 +61,23 @@ const Messages = (props) => {
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
+        filters.channel_id = channel;
+
         if (pagination?.pageSize && pagination?.current) {
             filters.limit = pagination.pageSize ? pagination.pageSize : 10;
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
         }
 
-        if (sorts) {
+        if (sorts?.order) {
             filters.sort = Object.keys(sorts).length !== 0 && {
                 field: sorts.columnKey || sorts.field,
                 direction: sorts.order,
             };
+        } else {
+            filters.sort = { field: "date_reception", direction: "descend" };
         }
+
         if (currentDates) {
             filters["date_reception"] = {
                 type: "date",
@@ -83,11 +87,9 @@ const Messages = (props) => {
         }
 
         try {
-            const channelResponse = await axios.post(`/messages/${channel}`, filters);
-            // const messageCount = await axios.get(`/messages/${channel}/count`, filters);
+            const channelResponse = await axios.post(`/messages/list`, filters);
             if (channelResponse?.data) {
-                const messages = channelResponse.data;
-                const totalMessages = 1000;
+                const { data: messages, total: totalMessages } = channelResponse.data;
 
                 const parsedMessages = messages.map((message) => {
                     const { message_id, status, date_processed, date_reception } = message;
@@ -239,7 +241,7 @@ const Messages = (props) => {
                 Utils.getFiltersByPairs((key) => `${key}`, value)
             );
         } else if (value !== "") {
-            const tableName = "zmessages_" + channel;
+            const tableName = "zmessages";
             const filter = {
                 [`"${tableName}"`]: {
                     type: "full-text-psql",
