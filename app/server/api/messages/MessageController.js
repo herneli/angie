@@ -63,11 +63,7 @@ export class MessageController extends BaseController {
             const data = await this.service.getChannelMessages(channel, filters);
             res.json(data);
         } catch (e) {
-            if (e.body.status === 404) {
-                res.json({});
-            } else {
-                next(e);
-            }
+            next(e);
         }
     }
 
