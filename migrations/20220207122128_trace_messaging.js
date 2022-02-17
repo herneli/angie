@@ -9,7 +9,7 @@ exports.up = async (knex) => {
             table.string("channel_name", 100);
             table.string("message_content_id", 50);
             table.string("message_content_type", 50);
-            table.string("error_cause", "longtext");
+            table.text("error_cause", "longtext");
             table.text("error_stack", "longtext");
             table.jsonb("meta");
             
