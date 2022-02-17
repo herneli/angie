@@ -1,8 +1,5 @@
-// import { BaseService } from "../../integration/elastic";
-import { TagService } from "../tags";
 import { MessageDao } from "./MessageDao";
 
-import lodash from "lodash";
 import { BaseService } from "lisco";
 export class MessageService extends BaseService {
     constructor() {
@@ -25,10 +22,6 @@ export class MessageService extends BaseService {
         response.data = [];
         response.total = 0;
         return response;
-    }
-
-    getChannelMessages(channel, filters) {
-        return this.dao.getChannelMessages(channel, filters);
     }
 
     getChannelMessageCount(channel) {
