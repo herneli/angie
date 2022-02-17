@@ -36,7 +36,7 @@ Establecer la clave generada anteriormente en `JUM_AGENTS_SECRET` dentro del arc
 
 ## Docker Environment
 
-Necesario disponer de docker instalado en el sistema el cual creará los contenedores: PostgreSQL, RabbitMQ, Kibana y ElasticSearch.
+Necesario disponer de docker instalado en el sistema el cual creará los contenedores: PostgreSQL, Keycloak, Prometheus y Grafana.
 
 El arranque y creación de estos sistemas se realiza mediante:
 
@@ -49,10 +49,9 @@ También se puede instalar la extensión docker y docker-compose en vscode para 
 Los puertos en los que se encuentra, por defecto, cada componente son:
 
 -   PostgreSQL: 3132
--   RabbitMQ: 3111 y 3112(management)
--   ElasticSearch: 3103
--   Kibana: 3108
 -   Keycloak: 3114
+-   Prometheus: 3190
+-   Grafana: 3100
 
 _**Nota:** en determinados entornos el script de `dbinit/01-init.sh` de postgre no funciona correctamente. En entornos Linux/Mac es necesario dar permisos (chmod 777) y en windows cambiar el tipo de salto de línea a LF._
 
