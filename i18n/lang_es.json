@@ -159,7 +159,8 @@
                 "deploy": "Desplegar",
                 "undeploy": "Replegar",
                 "stop": "Detener",
-                "start": "Arrancar"
+                "start": "Arrancar",
+                "delete": "Eliminar canal"
             },
             "context_menu": {
                 "configure": "Configurar",
