@@ -235,11 +235,11 @@ class ChannelHandlebarsHelpers {
     getMarshal(format) {
         switch (format) {
             case "json":
-                return "<marshal><json/></marshal>";
+                return this.safe("<marshal><json/></marshal>");
             case "hl7":
-                return "<marshal><hl7/></marshal>";
+                return this.safe("<marshal><hl7/></marshal>");
             case "xml":
-                return "<marshal><jacksonxml/></marshal>";
+                return this.safe("<marshal><jacksonxml/></marshal>");
             default:
                 return "";
         }
