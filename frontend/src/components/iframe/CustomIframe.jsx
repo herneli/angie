@@ -5,16 +5,17 @@ import { useEffect } from "react";
 
 export default function CustomIframe(props) {
     const [loading, setLoading] = useState(true);
-    const { width, height, style, bordered, ...customProps } = props;
+    const { width, height, style, onLoad, delay = 300, bordered, ...customProps } = props;
 
     useEffect(() => {
         setLoading(true);
-    }, [props.src]);
+    }, [props.src, props]);
 
     const showContent = () => {
+        //El timeout se utiliza para compensar el tiempo de carga del contenido del iframe
         setTimeout(() => {
             setLoading(false);
-        }, 300);
+        }, delay);
     };
 
     return (
@@ -33,7 +34,12 @@ export default function CustomIframe(props) {
                 </div>
             ) : null}
             <iframe
-                onLoad={showContent}
+                onLoad={(e) => {
+                    if (onLoad) {
+                        onLoad(e);
+                    }
+                    showContent();
+                }}
                 width={width}
                 height="100%"
                 {...customProps}
