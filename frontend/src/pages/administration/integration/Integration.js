@@ -7,8 +7,7 @@ import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
 import { useHistory } from "react-router";
-import Marquee from 'react-fast-marquee';
-
+import Marquee from "react-fast-marquee";
 
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-xml";
@@ -42,6 +41,7 @@ import {
     mdiSourceBranchPlus,
     mdiCogs,
     mdiAlertOutline,
+    mdiTrashCan,
 } from "@mdi/js";
 import { useInterval } from "../../../common/useInterval";
 import PreventTransitionPrompt from "../../../components/PreventTransitionPrompt";
@@ -495,18 +495,25 @@ const Integration = () => {
 
         let buttons = [];
 
-        let nodeError=[]
-        if(warningIcon){
+        let nodeError = [];
+        if (warningIcon) {
             nodeError.push(
-            <Marquee pauseOnHover  style={{width: 250}} gradient={false} warningIcon={false}>
-                <IconButton
-                    key="nodeWarning"
-                    style={{backgroundColor: "white"}}
-                    onClick={() => showWarningVisible()}
-                    icon={{ path: mdiAlertOutline  ,color: "RED", size: 0.6, title: T.translate("common.button.warning"),spin:true }}
-                >{T.translate("integrations.channel.node.type_modal")}</IconButton>
-            </Marquee>
-        )
+                <Marquee pauseOnHover style={{ width: 250 }} gradient={false} warningIcon={false}>
+                    <IconButton
+                        key="nodeWarning"
+                        style={{ backgroundColor: "white" }}
+                        onClick={() => showWarningVisible()}
+                        icon={{
+                            path: mdiAlertOutline,
+                            color: "RED",
+                            size: 0.6,
+                            title: T.translate("common.button.warning"),
+                            spin: true,
+                        }}>
+                        {T.translate("integrations.channel.node.type_modal")}
+                    </IconButton>
+                </Marquee>
+            );
         }
 
         if (currentStatus === "Started" && activeChannel.enabled) {
@@ -808,7 +815,9 @@ const Integration = () => {
                 onChange={(activeKey) => setActiveTab(activeKey) && console.log("wii")}
                 activeKey={activeTab}
                 destroyInactiveTabPane={true}
-                onEdit={onTabEdit}>
+                onEdit={(channelId, action) => {
+                    action === "add" && onTabEdit(channelId, action);
+                }}>
                 {channels.map((channel) => (
                     <TabPane
                         style={{ position: "relative", overflow: "hidden" }}
@@ -818,6 +827,21 @@ const Integration = () => {
                             </span>
                         }
                         key={channel.id}
+                        closeIcon={
+                            <Popconfirm
+                                key={`delete_${channel}`}
+                                title={T.translate("common.question")}
+                                onConfirm={() => {
+                                    onTabEdit(channel.id, "remove");
+                                }}>
+                                <Icon
+                                    id="delete-button"
+                                    path={mdiTrashCan}
+                                    size={0.7}
+                                    title={T.translate("integrations.channel.button.delete")}
+                                />
+                            </Popconfirm>
+                        }
                         closable={true}>
                         <Channel
                             channel={channel}
