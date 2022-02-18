@@ -30,10 +30,11 @@ export class MessageDao extends BaseKnexDao {
             `${this.tableName}.error_cause`,
             `${this.tableName}.error_stack`,
             `${this.tableName}.meta`,
+            knex.raw(`string_agg("tag", '-'  order by "tag_date") as datatags`),
         ];
 
         const self = this;
-        return knex
+        const qry = knex
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
@@ -50,6 +51,9 @@ export class MessageDao extends BaseKnexDao {
             .orderByRaw(sorts)
             .limit(limit)
             .offset(start);
+
+        // console.log(qry.toSQL());
+        return await qry;
     }
 
     async countFilteredDataTagged(filters, tagFilter) {
@@ -67,6 +71,7 @@ export class MessageDao extends BaseKnexDao {
             `${this.tableName}.error_cause`,
             `${this.tableName}.error_stack`,
             `${this.tableName}.meta`,
+            knex.raw(`string_agg("tag", '-'  order by "tag_date") as datatags`),
         ];
 
         const self = this;
@@ -75,10 +80,10 @@ export class MessageDao extends BaseKnexDao {
                 this.columns(columns)
                     .from(self.tableName)
                     .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
+                    .groupBy(`${self.tableName}.message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
                     )
-                    .groupBy(`${self.tableName}.message_id`)
                     .as("tagged_messages");
             })
             .where((builder) =>

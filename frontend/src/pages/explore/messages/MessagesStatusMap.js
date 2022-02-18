@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { useState } from "react";
 import lodash from "lodash";
-import StatusMap from "../StatusMap";
+import StatusMap from "../common/StatusMap";
 
 import T from "i18n-react";
 

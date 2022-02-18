@@ -1,19 +1,32 @@
 import { Col, Row, Typography, Table, Input, Divider } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import BasicFilter from "../../components/basic-filter/BasicFilter";
+import BasicFilter from "../../../components/basic-filter/BasicFilter";
 import TagMessageMap from "./tag-messages-map/TagMessageMap";
 
 import T from "i18n-react";
 
-import Utils from "../../common/Utils";
-import { useAngieSession } from "../../providers/security/UserContext";
+import Utils from "../../../common/Utils";
+import { useAngieSession } from "../../../providers/security/UserContext";
 
-const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad, doTableLoad, height, mapLoading, tableLoading }) => {
+const StatusMap = ({
+    tags,
+    dataSource,
+    defaultDates,
+    customDateRanges,
+    doMapLoad,
+    doTableLoad,
+    height,
+    mapLoading,
+    tableLoading,
+}) => {
     const [selectedElements, setSelectedElements] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState([]);
 
+    const [searchValue, setSearchValue] = useState("");
+
     const [filters, setFilters] = useState({});
+    const [dateFilters, setDateFilters] = useState({});
     const [pagination, setPagination] = useState();
     const [sort, setSort] = useState({});
     const { currentUser } = useAngieSession();
@@ -45,42 +58,52 @@ const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad
         setSelectedElements(selectedRowKeys);
     };
 
-    const onSearch = (value) => {
-        if (value.indexOf(":") !== -1) {
-            return setFilters(Utils.getFiltersByPairs((key) => `${key}`, value));
+    const onTagSelected = (filter) => {
+        console.log(filter);
+        setSearchValue(filter);
+        if (filter) {
+            onSearch(filter);
         }
-        const filter = {
-            tagged_messages: {
-                type: "full-text-psql",
-                value: value,
-            },
-        };
-        const newFilters = value ? { ...filters, ...filter } : { ...filters };
+    };
+
+    const onSearch = (value) => {
+        console.log('oli')
+        let newFilters = {};
+        if (value.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `${key}`, value);
+        } else if (value) {
+            newFilters = {
+                tagged_messages: {
+                    type: "full-text-psql",
+                    value: value,
+                },
+            };
+        }
+
         setFilters(newFilters);
-        doTableLoad(pagination, newFilters, sort, checkedNodes);
-        doMapLoad(newFilters, checkedNodes);
+        doTableLoad(pagination, { ...dateFilters, ...newFilters }, sort, checkedNodes);
+        doMapLoad({ ...dateFilters, ...newFilters }, checkedNodes);
     };
 
     const onDateChange = (dates) => {
         if (dates) {
-            const newFilters = {
-                ...filters,
+            const newDateFilters = {
                 date_reception: {
                     type: "date",
                     start: dates[0].toISOString(),
                     end: dates[1].toISOString(),
                 },
             };
-            setFilters(newFilters);
-            doTableLoad(pagination, newFilters, sort, checkedNodes);
-            doMapLoad(newFilters, checkedNodes);
+            setDateFilters(newDateFilters);
+            doTableLoad(pagination, { ...filters, ...newDateFilters }, sort, checkedNodes);
+            doMapLoad({ ...filters, ...newDateFilters }, checkedNodes);
         }
     };
 
     const onCheckedChange = (checkedNodes) => {
         setCheckedNodes(checkedNodes);
-        doTableLoad(pagination, filters, sort, checkedNodes);
-        doMapLoad(filters, checkedNodes);
+        doTableLoad(pagination, { ...filters, ...dateFilters }, sort, checkedNodes);
+        doMapLoad({ ...filters, ...dateFilters }, checkedNodes);
     };
 
     const baseHeight = `calc(100vh - ${height || 165}px)`;
@@ -88,6 +111,8 @@ const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad
     return (
         <div>
             <BasicFilter
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 defaultDates={defaultDates}
                 onDateChange={onDateChange}
                 onSearch={onSearch}
@@ -101,7 +126,7 @@ const StatusMap = ({ tags, dataSource, defaultDates, customDateRanges, doMapLoad
                         <TagMessageMap
                             record={tags}
                             selection={selectedElements}
-                            setSelection={setSelectedElements}
+                            setSelection={onTagSelected}
                             onCheckedChange={onCheckedChange}
                             loading={mapLoading}
                         />

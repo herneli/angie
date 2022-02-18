@@ -67,6 +67,25 @@ module.exports = async () => {
          */
         App.keycloak = getKeycloak();
         app.use(App.keycloak.middleware({ logout: "/logout" }));
+
+        //Custom tracer for Requests
+        app.use((request, response, next) => {
+            request.requestTime = Date.now();
+            response.on("finish", () => {
+                const url = require("url");
+                let pathname = url.parse(request.url).pathname;
+                let end = Date.now() - request.requestTime;
+                let user = (request && request.session && request.session.user_id) || "";
+
+                if (pathname.indexOf("metrics") === -1 && pathname.indexOf("scrape") === -1) {//Ignorar metricas 
+                    console.debug(
+                        `APIRequest[${process.pid}]::. [${request.method}] (user:${user})  ${pathname} |-> took: ${end} ms`
+                    );
+                    console.debug(JSON.stringify(request.body));
+                }
+            });
+            next();
+        });
     };
 
     App.beforeListen = () => {
@@ -114,6 +133,7 @@ module.exports = async () => {
             //     directives: directives,
             // },
         },
+        traceRequests: false,
         socketio: { transports: ["websocket"], pingTimeout: 60 * 1000 },
     });
 

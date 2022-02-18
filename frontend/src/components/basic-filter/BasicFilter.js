@@ -7,7 +7,16 @@ const { RangePicker } = DatePicker;
 
 const dateFormat = "YYYY/MM/DD HH:mm:ss";
 
-const BasicFilter = ({ hideDateFilter, defaultDates, onSearch, onDateChange, customDateRanges, children }) => {
+const BasicFilter = ({
+    value,
+    onChange,
+    hideDateFilter,
+    defaultDates,
+    onSearch,
+    onDateChange,
+    customDateRanges,
+    children,
+}) => {
     const defaultDateRanges = {};
     defaultDateRanges[T.translate("common.date_ranges.today")] = [moment().startOf("day"), moment().endOf("day")];
     defaultDateRanges[T.translate("common.date_ranges.last_24")] = [
@@ -30,7 +39,7 @@ const BasicFilter = ({ hideDateFilter, defaultDates, onSearch, onDateChange, cus
     return (
         <Row>
             <Col flex={2}>
-                <Input.Search onSearch={(element) => onSearch(element)} enterButton />
+                <Input.Search allowClear value={value} onSearch={(element) => onSearch(element)} enterButton onChange={onChange} />
             </Col>
             <Col flex={1}>
                 <Row justify="end">

@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 
 import lodash from "lodash";
-import ReactFlow, { isNode, Controls } from "react-flow-renderer";
+import ReactFlow, { isNode, Controls, ReactFlowProvider, useZoomPanHelper } from "react-flow-renderer";
 
 import dagre from "dagre";
-import FloatingEdge from "../../../components/react-flow/FloatingEdge";
+import FloatingEdge from "../../../../components/react-flow/FloatingEdge";
 
 import "./TagMessageMap.css";
-import TagNode from "../../../components/react-flow/custom_nodes/TagNode";
-import useEventListener from "../../../hooks/useEventListener";
+import TagNode from "../../../../components/react-flow/custom_nodes/TagNode";
+import useEventListener from "../../../../hooks/useEventListener";
 
-import * as api from "../../../api/configurationApi";
+import * as api from "../../../../api/configurationApi";
 import { Checkbox, Divider, Spin } from "antd";
 
 import T from "i18n-react";
-import axios from "axios";
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -47,9 +46,21 @@ const getLayoutedElements = (elements) => {
     });
 };
 
-const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loading }) => {
-    const [reactFlowInstance, setReactFlowInstance] = useState(null);
+/**
+ * Componente que se encarga de hacer un FitView del ReactFlow al ser montado
+ * @param {*} param0
+ * @returns
+ */
+const FitView = ({ done }) => {
+    const { fitView } = useZoomPanHelper();
+    useEffect(() => {
+        fitView();
+        done();
+    }, []);
+    return <></>;
+};
 
+const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loading }) => {
     const [elements, setElements] = useState([]);
     const [tags, setTags] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState(null);
@@ -59,19 +70,23 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
 
     const [availableChecks, setAvailableChecks] = useState(null);
 
+    const [forceFitView, setForceFitView] = useState(false);
+
     useEffect(() => {
         loadTags();
     }, []);
 
     useEffect(() => {
+        let available = availableChecks;
+        if (record && record.nodes && availableChecks == null) {
+            available = getCurrentOptions(record);
+        }
         let checked = checkedNodes;
         if (record && record.nodes && checkedNodes == null) {
-            checked = defaultSelected(record);
-            setCheckedNodes();
+            checked = defaultSelected(record, available);
+            setCheckedNodes(checked);
         }
-        if (record && record.nodes && availableChecks == null) {
-            getCurrentOptions(record);
-        }
+
         createElements(record, checked);
     }, [record]);
 
@@ -91,30 +106,23 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
         }
     };
 
-    const defaultSelected = ({ nodes }) => {
+    const defaultSelected = ({ nodes }, available) => {
         const selected = lodash.keys(nodes);
-        setCheckAllNodes(selected.length >= tags.length);
-        setIndeterminate(!!selected.length && selected.length < tags.length);
+        setCheckAllNodes(selected.length >= available.length);
+        console.log(selected.length);
+        console.log(available.length);
+        setIndeterminate(!!selected.length && selected.length < available.length);
         return selected;
     };
-
-    /**
-     * Almacena la instancia actual del RFlow
-     * @param {*} _reactFlowInstance
-     * @returns
-     */
-    const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
     useEventListener("resize", () => {
         refitView();
     });
 
     const refitView = () => {
-        // setTimeout(() => {
-        //     if (reactFlowInstance) {
-        //         reactFlowInstance.fitView();
-        //     }
-        // }, 50);
+        setTimeout(() => {
+            setForceFitView(true);
+        }, 100);
     };
 
     /**
@@ -124,7 +132,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
      */
     const createElements = async (data, checked) => {
         if (data) {
-            const { connections, nodes } = data;
+            const { connections, nodes, counters } = data;
 
             //Crear los nodos
             const elems = [];
@@ -134,6 +142,8 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
                     continue;
                 }
 
+                const srcCount = lodash.find(counters, { code: tag.code, type: "source" });
+                const tgtCount = lodash.find(counters, { code: tag.code, type: "target" });
                 elems.push({
                     id: tag.code,
                     type: "TagNode",
@@ -142,25 +152,24 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
                         label: tag.name,
                         tagId: tag.id,
                         healthcheck: tag.healthcheck,
-                        error_sent: el && el.error_sent,
-                        success_sent: el && el.sent_sent,
-                        error_rec: el && el.error_rec,
-                        success_rec: el && el.sent_rec,
+                        error_sent: srcCount && srcCount.error,
+                        success_sent: srcCount && srcCount.sent,
+                        error_rec: tgtCount && tgtCount.error,
+                        success_rec: tgtCount && tgtCount.sent,
                         onElementClick: (type) => {
                             switch (type) {
-                                // case "error_sent":
-                                //TODO selection!
-                                //     if (el) setSelection(lodash.uniq(el.error_sent));
-                                //     break;
-                                // case "error_rec":
-                                //     if (el) setSelection(lodash.uniq(el.error_rec));
-                                //     break;
-                                // case "success_sent":
-                                //     if (el) setSelection(lodash.uniq(el.sent_sent));
-                                //     break;
-                                // case "success_rec":
-                                //     if (el) setSelection(lodash.uniq(el.sent_rec));
-                                //     break;
+                                case "error_sent":
+                                    if (el) setSelection(`datatags:${tag.code}- status:error`);
+                                    break;
+                                case "error_rec":
+                                    if (el) setSelection(`datatags:-${tag.code} status:error`);
+                                    break;
+                                case "success_sent":
+                                    if (el) setSelection(`datatags:${tag.code}- status:sent`);
+                                    break;
+                                case "success_rec":
+                                    if (el) setSelection(`datatags:-${tag.code} status:sent`);
+                                    break;
                                 // case "all":
                                 //     let sel = [];
                                 //     if (el.error_sent) sel = [...sel, ...lodash.uniq(el.error_sent)];
@@ -188,7 +197,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
             if (!lodash.isEmpty(elements)) {
                 // elements[0].data.onElementClick("all"); //Utilizar el metodo definido para forzar la seleccion
             } else {
-                setSelection([]);
+                setSelection();
             }
         }
     };
@@ -213,38 +222,43 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
 
     const getCurrentOptions = (data) => {
         let currentTags = lodash.filter(tags, (tag) => (data.nodes[tag.code] ? true : false));
-        setAvailableChecks(lodash.map(currentTags, (tag) => ({ label: tag.name, value: tag.code })));
+        const available = lodash.map(currentTags, (tag) => ({ label: tag.name, value: tag.code }));
+        setAvailableChecks(available);
+        return available;
     };
     return (
         <span className="tagMap">
-            <Spin spinning={loading} />
-            {tags && (
-                <div>
-                    <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAllNodes}>
-                        {T.translate("common.all")}
-                    </Checkbox>
-                    <Divider type="vertical" />
-                    <Checkbox.Group options={availableChecks || []} value={checkedNodes} onChange={onChange} />
-                </div>
-            )}
-            <ReactFlow
-                onLoad={onLoad}
-                edgeTypes={edgeTypes}
-                nodeTypes={{
-                    TagNode: TagNode,
-                }}
-                onSelectionChange={onElementSelection}
-                // zoomOnScroll={false}
-                panOnScroll={false}
-                // paneMoveable={false}
-                selectNodesOnDrag={false}
-                // nodesDraggable={false}
-                nodesConnectable={false}
-                elements={elements}
-                zoomOnDoubleClick={false}
-                snapToGrid={true}>
-                <Controls showInteractive={false} />
-            </ReactFlow>
+            <ReactFlowProvider>
+                <Spin spinning={loading} />
+                {tags && (
+                    <div>
+                        <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAllNodes}>
+                            {T.translate("common.all")}
+                        </Checkbox>
+                        <Divider type="vertical" />
+                        <Checkbox.Group options={availableChecks || []} value={checkedNodes} onChange={onChange} />
+                    </div>
+                )}
+                {forceFitView && <FitView done={setForceFitView} />}
+                <ReactFlow
+                    edgeTypes={edgeTypes}
+                    nodeTypes={{
+                        TagNode: TagNode,
+                    }}
+                    // onSelectionChange={onElementSelection}
+                    // zoomOnScroll={false}
+                    panOnScroll={false}
+                    onNodeDragStart={(e) => e.stopPropagation()}
+                    // paneMoveable={false}
+                    selectNodesOnDrag={false}
+                    // nodesDraggable={false}
+                    nodesConnectable={false}
+                    elements={elements}
+                    zoomOnDoubleClick={false}
+                    snapToGrid={true}>
+                    <Controls showInteractive={false} />
+                </ReactFlow>
+            </ReactFlowProvider>
         </span>
     );
 };

@@ -12,7 +12,7 @@ exports.up = async (knex) => {
             table.text("error_cause", "longtext");
             table.text("error_stack", "longtext");
             table.jsonb("meta");
-            
+
             table.index(["status"]);
             table.index(["message_id"]);
             table.index(["date_reception"]);
@@ -39,6 +39,11 @@ exports.up = async (knex) => {
             table.string("date_time", 30);
             table.string("arrow", 4).notNullable();
             table.jsonb("data");
+
+            table.index(["date_time"]);
+            table.index(["event"]);
+            table.index(["breadcrumb_id"]);
+            table.index(["exchange_id"]);
         });
     }
 
@@ -56,6 +61,13 @@ exports.up = async (knex) => {
             table.index(["tag_date"]);
         });
     }
+
+    await knex.raw(`CREATE MATERIALIZED VIEW IF NOT EXISTS tagged_messages AS select "message_id","date_reception", "date_processed", "channel_name", "message_content_id", "message_content_type", "status", "meta", string_agg("ztags"."tag", '-' order by "ztags"."tag_date") as datatags
+    from "zmessages" 
+    left join "ztags" on "zmessages"."message_id" = "ztags"."tag_message_id" 
+    group by "zmessages"."message_id";`);
 };
 
-exports.down = function (knex) {};
+exports.down = async (knex) => {
+    await knex.raw(`DROP MATERIALIZED VIEW tagged_messages;`);
+};

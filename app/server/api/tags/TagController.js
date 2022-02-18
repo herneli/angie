@@ -1,4 +1,4 @@
-import { App, BaseController, JsonResponse } from "lisco";
+import { App, BaseController, JsonResponse, KnexConnector } from "lisco";
 import expressAsyncHandler from "express-async-handler";
 import { TagService } from ".";
 import { IntegrationService } from "../integration";
@@ -24,6 +24,13 @@ export class TagController extends BaseController {
                 this.healthcheck(request, response, next);
             })
         );
+
+        setInterval(async () => {
+            //Establecer el intervalo de recarga de la vista de tagged_messages
+            const knex = KnexConnector.connection;
+            await knex.raw("REFRESH MATERIALIZED VIEW tagged_messages;");
+            console.log("reloading tagged_messages");
+        }, 60 * 1000);
 
         return this.router;
     }
