@@ -30,7 +30,7 @@ export class TagController extends BaseController {
             const knex = KnexConnector.connection;
             await knex.raw("REFRESH MATERIALIZED VIEW tagged_messages;");
             console.log("reloading tagged_messages");
-        }, 60 * 1000);
+        }, 30 * 1000);
 
         return this.router;
     }

@@ -73,27 +73,29 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
     const [forceFitView, setForceFitView] = useState(false);
 
     useEffect(() => {
-        loadTags();
-    }, []);
-
-    useEffect(() => {
-        let available = availableChecks;
-        if (record && record.nodes && availableChecks == null) {
-            available = getCurrentOptions(record);
-        }
-        let checked = checkedNodes;
-        if (record && record.nodes && checkedNodes == null) {
-            checked = defaultSelected(record, available);
-            setCheckedNodes(checked);
-        }
-
-        createElements(record, checked);
+        loadRecord(record);
     }, [record]);
 
-    useEffect(() => {
-        refitView();
-    }, [record]);
 
+    const loadRecord = async (record) => {
+        if (!lodash.isEmpty(record)) {
+            let available = availableChecks;
+            let tagMaster = tags;
+            if (record && record.nodes && availableChecks == null) {
+                const data = await getCurrentOptions(record);
+                available = data.available;
+                tagMaster = data.tags;
+            }
+            let checked = checkedNodes;
+            if (record && record.nodes && checkedNodes == null) {
+                checked = defaultSelected(record, available);
+                setCheckedNodes(checked);
+            }
+
+            createElements(record, tagMaster, checked);
+            refitView();
+        }
+    };
     /**
      * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
@@ -101,6 +103,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
         try {
             const tags = await api.getModelDataList("tag");
             setTags(tags);
+            return tags;
         } catch (ex) {
             console.error(ex);
         }
@@ -130,7 +133,7 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
      *
      * @param {*} data
      */
-    const createElements = async (data, checked) => {
+    const createElements = async (data, tags, checked) => {
         if (data) {
             const { connections, nodes, counters } = data;
 
@@ -220,11 +223,13 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
         onCheckedChange(list);
     };
 
-    const getCurrentOptions = (data) => {
-        let currentTags = lodash.filter(tags, (tag) => (data.nodes[tag.code] ? true : false));
+    const getCurrentOptions = async (data) => {
+        const tagsMaster = await loadTags();
+
+        let currentTags = lodash.filter(tagsMaster, (tag) => (data.nodes[tag.code] ? true : false));
         const available = lodash.map(currentTags, (tag) => ({ label: tag.name, value: tag.code }));
         setAvailableChecks(available);
-        return available;
+        return { available, tags: tagsMaster };
     };
     return (
         <span className="tagMap">
