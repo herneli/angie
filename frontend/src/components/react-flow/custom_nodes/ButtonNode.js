@@ -23,15 +23,14 @@ async function callApi(node, currentChannel, channelStatus) {
             });
         }
     } else {
-        //Todo: Traducción de esta notificación
-        message.warn("Es necesario desplegar el canal para poder realizar esta acción.");
+        message.info(T.translate("integrations.channel.inject_channel_stopped"));
     }
 }
 
 const ButtonNode = (node) => {
     const { currentChannel, currentStatus } = useCurrentChannel();
-
     const { data, isConnectable } = node;
+
     return (
         <div
             style={{

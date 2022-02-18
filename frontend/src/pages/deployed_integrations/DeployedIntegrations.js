@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, List, notification, Popconfirm, Row, Space, Layout, Avatar, Tag, Badge } from "antd";
+import { List, notification, Popconfirm, Space, Layout, Avatar, Tag, Badge, Divider } from "antd";
 import axios from "axios";
 import moment from "moment";
 import lodash from "lodash";
@@ -323,14 +323,38 @@ const DeployedIntegrations = () => {
      * @returns
      */
     const drawIntegration = (item) => {
+        //Suma los mensajes de los canales de la integración
+        const integrationMessages = item.channels.reduce(
+            (acc, channel) => {
+                acc.error += channel.messages_error;
+                acc.sent += channel.messages_sent;
+                acc.total += channel.messages_total;
+                return acc;
+            },
+            { total: 0, error: 0, sent: 0 }
+        );
         return (
             <List.Item key={item.id}>
                 <Space className={classes.integrationTags}>
-                    <Tag color={"blue"}>
-                        {item.package_code}@{item.package_version}
-                    </Tag>
-                    <Tag>{renderOrganization(item)}</Tag>
-                    {drawIntegrationStatus(item)}
+                    <div>
+                        <Tag color="green">
+                            {`${T.translate("integrations.columns.messages_sent")}: ${integrationMessages.sent}`}
+                        </Tag>
+                        <Tag color="red">
+                            {`${T.translate("integrations.columns.messages_error")}: ${integrationMessages.error}`}
+                        </Tag>
+                        <Tag color="blue">
+                            {`${T.translate("integrations.columns.messages_total")}: ${integrationMessages.total}`}
+                        </Tag>
+                        <Divider type="vertical" />
+                    </div>
+                    <div>
+                        <Tag color={"gold"}>
+                            {item.package_code}@{item.package_version}
+                        </Tag>
+                        <Tag>{renderOrganization(item)}</Tag>
+                        {drawIntegrationStatus(item)}
+                    </div>
                 </Space>
 
                 <List.Item.Meta
@@ -372,9 +396,15 @@ const DeployedIntegrations = () => {
                         showZero
                         count={chann.messages_sent}
                         style={{ backgroundColor: "green" }}
+                        title={`${T.translate("integrations.columns.messages_sent")}: ${chann.messages_sent}`}
                         overflowCount={99999999}
                     />,
-                    <Badge showZero count={chann.messages_error} overflowCount={99999999} />,
+                    <Badge
+                        showZero
+                        count={chann.messages_error}
+                        overflowCount={99999999}
+                        title={`${T.translate("integrations.columns.messages_error")}: ${chann.messages_error}`}
+                    />,
                     <Badge
                         showZero
                         count={chann.messages_total}
@@ -382,6 +412,7 @@ const DeployedIntegrations = () => {
                         style={{
                             backgroundColor: "#2db7f5",
                         }}
+                        title={`${T.translate("integrations.columns.messages_total")}: ${chann.messages_total}`}
                     />,
                     chann?.agent?.name && (
                         <AgentInfo

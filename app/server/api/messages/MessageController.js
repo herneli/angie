@@ -15,7 +15,7 @@ export class MessageController extends BaseController {
         this.router.post(
             `/messages/:channel`,
             expressAsyncHandler((request, response, next) => {
-                this.getChannelMessages(request, response, next);
+                this.listMessages(request, response, next);
             })
         );
 
@@ -51,17 +51,6 @@ export class MessageController extends BaseController {
             let jsRes = new JsonResponse(true, data.data, null, data.total);
 
             response.json(jsRes.toJson());
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    async getChannelMessages(req, res, next) {
-        const channel = req.params.channel;
-        const filters = req.body;
-        try {
-            const data = await this.service.getChannelMessages(channel, filters);
-            res.json(data);
         } catch (e) {
             next(e);
         }

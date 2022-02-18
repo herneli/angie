@@ -104,23 +104,6 @@ export class MessageDao extends BaseKnexDao {
 
         return data && data[0].total;
     }
-    getChannelMessages(channelId, filters) {
-        //TODO: añadir búsqueda y ordenación
-        const { start = 0, limit = 10 } = filters;
-        delete filters.start;
-        delete filters.limit;
-
-        if (!filters.sort || !filters.sort.direction) {
-            filters.sort = {
-                field: "date_reception",
-                direction: "descend",
-            };
-        }
-
-        this.tableName = `zmessages_${channelId}`;
-
-        return this.loadFilteredData(filters, start, limit);
-    }
 
     getMessageTraces(channelId, messageId) {
         this.tableName = `zstats_${channelId}`;

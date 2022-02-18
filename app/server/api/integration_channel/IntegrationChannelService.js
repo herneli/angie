@@ -92,21 +92,24 @@ export class IntegrationChannelService {
      *
      * @returns
      */
-         async listAllChannelsByIntegration() {
-            const integrationService = new IntegrationService();
-            const { data: integrations } = await integrationService.list();
-    
-            let result = [];
-            for (const integration of integrations) {
-                let channels = [];
-                for (const channel of integration.data.channels) {
-                    channels = [...channels, { id: channel.id, name: channel.name, enabled: channel.enabled, status: channel.status }];
-                }
-                result = [...result, { integration: { id: integration.id, name: integration.name, channels: channels }}];
+    async listAllChannelsByIntegration() {
+        const integrationService = new IntegrationService();
+        const { data: integrations } = await integrationService.list();
+
+        let result = [];
+        for (const integration of integrations) {
+            let channels = [];
+            for (const channel of integration.data.channels) {
+                channels = [
+                    ...channels,
+                    { id: channel.id, name: channel.name, enabled: channel.enabled, status: channel.status },
+                ];
             }
-    
-            return result;
+            result = [...result, { integration: { id: integration.id, name: integration.name, channels: channels } }];
         }
+
+        return result;
+    }
     /**
      * Busca un canal mediante su identificador
      *
@@ -400,9 +403,15 @@ export class IntegrationChannelService {
             console.error(ex);
         }
         channel.status = (remoteChannel && remoteChannel.status) || "UNDEPLOYED";
-        channel.messages_total = messages ? messages.total : (remoteChannel && remoteChannel.messages_total) || 0;
-        channel.messages_error = messages ? messages.error : (remoteChannel && remoteChannel.messages_error) || 0;
-        channel.messages_sent = messages ? messages.sent : (remoteChannel && remoteChannel.messages_sent) || 0;
+        channel.messages_total = parseInt(
+            messages ? messages.total : (remoteChannel && remoteChannel.messages_total) || 0
+        );
+        channel.messages_error = parseInt(
+            messages ? messages.error : (remoteChannel && remoteChannel.messages_error) || 0
+        );
+        channel.messages_sent = parseInt(
+            messages ? messages.sent : (remoteChannel && remoteChannel.messages_sent) || 0
+        );
 
         return channel;
     }
