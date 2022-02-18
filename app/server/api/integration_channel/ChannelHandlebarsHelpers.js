@@ -106,10 +106,10 @@ class ChannelHandlebarsHelpers {
                 ${this.setHeader("entity_type", "unknown", "constant")}
                 <setBody><simple>{}</simple></setBody>
             </otherwise>
-            <unmarshal><json/></unmarshal>
-            <process ref="entityGenerator"/>
-            <to uri="mock:store"/>
-        </choice>`);
+        </choice>
+        <unmarshal><json/></unmarshal>
+        <process ref="entityGenerator"/>
+        <to uri="mock:store"/>`);
     }
 
     /**

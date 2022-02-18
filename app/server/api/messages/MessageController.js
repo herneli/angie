@@ -71,7 +71,7 @@ export class MessageController extends BaseController {
         const { channel, message } = req.params;
         try {
             const data = await this.service.getMessageTraces(channel, message);
-            console.log(data);
+            // console.log(data);
             res.json(data);
         } catch (e) {
             next(e);
