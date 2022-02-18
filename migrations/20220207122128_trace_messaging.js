@@ -64,7 +64,7 @@ exports.up = async (knex) => {
 
     await knex("integration_config").update({ document_type: "checkpoint" }).where({ document_type: "tag" });
 
-    await knex.raw(`CREATE MATERIALIZED VIEW IF NOT EXISTS tagged_messages AS select "message_id","date_reception", "date_processed", "channel_name", "message_content_id", "message_content_type", "status", "meta", string_agg("zcheckpoints"."check_tag", '-' order by "zcheckpoints"."check_date") as checks
+    await knex.raw(`CREATE MATERIALIZED VIEW IF NOT EXISTS tagged_messages AS select "message_id","date_reception", "date_processed", "channel_name", "channel_id", "message_content_id", "message_content_type", "status", "meta", string_agg("zcheckpoints"."check_tag", '-' order by "zcheckpoints"."check_date") as checks
     from "zmessages" 
     left join "zcheckpoints" on "zmessages"."message_id" = "zcheckpoints"."check_message_id" 
     group by "zmessages"."message_id";`);
