@@ -69,5 +69,5 @@ exports.up = async (knex) => {
 };
 
 exports.down = async (knex) => {
-    await knex.raw(`DROP MATERIALIZED VIEW tagged_messages;`);
+    await knex.raw(`DROP MATERIALIZED VIEW IF EXISTS tagged_messages;`);
 };
