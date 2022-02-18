@@ -76,6 +76,11 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
         loadRecord(record);
     }, [record]);
 
+    useEffect(() => {
+        if (record) {
+            loadRecord(record);
+        }
+    }, [selection]);
 
     const loadRecord = async (record) => {
         if (!lodash.isEmpty(record)) {
@@ -191,7 +196,18 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
                 });
             }
 
-            setElements(getLayoutedElements([...lodash.compact(elems), ...lodash.values(connections)]));
+            let filteredConnections = connections;
+            if (selection && !lodash.isEmpty(selection)) {
+                const selectedPaths = lodash.map(selection, "checks");
+                filteredConnections = {};
+                for (const path in connections) {
+                    if (selectedPaths.indexOf(path) !== -1) {
+                        filteredConnections[path] = connections[path];
+                    }
+                }
+            }
+
+            setElements(getLayoutedElements([...lodash.compact(elems), ...lodash.values(filteredConnections)]));
         }
     };
 

@@ -88,7 +88,6 @@ const TagNode = ({ data, isConnectable }) => {
 
     useEffect(() => {
         if (healthcheck && healthcheck.url) {
-            console.log('lala')
             performHealthcheck();
         }
     }, [healthcheck]);

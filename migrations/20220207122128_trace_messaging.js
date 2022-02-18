@@ -34,7 +34,7 @@ exports.up = async (knex) => {
             table.string("exchange_id", 50).notNullable();
             table.string("current_channel", 50);
             table.string("current_channel_name", 100);
-            table.string("group", 100);
+            table.string("group_tag", 100);
             table.string("current_route", 50).notNullable();
             table.string("date_time", 30);
             table.string("arrow", 4).notNullable();

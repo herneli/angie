@@ -3,6 +3,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
 import MessageMap from "./messages-map/MessageMap";
+import lodash from "lodash";
 
 import T from "i18n-react";
 
@@ -21,6 +22,7 @@ const StatusMap = ({
     tableLoading,
 }) => {
     const [selectedElements, setSelectedElements] = useState([]);
+    const [selectedRecords, setSelectedRecords] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState([]);
 
     const [searchValue, setSearchValue] = useState("");
@@ -46,16 +48,21 @@ const StatusMap = ({
         selectedRowKeys: selectedElements,
         onChange: (selectedRowKeys, selectedRows) => {
             setSelectedElements(selectedRowKeys);
+            setSelectedRecords(selectedRows);
         },
     };
     const selectRow = (record) => {
         const selectedRowKeys = [...selectedElements];
+        let selectedRows = [...selectedRecords];
         if (selectedRowKeys.indexOf(record.message_id) >= 0) {
             selectedRowKeys.splice(selectedRowKeys.indexOf(record.message_id), 1);
+            selectedRows = lodash.filter(selectedRows, (e) => e.message_id !== record.message_id);
         } else {
             selectedRowKeys.push(record.message_id);
+            selectedRows.push(record);
         }
         setSelectedElements(selectedRowKeys);
+        setSelectedRecords(selectedRows);
     };
 
     const onCheckpointSelected = (filter) => {
@@ -67,7 +74,6 @@ const StatusMap = ({
     };
 
     const onSearch = (value) => {
-        console.log('oli')
         let newFilters = {};
         if (value.indexOf(":") !== -1) {
             newFilters = Utils.getFiltersByPairs((key) => `${key}`, value);
@@ -125,7 +131,7 @@ const StatusMap = ({
                     <Col span={10}>
                         <MessageMap
                             record={checks}
-                            selection={selectedElements}
+                            selection={selectedRecords}
                             setSelection={onCheckpointSelected}
                             onCheckedChange={onCheckedChange}
                             loading={mapLoading}
