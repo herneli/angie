@@ -6,7 +6,7 @@ import ReactFlow, { isNode, Controls, ReactFlowProvider, useZoomPanHelper } from
 import dagre from "dagre";
 import FloatingEdge from "../../../../components/react-flow/FloatingEdge";
 
-import "./TagMessageMap.css";
+import "./MessageMap.css";
 import TagNode from "../../../../components/react-flow/custom_nodes/TagNode";
 import useEventListener from "../../../../hooks/useEventListener";
 
@@ -60,9 +60,9 @@ const FitView = ({ done }) => {
     return <></>;
 };
 
-const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loading }) => {
+const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading }) => {
     const [elements, setElements] = useState([]);
-    const [tags, setTags] = useState([]);
+    const [checkpoints, setCheckpoints] = useState([]);
     const [checkedNodes, setCheckedNodes] = useState(null);
 
     const [indeterminate, setIndeterminate] = useState(true);
@@ -80,11 +80,11 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
     const loadRecord = async (record) => {
         if (!lodash.isEmpty(record)) {
             let available = availableChecks;
-            let tagMaster = tags;
+            let checks = checkpoints;
             if (record && record.nodes && availableChecks == null) {
                 const data = await getCurrentOptions(record);
                 available = data.available;
-                tagMaster = data.tags;
+                checks = data.checkpoints;
             }
             let checked = checkedNodes;
             if (record && record.nodes && checkedNodes == null) {
@@ -92,18 +92,18 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
                 setCheckedNodes(checked);
             }
 
-            createElements(record, tagMaster, checked);
+            createElements(record, checks, checked);
             refitView();
         }
     };
     /**
      * Carga los tipos de nodos para su utilización a lo largo de las integraciones y canales
      */
-    const loadTags = async () => {
+    const loadCheckpoints = async () => {
         try {
-            const tags = await api.getModelDataList("tag");
-            setTags(tags);
-            return tags;
+            const checkpoints = await api.getModelDataList("checkpoint");
+            setCheckpoints(checkpoints);
+            return checkpoints;
         } catch (ex) {
             console.error(ex);
         }
@@ -133,28 +133,28 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
      *
      * @param {*} data
      */
-    const createElements = async (data, tags, checked) => {
+    const createElements = async (data, checks, checked) => {
         if (data) {
             const { connections, nodes, counters } = data;
 
             //Crear los nodos
             const elems = [];
-            for (const tag of tags) {
-                const el = nodes[tag.code];
-                if (checked?.indexOf(tag.code) === -1) {
+            for (const check of checks) {
+                const el = nodes[check.code];
+                if (checked?.indexOf(check.code) === -1) {
                     continue;
                 }
 
-                const srcCount = lodash.find(counters, { code: tag.code, type: "source" });
-                const tgtCount = lodash.find(counters, { code: tag.code, type: "target" });
+                const srcCount = lodash.find(counters, { code: check.code, type: "source" });
+                const tgtCount = lodash.find(counters, { code: check.code, type: "target" });
                 elems.push({
-                    id: tag.code,
+                    id: check.code,
                     type: "TagNode",
                     // selectable: false,
                     data: {
-                        label: tag.name,
-                        tagId: tag.id,
-                        healthcheck: tag.healthcheck,
+                        label: check.name,
+                        tagId: check.id,
+                        healthcheck: check.healthcheck,
                         error_sent: srcCount && srcCount.error,
                         success_sent: srcCount && srcCount.sent,
                         error_rec: tgtCount && tgtCount.error,
@@ -162,16 +162,16 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
                         onElementClick: (type) => {
                             switch (type) {
                                 case "error_sent":
-                                    if (el) setSelection(`datatags:${tag.code}- status:error`);
+                                    if (el) setSelection(`checks:${check.code}- status:error`);
                                     break;
                                 case "error_rec":
-                                    if (el) setSelection(`datatags:-${tag.code} status:error`);
+                                    if (el) setSelection(`checks:-${check.code} status:error`);
                                     break;
                                 case "success_sent":
-                                    if (el) setSelection(`datatags:${tag.code}- status:sent`);
+                                    if (el) setSelection(`checks:${check.code}- status:sent`);
                                     break;
                                 case "success_rec":
-                                    if (el) setSelection(`datatags:-${tag.code} status:sent`);
+                                    if (el) setSelection(`checks:-${check.code} status:sent`);
                                     break;
                                 // case "all":
                                 //     let sel = [];
@@ -210,13 +210,13 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
     };
     const onChange = (list) => {
         setCheckedNodes(list);
-        setIndeterminate(!!list.length && list.length < tags.length);
-        setCheckAllNodes(list.length === tags.length);
+        setIndeterminate(!!list.length && list.length < checkpoints.length);
+        setCheckAllNodes(list.length === checkpoints.length);
         onCheckedChange(list);
     };
 
     const onCheckAllChange = (e) => {
-        const list = e.target.checked ? lodash.map(tags, "code") : [];
+        const list = e.target.checked ? lodash.map(checkpoints, "code") : [];
         setCheckedNodes(list);
         setIndeterminate(false);
         setCheckAllNodes(e.target.checked);
@@ -224,18 +224,18 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
     };
 
     const getCurrentOptions = async (data) => {
-        const tagsMaster = await loadTags();
+        const checks = await loadCheckpoints();
 
-        let currentTags = lodash.filter(tagsMaster, (tag) => (data.nodes[tag.code] ? true : false));
-        const available = lodash.map(currentTags, (tag) => ({ label: tag.name, value: tag.code }));
+        let currentTags = lodash.filter(checks, (check) => (data.nodes[check.code] ? true : false));
+        const available = lodash.map(currentTags, (check) => ({ label: check.name, value: check.code }));
         setAvailableChecks(available);
-        return { available, tags: tagsMaster };
+        return { available, checkpoints: checks };
     };
     return (
         <span className="tagMap">
             <ReactFlowProvider>
                 <Spin spinning={loading} />
-                {tags && (
+                {checkpoints && (
                     <div>
                         <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAllNodes}>
                             {T.translate("common.all")}
@@ -268,4 +268,4 @@ const TagMessageMap = ({ record, selection, setSelection, onCheckedChange, loadi
     );
 };
 
-export default TagMessageMap;
+export default MessageMap;

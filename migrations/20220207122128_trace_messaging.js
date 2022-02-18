@@ -47,24 +47,26 @@ exports.up = async (knex) => {
         });
     }
 
-    if (!(await knex.schema.hasTable("ztags"))) {
-        await knex.schema.createTable("ztags", function (table) {
-            table.string("tag", 200).notNullable();
-            table.string("tag_message_id", 50).notNullable();
-            table.string("tag_route_id", 50).notNullable();
-            table.string("tag_channel_id", 50).notNullable();
-            table.string("tag_date", 30).notNullable();
-            table.primary(["tag", "tag_message_id", "tag_route_id"]);
+    if (!(await knex.schema.hasTable("zcheckpoints"))) {
+        await knex.schema.createTable("zcheckpoints", function (table) {
+            table.string("check_tag", 200).notNullable();
+            table.string("check_message_id", 50).notNullable();
+            table.string("check_route_id", 50).notNullable();
+            table.string("check_channel_id", 50).notNullable();
+            table.string("check_date", 30).notNullable();
+            table.primary(["check_tag", "check_message_id", "check_route_id"]);
 
-            table.index(["tag"]);
-            table.index(["tag_message_id"]);
-            table.index(["tag_date"]);
+            table.index(["check_tag"]);
+            table.index(["check_message_id"]);
+            table.index(["check_date"]);
         });
     }
 
-    await knex.raw(`CREATE MATERIALIZED VIEW IF NOT EXISTS tagged_messages AS select "message_id","date_reception", "date_processed", "channel_name", "message_content_id", "message_content_type", "status", "meta", string_agg("ztags"."tag", '-' order by "ztags"."tag_date") as datatags
+    await knex("integration_config").update({ document_type: "checkpoint" }).where({ document_type: "tag" });
+
+    await knex.raw(`CREATE MATERIALIZED VIEW IF NOT EXISTS tagged_messages AS select "message_id","date_reception", "date_processed", "channel_name", "message_content_id", "message_content_type", "status", "meta", string_agg("zcheckpoints"."check_tag", '-' order by "zcheckpoints"."check_date") as checks
     from "zmessages" 
-    left join "ztags" on "zmessages"."message_id" = "ztags"."tag_message_id" 
+    left join "zcheckpoints" on "zmessages"."message_id" = "zcheckpoints"."check_message_id" 
     group by "zmessages"."message_id";`);
 };
 

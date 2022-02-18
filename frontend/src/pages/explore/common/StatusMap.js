@@ -2,7 +2,7 @@ import { Col, Row, Typography, Table, Input, Divider } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
-import TagMessageMap from "./tag-messages-map/TagMessageMap";
+import MessageMap from "./messages-map/MessageMap";
 
 import T from "i18n-react";
 
@@ -10,7 +10,7 @@ import Utils from "../../../common/Utils";
 import { useAngieSession } from "../../../providers/security/UserContext";
 
 const StatusMap = ({
-    tags,
+    checks,
     dataSource,
     defaultDates,
     customDateRanges,
@@ -58,7 +58,7 @@ const StatusMap = ({
         setSelectedElements(selectedRowKeys);
     };
 
-    const onTagSelected = (filter) => {
+    const onCheckpointSelected = (filter) => {
         console.log(filter);
         setSearchValue(filter);
         if (filter) {
@@ -123,10 +123,10 @@ const StatusMap = ({
             <div>
                 <Row style={{}}>
                     <Col span={10}>
-                        <TagMessageMap
-                            record={tags}
+                        <MessageMap
+                            record={checks}
                             selection={selectedElements}
-                            setSelection={onTagSelected}
+                            setSelection={onCheckpointSelected}
                             onCheckedChange={onCheckedChange}
                             loading={mapLoading}
                         />
@@ -173,11 +173,6 @@ const StatusMap = ({
                                         dataIndex: ["message_content_type"],
                                         sorter: true,
                                     },
-                                    // {
-                                    //     title: T.translate("messages.tags"),
-                                    //     dataIndex: ["tags"],
-                                    //     sorter: true,
-                                    // },
                                     {
                                         title: T.translate("messages.channel"),
                                         dataIndex: ["channel_name"],

@@ -79,7 +79,7 @@ const TagNode = ({ data, isConnectable }) => {
 
     const performHealthcheck = async () => {
         try {
-            const response = await axios.get(`/tag/${tagId}/healthcheck`);
+            const response = await axios.get(`/checkpoint/${tagId}/healthcheck`);
             setHealthData(response.data.data);
         } catch (ex) {
             console.error(ex);

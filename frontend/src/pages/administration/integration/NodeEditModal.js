@@ -79,7 +79,7 @@ export default function NodeEditModal({
      */
     const loadTags = async () => {
         try {
-            const tags = await api.getModelDataList("tag");
+            const tags = await api.getModelDataList("checkpoint");
             setTags(tags);
         } catch (ex) {
             console.error(ex);

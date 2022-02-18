@@ -2,11 +2,11 @@
 
 import { BaseKnexDao, KnexConnector, KnexFilterParser } from "lisco";
 import lodash, { groupBy } from "lodash";
-export class TagDao extends BaseKnexDao {
+export class CheckpointDao extends BaseKnexDao {
     constructor() {
         super();
 
-        this.tableName = `ztags`;
+        this.tableName = `zcheckpoints`;
     }
 
     async loadFilteredData(filters, start, limit) {
@@ -46,33 +46,33 @@ export class TagDao extends BaseKnexDao {
     }
 
     /**
-     * Obtiene una lista con las posibles tags de la aplicación.
+     * Obtiene una lista con las posibles checkpoints de la aplicación.
      *
      * Su estructura será:
      * [
      *  {
-     *      "datatags": "xxx-yyy-zzz", //Lista de tags separados por guiones donde los origenes estan a la izquierda de sus destinos
+     *      "checks": "xxx-yyy-zzz", //Lista de checkpoints separados por guiones donde los origenes estan a la izquierda de sus destinos
      *      "status": "error|sent" //Estado del mensaje mas reciente encontrado
      *  }
      * ]
      * @param {*} filters
      * @returns
      */
-    async getProcessedTags(filters) {
+    async getProcessedCheckpoints(filters) {
         const knex = KnexConnector.connection;
 
         let qry = knex
-            .columns(["datatags", knex.raw('(array_agg("status" ORDER BY "date_reception" DESC))[1] as status')]) //, knex.raw('(array_agg("status"))[1] as status')])
+            .columns(["checks", knex.raw('(array_agg("status" ORDER BY "date_reception" DESC))[1] as status')]) //, knex.raw('(array_agg("status"))[1] as status')])
             .from(function () {
                 this.columns([
-                    "datatags",
+                    "checks",
                     "status",
                     "date_reception",
-                    // knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`),
-                    // knex.raw('(array_agg("status" ORDER BY "tag_date" DESC))[1] as status'),
+                    // knex.raw(`string_agg("check_tag", '-' order by "check_date") as checks`),
+                    // knex.raw('(array_agg("status" ORDER BY "check_date" DESC))[1] as status'),
                 ])
                     // .from(self.tableName)
-                    // .leftJoin(RELATION_TABLE, `${self.tableName}.tag_message_id`, `${RELATION_TABLE}.message_id`)
+                    // .leftJoin(RELATION_TABLE, `${self.tableName}.check_message_id`, `${RELATION_TABLE}.message_id`)
                     // .from(function () {
                     //     self.getTaggedMessagesQuery(this);
                     // })
@@ -83,7 +83,7 @@ export class TagDao extends BaseKnexDao {
                     // .groupBy(`message_id`)
                     .as("nodetags");
             })
-            .groupBy(`nodetags.datatags`);
+            .groupBy(`nodetags.checks`);
 
         // console.log(qry.toSQL());
         return await qry;
@@ -104,13 +104,13 @@ export class TagDao extends BaseKnexDao {
         const self = this;
         let qry = knex
             .columns([
-                "datatags",
+                "checks",
                 knex.raw("count(CASE WHEN status = 'sent' THEN 1 ELSE NULL END) as sent"),
                 knex.raw("count(CASE WHEN status = 'error' THEN 1 ELSE NULL END) as error"),
                 // knex.raw("(array_agg(status))[1] as last_status"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("check_tag", '-' order by "check_date") as checks`), `status`])
                     .from(function () {
                         self.getTaggedMessagesQuery(this);
                     })
@@ -120,8 +120,8 @@ export class TagDao extends BaseKnexDao {
                     .groupBy(`message_id`, `status`)
                     .as("nodetags");
             })
-            .where("nodetags.datatags", "LIKE", `%${connection}%`)
-            .groupBy(`nodetags.datatags`);
+            .where("nodetags.checks", "LIKE", `%${connection}%`)
+            .groupBy(`nodetags.checks`);
 
         // console.log(qry.toSQL());
         return await qry;
@@ -146,14 +146,14 @@ export class TagDao extends BaseKnexDao {
                 knex.raw("count(CASE WHEN status = 'error' THEN 1 ELSE NULL END) as error"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("check_tag", '-' order by "check_date") as checks`), `status`])
                     .from(function () {
                         self.getTaggedMessagesQuery(
                             this,
                             [
-                                `${self.tableName}.message_id`,
-                                `${self.tableName}.date_reception`,
-                                `${self.tableName}.tag`,
+                                `${self.tableName}.check_message_id`,
+                                `${self.tableName}.check_date`,
+                                `${self.tableName}.check_tag`,
                                 `${RELATION_TABLE}.status`,
                             ],
                             false
@@ -165,8 +165,8 @@ export class TagDao extends BaseKnexDao {
                     .groupBy(`message_id`, `status`)
                     .as("nodetags");
             })
-            .where("nodetags.datatags", "LIKE", `${node}`)
-            .orWhere("nodetags.datatags", "LIKE", `%${node}-%`)
+            .where("nodetags.checks", "LIKE", `${node}`)
+            .orWhere("nodetags.checks", "LIKE", `%${node}-%`)
             .unionAll([this.getTargetQuery(filters, node)]);
 
         return data;
@@ -192,14 +192,14 @@ export class TagDao extends BaseKnexDao {
                 knex.raw("count(CASE WHEN status = 'error' THEN 1 ELSE NULL END) as error"),
             ])
             .from(function () {
-                this.columns([knex.raw(`string_agg("tag", '-' order by "tag_date") as datatags`), `status`])
+                this.columns([knex.raw(`string_agg("check_tag", '-' order by "check_date") as checks`), `status`])
                     .from(function () {
                         self.getTaggedMessagesQuery(
                             this,
                             [
-                                `${self.tableName}.message_id`,
-                                `${self.tableName}.date_reception`,
-                                `${self.tableName}.tag`,
+                                `${self.tableName}.check_message_id`,
+                                `${self.tableName}.check_date`,
+                                `${self.tableName}.check_tag`,
                                 `${RELATION_TABLE}.status`,
                             ],
                             false
@@ -211,11 +211,11 @@ export class TagDao extends BaseKnexDao {
                     .groupBy(`message_id`, `status`)
                     .as("nodetags");
             })
-            .where("nodetags.datatags", "LIKE", `%-${node}%`);
+            .where("nodetags.checks", "LIKE", `%-${node}%`);
     }
 
     /**
-     * Subquery target_messages que se encarga de hacer join entre las tablas zmessages y ztags de forma que se
+     * Subquery target_messages que se encarga de hacer join entre las tablas zmessages y zcheckpoints de forma que se
      * permita su uso en multiples lugares como tagged_messages
      *
      *
@@ -231,11 +231,11 @@ export class TagDao extends BaseKnexDao {
             .from(RELATION_TABLE)
             .columns(
                 columns || [
-                    `${this.tableName}.tag`,
-                    `${this.tableName}.tag_message_id`,
-                    `${this.tableName}.tag_route_id`,
-                    `${this.tableName}.tag_channel_id`,
-                    `${this.tableName}.tag_date`,
+                    `${this.tableName}.check_tag`,
+                    `${this.tableName}.check_message_id`,
+                    `${this.tableName}.check_route_id`,
+                    `${this.tableName}.check_channel_id`,
+                    `${this.tableName}.check_date`,
                     `${RELATION_TABLE}.message_id`,
                     `${RELATION_TABLE}.date_reception`,
                     `${RELATION_TABLE}.date_processed`,
@@ -245,7 +245,7 @@ export class TagDao extends BaseKnexDao {
                     `${RELATION_TABLE}.message_content_type`,
                 ]
             )
-            .leftJoin(this.tableName, `${this.tableName}.tag_message_id`, `${RELATION_TABLE}.message_id`)
+            .leftJoin(this.tableName, `${this.tableName}.check_message_id`, `${RELATION_TABLE}.message_id`)
 
             .as("tagged_messages");
 
@@ -256,7 +256,7 @@ export class TagDao extends BaseKnexDao {
     }
 
     /**
-     * Realiza la obtencion de todas las posibles tags y agrupa sus posibles elementos de forma que cuente cuantos mensajes source y target tiene cada tag
+     * Realiza la obtencion de todas las posibles tags y agrupa sus posibles elementos de forma que cuente cuantos mensajes source y target tiene cada check
      *
      * @param {*} filters
      * @returns
@@ -267,7 +267,7 @@ export class TagDao extends BaseKnexDao {
 
         let qry = knex
             .select(knex.raw("'' as type, '' as code, '0' as sent, '0' as error"))
-            .from("ztags") //Workaround para evitar problemas con groupby en unionall: https://github.com/knex/knex/issues/913#issuecomment-858803542
+            .from("zcheckpoints") //Workaround para evitar problemas con groupby en unionall: https://github.com/knex/knex/issues/913#issuecomment-858803542
             .whereRaw("0 = 1")
             .unionAll([
                 knex
@@ -278,7 +278,7 @@ export class TagDao extends BaseKnexDao {
                         knex.raw("count(CASE WHEN source_messages.status = 'error' THEN 1 ELSE NULL END) as error"),
                     ])
                     .from(function () {
-                        this.from("integration_config").select("code").where({ document_type: "tag" }).as("tagsmaster");
+                        this.from("integration_config").select("code").where({ document_type: "checkpoint" }).as("tagsmaster");
                     })
                     .leftJoin(
                         function () {
@@ -292,8 +292,8 @@ export class TagDao extends BaseKnexDao {
                                 .as("source_messages");
                         },
                         function () {
-                            // this.on("source_messages.datatags", "LIKE", "code").orOn(
-                            this.on("source_messages.datatags", "LIKE", knex.raw("concat('%',code ,'-%')"));
+                            // this.on("source_messages.checks", "LIKE", "code").orOn(
+                            this.on("source_messages.checks", "LIKE", knex.raw("concat('%',code ,'-%')"));
                         }
                     )
                     .groupBy("code"),
@@ -305,7 +305,7 @@ export class TagDao extends BaseKnexDao {
                         knex.raw("count(CASE WHEN target_messages.status = 'error' THEN 1 ELSE NULL END) as error"),
                     ])
                     .from(function () {
-                        this.from("integration_config").select("code").where({ document_type: "tag" }).as("tagsmaster");
+                        this.from("integration_config").select("code").where({ document_type: "checkpoint" }).as("tagsmaster");
                     })
                     .leftJoin(
                         function () {
@@ -319,35 +319,12 @@ export class TagDao extends BaseKnexDao {
                                 .as("target_messages");
                         },
                         function () {
-                            this.on("target_messages.datatags", "LIKE", knex.raw("concat('%-',code ,'%')"));
+                            this.on("target_messages.checks", "LIKE", knex.raw("concat('%-',code ,'%')"));
                         }
                     )
                     .groupBy("code"),
             ]);
 
-        // let data =
-        //     await knex.raw(`SELECT 'source' as type, code, count(CASE WHEN source_messages.status = 'sent' THEN 1 ELSE NULL END) as sent, count(CASE WHEN source_messages.status = 'error' THEN 1 ELSE NULL END) as error
-        //     FROM (SELECT code FROM integration_config WHERE document_type = 'tag') as tagsMaster
-
-        //     LEFT JOIN (select string_agg("ztags"."tag", '-' order by "ztags"."date_reception") as datatags, "zmessages"."status"
-        //       from "zmessages"
-        //       left join "ztags" on "ztags"."message_id" = "zmessages"."message_id"
-        //       group by "zmessages"."message_id" order by zmessages.date_reception) as source_messages
-        //     ON "source_messages"."datatags" like code or "source_messages"."datatags" like concat('%',code,'-%')
-
-        //     group by code
-        //     UNION ALL
-        //     SELECT 'target' as type,  code, count(CASE WHEN target_messages.status = 'sent' THEN 1 ELSE NULL END) as sent, count(CASE WHEN target_messages.status = 'error' THEN 1 ELSE NULL END) as error
-        //     FROM (SELECT code FROM integration_config WHERE document_type = 'tag') as tagsMaster
-
-        //     LEFT JOIN (select string_agg("ztags"."tag", '-' order by "ztags"."date_reception") as datatags, "zmessages"."status"
-        //       from "zmessages"
-        //       left join "ztags" on "ztags"."message_id" = "zmessages"."message_id"
-        //       group by "zmessages"."message_id" order by zmessages.date_reception) as target_messages
-        //     ON "target_messages"."datatags" like concat('%-',code,'%')
-
-        //     group by code
-        //     order by code`);
 
         // console.log(qry.toSQL());
         return await qry;

@@ -16,7 +16,7 @@ export class MessageDao extends BaseKnexDao {
         if (filters.sort) {
             sorts = KnexFilterParser.parseSort(filters.sort);
         }
-        const RELATION_TABLE = "ztags";
+        const RELATION_TABLE = "zcheckpoints";
         const knex = KnexConnector.connection;
         const columns = [
             `${this.tableName}.message_id`,
@@ -30,7 +30,7 @@ export class MessageDao extends BaseKnexDao {
             `${this.tableName}.error_cause`,
             `${this.tableName}.error_stack`,
             `${this.tableName}.meta`,
-            knex.raw(`string_agg("tag", '-'  order by "tag_date") as datatags`),
+            knex.raw(`string_agg("check_tag", '-'  order by "check_date") as checks`),
         ];
 
         const self = this;
@@ -38,7 +38,7 @@ export class MessageDao extends BaseKnexDao {
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.check_message_id`)
                     .groupBy(`${self.tableName}.message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))
@@ -57,7 +57,7 @@ export class MessageDao extends BaseKnexDao {
     }
 
     async countFilteredDataTagged(filters, tagFilter) {
-        const RELATION_TABLE = "ztags";
+        const RELATION_TABLE = "zcheckpoints";
         const knex = KnexConnector.connection;
         const columns = [
             `${this.tableName}.message_id`,
@@ -71,7 +71,7 @@ export class MessageDao extends BaseKnexDao {
             `${this.tableName}.error_cause`,
             `${this.tableName}.error_stack`,
             `${this.tableName}.meta`,
-            knex.raw(`string_agg("tag", '-'  order by "tag_date") as datatags`),
+            knex.raw(`string_agg("check_tag", '-'  order by "check_date") as checks`),
         ];
 
         const self = this;
@@ -79,7 +79,7 @@ export class MessageDao extends BaseKnexDao {
             .from(function () {
                 this.columns(columns)
                     .from(self.tableName)
-                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.tag_message_id`)
+                    .leftJoin(RELATION_TABLE, `${self.tableName}.message_id`, `${RELATION_TABLE}.check_message_id`)
                     .groupBy(`${self.tableName}.message_id`)
                     .where((builder) =>
                         KnexFilterParser.parseFilters(builder, lodash.omit(tagFilter, ["sort", "start", "limit"]))

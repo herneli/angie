@@ -3,7 +3,7 @@ import { EntityDao } from "./EntityDao";
 import { MessageService } from "../messages";
 
 import lodash from "lodash";
-import { TagService } from "../tags";
+import { CheckpointService } from "../checkpoints";
 import { BaseService } from "lisco";
 
 export class EntityService extends BaseService {

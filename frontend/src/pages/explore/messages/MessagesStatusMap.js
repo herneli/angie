@@ -12,7 +12,7 @@ const defaultDates = [moment().subtract(1, "day"), moment().endOf("day")];
 const MessagesStatusMap = ({ entity, height }) => {
     const [tableLoading, setTableLoading] = useState(false);
     const [mapLoading, setMapLoading] = useState(false);
-    const [tags, setTags] = useState({});
+    const [checks, setChecks] = useState({});
     const [dataSource, setDataSource] = useState({});
 
     const getEntityFilter = (filters) => {
@@ -31,10 +31,10 @@ const MessagesStatusMap = ({ entity, height }) => {
         try {
             getEntityFilter(filters);
 
-            const response = await axios.post("/tag/list/tags", { filters, checkedNodes });
+            const response = await axios.post("/checkpoint/list/checkpoints", { filters, checkedNodes });
 
             if (response?.data?.data) {
-                setTags({ ...response?.data?.data });
+                setChecks({ ...response?.data?.data });
             }
         } catch (ex) {
             notification.error({
@@ -67,7 +67,7 @@ const MessagesStatusMap = ({ entity, height }) => {
                         : { field: "date_reception", direction: "descend" };
             }
 
-            const response = await axios.post("/tag/list/messages", { filters, checkedNodes });
+            const response = await axios.post("/checkpoint/list/messages", { filters, checkedNodes });
 
             if (response?.data) {
                 setDataSource({ ...response?.data });
@@ -86,7 +86,7 @@ const MessagesStatusMap = ({ entity, height }) => {
         <div>
             <StatusMap
                 defaultDates={defaultDates}
-                tags={tags}
+                checks={checks}
                 dataSource={dataSource}
                 doMapLoad={loadMap}
                 doTableLoad={loadData}

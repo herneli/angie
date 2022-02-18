@@ -106,10 +106,10 @@
                                 "title": "menu.packages.entity_mapper"
                             },
                             {
-                                "key": "tag",
-                                "value": "/tag",
+                                "key": "checkpoint",
+                                "value": "/checkpoint",
                                 "icon": "mdiTagMultiple",
-                                "title": "menu.packages.tag"
+                                "title": "menu.packages.checkpoint"
                             }
                         ]
                     },

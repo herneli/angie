@@ -1303,14 +1303,14 @@ exports.seed = async function (knex) {
             },
         },
         {
-            name: "Etiquetas",
-            code: "tag",
+            name: "Checkpoints",
+            code: "checkpoint",
             data: {
-                code: "tag",
-                name: "Etiquetas",
+                code: "checkpoint",
+                name: "Checkpoints",
                 table: "integration_config",
                 id_mode: "uuid",
-                documentType: "tag",
+                documentType: "checkpoint",
                 // selectQuery:
                 //     "integration_config.*,array_to_string(array_agg(DISTINCT organization.code), ', ') as organization_data",
                 // group_by: "integration_config.id",

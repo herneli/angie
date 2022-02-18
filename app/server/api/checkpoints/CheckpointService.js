@@ -2,28 +2,28 @@
 import axios from "axios";
 import { BaseService } from "lisco";
 import { ConfigurationService } from "../configuration/ConfigurationService";
-import { TagDao } from "./";
+import { CheckpointDao } from ".";
 import { JSONPath } from "jsonpath-plus";
 
 import lodash from "lodash";
 import { MessageService } from "../messages";
-export class TagService extends BaseService {
+export class CheckpointService extends BaseService {
     constructor() {
-        super(TagDao);
+        super(CheckpointDao);
     }
 
-    async listMessagesTagged(filters, start, limit, checkedNodes) {
-        let tagFilter = {};
+    async listMessagesCheckpointed(filters, start, limit, checkedNodes) {
+        let checksFilter = {};
         if (!lodash.isEmpty(checkedNodes)) {
-            tagFilter = {
-                tag: {
+            checksFilter = {
+                check_tag: {
                     type: "in",
                     value: checkedNodes,
                 },
             };
         }
         const messageServ = new MessageService();
-        const messages = messageServ.listTagged(filters, start, limit, tagFilter);
+        const messages = messageServ.listTagged(filters, start, limit, checksFilter);
 
         return messages;
     }
@@ -34,26 +34,23 @@ export class TagService extends BaseService {
      * filters, es opcional. Si no se pasan se devuelve lo que hay ;
      */
     async list(filters, start, limit, checkedNodes) {
-        // const response = await super.list({ ...filters, ...tagFilter }, 0, 100000);
-        // const tags = await this.getNodes(response.data);
-
-        const [counters, datatags] = await Promise.all([
+        const [counters, checkpoints] = await Promise.all([
             this.dao.countAllNodes(filters),
-            this.dao.getProcessedTags(filters),
+            this.dao.getProcessedCheckpoints(filters),
         ]);
 
         // let tStart = Date.now();
-        // const counters = await this.dao.countAllNodes({ ...filters, ...tagFilter });
+        // const counters = await this.dao.countAllNodes(filters);
         // console.log("Query1 Time: " + (Date.now() - tStart));
         // tStart = Date.now();
-        // const datatags = await this.dao.getProcessedTags({ ...filters, ...tagFilter });
+        // const checkpoints = await this.dao.getProcessedCheckpoints(filters);
         // console.log("Query2 Time: " + (Date.now() - tStart));
 
         // tStart = Date.now();
-        const tags = await this.processNodes(datatags, checkedNodes);
+        const checks = await this.processNodes(checkpoints, checkedNodes);
         // console.log("Process Time: " + (Date.now() - tStart));
         return {
-            data: {...tags, counters},
+            data: { ...checks, counters },
         };
     }
 
@@ -90,13 +87,13 @@ export class TagService extends BaseService {
         connections[key] = { ...connections[key], ...data };
     }
 
-    async processNodes(datatags, checkedNodes) {
+    async processNodes(checkpoints, checkedNodes) {
         const connections = {};
         const nodes = {};
 
         await Promise.all(
-            lodash.map(datatags, async (el) => {
-                const { datatags: tags } = el;
+            lodash.map(checkpoints, async (el) => {
+                const { checks: tags } = el;
 
                 let tagList = tags ? tags.split("-") : [];
                 if (!lodash.isEmpty(checkedNodes)) {
@@ -134,63 +131,9 @@ export class TagService extends BaseService {
         return { connections, nodes };
     }
 
-    getNodes(tags) {
-        // const tags_filtered = lodash.filter(tags, ({ tag }) => checkedNodes.indexOf(tag) !== -1);
-
-        const groupedMsg = lodash.groupBy(tags, "message_id");
-        const connections = {};
-        const nodes = {};
-        //Recorrer los mensajes agrupados por identificador (diferentes posibles tags)
-        for (const el in groupedMsg) {
-            const tagList = groupedMsg[el];
-
-            //Obtener los datos principales del mensaje
-            //Ordenar por fecha para mirar las direcciones
-            const sorted = lodash.sortBy(tagList, "date_reception");
-            for (let idx = 0; idx < sorted.length; idx++) {
-                let prevMsg = sorted[idx];
-                let msg = sorted[idx + 1];
-                const sourceTag = prevMsg && prevMsg.tag;
-                const targetTag = msg && msg.tag;
-                //El anterior se obtiene como source y el actual como target
-                this.addNode(nodes, sourceTag, "source");
-                this.addNode(nodes, targetTag, "target");
-
-                //!FIXME  revisar porque si es de un solo nodo no va a contar bien nunca
-                if (prevMsg && msg) {
-                    //Solo cuenta los source si hay destino
-                    this.addNodeMessage(nodes, sourceTag, prevMsg && prevMsg.status + "_sent", el); //Contar los "source"
-                }
-                this.addNodeMessage(nodes, targetTag, msg && msg.status + "_rec", el); //Contar los "target"
-
-                const connection = {
-                    source: sourceTag,
-                    target: targetTag,
-                };
-                if (msg && msg.status === "error") {
-                    connection.style = { stroke: "red" };
-                    connection.arrowHeadType = "arrowclosed";
-                } else {
-                    connection.style = { stroke: "green" };
-                }
-
-                const id = sourceTag + "-" + targetTag;
-                // const selected = selection.indexOf(msg && msg.message_id) !== -1;
-                // if (selected) {
-                // }
-                //Solo añade la conexion si hay nodos que conectar o si se esta intentando visualizar uno/varios mensajes concretos
-                if (prevMsg && msg /*&& (lodash.isEmpty(selection) || selected)*/) {
-                    this.addConnection(connections, id, connection);
-                }
-            }
-        }
-
-        return { connections, nodes };
-    }
-
     async healthcheck(identifier) {
         const confServ = new ConfigurationService();
-        const { data: tagDefinition } = await confServ.getModelData("tag", identifier);
+        const { data: tagDefinition } = await confServ.getModelData("checkpoint", identifier);
 
         if (!tagDefinition || !tagDefinition.healthcheck) {
             return null;

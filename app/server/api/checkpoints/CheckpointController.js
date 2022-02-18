@@ -1,25 +1,25 @@
 import { App, BaseController, JsonResponse, KnexConnector } from "lisco";
 import expressAsyncHandler from "express-async-handler";
-import { TagService } from ".";
+import { CheckpointService } from ".";
 import { IntegrationService } from "../integration";
 
-export class TagController extends BaseController {
+export class CheckpointController extends BaseController {
     configure() {
         this.router.post(
-            `/tag/list/tags`,
+            `/checkpoint/list/checkpoints`,
             expressAsyncHandler((request, response, next) => {
-                this.listTags(request, response, next);
+                this.listCheckpoints(request, response, next);
             })
         );
         this.router.post(
-            `/tag/list/messages`,
+            `/checkpoint/list/messages`,
             expressAsyncHandler((request, response, next) => {
-                this.listMessagesTagged(request, response, next);
+                this.listMessagesCheckpointed(request, response, next);
             })
         );
 
         this.router.get(
-            `/tag/:id/healthcheck`,
+            `/checkpoint/:id/healthcheck`,
             expressAsyncHandler((request, response, next) => {
                 this.healthcheck(request, response, next);
             })
@@ -39,9 +39,9 @@ export class TagController extends BaseController {
      * Lista entidades en la aplicacion, es posible enviarle parametros de filtrado.
      *
      */
-    async listTags(request, response, next) {
+    async listCheckpoints(request, response, next) {
         try {
-            let service = new TagService();
+            let service = new CheckpointService();
             let { checkedNodes, filters } = request.body;
 
             if (!filters) {
@@ -69,9 +69,9 @@ export class TagController extends BaseController {
      * Lista entidades en la aplicacion, es posible enviarle parametros de filtrado.
      *
      */
-    async listMessagesTagged(request, response, next) {
+    async listMessagesCheckpointed(request, response, next) {
         try {
-            let service = new TagService();
+            let service = new CheckpointService();
             let { checkedNodes, filters } = request.body;
 
             if (!filters) {
@@ -86,7 +86,7 @@ export class TagController extends BaseController {
                 };
             }
 
-            let data = await service.listMessagesTagged(filters, filters.start, filters.limit, checkedNodes);
+            let data = await service.listMessagesCheckpointed(filters, filters.start, filters.limit, checkedNodes);
             let jsRes = new JsonResponse(true, data.data, null, data.total);
 
             response.json(jsRes.toJson());
@@ -97,7 +97,7 @@ export class TagController extends BaseController {
 
     async healthcheck(request, response, next) {
         try {
-            const service = new TagService();
+            const service = new CheckpointService();
 
             const data = await service.healthcheck(request.params.id);
 

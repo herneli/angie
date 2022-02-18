@@ -22,7 +22,7 @@ import Cache from "./app/server/common/Cache";
 import { LibraryController } from "./app/server/api/library/LibraryController";
 import { EntityController } from "./app/server/api/entity";
 import { MetricsController } from "./app/server/api/metrics/MetricsControler";
-import { TagController } from "./app/server/api/tags";
+import { CheckpointController } from "./app/server/api/checkpoints";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -112,7 +112,7 @@ module.exports = async () => {
         new LibraryController(),
         new EntityController(),
         new MetricsController(),
-        new TagController(),
+        new CheckpointController(),
     ];
 
     const directives = {

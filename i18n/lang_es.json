@@ -207,7 +207,7 @@
             "integration_config": "Config. Integraciones",
             "node_types": "Tipos de Nodo",
             "entity_mapper": "Mapeo Entidades",
-            "tag": "Etiquetas",
+            "checkpoint": "Checkpoints",
             "scripting": "Scripting",
             "contexts": "Contextos",
             "objects": "Objectos",
