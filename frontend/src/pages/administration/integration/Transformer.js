@@ -66,6 +66,7 @@ class Transformer {
                             targetHandle: null,
                             label: node.links && node.links.length > 1 && "idx: " + i,
                             // "type": 'smoothstep',
+                            type: 'smart',
                             id: `reactflow__edge-${node.id}${link.handle}-${link.node_id}null`,
                         });
                         i++;

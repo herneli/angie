@@ -14,25 +14,18 @@ import { v4 as uuid_v4 } from "uuid";
 import "./Channel.css";
 import NodeEditModal from "./NodeEditModal";
 
+import { SmartEdge, SmartEdgeProvider } from "@tisoap/react-flow-smart-edge";
+
 import lodash from "lodash";
 import useEventListener from "../../../hooks/useEventListener";
 import { Modal, Dropdown, Menu, Space, Tabs, List, Select, Divider, Alert, Popconfirm, Button } from "antd";
 import Icon from "@mdi/react";
-import {
-    mdiClipboard,
-    mdiCogs,
-    mdiContentCopy,
-    mdiInformation,
-    mdiRefresh,
-    mdiScissorsCutting,
-    mdiTrashCan,
-} from "@mdi/js";
+import { mdiClipboard, mdiCogs, mdiContentCopy, mdiRefresh, mdiScissorsCutting, mdiTrashCan } from "@mdi/js";
 import ChannelContextProvider from "../../../providers/channels/ChannelContext";
 import AceEditor from "../../../components/ace-editor/AceEditor";
 import IconButton from "../../../components/button/IconButton";
 
 import ResizableDrawer from "../../../components/drawer/ResizableDrawer";
-import Text from "antd/lib/typography/Text";
 
 const { TabPane } = Tabs;
 
@@ -117,9 +110,9 @@ const Channel = ({
                     element.label = element.name;
                 });
 
-                setWarningIcon(true)
+                setWarningIcon(true);
             } else {
-                setWarningIcon(false)
+                setWarningIcon(false);
             }
         }
     }, [channel, nodeTypes]);
@@ -475,68 +468,73 @@ const Channel = ({
             <div className="dndflow">
                 <ChannelContextProvider currentChannel={channel} currentStatus={channelStatus}>
                     <ReactFlowProvider>
-                        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                            <Dropdown overlay={contextMenu()} trigger={["contextMenu"]}>
-                                <ReactFlow
-                                    elements={elements}
-                                    onConnect={onConnect}
-                                    onElementsRemove={onElementsRemove}
-                                    onLoad={onLoad}
-                                    onDrop={onDrop}
-                                    nodeTypes={customNodes}
-                                    deleteKeyCode={46}
-                                    multiSelectionKeyCode={17}
-                                    onDragOver={onDragOver}
-                                    onSelectionDragStop={(event, nodes) => onMultiNodeEditEnd(nodes)}
-                                    onPaneContextMenu={() => changeSelectedNodes([])}
-                                    onNodeContextMenu={(event, node) => {
-                                        if (selectedNodes == null || selectedNodes?.length < 2) {
-                                            console.log("setting");
-                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
-                                        }
-                                    }}
-                                    onEdgeContextMenu={(event, node) => {
-                                        if (selectedNodes == null || selectedNodes?.length < 2) {
-                                            console.log("setting");
-                                            changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
-                                        }
-                                    }}
-                                    onNodeDragStop={(event, node) => {
-                                        if (selectedNodes != null && selectedNodes?.length > 1) {
-                                            onMultiNodeEditEnd(
-                                                lodash.filter(
-                                                    reactFlowInstance.getElements(),
-                                                    (el) => el.id && lodash.find(selectedNodes, { id: el.id })
-                                                )
-                                            );
-                                            //Actualmente hay un bug y la selección multiple con Control no funciona del todo bien
-                                            //De ahí que se haga la busqueda en los elements de la seleccion y notificar de la modificación de los mismos.
-                                            //https://github.com/wbkd/react-flow/issues/1314
-                                        } else {
-                                            onNodeEditEnd(node.id, {
-                                                position: node.position,
-                                                data: node.data,
-                                            });
-                                        }
-                                    }}
-                                    onNodeDoubleClick={(event, node) => startEditing(node.id)}
-                                    onSelectionChange={(elements) => changeSelectedNodes(elements)}>
-                                    <Controls />
-                                    <MiniMap />
-                                    <Background />
-                                </ReactFlow>
-                            </Dropdown>
-                        </div>
+                        <SmartEdgeProvider options={{ debounceTime: 5, nodePadding: 15 }}>
+                            <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                                <Dropdown overlay={contextMenu()} trigger={["contextMenu"]}>
+                                    <ReactFlow
+                                        elements={elements}
+                                        onConnect={onConnect}
+                                        onElementsRemove={onElementsRemove}
+                                        onLoad={onLoad}
+                                        onDrop={onDrop}
+                                        nodeTypes={customNodes}
+                                        edgeTypes={{
+                                            smart: SmartEdge,
+                                        }}
+                                        deleteKeyCode={46}
+                                        multiSelectionKeyCode={17}
+                                        onDragOver={onDragOver}
+                                        onSelectionDragStop={(event, nodes) => onMultiNodeEditEnd(nodes)}
+                                        onPaneContextMenu={() => changeSelectedNodes([])}
+                                        onNodeContextMenu={(event, node) => {
+                                            if (selectedNodes == null || selectedNodes?.length < 2) {
+                                                console.log("setting");
+                                                changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                            }
+                                        }}
+                                        onEdgeContextMenu={(event, node) => {
+                                            if (selectedNodes == null || selectedNodes?.length < 2) {
+                                                console.log("setting");
+                                                changeSelectedNodes([node]); //Al hacer click derecho sobre un nodo, si no hay muchos seleccionados, cambiar la seleccion
+                                            }
+                                        }}
+                                        onNodeDragStop={(event, node) => {
+                                            if (selectedNodes != null && selectedNodes?.length > 1) {
+                                                onMultiNodeEditEnd(
+                                                    lodash.filter(
+                                                        reactFlowInstance.getElements(),
+                                                        (el) => el.id && lodash.find(selectedNodes, { id: el.id })
+                                                    )
+                                                );
+                                                //Actualmente hay un bug y la selección multiple con Control no funciona del todo bien
+                                                //De ahí que se haga la busqueda en los elements de la seleccion y notificar de la modificación de los mismos.
+                                                //https://github.com/wbkd/react-flow/issues/1314
+                                            } else {
+                                                onNodeEditEnd(node.id, {
+                                                    position: node.position,
+                                                    data: node.data,
+                                                });
+                                            }
+                                        }}
+                                        onNodeDoubleClick={(event, node) => startEditing(node.id)}
+                                        onSelectionChange={(elements) => changeSelectedNodes(elements)}>
+                                        <Controls />
+                                        <MiniMap />
+                                        <Background />
+                                    </ReactFlow>
+                                </Dropdown>
+                            </div>
 
-                        <Sidebar nodeTypes={nodeTypes} />
+                            <Sidebar nodeTypes={nodeTypes} />
 
-                        <NodeEditModal
-                            selectedType={selectedType}
-                            nodeTypes={nodeTypes}
-                            editNodeVisible={editNodeVisible}
-                            onEditCancel={() => setEditNodeVisible(false)}
-                            onNodeEditEnd={onNodeEditEnd}
-                        />
+                            <NodeEditModal
+                                selectedType={selectedType}
+                                nodeTypes={nodeTypes}
+                                editNodeVisible={editNodeVisible}
+                                onEditCancel={() => setEditNodeVisible(false)}
+                                onNodeEditEnd={onNodeEditEnd}
+                            />
+                        </SmartEdgeProvider>
                     </ReactFlowProvider>
 
                     <ResizableDrawer
@@ -634,64 +632,77 @@ const Channel = ({
                     onCancel={warningClose}
                     title={T.translate("integrations.channel.node.type_modal")}
                     onOk={() => {
-                        let updatedNodes = []
+                        let updatedNodes = [];
 
                         //Coge los nodos cuyo CODE no ha sido encontrado y le establece el de la selección.
                         notFoundedNodes.forEach((element) => {
-                            let found = notFoundedValues.find((item) => { return item.item == element.id })
+                            let found = notFoundedValues.find((item) => {
+                                return item.item == element.id;
+                            });
                             if (found && found.value) {
-                                element.type_id = found.value
-                                updatedNodes.push(element)
+                                element.type_id = found.value;
+                                updatedNodes.push(element);
                             }
-                        })
+                        });
 
                         //Se unifica con el array de los nodos del canal.
-                        let value = lodash.unionBy(updatedNodes, channel.nodes, "id")
-                        channel.nodes = value
+                        let value = lodash.unionBy(updatedNodes, channel.nodes, "id");
+                        channel.nodes = value;
 
                         //Se actualiza el canal.
-                        onChannelUpdate(channel)
-                        warningClose()
-                    }}
-                >
+                        onChannelUpdate(channel);
+                        warningClose();
+                    }}>
                     <Alert description={T.translate("integrations.channel.node.info")} color={"#4ab199"} />
-                    <Divider ></Divider>
+                    <Divider></Divider>
                     <List
                         itemLayout="horizontal"
                         dataSource={notFoundedNodes}
-                        renderItem={item => (
+                        renderItem={(item) => (
                             <List.Item>
                                 <List.Item.Meta
                                     description={item.data && item.data.label ? item.data.label : item.type_id}
                                 />
 
-                                <Popconfirm title={T.translate("common.question")}  onConfirm={() => {
-                                    let items = notFoundedNodes
-                                    items = lodash.remove(items, function (n) {
-                                        return n != item;
-                                    });
-                                    onElementsRemove(items)
+                                <Popconfirm
+                                    title={T.translate("common.question")}
+                                    onConfirm={() => {
+                                        let items = notFoundedNodes;
+                                        items = lodash.remove(items, function (n) {
+                                            return n != item;
+                                        });
+                                        onElementsRemove(items);
+                                    }}>
+                                    <Button style={{ marginRight: 50 }} danger>
+                                        {"Delete"}
+                                    </Button>
+                                </Popconfirm>
 
-                                }}>
-                                    <Button style={{ marginRight: 50 }} danger>{"Delete"}</Button>
-                                </Popconfirm>                                    
-                                
-                                <Select showSearch style={{ width: 250 }} options={nodeTypes} onChange={(e, option) => {
-                                    let selection = { "value": option.code, "item": item.custom_name ? item.custom_name : item.id }
-                                    let modalValues = notFoundedValues
+                                <Select
+                                    showSearch
+                                    style={{ width: 250 }}
+                                    options={nodeTypes}
+                                    onChange={(e, option) => {
+                                        let selection = {
+                                            value: option.code,
+                                            item: item.custom_name ? item.custom_name : item.id,
+                                        };
+                                        let modalValues = notFoundedValues;
 
-                                    //Se comprueba que no haya duplicados si los hay elimina el elemento y le añade la modificación
-                                    let duplicated = lodash.find(modalValues, { "item": selection.item })
-                                    if (duplicated) modalValues = lodash.reject(modalValues, { "item": selection.item })
+                                        //Se comprueba que no haya duplicados si los hay elimina el elemento y le añade la modificación
+                                        let duplicated = lodash.find(modalValues, { item: selection.item });
+                                        if (duplicated)
+                                            modalValues = lodash.reject(modalValues, { item: selection.item });
 
-                                    //Set Modal values on change
-                                    modalValues.push(selection)
-                                    setNotFoundedValues(modalValues)
-                                }} />
-                            </List.Item>)} />
-
+                                        //Set Modal values on change
+                                        modalValues.push(selection);
+                                        setNotFoundedValues(modalValues);
+                                    }}
+                                />
+                            </List.Item>
+                        )}
+                    />
                 </Modal>
-
             </div>
         </div>
     );

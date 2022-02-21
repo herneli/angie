@@ -2,11 +2,7 @@ import React from "react";
 
 import axios from "axios";
 import { Button, Col, Popconfirm, Row, Table } from "antd";
-import {
-    DeleteOutlined,
-    MenuOutlined,
-    PlusCircleOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, MenuOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import T from "i18n-react";
 
 import ReactDragListView from "react-drag-listview";
@@ -49,14 +45,13 @@ const AntdArrayFieldTemplate = ({
         }));
 
         if (!optionsColumns) {
-            columns = Object.entries(schema.items.properties).map(
-                ([key, value], i) => ({
-                    title: value.title || key,
-                    dataIndex: key,
-                    key,
-                    // fixed: i === 0 && "left",
-                })
-            );
+            columns = Object.entries(schema.items.properties).map(([key, value], i) => ({
+                title: value.title || key,
+                dataIndex: key,
+                key,
+                ellipsis: true,
+                // fixed: i === 0 && "left",
+            }));
         } else {
             columns = optionsColumns;
         }
@@ -95,13 +90,8 @@ const AntdArrayFieldTemplate = ({
                         onConfirm={record.onDropIndexClick(record.index)}
                         onCancel={() => {}}
                         okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<DeleteOutlined />}
-                        ></Button>
+                        cancelText="No">
+                        <Button type="primary" shape="circle" icon={<DeleteOutlined />}></Button>
                     </Popconfirm>
                 ),
             },
@@ -116,9 +106,7 @@ const AntdArrayFieldTemplate = ({
                 fixed: "right",
                 width: 50,
                 className: "drag-handle",
-                render: (text, record, index) => (
-                    <MenuOutlined style={{ cursor: "pointer", color: "#999" }} />
-                ),
+                render: (text, record, index) => <MenuOutlined style={{ cursor: "pointer", color: "#999" }} />,
             },
         ];
     }
@@ -150,9 +138,7 @@ const AntdArrayFieldTemplate = ({
             {(uiSchema["ui:description"] || schema.description) && (
                 <Col span={24}>
                     <DescriptionField
-                        description={
-                            uiSchema["ui:description"] || schema.description
-                        }
+                        description={uiSchema["ui:description"] || schema.description}
                         id={`${idSchema.$id}__description`}
                         key={`array-field-description-${idSchema.$id}`}
                     />
@@ -192,8 +178,7 @@ const AntdArrayFieldTemplate = ({
                                     disabled={disabled || readonly}
                                     onClick={onAddClick}
                                     type="primary"
-                                    style={{ marginTop: 10 }}
-                                >
+                                    style={{ marginTop: 10 }}>
                                     <PlusCircleOutlined />
                                 </Button>
                             </Col>
