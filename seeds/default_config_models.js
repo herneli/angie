@@ -1275,9 +1275,9 @@ exports.seed = async function (knex) {
                             items: {
                                 type: "object",
                                 properties: {
-                                    code: { type: "string" },
-                                    message_type: { type: "string" },
-                                    entity_extraction: { type: "string" },
+                                    code: { type: "string",title: "Tipo Entidad" },
+                                    message_type: { type: "string", title: "Tipo Mensaje" },
+                                    entity_extraction: { type: "string",title: "Extracción Entidad" },
                                 },
                             },
                         },
@@ -1292,12 +1292,64 @@ exports.seed = async function (knex) {
                     },
                     entities: {
                         items: {
+                            code: {
+                                "ui:widget": "SelectRemoteWidget",
+                                "ui:selectOptions": "/configuration/model/entity_type/data#path=data&value=id&label=data.name"
+                            },
                             entity_extraction: {
                                 "ui:widget": "AceEditorWidget",
                                 "ui:mode": "json",
                                 "ui:beautify": false,
                             },
                         },
+                    },
+                },
+            },
+        },
+        {
+            name: "Tipos de Entidad",
+            code: "entity_type",
+            data: {
+                code: "entity_type",
+                name: "Tipos de Entidad",
+                table: "integration_config",
+                id_mode: "uuid",
+                documentType: "entity_type",
+                listFields: [
+                    {
+                        title: "Código",
+                        field: "code",
+                    },
+                    {
+                        title: "Nombre",
+                        field: "name",
+                        key: "data->>'name'",
+                    },
+                    {
+                        title: "Detalle Entidad",
+                        field: "entity_detail",
+                        key: "data->>'entity_detail'",
+                    },
+                ],
+                schema: {
+                    type: "object",
+                    required: ["code", "name", "entity_detail"],
+                    properties: {
+                        code: { title: "Código", type: "string" },
+                        name: { title: "Nombre", type: "string" },
+                        entity_detail: { title: "Detalle Entidad", type: "string" },
+                    },
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "4",
+                    },
+                    name: {
+                        "ui:columnSize": "4",
+                    },
+                    entity_detail: {
+                        "ui:widget": "AceEditorWidget",
+                        "ui:columnSize": "8"
                     },
                 },
             },

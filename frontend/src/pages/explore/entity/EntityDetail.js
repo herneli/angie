@@ -22,14 +22,14 @@ const EntityDetail = ({ record }) => {
     const { state } = useLocation();
     const { id } = useParams();
 
-    const basePattern = {
+    const [basePattern, setBasePattern] = useState({
         id: {
             label: T.translate("entity.id"),
             style: {
                 // fontSize: "120%",
             },
         },
-        type: {
+        entity_type_name: {
             label: T.translate("entity.type"),
         },
         arrayTest: {
@@ -48,7 +48,9 @@ const EntityDetail = ({ record }) => {
             label: T.translate("entity.organization"),
             render: (value) => getOrganizationById(value)?.name,
         },
-    };
+    });
+
+    //currentRecord.type  //TODO .detail
 
     const initialize = async () => {
         await loadOrganizations();
@@ -68,7 +70,12 @@ const EntityDetail = ({ record }) => {
             const response = await axios.post("/entity/" + id);
 
             if (response) {
-                setCurrentRecord(response?.data?.data);
+                let record = response?.data?.data
+                let entity_detail = response?.data?.data?.entity_type?.data?.entity_detail
+                setCurrentRecord(record);
+                if(entity_detail != null && entity_detail != ""){
+                    setBasePattern(JSON.parse(entity_detail)) 
+                }   
                 setDetailHeight(getDetailHeight());
             }
         } catch (ex) {

@@ -44,9 +44,13 @@ const DynamicDetail = ({ title, pattern, data, options }) => {
             if (type === "date") {
                 value = moment(value).format(format);
             }
-            if (el.render) {
+            if (el.render && !(typeof  el.render  === 'string' || el.render instanceof String)) {
                 value = el.render(value, data);
             }
+            if((typeof  el.render  === 'string' || el.render instanceof String)){
+                value = eval(el.render)
+            }
+          
             return (
                 <Descriptions.Item key={key} label={label || ""} contentStyle={style} span={span}>
                     {value || ""}
