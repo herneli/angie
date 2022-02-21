@@ -64,16 +64,14 @@ const Agents = () => {
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
-        
         filters.limit = pagination?.pageSize || 10;
         filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
 
-        if (sorts) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
+        filters.sort = sorts &&
+            Object.keys(sorts).length !== 0 && {
                 field: sorts.columnKey || sorts.field,
                 direction: sorts.order,
             };
-        }
 
         try {
             const response = await axios.post("/jum_agent/list", filters);

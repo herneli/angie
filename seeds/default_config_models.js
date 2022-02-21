@@ -1275,9 +1275,9 @@ exports.seed = async function (knex) {
                             items: {
                                 type: "object",
                                 properties: {
-                                    code: { type: "string",title: "Tipo Entidad" },
+                                    code: { type: "string", title: "Tipo Entidad" },
                                     message_type: { type: "string", title: "Tipo Mensaje" },
-                                    entity_extraction: { type: "string",title: "Extracción Entidad" },
+                                    entity_extraction: { type: "string", title: "Extracción Entidad" },
                                 },
                             },
                         },
@@ -1294,7 +1294,8 @@ exports.seed = async function (knex) {
                         items: {
                             code: {
                                 "ui:widget": "SelectRemoteWidget",
-                                "ui:selectOptions": "/configuration/model/entity_type/data#path=data&value=code&label=data.name"
+                                "ui:selectOptions":
+                                    "/configuration/model/entity_type/data#path=data&value=code&label=data.name",
                             },
                             entity_extraction: {
                                 "ui:widget": "AceEditorWidget",
@@ -1325,11 +1326,11 @@ exports.seed = async function (knex) {
                         field: "name",
                         key: "data->>'name'",
                     },
-                    {
-                        title: "Detalle Entidad",
-                        field: "entity_detail",
-                        key: "data->>'entity_detail'",
-                    },
+                    // {
+                    //     title: "Detalle Entidad",
+                    //     field: "entity_detail",
+                    //     key: "data->>'entity_detail'",
+                    // },
                 ],
                 schema: {
                     type: "object",
@@ -1342,14 +1343,17 @@ exports.seed = async function (knex) {
                 },
                 uiSchema: {
                     code: {
-                        "ui:columnSize": "4",
+                        "ui:columnSize": "6",
                     },
                     name: {
-                        "ui:columnSize": "4",
+                        "ui:columnSize": "6",
                     },
                     entity_detail: {
                         "ui:widget": "AceEditorWidget",
-                        "ui:columnSize": "8"
+                        "ui:mode": "json",
+                        "ui:beautify": true,
+                        "ui:height": "500px",
+                        "ui:columnSize": "12",
                     },
                 },
             },

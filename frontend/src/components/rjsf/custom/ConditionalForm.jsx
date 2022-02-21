@@ -1,14 +1,13 @@
 import Form from "@rjsf/antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import processForm from "./ConditionalProcessor";
 import lodash from "lodash";
 
 const ConditionalForm = React.forwardRef((props, ref) => {
-    const { schema, formData } = props;
     const [initialValues, setInitialValues] = useState();
     const [emptyField, setEmptyField] = useState(false);
 
-    const initialLoad = ({ schema, uiSchema }) => {
+    const initialLoad = ({ schema, uiSchema, formData }) => {
         const initValues = {
             originalSchema: lodash.cloneDeep(schema),
             originalUISchema: lodash.cloneDeep(uiSchema),
@@ -22,31 +21,24 @@ const ConditionalForm = React.forwardRef((props, ref) => {
     //Se construye de esta forma para unicamente ejecutarlo una vez y al inicio del componente
     const [state, setState] = useState(() => initialLoad(props));
 
-    useEffect(() => {
-        if (formData) {
-            redraw({ formData, schema });
-        }
-    }, [formData]);
-
     //Manejo de los errores
     const transformErrors = (errors) => {
         console.log("Form Errors : " + JSON.stringify(errors));
-        var e = [];
 
-        errors.map((error) => {
-            if (error.message == "should NOT have fewer than 1 items") {
+        let e = lodash.filter(errors, (error) => {
+            if (error.message.indexOf("should NOT have fewer than 1 items") !== -1) {
                 if (emptyField) {
-                    e.push(error);
+                    return true;
                 }
-                return;
+                return false;
             }
-            if (error.message == "should be array") {
-                return;
+            if (error.message.indexOf("should be array") !== -1) {
+                return false;
             }
-            if (error.message == "should match some schema in anyOf") {
-                return;
+            if (error.message.indexOf("should match some schema in anyOf") !== -1) {
+                return false;
             }
-            e.push(error);
+            return true;
         });
 
         return e;
@@ -70,6 +62,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
     };
 
     const onChange = (e) => {
+        console.log(e.formData);
         redraw(e);
 
         if (props.onChange) props.onChange(e);

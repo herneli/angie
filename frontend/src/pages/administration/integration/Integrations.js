@@ -89,7 +89,6 @@ const Integrations = () => {
         await loadOrganizations();
         setLoading(true);
 
-        
         filters.limit = pagination?.pageSize || 10;
         filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
         if (packageData) {
@@ -99,12 +98,11 @@ const Integrations = () => {
             };
         }
 
-        if (sorts) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
+        filters.sort = sorts &&
+            Object.keys(sorts).length !== 0 && {
                 field: sorts.columnKey || sorts.field,
                 direction: sorts.order,
             };
-        }
 
         try {
             const response = await axios.post("/integration/list", filters);

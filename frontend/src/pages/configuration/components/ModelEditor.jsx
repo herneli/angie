@@ -44,7 +44,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
     return (
         <div className={classes.tableWrapper}>
             <Button onClick={onCancel}>{T.translate("configuration.return")}</Button>
-            <ConditionalForm
+            {currentData && <ConditionalForm
                 ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                 ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                 widgets={formConfig.widgets}
@@ -64,7 +64,7 @@ export default function ModelEditor({ data, schema, uiSchema, onCancel, onSave, 
                         </Button>
                     </Space>
                 </Row>
-            </ConditionalForm>
+            </ConditionalForm>}
         </div>
     );
 }

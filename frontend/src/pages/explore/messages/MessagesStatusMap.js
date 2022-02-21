@@ -51,18 +51,16 @@ const MessagesStatusMap = ({ entity, height }) => {
         try {
             filters.limit = pagination?.pageSize || 10;
             filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
-            
+
             getEntityFilter(filters);
 
-            if (sorts) {
-                filters.sort =
-                    Object.keys(sorts).length !== 0
-                        ? {
-                              field: sorts.columnKey || sorts.field,
-                              direction: sorts.order,
-                          }
-                        : { field: "date_reception", direction: "descend" };
-            }
+            filters.sort =
+                sorts && Object.keys(sorts).length !== 0
+                    ? {
+                          field: sorts.columnKey || sorts.field,
+                          direction: sorts.order,
+                      }
+                    : { field: "date_reception", direction: "descend" };
 
             const response = await axios.post("/checkpoint/list/messages", { filters, checkedNodes });
 

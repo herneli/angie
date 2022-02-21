@@ -45,6 +45,9 @@ const DynamicDetail = ({ title, pattern, data, options, helpers }) => {
             if (type === "date") {
                 value = moment(value).format(format);
             }
+            if (type === "boolean") {
+                value = value === true ? T.translate("common.yes") : T.translate("common.no");
+            }
             if (el.render && !(typeof el.render === "string" || el.render instanceof String)) {
                 value = el.render(value, data);
             }

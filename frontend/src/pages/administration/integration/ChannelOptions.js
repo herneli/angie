@@ -3,8 +3,6 @@ import Form from "@rjsf/antd";
 import { Button, Card, Col, Collapse, Divider, Modal, Row, Slider, Switch } from "antd";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 
-
-
 import T from "i18n-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -23,7 +21,7 @@ const editTabFormSchema = {
             deployment_options: {
                 title: "Opciones",
                 type: "object",
-                required: ["agent_assign_mode","assigned_agent"],
+                required: ["agent_assign_mode", "assigned_agent"],
                 properties: {
                     restart_policy: {
                         title: "Política Reinicios",
@@ -44,7 +42,7 @@ const editTabFormSchema = {
                         title: "Agentes Asignados",
                         items: {
                             type: "string",
-                            enum: []
+                            enum: [],
                         },
                         uniqueItems: true,
                     },
@@ -91,25 +89,24 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
         33: T.translate("integrations.channel.trace_stats"),
         66: T.translate("integrations.channel.trace_incoming_message"),
         99: T.translate("integrations.channel.trace_outgoing_message"),
-    }
+    };
 
     const [editingData, setEditingData] = useState();
     const [levelOfStorage, setLevelOfStorage] = useState(0);
     const [traceProperties, setTraceProperties] = useState(false);
     const [tracefile, setTraceFile] = useState(false);
 
-    const changeProperties = (e)=> {
-        channel.deployment_options.trace_properties = e
+    const changeProperties = (e) => {
+        channel.deployment_options.trace_properties = e;
 
-       
-        setEditingData({ ...channel })
-    }
+        setEditingData({ ...channel });
+    };
 
-    const changeFile = (e)=> {
-        channel.deployment_options.trace_file = e
+    const changeFile = (e) => {
+        channel.deployment_options.trace_file = e;
 
-        setEditingData({ ...channel })
-    }
+        setEditingData({ ...channel });
+    };
 
     useEffect(() => {
         if (visible) {
@@ -120,60 +117,56 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                 channel.deployment_options.assigned_agent = [];
             }
 
-
-            if(channel.deployment_options.trace_properties){
+            if (channel.deployment_options.trace_properties) {
                 setTraceProperties(true);
             }
-            if(channel.deployment_options.trace_file){
+            if (channel.deployment_options.trace_file) {
                 setTraceFile(true);
             }
             //Check level of storage
-            if(channel.deployment_options.trace_stats){
+            if (channel.deployment_options.trace_stats) {
                 setLevelOfStorage(33);
             }
-            if(channel.deployment_options.trace_incoming_message){
+            if (channel.deployment_options.trace_incoming_message) {
                 setLevelOfStorage(66);
             }
-            if(channel.deployment_options.trace_outgoing_message){
+            if (channel.deployment_options.trace_outgoing_message) {
                 setLevelOfStorage(99);
             }
-
-
 
             setEditingData({ ...channel });
         }
     }, [visible]);
 
     const setLevelsOfStorage = (option) => {
-            if(channel.deployment_options){
-                delete channel.deployment_options.trace_stats
-                delete channel.deployment_options.trace_incoming_message
-                delete channel.deployment_options.trace_outgoing_message
-            }
-            switch (option) {
-                case 0:
-                    break;
-                case 33:
-                    channel.deployment_options.trace_stats = true
-                    break;
-                case 66:
-                    channel.deployment_options.trace_stats = true
-                    channel.deployment_options.trace_incoming_message = true
-                    break;
-                case 99:
-                    channel.deployment_options.trace_stats = true
-                    channel.deployment_options.trace_incoming_message = true
-                    channel.deployment_options.trace_outgoing_message = true
-                    break;
-                default:
-                    break;
-            } 
+        if (channel.deployment_options) {
+            delete channel.deployment_options.trace_stats;
+            delete channel.deployment_options.trace_incoming_message;
+            delete channel.deployment_options.trace_outgoing_message;
+        }
+        switch (option) {
+            case 0:
+                break;
+            case 33:
+                channel.deployment_options.trace_stats = true;
+                break;
+            case 66:
+                channel.deployment_options.trace_stats = true;
+                channel.deployment_options.trace_incoming_message = true;
+                break;
+            case 99:
+                channel.deployment_options.trace_stats = true;
+                channel.deployment_options.trace_incoming_message = true;
+                channel.deployment_options.trace_outgoing_message = true;
+                break;
+            default:
+                break;
+        }
 
-        console.log(channel)
+        console.log(channel);
 
-        setEditingData({ ...channel })
-    }
-
+        setEditingData({ ...channel });
+    };
 
     return (
         <Modal
@@ -202,41 +195,61 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                 </Button>,
             ]}>
             {editingData && (
-                <>   <Collapse accordion  defaultActiveKey="1">
-                        <Panel header={T.translate("integrations.channel.trace_levels")}  key="1">
-                            <Row >
-                                <Col span={12}>  
-                                    <div style={{display: 'block',height: 300,marginLeft: 70}}>
-                                        <Slider vertical marks={marks} tooltipVisible={false} step={null} defaultValue={levelOfStorage} onChange={(e) =>{ setLevelsOfStorage(e)}} />
+                <ConditionalForm
+                    ref={editTabFormEl}
+                    ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
+                    ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
+                    schema={editTabFormSchema.schema}
+                    formData={editingData}
+                    uiSchema={editTabFormSchema.uiSchema}
+                    widgets={formConfig.widgets}
+                    onChange={(e) => setEditingData(e.formData)}
+                    onSubmit={(e) => onOk(e)}
+                    onError={(e) => console.log(e)}>
+                    <></>
+                    <Collapse accordion defaultActiveKey="1">
+                        <Panel header={T.translate("integrations.channel.trace_levels")} key="1">
+                            <Row>
+                                <Col span={12}>
+                                    <div style={{ display: "block", height: 300, marginLeft: 70 }}>
+                                        <Slider
+                                            vertical
+                                            marks={marks}
+                                            tooltipVisible={false}
+                                            step={null}
+                                            defaultValue={levelOfStorage}
+                                            onChange={(e) => {
+                                                setLevelsOfStorage(e);
+                                            }}
+                                        />
                                     </div>
                                 </Col>
                                 <Col span={10}>
-                                    <Card  type="inner" title={T.translate("integrations.channel.additional_props")} style={{height: 300}}>
-                                        <p>{T.translate("integrations.channel.trace_logs")}</p><Switch defaultChecked={tracefile} onChange={(e) => { changeFile(e) }} />
+                                    <Card
+                                        type="inner"
+                                        title={T.translate("integrations.channel.additional_props")}
+                                        style={{ height: 300 }}>
+                                        <p>{T.translate("integrations.channel.trace_logs")}</p>
+                                        <Switch
+                                            defaultChecked={tracefile}
+                                            onChange={(e) => {
+                                                changeFile(e);
+                                            }}
+                                        />
                                         <Divider></Divider>
-                                        <p>{T.translate("integrations.channel.trace_properties")}</p><Switch defaultChecked={traceProperties} onChange={(e) => { changeProperties(e) }} />
+                                        <p>{T.translate("integrations.channel.trace_properties")}</p>
+                                        <Switch
+                                            defaultChecked={traceProperties}
+                                            onChange={(e) => {
+                                                changeProperties(e);
+                                            }}
+                                        />
                                     </Card>
                                 </Col>
                             </Row>
                         </Panel>
-                     </Collapse>
-                    <Divider></Divider>
-                    <ConditionalForm
-                        ref={editTabFormEl}
-                        ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
-                        ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
-                        schema={editTabFormSchema.schema}
-                        formData={editingData}
-                        uiSchema={editTabFormSchema.uiSchema}
-                        widgets={formConfig.widgets}
-                        onChange={(e) => setEditingData(e.formData)}
-                        onSubmit={(e) => onOk(e)}
-                        onError={(e) => console.log(e)}>
-                        <></>
-                    </ConditionalForm>
-                </>
-          
-              
+                    </Collapse>
+                </ConditionalForm>
             )}
         </Modal>
     );

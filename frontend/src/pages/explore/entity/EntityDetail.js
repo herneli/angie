@@ -25,28 +25,14 @@ const EntityDetail = ({ record }) => {
     const [basePattern, setBasePattern] = useState({
         id: {
             label: T.translate("entity.id"),
-            style: {
-                // fontSize: "120%",
-            },
         },
         entity_type_name: {
             label: T.translate("entity.type"),
-        },
-        arrayTest: {
-            label: "Paciente",
-        },
-        entity: {
-            // span: 2,
-            label: "Origen",
         },
         date: {
             label: T.translate("entity.date"),
             type: "date",
             format: "DD/MM/YYYY HH:mm:ss.SSS",
-        },
-        organization: {
-            label: T.translate("entity.organization"),
-            render: (value) => getOrganizationById(value),
         },
     });
 
@@ -140,10 +126,10 @@ const EntityDetail = ({ record }) => {
                 {/* <pre>{JSON.stringify(currentRecord, null, 2)}</pre> */}
 
                 <div ref={detail}>
-                    <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title>
+                    {/* <Typography.Title level={4}>{T.translate("entity.detail.title")}</Typography.Title> */}
                     {currentRecord && (
                         <DynamicDetail
-                            options={{ size: "small", bordered: true, layout: "vertical" }}
+                            options={{ size: "small", bordered: true,/* layout: "vertical"*/ }}
                             pattern={basePattern}
                             data={currentRecord}
                             helpers={{

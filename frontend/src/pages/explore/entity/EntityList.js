@@ -75,23 +75,17 @@ const EntityList = () => {
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
-        
         filters.limit = pagination?.pageSize || 10;
         filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
 
-        if (sorts) {
-            filters.sort =
-                Object.keys(sorts).length !== 0
-                    ? {
-                          field: sorts.columnKey || sorts.field,
-                          direction: sorts.order,
-                      }
-                    : { field: "data->>'date'", direction: "descend" };
-        }
+        filters.sort =
+            sorts && Object.keys(sorts).length !== 0
+                ? {
+                      field: sorts.columnKey || sorts.field,
+                      direction: sorts.order,
+                  }
+                : { field: "data->>'date'", direction: "descend" };
 
-        if (sorts.columnKey == "id") {
-            filters.sort.field = "id::bigint";
-        }
         try {
             const response = await axios.post(`/entity/list`, filters);
 
@@ -111,7 +105,7 @@ const EntityList = () => {
         {
             title: T.translate("entity.id"),
             dataIndex: "id",
-            key: "id",
+            key: "id::bigint",//!FIXME... si los ids tienen texto esto no ordena
             ellipsis: true,
             sorter: true,
             render: (text) => <Link to={`/explore/entity/${text}`}>{text}</Link>,
