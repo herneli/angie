@@ -1294,7 +1294,7 @@ exports.seed = async function (knex) {
                         items: {
                             code: {
                                 "ui:widget": "SelectRemoteWidget",
-                                "ui:selectOptions": "/configuration/model/entity_type/data#path=data&value=id&label=data.name"
+                                "ui:selectOptions": "/configuration/model/entity_type/data#path=data&value=code&label=data.name"
                             },
                             entity_extraction: {
                                 "ui:widget": "AceEditorWidget",
