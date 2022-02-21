@@ -106,6 +106,12 @@
                                 "title": "menu.packages.entity_mapper"
                             },
                             {
+                                "key": "entity_type",
+                                "value": "/entity_type",
+                                "icon": "mdiCardBulletedSettings",
+                                "title": "menu.packages.entity_type"
+                            },
+                            {
                                 "key": "checkpoint",
                                 "value": "/checkpoint",
                                 "icon": "mdiTagMultiple",

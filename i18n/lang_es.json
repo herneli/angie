@@ -206,6 +206,7 @@
             "integrations": "Integraciones",
             "integration_config": "Config. Integraciones",
             "node_types": "Tipos de Nodo",
+            "entity_type": "Tipos de Entidad",
             "entity_mapper": "Mapeo Entidades",
             "checkpoint": "Checkpoints",
             "scripting": "Scripting",
