@@ -251,7 +251,7 @@ const DeployedIntegrations = () => {
             newFilters = Utils.getFiltersByPairs((key) => `data->>'${key}'`, filter);
         } else if (filter) {
             newFilters["integration.data::text"] = {
-                type: "jsonb",
+                type: "likeI",
                 value: filter,
             };
         }

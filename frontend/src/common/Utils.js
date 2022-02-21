@@ -1,6 +1,6 @@
 export default class Utils {
     static getFiltersByPairs = (filterKey, str) => {
-        const regex = /(?<key>[^:]+):(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
+        const regex = /(?<key>[^:|^!:]+)(:|!:)(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
         let m;
 
         let data = {};
@@ -10,9 +10,23 @@ export default class Utils {
                 regex.lastIndex++;
             }
             let { key, value } = m.groups;
+
+            const operator = m[2] || ":";
+
+            let type = "likeI";
+            switch (operator) {
+                case ":":
+                default:
+                    type = "likeI";
+                    break;
+                case "!:":
+                    type = "notlikeI";
+                    break;
+            }
+
             if (key) {
                 data[filterKey(key)] = {
-                    type: "jsonb",
+                    type: type,
                     value: `%${value}%`,
                 };
             }

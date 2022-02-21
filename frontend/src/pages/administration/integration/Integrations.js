@@ -404,7 +404,7 @@ const Integrations = () => {
         }
         search(null, {
             "integration.data::text": {
-                type: "jsonb",
+                type: "likeI",
                 value: value,
             },
         });

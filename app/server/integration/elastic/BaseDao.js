@@ -170,8 +170,6 @@ export default class BaseDao {
                     case "query_string":
                         body.andFilter("query_string", "query", element.value);
                         break;
-                    // case "jsonb":
-                    //     break;
                     case "greater":
                         body.query("range", index, { gt: element.value });
                         break;
