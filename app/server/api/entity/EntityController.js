@@ -1,7 +1,6 @@
 import { App, BaseController, JsonResponse } from "lisco";
 import expressAsyncHandler from "express-async-handler";
 import { EntityService } from ".";
-import { ConfigurationService } from "../configuration/ConfigurationService";
 
 export class EntityController extends BaseController {
     configure() {
@@ -66,14 +65,7 @@ export class EntityController extends BaseController {
             let service = new EntityService();
             let data = await service.loadById(request.params.id);
 
-            //Tipo entidad
-            let configurationService = new ConfigurationService();
-            let element = await configurationService.list("entity_type",{"id": data.type})
-            if(element.data && element.data[0]){
-                let entity_type = {"entity_type": element.data[0]}
-                data["entity_type_name"] = element &&  element.data[0] && element.data[0].data && element.data[0].data.name ? element.data[0].data.name : ""
-                data = {...data,...entity_type}
-            }
+            
 
             let jsRes = new JsonResponse(true, data);
             let code = 200;
