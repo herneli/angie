@@ -2,6 +2,7 @@ import { Col, DatePicker, Input, Row } from "antd";
 import moment from "moment";
 
 import T from "i18n-react";
+import { useState } from "react";
 
 const { RangePicker } = DatePicker;
 
@@ -13,7 +14,6 @@ const BasicFilter = ({
     hideDateFilter,
     defaultDates,
     onSearch,
-    onDateChange,
     customDateRanges,
     children,
 }) => {
@@ -36,10 +36,29 @@ const BasicFilter = ({
         moment().endOf("day"),
     ];
 
+    const [filters, setFilters] = useState({});
+
+    const onDateChange = (dates) => {
+        const newFilters = { ...filters, dates: dates };
+        setFilters(newFilters);
+        onSearch(newFilters);
+    };
+
+    const onFilterChange = (filter) => {
+        const newFilters = { ...filters, filter: filter };
+        setFilters(newFilters);
+        onSearch(newFilters);
+    };
     return (
         <Row>
             <Col flex={2}>
-                <Input.Search allowClear value={value} onSearch={(element) => onSearch(element)} enterButton onChange={onChange} />
+                <Input.Search
+                    allowClear
+                    value={value}
+                    onSearch={(element) => onFilterChange(element)}
+                    enterButton
+                    onChange={onChange}
+                />
             </Col>
             <Col flex={1}>
                 <Row justify="end">
@@ -49,7 +68,7 @@ const BasicFilter = ({
                             defaultValue={defaultDates}
                             showTime
                             format={dateFormat}
-                            onChange={onDateChange}
+                            onChange={(dates) => onDateChange(dates)}
                         />
                     )}
                     {children}

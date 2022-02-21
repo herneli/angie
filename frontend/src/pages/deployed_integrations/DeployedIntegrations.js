@@ -68,6 +68,7 @@ const DeployedIntegrations = () => {
     const [agents, setAgents] = useState([]);
     const { currentUser } = useAngieSession();
 
+    const [filters, setFilters] = useState({});
     const [pagination, setPagination] = useState({});
 
     const initialize = async () => {
@@ -117,20 +118,13 @@ const DeployedIntegrations = () => {
      * @param {*} filters
      * @param {*} sorts
      */
-    const search = async (pagination, filters = {}, sorts) => {
+    const search = async (pagination, filters = {}) => {
         setLoading(true);
 
         if (pagination?.pageSize && pagination?.current) {
             filters.limit = pagination.pageSize ? pagination.pageSize : 10;
             filters.start =
                 (pagination.current ? pagination.current - 1 : 0) * (pagination.pageSize ? pagination.pageSize : 10);
-        }
-
-        if (sorts) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
-                field: sorts.columnKey || sorts.field,
-                direction: sorts.order,
-            };
         }
 
         try {
@@ -172,7 +166,7 @@ const DeployedIntegrations = () => {
                         onConfirm={() => {
                             (async () => {
                                 await channelActions.undeployChannel(integration.id, record.id, false);
-                                await search();
+                                await search(pagination, filters);
                             })();
                         }}>
                         <IconButton
@@ -192,7 +186,7 @@ const DeployedIntegrations = () => {
                             key="deploy"
                             onClick={async () => {
                                 await channelActions.deployChannel(integration.id, record.id);
-                                await search();
+                                await search(pagination, filters);
                             }}
                             icon={{
                                 path: mdiPlayCircle,
@@ -251,19 +245,18 @@ const DeployedIntegrations = () => {
             </div>
         );
     };
-    const onSearch = (value) => {
-        if (value.indexOf(":") !== -1) {
-            return search(
-                null,
-                Utils.getFiltersByPairs((key) => `data->>'${key}'`, value)
-            );
-        }
-        search(null, {
-            "integration.data::text": {
+    const onSearch = ({ filter }) => {
+        let newFilters = {};
+        if (filter && filter.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `data->>'${key}'`, filter);
+        } else if (filter) {
+            newFilters["integration.data::text"] = {
                 type: "jsonb",
-                value: value,
-            },
-        });
+                value: filter,
+            };
+        }
+        setFilters(newFilters);
+        search(pagination, newFilters);
     };
 
     /**
@@ -420,7 +413,7 @@ const DeployedIntegrations = () => {
                             channel={chann}
                             currentAgent={chann?.agent}
                             agents={agents}
-                            onActionEnd={search}
+                            onActionEnd={() => search(pagination, filters)}
                         />
                     ),
                 ]}
@@ -442,8 +435,8 @@ const DeployedIntegrations = () => {
         <Content className={"deployedIntegrations"}>
             <BasicFilter hideDateFilter onSearch={onSearch}>
                 <IconButton
-                    key="undeploy"
-                    onClick={() => search()}
+                    key="reload"
+                    onClick={() => search(pagination, filters)}
                     icon={{
                         path: mdiRefresh,
                         size: 0.7,

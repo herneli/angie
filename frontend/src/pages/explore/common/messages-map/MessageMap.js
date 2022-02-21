@@ -139,7 +139,7 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
      * @param {*} data
      */
     const createElements = async (data, checks, checked) => {
-        if (data) {
+        if (data && checks) {
             const { connections, nodes, counters } = data;
 
             //Crear los nodos

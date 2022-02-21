@@ -35,7 +35,11 @@ const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 const Messages = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [pagination, setPagination] = useState({});
+
+    const [filters, setFilters] = useState({});
+    const [pagination, setPagination] = useState({ showSizeChanger: true });
+    const [sort, setSort] = useState({});
+
     const [messageModalVisible, setMessageModalVisible] = useState(false);
     const [detailedMessage, setDetailedMessage] = useState([]);
     const [currentDates, setCurrentDates] = useState(defaultDates);
@@ -53,8 +57,8 @@ const Messages = (props) => {
     }
 
     useEffect(() => {
-        search();
-    }, [props.debugData, currentDates]);
+        search(pagination, filters, sort);
+    }, [props.debugData]);
 
     const classes = useStyles();
 
@@ -70,12 +74,13 @@ const Messages = (props) => {
         }
 
         if (sorts?.order) {
-            filters.sort = Object.keys(sorts).length !== 0 && {
-                field: sorts.columnKey || sorts.field,
-                direction: sorts.order,
-            };
-        } else {
-            filters.sort = { field: "date_reception", direction: "descend" };
+            filters.sort =
+                Object.keys(sorts).length !== 0
+                    ? {
+                          field: sorts.columnKey || sorts.field,
+                          direction: sorts.order,
+                      }
+                    : { field: "date_reception", direction: "descend" };
         }
 
         if (currentDates) {
@@ -230,29 +235,27 @@ const Messages = (props) => {
         },
     ];
 
-    const onDateChange = (dates) => {
-        setCurrentDates(dates);
-    };
-
-    const onSearch = (value) => {
-        if (value.indexOf(":") !== -1) {
-            search(
-                null,
-                Utils.getFiltersByPairs((key) => `${key}`, value)
-            );
-        } else if (value !== "") {
-            const tableName = "zmessages";
-            const filter = {
-                [`"${tableName}"`]: {
-                    type: "full-text-psql",
-                    value: value,
-                },
+    const onSearch = ({ filter, dates }) => {
+        let newFilters = {};
+        if (filter && filter.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `${key}`, filter);
+        } else if (filter) {
+            newFilters["zmessages"] = {
+                type: "full-text-psql",
+                value: filter,
             };
-
-            search(null, filter);
-        } else {
-            search(null, {});
         }
+
+        if (dates) {
+            newFilters["date_reception"] = {
+                type: "date",
+                start: dates[0].toISOString(),
+                end: dates[1].toISOString(),
+            };
+        }
+
+        setFilters(newFilters);
+        search(pagination, newFilters, sort);
     };
 
     return props.channel ? (
@@ -263,7 +266,7 @@ const Messages = (props) => {
                     key="messages-table"
                     dataSource={dataSource}
                     columns={columns}
-                    onChange={search}
+                    onChange={() => search(pagination, filters, sort)}
                     pagination={pagination}
                     rowKey={"id"}
                     childrenColumnName={"channels"}
@@ -288,7 +291,7 @@ const Messages = (props) => {
         </>
     ) : (
         <Content>
-            <BasicFilter defaultDates={defaultDates} onDateChange={onDateChange} onSearch={onSearch}>
+            <BasicFilter defaultDates={defaultDates} onSearch={onSearch}>
                 <Button
                     icon={<Icon path={mdiDownload} className={classes.icon} />}
                     type="text"
@@ -296,29 +299,18 @@ const Messages = (props) => {
                 />
             </BasicFilter>
             <br />
-            {/* <Row className={classes.card}>
-                <Col flex={1}>
-                    <Input.Search className={classes.search} onSearch={(element) => onSearch(element)} enterButton />
-                </Col>
-                <Col flex={2}>
-                    <Row justify="end" gutter={10}>
-                        <Col>
-                            <Button
-                                icon={<Icon path={mdiDownload} className={classes.icon} />}
-                                type="text"
-                                onClick={() => handleDownloadTable(dataSource)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-            </Row> */}
+
             {dataSource && (
                 <Table
                     loading={loading}
                     key="messages-table"
                     dataSource={dataSource}
                     columns={columns}
-                    onChange={search}
+                    onChange={(pagination, tableFilters, sort) => {
+                        setSort(sort);
+                        setPagination(pagination);
+                        search(pagination, filters, sort);
+                    }}
                     pagination={pagination}
                     rowKey={"id"}
                     childrenColumnName={"channels"}

@@ -14,6 +14,7 @@ import * as api from "../../../api/configurationApi";
 import { useAngieSession } from "../../../providers/security/UserContext";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
 import { Link } from "react-router-dom";
+import Utils from "../../../common/Utils";
 
 const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 
@@ -70,7 +71,7 @@ const EntityList = () => {
             console.error(ex);
         }
     };
-    
+
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
@@ -89,9 +90,9 @@ const EntityList = () => {
                       }
                     : { field: "data->>'date'", direction: "descend" };
         }
-        
-        if(sorts.columnKey == "id"){
-            filters.sort.field = "id::bigint"
+
+        if (sorts.columnKey == "id") {
+            filters.sort.field = "id::bigint";
         }
         try {
             const response = await axios.post(`/entity/list`, filters);
@@ -167,35 +168,31 @@ const EntityList = () => {
         },
     ];
 
-    const onDateChange = (dates) => {
-        if (dates) {
-            const newFilters = {
-                ...filters,
-                "data->>'date'": {
-                    type: "dateraw",
-                    start: dates[0].toISOString(),
-                    end: dates[1].toISOString(),
-                },
-            };
-            setFilters(newFilters);
-            search(pagination, newFilters, sort);
-        }
-    };
-    const onSearch = (value) => {
-        const filter = {
-            tagged_messages: {
+    const onSearch = ({ filter, dates }) => {
+        let newFilters = {};
+        if (filter && filter.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `${key}`, filter);
+        } else if (filter) {
+            newFilters["zentity"] = {
                 type: "full-text-psql",
-                value: value,
-            },
-        };
-        const newFilters = value ? { ...filters, ...filter } : { ...filters };
+                value: filter,
+            };
+        }
+        if (dates) {
+            newFilters["data->>'date'"] = {
+                type: "dateraw",
+                start: dates[0].toISOString(),
+                end: dates[1].toISOString(),
+            };
+        }
+
         setFilters(newFilters);
         search(pagination, newFilters, sort);
     };
 
     return (
         <div>
-            <BasicFilter defaultDates={defaultDates} onDateChange={onDateChange} onSearch={onSearch} />
+            <BasicFilter defaultDates={defaultDates} onSearch={onSearch} />
             <br />
             {dataSource && (
                 <Table

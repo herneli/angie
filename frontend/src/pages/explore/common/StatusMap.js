@@ -28,7 +28,6 @@ const StatusMap = ({
     const [searchValue, setSearchValue] = useState("");
 
     const [filters, setFilters] = useState({});
-    const [dateFilters, setDateFilters] = useState({});
     const [pagination, setPagination] = useState();
     const [sort, setSort] = useState({});
     const { currentUser } = useAngieSession();
@@ -73,43 +72,35 @@ const StatusMap = ({
         }
     };
 
-    const onSearch = (value) => {
+    const onSearch = ({ filter, dates }) => {
         let newFilters = {};
-        if (value.indexOf(":") !== -1) {
-            newFilters = Utils.getFiltersByPairs((key) => `${key}`, value);
-        } else if (value) {
+        if (filter && filter.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `${key}`, filter);
+        } else if (filter) {
             newFilters = {
                 tagged_messages: {
                     type: "full-text-psql",
-                    value: value,
+                    value: filter,
                 },
+            };
+        }
+        if (dates) {
+            newFilters["date_reception"] = {
+                type: "date",
+                start: dates[0].toISOString(),
+                end: dates[1].toISOString(),
             };
         }
 
         setFilters(newFilters);
-        doTableLoad(pagination, { ...dateFilters, ...newFilters }, sort, checkedNodes);
-        doMapLoad({ ...dateFilters, ...newFilters }, checkedNodes);
-    };
-
-    const onDateChange = (dates) => {
-        if (dates) {
-            const newDateFilters = {
-                date_reception: {
-                    type: "date",
-                    start: dates[0].toISOString(),
-                    end: dates[1].toISOString(),
-                },
-            };
-            setDateFilters(newDateFilters);
-            doTableLoad(pagination, { ...filters, ...newDateFilters }, sort, checkedNodes);
-            doMapLoad({ ...filters, ...newDateFilters }, checkedNodes);
-        }
+        doTableLoad(pagination, newFilters, sort, checkedNodes);
+        doMapLoad(newFilters, checkedNodes);
     };
 
     const onCheckedChange = (checkedNodes) => {
         setCheckedNodes(checkedNodes);
-        doTableLoad(pagination, { ...filters, ...dateFilters }, sort, checkedNodes);
-        doMapLoad({ ...filters, ...dateFilters }, checkedNodes);
+        doTableLoad(pagination, filters, sort, checkedNodes);
+        doMapLoad(filters, checkedNodes);
     };
 
     const baseHeight = `calc(100vh - ${height || 165}px)`;
@@ -120,7 +111,6 @@ const StatusMap = ({
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 defaultDates={defaultDates}
-                onDateChange={onDateChange}
                 onSearch={onSearch}
                 customDateRanges={customDateRanges}
             />

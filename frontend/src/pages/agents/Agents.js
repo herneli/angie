@@ -55,11 +55,9 @@ const Agents = () => {
     let [agentDependenciesVisible, setAgentDependenciesVisible] = useState(false);
     let [currentAgent, setCurrentAgent] = useState(null);
 
-    const [pagination, setPagination] = useState({});
-
-    useEffect(() => {
-        setPagination({ total: dataSource.total, showSizeChanger: true });
-    }, [dataSource]);
+    const [filters, setFilters] = useState({});
+    const [pagination, setPagination] = useState({ showSizeChanger: true });
+    const [sort, setSort] = useState({});
 
     const classes = useStyles();
 
@@ -85,6 +83,7 @@ const Agents = () => {
             if (response && response.data && response.data.data) {
                 let agents = response.data.data;
 
+                setPagination({ ...pagination, total: response?.data?.total });
                 setDataSource(agents);
                 setDataSourceKeys(lodash.map(agents, "id"));
             }
@@ -100,26 +99,24 @@ const Agents = () => {
     const forceStatusReload = async (agent) => {
         try {
             await axios.post(`/jum_agent/${agent.id}/forceReload`);
-            await search();
+            await search(pagination, filters, sort);
         } catch (ex) {
-
-            if(ex?.response?.data?.message === 'agent_not_connected'){
+            if (ex?.response?.data?.message === "agent_not_connected") {
                 notification.error({
                     message: T.translate("common.messages.error.title"),
                     description: T.translate("common.messages.error.agent_not_connected", { error: ex }),
                 });
-            }else{
+            } else {
                 notification.error({
                     message: T.translate("common.messages.error.title"),
                     description: T.translate("common.messages.error.description", { error: ex }),
                 });
             }
-            
         }
     };
 
     useEffect(() => {
-        search();
+        search(pagination, filters, sort);
     }, []);
 
     const approveAgent = async (agent) => {
@@ -147,18 +144,18 @@ const Agents = () => {
     const reloadDependencies = async (agent) => {
         try {
             await axios.post(`/jum_agent/${agent.id}/reload_dependencies`);
-            await search();
+            await search(pagination, filters, sort);
             notification.success({
                 message: T.translate("common.messages.reloaded.title"),
                 description: T.translate("common.messages.reloaded.ok_desc"),
             });
         } catch (ex) {
-            if(ex?.response?.data?.message === 'agent_not_connected'){
+            if (ex?.response?.data?.message === "agent_not_connected") {
                 notification.error({
                     message: T.translate("common.messages.error.title"),
                     description: T.translate("common.messages.error.agent_not_connected", { error: ex }),
                 });
-            }else{
+            } else {
                 notification.error({
                     message: T.translate("common.messages.error.title"),
                     description: T.translate("common.messages.error.description", { error: ex }),
@@ -339,7 +336,7 @@ const Agents = () => {
                                     onConfirm={() => {
                                         (async () => {
                                             await approveAgent(record);
-                                            await search();
+                                            await search(pagination, filters, sort);
                                         })();
                                     }}>
                                     <Button
@@ -362,7 +359,7 @@ const Agents = () => {
                                     onConfirm={() => {
                                         (async () => {
                                             await deleteAgent(record);
-                                            await search();
+                                            await search(pagination, filters, sort);
                                         })();
                                     }}>
                                     <Button
@@ -400,7 +397,7 @@ const Agents = () => {
         //TODo
         try {
             await axios.put(`/jum_agent/${formData.id}`, { id: formData.id, options: formData.options });
-            await search();
+            await search(pagination, filters, sort);
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -414,7 +411,7 @@ const Agents = () => {
     const saveLibraries = async ({ formData }) => {
         try {
             await axios.post(`/library/updateAll`, { libraries: formData.libraries });
-            await search();
+            await search(pagination, filters, sort);
         } catch (ex) {
             notification.error({
                 message: T.translate("common.messages.error.title"),
@@ -425,22 +422,18 @@ const Agents = () => {
         cancelLibraries();
     };
 
-    const onSearch = (value) => {
-        if (value.indexOf(":") !== -1) {
-            return search(
-                null,
-                Utils.getFiltersByPairs((key) => `${key}::text`, value)
-            );
-        }
-        if (!value) {
-            return search();
-        }
-        search(null, {
-            jum_agent: {
+    const onSearch = ({ filter }) => {
+        let newFilters = {};
+        if (filter && filter.indexOf(":") !== -1) {
+            newFilters = Utils.getFiltersByPairs((key) => `${key}::text`, filter);
+        } else if (filter) {
+            newFilters["jum_agent"] = {
                 type: "full-text-psql",
-                value: value,
-            },
-        });
+                value: filter,
+            };
+        }
+        setFilters(newFilters);
+        search(pagination, newFilters, sort);
     };
     return (
         <Content>
@@ -456,7 +449,7 @@ const Agents = () => {
                 />
                 <IconButton
                     key="undeploy"
-                    onClick={() => search()}
+                    onClick={() => search(pagination, filters, sort)}
                     icon={{
                         path: mdiRefresh,
                         size: 0.7,
@@ -470,7 +463,11 @@ const Agents = () => {
                 key="agents-table"
                 dataSource={dataSource}
                 columns={columns}
-                onChange={search}
+                onChange={(pagination, tableFilters, sort) => {
+                    setSort(sort);
+                    setPagination(pagination);
+                    search(pagination, filters, sort);
+                }}
                 pagination={pagination}
                 rowKey={"id"}
                 childrenColumnName={"channels"}
