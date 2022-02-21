@@ -117,8 +117,6 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
     const defaultSelected = ({ nodes }, available) => {
         const selected = lodash.keys(nodes);
         setCheckAllNodes(selected.length >= available.length);
-        console.log(selected.length);
-        console.log(available.length);
         setIndeterminate(!!selected.length && selected.length < available.length);
         return selected;
     };

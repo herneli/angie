@@ -49,12 +49,9 @@ const MessagesStatusMap = ({ entity, height }) => {
     const loadData = async (pagination, filters = {}, sorts, checkedNodes) => {
         setTableLoading(true);
         try {
-            if (pagination?.pageSize && pagination?.current) {
-                filters.limit = pagination.pageSize ? pagination.pageSize : 10;
-                filters.start =
-                    (pagination.current ? pagination.current - 1 : 0) *
-                    (pagination.pageSize ? pagination.pageSize : 10);
-            }
+            filters.limit = pagination?.pageSize || 10;
+            filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
+            
             getEntityFilter(filters);
 
             if (sorts) {
