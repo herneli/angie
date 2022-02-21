@@ -317,7 +317,6 @@ const Messages = (props) => {
                     bordered
                     sort
                     scroll={{ x: 1100 }}
-                    size="small"
                 />
             )}
             {messageModalVisible && (

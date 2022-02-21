@@ -198,7 +198,10 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
 
             let filteredConnections = connections;
             if (selection && !lodash.isEmpty(selection)) {
-                const selectedPaths = lodash.map(selection, "checks");
+                let selectedPaths = lodash.map(selection, "checks");
+
+                selectedPaths = lodash.flatten(lodash.map(selectedPaths, splitCheckpointInPairs));
+
                 filteredConnections = {};
                 for (const path in connections) {
                     if (selectedPaths.indexOf(path) !== -1) {
@@ -209,6 +212,21 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
 
             setElements(getLayoutedElements([...lodash.compact(elems), ...lodash.values(filteredConnections)]));
         }
+    };
+
+    const splitCheckpointInPairs = (path) => {
+        if (!path) return [];
+        const values = path.split("-");
+        let result = [];
+
+        for (let idx = 0; idx < values.length; idx++) {
+            const elm = values[idx];
+            const nextelm = values[idx + 1];
+
+            result.push(elm + "-" + nextelm);
+        }
+
+        return result;
     };
 
     const onElementSelection = (elements) => {

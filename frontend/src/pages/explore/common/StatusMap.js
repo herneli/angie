@@ -68,7 +68,7 @@ const StatusMap = ({
         console.log(filter);
         setSearchValue(filter);
         if (filter) {
-            onSearch(filter);
+            onSearch({ filter });
         }
     };
 
