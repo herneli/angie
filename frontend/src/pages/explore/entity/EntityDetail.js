@@ -46,7 +46,7 @@ const EntityDetail = ({ record }) => {
         },
         organization: {
             label: T.translate("entity.organization"),
-            render: (value) => getOrganizationById(value)?.name,
+            render: (value) => getOrganizationById(value),
         },
     });
 
@@ -70,12 +70,12 @@ const EntityDetail = ({ record }) => {
             const response = await axios.post("/entity/" + id);
 
             if (response) {
-                let record = response?.data?.data
-                let entity_detail = response?.data?.data?.entity_type?.data?.entity_detail
+                let record = response?.data?.data;
+                let entity_detail = response?.data?.data?.entity_type?.data?.entity_detail;
                 setCurrentRecord(record);
-                if(entity_detail != null && entity_detail != ""){
-                    setBasePattern(JSON.parse(entity_detail)) 
-                }   
+                if (entity_detail != null && entity_detail != "") {
+                    setBasePattern(JSON.parse(entity_detail));
+                }
                 setDetailHeight(getDetailHeight());
             }
         } catch (ex) {
@@ -97,7 +97,8 @@ const EntityDetail = ({ record }) => {
         if (!id) return null;
         const org = lodash.find(organizations, { id: id });
         if (!org) return null;
-        return { ...org, ...org.data };
+        const data = { ...org, ...org.data };
+        return data.name;
     };
 
     /**
@@ -145,6 +146,9 @@ const EntityDetail = ({ record }) => {
                             options={{ size: "small", bordered: true, layout: "vertical" }}
                             pattern={basePattern}
                             data={currentRecord}
+                            helpers={{
+                                getOrganizationById: (value) => getOrganizationById(value),
+                            }}
                         />
                     )}
                     <br />

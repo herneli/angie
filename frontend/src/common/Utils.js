@@ -27,7 +27,7 @@ export default class Utils {
             if (key) {
                 data[filterKey(key)] = {
                     type: type,
-                    value: `%${value}%`,
+                    value: `${value}`,
                 };
             }
         }

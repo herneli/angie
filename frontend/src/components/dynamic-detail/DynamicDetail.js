@@ -3,6 +3,7 @@ import { JSONPath } from "jsonpath-plus";
 import lodash from "lodash";
 import moment from "moment";
 
+import T from "i18n-react";
 /**
  * Construye un detalle en base a un objeto JSON y un patrón.
  * 
@@ -23,7 +24,7 @@ import moment from "moment";
  * @param {*} param0 
  * @returns 
  */
-const DynamicDetail = ({ title, pattern, data, options }) => {
+const DynamicDetail = ({ title, pattern, data, options, helpers }) => {
     const drawObject = (object) => {
         return lodash.map(object, (el, key) => {
             let label = el;
@@ -44,15 +45,19 @@ const DynamicDetail = ({ title, pattern, data, options }) => {
             if (type === "date") {
                 value = moment(value).format(format);
             }
-            if (el.render && !(typeof  el.render  === 'string' || el.render instanceof String)) {
+            if (el.render && !(typeof el.render === "string" || el.render instanceof String)) {
                 value = el.render(value, data);
             }
-            if((typeof  el.render  === 'string' || el.render instanceof String)){
-                value = eval(el.render)
+            if (typeof el.render === "string" || el.render instanceof String) {
+                value = eval(el.render);
             }
-          
+
+            if (el.helper && helpers[el.helper]) {
+                value = helpers[el.helper](value, data);
+            }
+
             return (
-                <Descriptions.Item key={key} label={label || ""} contentStyle={style} span={span}>
+                <Descriptions.Item key={key} label={T.translate(label || "")} contentStyle={style} span={span}>
                     {value || ""}
                 </Descriptions.Item>
             );
