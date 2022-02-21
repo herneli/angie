@@ -91,25 +91,26 @@ class ChannelHandlebarsHelpers {
         const conditions = (app && app.data && app.data.entities) || [];
 
         return this.safe(`
-        ${this.setHeader("organization", object.organization, "constant")}
-        <choice>
-            ${conditions
-                .map(
-                    (cond) => `<when>
-                    <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
-                    ${this.setHeader("entity_type", cond.code, "constant")}
-                    <setBody><simple>${cond.entity_extraction}</simple></setBody>
-                </when>`
-                )
-                .join("\n")}
-            <otherwise>
-                ${this.setHeader("entity_type", "unknown", "constant")}
-                <setBody><simple>{}</simple></setBody>
-            </otherwise>
-        </choice>
-        <unmarshal><json/></unmarshal>
-        <process ref="entityGenerator"/>
-        <to uri="mock:store"/>`);
+            ${this.setHeader("organization", object.organization, "constant")}
+            <choice>
+                ${conditions
+                    .map(
+                        (cond) => `<when>
+                            <simple>$\{headers.message_type\} == "${cond.message_type}"</simple>
+                            ${this.setHeader("entity_type", cond.code, "constant")}
+                            <setBody><simple>${cond.entity_extraction}</simple></setBody>
+                        </when>`
+                    )
+                    .join("\n")}
+                <otherwise>
+                    ${this.setHeader("entity_type", "unknown", "constant")}
+                    <setBody><simple>{}</simple></setBody>
+                </otherwise>
+            </choice>
+            <unmarshal><json/></unmarshal>
+            <process ref="entityGenerator"/>
+            <to uri="mock:store"/>
+        `);
     }
 
     /**

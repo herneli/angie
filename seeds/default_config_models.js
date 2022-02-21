@@ -8,7 +8,7 @@ exports.seed = async function (knex) {
             name: "Script method",
             code: "script_method",
             data: {
-                code: "method",
+                code: "script_method",
                 name: "Método",
                 table: "script_config",
                 documentType: "method",
@@ -16,6 +16,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -487,6 +488,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -689,6 +691,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Usuario",
                         field: "username",
+                        link: true
                     },
                     {
                         title: "Email",
@@ -772,6 +775,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -887,7 +891,7 @@ exports.seed = async function (knex) {
             name: "Contextos",
             code: "script_context",
             data: {
-                code: "context",
+                code: "script_context",
                 name: "Contexto",
                 table: "script_config",
                 documentType: "context",
@@ -895,6 +899,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -1037,6 +1042,7 @@ exports.seed = async function (knex) {
                     {
                         title: "code",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -1048,7 +1054,6 @@ exports.seed = async function (knex) {
                     },
                 ],
                 schema: {
-                    title: "Add Organization",
                     type: "object",
                     required: ["code", "name", "config"],
                     properties: {
@@ -1090,6 +1095,7 @@ exports.seed = async function (knex) {
                     {
                         title: "code",
                         field: "code",
+                        link: true
                     },
                     // {
                     //     title: "title",
@@ -1256,6 +1262,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -1320,6 +1327,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",
@@ -1383,6 +1391,7 @@ exports.seed = async function (knex) {
                     {
                         title: "Código",
                         field: "code",
+                        link: true
                     },
                     {
                         title: "Nombre",

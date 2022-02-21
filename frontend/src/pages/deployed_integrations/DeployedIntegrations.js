@@ -124,6 +124,7 @@ const DeployedIntegrations = () => {
         filters.limit = pagination?.pageSize || 10;
         filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
 
+        filters["enabled"] = true;
         try {
             const response = await axios.post("/integration/list/deployed", filters);
 
@@ -247,8 +248,8 @@ const DeployedIntegrations = () => {
         if (filter && filter.indexOf(":") !== -1) {
             newFilters = Utils.getFiltersByPairs((key) => `data->>'${key}'`, filter);
         } else if (filter) {
-            newFilters["integration.data::text"] = {
-                type: "likeI",
+            newFilters["integration"] = {
+                type: "full-text-psql",
                 value: filter,
             };
         }

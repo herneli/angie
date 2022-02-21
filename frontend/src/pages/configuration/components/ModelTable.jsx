@@ -6,6 +6,7 @@ import T from "i18n-react";
 import { mdiUpload, mdiPlus, mdiDelete, mdiContentCopy, mdiDownload, mdiPencil } from "@mdi/js";
 import Icon from "@mdi/react";
 import Utils from "../../../common/Utils";
+import { Link } from "react-router-dom";
 const { Search } = Input;
 
 const useStyles = createUseStyles({
@@ -39,12 +40,19 @@ export default function ModelTable({
 }) {
     const calculateColumns = (info) => {
         if (info) {
-            let columns = info.listFields.map((field) => ({
-                title: field.title,
-                key: field.key,
-                dataIndex: field.field,
-                sorter: true,
-            }));
+            let columns = info.listFields.map((field) => {
+                const obj = {
+                    title: field.title,
+                    key: field.key,
+                    dataIndex: field.field,
+                    sorter: true,
+                };
+
+                if (field.link) {
+                    obj.render = (text, record) => <Link to={modelInfo.code + "/" + record.id}>{text}</Link>;
+                }
+                return obj;
+            });
 
             columns.push({
                 title: T.translate("configuration.actions"),

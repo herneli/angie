@@ -119,7 +119,14 @@ export default function Packages({ history }) {
 
     const renderExpandable = (packageData) => {
         let extendedColumns = [
-            { title: T.translate("packages.version"), key: "version", dataIndex: "version" },
+            {
+                title: T.translate("packages.version"),
+                key: "version",
+                dataIndex: "version",
+                render: (text, record) => (
+                    <Link to={"packages/" + record.code + "/versions/" + record.version}>{text}</Link>
+                ),
+            },
             { title: T.translate("packages.local_commit"), key: "local_commit", dataIndex: "local_commit" },
             { title: T.translate("packages.remote_commit"), key: "remote_commit", dataIndex: "remote_commit" },
             {
