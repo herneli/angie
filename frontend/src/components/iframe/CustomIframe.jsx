@@ -4,12 +4,12 @@ import T from "i18n-react";
 import { useEffect } from "react";
 
 export default function CustomIframe(props) {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const { width, height, style, onLoad, delay = 300, bordered, ...customProps } = props;
 
     useEffect(() => {
         setLoading(true);
-    }, [props.src, props]);
+    }, [props.src]);
 
     const showContent = () => {
         //El timeout se utiliza para compensar el tiempo de carga del contenido del iframe
