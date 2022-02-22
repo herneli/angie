@@ -70,141 +70,22 @@ const JumContexts = () => {
     }, []);
 
     return (
-        <>
+        <div style={{ height: "100%", display: "flex", gap: ".5rem", flexDirection: "column" }}>
             {grafanaLogged === false && (
                 <iframe src="http://localhost:3100" onLoad={updateGrafanaLogged} style={{ display: "none" }} />
             )}
             {drawChannelsSelect()}
             {loaded && grafanaLogged && (
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", height: "125px" }}>
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=3&theme=light"
-                            }
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            title="Routes"
-                        />
-
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=4&theme=light"
-                            }
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            title="Exchanges total"
-                        />
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=5&theme=light"
-                            }
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            title="Exchanges succeeded"
-                        />
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=6&theme=light"
-                            }
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            title="Exchanges failed"
-                        />
-                    </div>
-                    <div style={{ display: "flex", height: "275px" }}>
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=7&theme=light"
-                            }
-                            width="200px"
-                            frameBorder="0"
-                            title="Ex/sec all"
-                        />
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=9&theme=light"
-                            }
-                            width="100%"
-                            frameBorder="0"
-                            title="Ex/sec"
-                        />
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=10&theme=light"
-                            }
-                            width="100%"
-                            frameBorder="0"
-                            title="Ex/sec per route"
-                        />
-                    </div>
-                    <div style={{ display: "flex", height: "160px" }}>
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=11&theme=light"
-                            }
-                            width="100%"
-                            frameBorder="0"
-                            title="Avg Exec Time"
-                        />
-                    </div>
-                    <div style={{ display: "flex", height: "160px" }}>
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=13&theme=light"
-                            }
-                            width="100%"
-                            frameBorder="0"
-                            title="Avg Events Time"
-                        />
-                    </div>
-                    <div style={{ display: "flex", height: "125px" }}>
-                        <CustomIframe
-                            bordered
-                            src={
-                                "http://localhost:3100/d-solo/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=" +
-                                channelSelected +
-                                "&var-routeId=All&var-routeDescription=All&panelId=12&theme=light"
-                            }
-                            width="250px"
-                            frameBorder="0"
-                            title="Example Injects"
-                        />
-                    </div>
-                </div>
+                <CustomIframe
+                    src={`http://localhost:3100/d/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=${channelSelected}&var-routeId=All&var-routeDescription=All&theme=light&kiosk`}
+                    frameBorder={0}
+                    width={"100%"}
+                    height={"100%"}
+                    title="JumContext"
+                    delay={80}
+                />
             )}
-        </>
+        </div>
     );
 };
 
