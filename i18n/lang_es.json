@@ -279,7 +279,8 @@
         "version_dependencies": {
             "title": "Dependencias",
             "saved_succesfully": "Dependencias guardadas correctamente.",
-            "error_msg": "Se ha producido un error grabando las dependencias."
+            "error_msg": "Se ha producido un error grabando las dependencias.",
+            "field_title": "Seleccione las dependencias de la versión"
         }
     },
     "configuration": {

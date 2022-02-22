@@ -20,6 +20,8 @@ import PackageNew from "./PackageNew";
 import PackageVersionNew from "./PackageVersionNew";
 import PackageVersionDependencies from "./PackageVersionDependencies";
 
+import lodash from "lodash";
+
 const { Search } = Input;
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -43,13 +45,20 @@ export default function Packages({ history }) {
     const classes = useStyles();
     const [packages, setPackages] = useState();
     const [dialogActive, setDialogActive] = useState();
-    const loadPackages = () => {
+
+    const [childrenKeys, setChildrenKeys] = useState([]);
+
+    const loadPackages = (expand) => {
         axios.get("/packages").then((response) => {
-            setPackages(response.data.data.map((item) => ({ ...item, key: item.id })));
+            const data = response.data.data.map((item) => ({ ...item, key: item.id }));
+            setPackages(data);
+            if (expand) {
+                setChildrenKeys(lodash.map(data, "id"));
+            }
         });
     };
     useEffect(() => {
-        loadPackages();
+        loadPackages(true);
     }, []);
 
     const handleOnPublish = (code, version) => () => {
@@ -135,8 +144,17 @@ export default function Packages({ history }) {
             { title: T.translate("packages.local_commit"), key: "local_commit", dataIndex: "local_commit" },
             { title: T.translate("packages.remote_commit"), key: "remote_commit", dataIndex: "remote_commit" },
             {
+                title: T.translate("packages.dependencies"),
+                key: "dependencies",
+                dataIndex: "dependencies",
+                render: (text) => {
+                    return text && text.map((el) => el.join("@")).join(", ");
+                },
+            },
+            {
                 title: "Acciones",
                 key: "actions",
+                width: 200,
                 render: (text, record) => {
                     return (
                         <>
@@ -226,7 +244,7 @@ export default function Packages({ history }) {
         ];
         return (
             <Row style={{ margin: "10px" }}>
-                <Col span={12}>
+                <Col span={24}>
                     <Table
                         bordered
                         size="small"
@@ -298,6 +316,7 @@ export default function Packages({ history }) {
         {
             title: T.translate("packages.actions"),
             key: "actions",
+            width: 210,
             render: (key, record) => {
                 return (
                     <>
@@ -341,7 +360,7 @@ export default function Packages({ history }) {
             <Content>
                 <Row className={classes.card}>
                     <Col flex={4}>
-                        <Search className={classes.search} enterButton />
+                        <Search className={classes.search} enterButton allowClear />
                     </Col>
                     <Col flex={2}>
                         <Row justify="end">
@@ -362,6 +381,8 @@ export default function Packages({ history }) {
                     columns={columns}
                     size="small"
                     bordered
+                    expandedRowKeys={childrenKeys}
+                    onExpandedRowsChange={(expandedRows) => setChildrenKeys(expandedRows)}
                     expandable={{
                         expandedRowRender: renderExpandable,
                         rowExpandable: (record) => true,

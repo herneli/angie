@@ -7,33 +7,36 @@ import ConditionalForm from "../../../components/rjsf/custom/ConditionalForm";
 
 import formConfig from "../../../components/rjsf";
 
-const formSchema = {
-    schema: {
-        type: "object",
-        properties: {
-            dependencies: {
-                type: "array",
-                items: {
-                    type: "string",
-                    enum: [],
-                },
-                uniqueItems: true,
-            },
-        },
-    },
-    uiSchema: {
-        dependencies: {
-            "ui:columnSize": "12",
-            "ui:widget": "SelectRemoteWidget",
-            "ui:mode": "multiple",
-            "ui:selectOptions": "/packages/all/versions#path=data&value=abbreviation&label=abbreviation",
-        },
-    },
-};
 
 export default function PackageVersionDependencies({ baseVersion, onOk, onCancel }) {
     const editTabFormEl = useRef(null);
 
+    const formSchema = {
+        schema: {
+            type: "object",
+            properties: {
+                dependencies: {
+                    type: "array",
+                    title: T.translate("packages.version_dependencies.field_title"),
+                    items: {
+                        type: "string",
+                        enum: [],
+                    },
+                    uniqueItems: true,
+                },
+            },
+        },
+        uiSchema: {
+            dependencies: {
+                "ui:columnSize": "12",
+                "ui:widget": "SelectRemoteWidget",
+                "ui:mode": "multiple",
+                "ui:selectOptions": "/packages/all/versions#path=data&value=abbreviation&label=abbreviation",
+            },
+        },
+    };
+
+    
     const parseTupleDependencies = (version) => {
         if (!version.dependencies) {
             return [];
