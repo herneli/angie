@@ -22,16 +22,22 @@ export class JUMAgentService extends BaseService {
 
         for (const agent of data) {
             targets.push({
-                "targets": [(agent.meta.ip === "localhost" || agent.meta.ip === "::1" || agent.meta.ip === "127.0.0.1" ? "host.docker.internal" : agent.meta.ip) + ":" + agent.meta.rest_api_port],
-                "labels": { 
-                    "__metrics_path__": "/actuator/prometheus", 
-                    "jum_id": agent.id,
-                    "jum_name": agent.name,
-                    "status": agent.status
-                }
-            })
+                targets: [
+                    (agent.meta.ip === "localhost" || agent.meta.ip === "::1" || agent.meta.ip === "127.0.0.1"
+                        ? "host.docker.internal"
+                        : agent.meta.ip) +
+                        ":" +
+                        agent.meta.rest_api_port,
+                ],
+                labels: {
+                    __metrics_path__: "/actuator/prometheus",
+                    jum_id: agent.id,
+                    jum_name: agent.name,
+                    status: agent.status,
+                },
+            });
         }
-        return targets
+        return targets;
     }
 
     //Overwrite
@@ -633,30 +639,30 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * 
+     *
      *
      * @param {*}
      * @returns
      */
     async getAgentDependencies(agent) {
-            const service = new JUMAgentService();
-            const response = await this.sendCommand(agent.id, "/agent/get_dependencies");
+        const service = new JUMAgentService();
+        const response = await this.sendCommand(agent.id, "/agent/get_dependencies");
 
-            await service.update(agent.id, agent);
+        await service.update(agent.id, agent);
 
-            if(response.data == null){
-                return []
-            }
-            if(response.data){
-                return response.data;
-            }
-    
-            if (!response.success) {
-                throw new Error(response.data);
-            }
+        if (response.data == null) {
+            return [];
+        }
+        if (response.data) {
+            return response.data;
+        }
+
+        if (!response.success) {
+            throw new Error(response.data);
+        }
     }
     /**
-     * 
+     *
      *
      * @param {*}
      * @returns
@@ -665,33 +671,31 @@ export class JUMAgentService extends BaseService {
         const libraries = await new LibraryService().list();
         let response;
         let prev_dependencies = await this.getAgentDependencies(agent);
-        let addedDependencies = []
-        
+        let addedDependencies = [];
+
         if (prev_dependencies && prev_dependencies.length > 0) {
             let libraries_to_add = lodash.differenceWith(libraries.data, prev_dependencies, lodash.isEqual);
-            if(libraries_to_add.length > 0){
-                 response = await this.sendCommand(agent.id, "/agent/load_dependencies", libraries_to_add);
-                 addedDependencies = [...addedDependencies, ...libraries.data];
-            }else{
-                response = {}
-                return response.data = prev_dependencies;
+            if (libraries_to_add.length > 0) {
+                response = await this.sendCommand(agent.id, "/agent/load_dependencies", libraries_to_add);
+                addedDependencies = [...addedDependencies, ...libraries.data];
+            } else {
+                response = {};
+                return (response.data = prev_dependencies);
             }
         } else {
             response = await this.sendCommand(agent.id, "/agent/load_dependencies", libraries.data);
         }
-        
 
-        if(response && response.data){
+        if (response && response.data) {
             return response.data;
         }
 
         if (!response) {
-            throw new Error("No response from the Reload of dependencies")
+            throw new Error("No response from the Reload of dependencies");
         }
 
         if (!response.success) {
             throw new Error(response.data);
         }
     }
-    
 }
