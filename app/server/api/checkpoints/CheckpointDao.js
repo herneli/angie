@@ -153,7 +153,10 @@ export class CheckpointDao extends BaseKnexDao {
                         knex.raw("count(CASE WHEN source_messages.status = 'error' THEN 1 ELSE NULL END) as error"),
                     ])
                     .from(function () {
-                        this.from("integration_config").select("code").where({ document_type: "checkpoint" }).as("tagsmaster");
+                        this.from("integration_config")
+                            .select("code")
+                            .where({ document_type: "checkpoint" })
+                            .as("tagsmaster");
                     })
                     .leftJoin(
                         function () {
@@ -167,8 +170,11 @@ export class CheckpointDao extends BaseKnexDao {
                                 .as("source_messages");
                         },
                         function () {
-                            // this.on("source_messages.checks", "LIKE", "code").orOn(
-                            this.on("source_messages.checks", "LIKE", knex.raw("concat('%',code ,'-%')"));
+                            this.on("source_messages.checks", "LIKE", "code").orOn(
+                                /*this.on(*/ "source_messages.checks",
+                                "LIKE",
+                                knex.raw("concat('%',code ,'-%')")
+                            );
                         }
                     )
                     .groupBy("code"),
@@ -180,7 +186,10 @@ export class CheckpointDao extends BaseKnexDao {
                         knex.raw("count(CASE WHEN target_messages.status = 'error' THEN 1 ELSE NULL END) as error"),
                     ])
                     .from(function () {
-                        this.from("integration_config").select("code").where({ document_type: "checkpoint" }).as("tagsmaster");
+                        this.from("integration_config")
+                            .select("code")
+                            .where({ document_type: "checkpoint" })
+                            .as("tagsmaster");
                     })
                     .leftJoin(
                         function () {
@@ -199,7 +208,6 @@ export class CheckpointDao extends BaseKnexDao {
                     )
                     .groupBy("code"),
             ]);
-
 
         // console.log(qry.toSQL());
         return await qry;
