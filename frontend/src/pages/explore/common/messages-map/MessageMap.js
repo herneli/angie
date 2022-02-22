@@ -165,16 +165,16 @@ const MessageMap = ({ record, selection, setSelection, onCheckedChange, loading 
                         onElementClick: (type) => {
                             switch (type) {
                                 case "error_sent":
-                                    if (el) setSelection(`checks:${check.code}- status:error`);
+                                    setSelection(`checks:*${check.code}-* status:error`);
                                     break;
                                 case "error_rec":
-                                    if (el) setSelection(`checks:-${check.code} status:error`);
+                                    setSelection(`checks:*-${check.code}* status:error`);
                                     break;
                                 case "success_sent":
-                                    if (el) setSelection(`checks:${check.code}- status:sent`);
+                                    setSelection(`checks:*${check.code}-* status:sent`);
                                     break;
                                 case "success_rec":
-                                    if (el) setSelection(`checks:-${check.code} status:sent`);
+                                    setSelection(`checks:*-${check.code}* status:sent`);
                                     break;
                                 // case "all":
                                 //     let sel = [];
