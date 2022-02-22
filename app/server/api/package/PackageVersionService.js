@@ -70,6 +70,9 @@ export class PackageVersionService extends BaseService {
             return await this.copyVersionLocal(packageVersion, newVersion);
         }
     }
+    async updateVersionDependencies(code, version, dependencies) {
+        await this.dao.updatePackageDependencies(code, version, dependencies);
+    }
 
     async getRemoteList() {
         const packageDao = new PackageDao();

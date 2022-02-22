@@ -10,6 +10,7 @@ import {
     mdiCloudUpload,
     mdiContentCopy,
     mdiDelete,
+    mdiGraph,
     mdiPlus,
     mdiRefresh,
 } from "@mdi/js";
@@ -17,6 +18,7 @@ import { createUseStyles } from "react-jss";
 
 import PackageNew from "./PackageNew";
 import PackageVersionNew from "./PackageVersionNew";
+import PackageVersionDependencies from "./PackageVersionDependencies";
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -64,6 +66,9 @@ export default function Packages({ history }) {
 
     const handleOnCopy = (packageVersion) => () => {
         setDialogActive({ code: "copyVersion", payload: packageVersion });
+    };
+    const handleOnDeps = (packageVersion) => () => {
+        setDialogActive({ code: "versionDeps", payload: packageVersion });
     };
 
     const handleOnImport = (code, version) => () => {
@@ -189,6 +194,18 @@ export default function Packages({ history }) {
                                         />
                                     }></Button>
                             ) : null}
+
+                            <Button
+                                type="text"
+                                onClick={handleOnDeps(record)}
+                                icon={
+                                    <Icon
+                                        path={mdiGraph}
+                                        title={T.translate("packages.dependencies")}
+                                        className={classes.icon}
+                                    />
+                                }
+                            />
                             <Popconfirm
                                 title={T.translate("packages.delete_package_version_confirmation")}
                                 onConfirm={handleOnDeletePackageVersion(record.code, record.version)}>
@@ -244,7 +261,14 @@ export default function Packages({ history }) {
                         onOk={handleOnDialogComplete}
                     />
                 );
-
+            case "versionDeps":
+                return (
+                    <PackageVersionDependencies
+                        baseVersion={dialog.payload}
+                        onCancel={handleOnDialogCancel}
+                        onOk={handleOnDialogComplete}
+                    />
+                );
             default:
                 return null;
         }

@@ -82,6 +82,13 @@ export class PackageController extends BaseController {
             })
         );
 
+        this.router.post(
+            "/packages/:package_code/versions/:version_code/dependencies",
+            expressAsyncHandler((req, res, next) => {
+                this.updateVersionDependencies(req, res, next);
+            })
+        );
+
         return this.router;
     }
 
@@ -188,6 +195,15 @@ export class PackageController extends BaseController {
         try {
             let service = new PackageVersionService();
             let copyResponse = await service.copyVersion(req.params.package_code, req.params.version_code, req.body);
+            res.json(new JsonResponse(true, copyResponse));
+        } catch (e) {
+            next(e);
+        }
+    }
+    async updateVersionDependencies(req, res, next) {
+        try {
+            let service = new PackageVersionService();
+            let copyResponse = await service.updateVersionDependencies(req.params.package_code, req.params.version_code, req.body);
             res.json(new JsonResponse(true, copyResponse));
         } catch (e) {
             next(e);

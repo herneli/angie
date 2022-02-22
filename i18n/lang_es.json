@@ -275,7 +275,12 @@
         "remote_status_error": "Error al actualizar",
         "select_package": "Seleccione un paquete",
         "version": "Versión",
-        "versions": "Versiones"
+        "versions": "Versiones",
+        "version_dependencies": {
+            "title": "Dependencias",
+            "saved_succesfully": "Dependencias guardadas correctamente.",
+            "error_msg": "Se ha producido un error grabando las dependencias."
+        }
     },
     "configuration": {
         "actions": "Acciones",
