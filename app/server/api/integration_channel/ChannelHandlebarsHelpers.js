@@ -62,7 +62,7 @@ class ChannelHandlebarsHelpers {
      * @param {*} mode
      * @returns
      */
-    generateDestination(target, mode) {
+     generateDestination(target, mode) {
         if (lodash.isObject(mode)) {
             mode = "direct";
         }
@@ -72,6 +72,9 @@ class ChannelHandlebarsHelpers {
                 ${target.map((el) => `<to uri="${mode}:${el}" />`).join("\n")}
             </multicast>`);
         }
+        if(target.length == 1 && target[0] == "empty"){
+            return this.safe(`<to uri="mock:${target}" />`);
+        }    
         if (!Array.isArray(target) || target.length == 1) {
             return this.safe(`<to uri="${mode}:${target}" />`);
         }
