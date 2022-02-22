@@ -13,6 +13,12 @@ export class PackageVersionDao extends BaseKnexDao {
             .orderBy("version");
     }
 
+    async getPackagesWithVersions() {
+        let knex = KnexConnector.connection;
+        return await knex("package_version")
+            .orderBy("version");
+    }
+
     async getPackageVersion(code, version) {
         const packageDao = new PackageDao();
         let knex = KnexConnector.connection;

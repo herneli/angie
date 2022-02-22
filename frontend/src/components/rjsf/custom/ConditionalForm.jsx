@@ -62,7 +62,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
     };
 
     const onChange = (e) => {
-        console.log(e.formData);
+        // console.log(e.formData);
         redraw(e);
 
         if (props.onChange) props.onChange(e);

@@ -37,6 +37,15 @@ export class PackageVersionService extends BaseService {
         return await this.dao.getPackageVersionList(code);
     }
 
+    async getPackagesWithVersions() {
+        const data = await this.dao.getPackagesWithVersions();
+
+        return data.map((el) => {
+            el.abbreviation = `${el.code}@${el.version}`;
+            return el;
+        });
+    }
+
     async getPackageVersion(code, version) {
         return await this.dao.getPackageVersion(code, version);
     }

@@ -9,23 +9,24 @@ import formConfig from "../../../components/rjsf";
 
 const formSchema = {
     schema: {
-        type: "array",
-        items: {
-            type: "object",
-            properties: {
-                package_version: {
+        type: "object",
+        properties: {
+            dependencies: {
+                type: "array",
+                items: {
                     type: "string",
-                    title: "Paquete",
-                    pattern: "([^@]+)(@)([^s]+)s?",
+                    enum: [],
                 },
+                uniqueItems: true,
             },
         },
     },
     uiSchema: {
-        items: {
-            package_version: {
-                "ui:placeholder": "package@version",
-            },
+        dependencies: {
+            "ui:columnSize": "12",
+            "ui:widget": "SelectRemoteWidget",
+            "ui:mode": "multiple",
+            "ui:selectOptions": "/packages/all/versions#path=data&value=abbreviation&label=abbreviation",
         },
     },
 };
@@ -37,12 +38,12 @@ export default function PackageVersionDependencies({ baseVersion, onOk, onCancel
         if (!version.dependencies) {
             return [];
         }
-        return version.dependencies.map((el) => ({ package_version: el[0] + "@" + el[1] }));
+        return version.dependencies.map((el) => el[0] + "@" + el[1]);
     };
     const [dependencies, setDependencies] = useState(() => parseTupleDependencies(baseVersion));
 
     const handleSaveDependencies = async () => {
-        const parsedDependencies = dependencies.map(({ package_version }) => package_version.split("@"));
+        const parsedDependencies = dependencies.map((el) => el.split("@"));
 
         try {
             const response = await axios.post(
@@ -92,10 +93,10 @@ export default function PackageVersionDependencies({ baseVersion, onOk, onCancel
                 ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
                 ArrayFieldTemplate={formConfig.ArrayFieldTemplate}
                 schema={formSchema.schema}
-                formData={dependencies}
+                formData={{ dependencies }}
                 uiSchema={formSchema.uiSchema}
                 widgets={formConfig.widgets}
-                onChange={(e) => setDependencies(e.formData)}
+                onChange={(e) => setDependencies(e.formData.dependencies)}
                 onSubmit={(e) => handleSaveDependencies(e)}
                 onError={(e) => console.log(e)}>
                 <></>
