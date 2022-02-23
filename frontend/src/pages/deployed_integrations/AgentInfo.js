@@ -8,6 +8,7 @@ import { useState } from "react";
 
 const AgentInfo = ({ integration, channel, currentAgent, agents, onActionEnd }) => {
     const [selectedAgent, setSelectedAgent] = useState(null);
+    const [visible, setVisible] = useState(false);
 
     const channelActions = new ChannelActions();
     const content = (
@@ -32,6 +33,7 @@ const AgentInfo = ({ integration, channel, currentAgent, agents, onActionEnd }) 
                     } else {
                         await channelActions.deployToSpecificAgent(integration.id, channel.id, selectedAgent);
                     }
+                    setVisible(false);
                     onActionEnd();
                 }}
                 icon={{
@@ -44,7 +46,12 @@ const AgentInfo = ({ integration, channel, currentAgent, agents, onActionEnd }) 
     );
 
     return (
-        <Popover content={content} title={T.translate("deployed_integrations.agent_actions.title")} trigger="click">
+        <Popover
+            onVisibleChange={setVisible}
+            visible={visible}
+            content={content}
+            title={T.translate("deployed_integrations.agent_actions.title")}
+            trigger="click">
             <Tag color={"gold"} style={{ cursor: "pointer" }}>
                 {currentAgent?.name}
             </Tag>
