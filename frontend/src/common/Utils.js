@@ -1,6 +1,6 @@
 export default class Utils {
     static getFiltersByPairs = (filterKey, str) => {
-        const regex = /(?<key>[^:|^!:]+)(:|!:)(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
+        const regex = /(?<key>[^:|^!:]+)(?<operator>:|!:)(?<value>[^\s]+)\s?/g; // clave:valor clave2:valor2
         let m;
 
         let data = {};
@@ -9,9 +9,11 @@ export default class Utils {
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
-            let { key, value } = m.groups;
+            let { key, value, operator } = m.groups;
 
-            const operator = m[2] || ":";
+            if (!operator) {
+                operator = ":";
+            }
 
             let type = "likeI";
             switch (operator) {

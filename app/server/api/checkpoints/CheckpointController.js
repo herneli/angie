@@ -29,7 +29,7 @@ export class CheckpointController extends BaseController {
             //Establecer el intervalo de recarga de la vista de tagged_messages
             const knex = KnexConnector.connection;
             await knex.raw("REFRESH MATERIALIZED VIEW tagged_messages;");
-            console.log("reloading tagged_messages");
+            // console.log("reloading tagged_messages");
         }, 30 * 1000);
 
         return this.router;

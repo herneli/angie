@@ -9,9 +9,6 @@ Proyecto utilizado para el control de la mensajería entre diferentes sistemas. 
 NodeJS 12.XX o superior
 
 ```javascript
-//Es necesario tener un usuario en el registro de landra
-> npm login
-
 
 > npm install
 ```

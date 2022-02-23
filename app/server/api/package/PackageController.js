@@ -37,6 +37,12 @@ export class PackageController extends BaseController {
             })
         );
         this.router.get(
+            "/packages/all/versions",
+            expressAsyncHandler((req, res, next) => {
+                this.getPackagesWithVersions(req, res, next);
+            })
+        );
+        this.router.get(
             "/packages/:package_code/versions",
             expressAsyncHandler((req, res, next) => {
                 this.getPackageVersionList(req, res, next);
@@ -81,6 +87,14 @@ export class PackageController extends BaseController {
                 this.updateRemoteStatus(req, res, next);
             })
         );
+
+        this.router.post(
+            "/packages/:package_code/versions/:version_code/dependencies",
+            expressAsyncHandler((req, res, next) => {
+                this.updateVersionDependencies(req, res, next);
+            })
+        );
+        
 
         return this.router;
     }
@@ -129,6 +143,15 @@ export class PackageController extends BaseController {
         try {
             let service = new PackageVersionService();
             let packageVersions = await service.getPackageVersionList(req.params.package_code);
+            res.json(new JsonResponse(true, packageVersions));
+        } catch (e) {
+            next(e);
+        }
+    }
+    async getPackagesWithVersions(req, res, next) {
+        try {
+            let service = new PackageVersionService();
+            let packageVersions = await service.getPackagesWithVersions();
             res.json(new JsonResponse(true, packageVersions));
         } catch (e) {
             next(e);
@@ -188,6 +211,15 @@ export class PackageController extends BaseController {
         try {
             let service = new PackageVersionService();
             let copyResponse = await service.copyVersion(req.params.package_code, req.params.version_code, req.body);
+            res.json(new JsonResponse(true, copyResponse));
+        } catch (e) {
+            next(e);
+        }
+    }
+    async updateVersionDependencies(req, res, next) {
+        try {
+            let service = new PackageVersionService();
+            let copyResponse = await service.updateVersionDependencies(req.params.package_code, req.params.version_code, req.body);
             res.json(new JsonResponse(true, copyResponse));
         } catch (e) {
             next(e);

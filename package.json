@@ -31,7 +31,7 @@
     "helmet": "^5.0.1",
     "jsonpath-plus": "^6.0.1",
     "keycloak-connect": "^15.0.2",
-    "lisco": "^1.0.44",
+    "lisco": "^1.0.46",
     "lodash": "^4.17.21",
     "lodash.union": "^4.6.0",
     "moment": "^2.29.1",
