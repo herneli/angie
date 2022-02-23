@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Tag } from "antd";
+import { Button, Layout, Tag } from "antd";
 import { Route, Switch } from "react-router";
 import { useRouteMatch } from "react-router-dom";
 import T from "i18n-react";
@@ -13,6 +13,10 @@ import ModelEdit from "../../configuration/ModelEdit";
 import SubMenu from "../../../layout/SubMenu";
 import NodeTypeEdit from "../nodeType/NodeTypeEdit";
 import Text from "antd/lib/typography/Text";
+import { LeftOutlined } from "@ant-design/icons";
+import { PrivateRoute } from "../../../components/security/PrivateRoute";
+import Packages from "./Packages";
+import { useHistory } from "react-router-dom";
 
 const { Content, Header } = Layout;
 
@@ -27,6 +31,7 @@ const useStyles = createUseStyles({
 export default function Package({ match }) {
     const [currentPackage, setCurrentPackage] = useState();
     const classes = useStyles();
+    const history = useHistory();
 
     useEffect(() => {
         axios
@@ -46,6 +51,7 @@ export default function Package({ match }) {
         <PackageContextProvider currentPackage={currentPackage} dependencies={dependiencies}>
             <Layout>
                 <Header className={classes.header} style={{ backgroundColor: "#deefff"}}>
+                    <Button type="primary" onClick={(e) => history.goBack()} icon={<LeftOutlined />} size={"small"} style={{height: 22}}/>
                     <Tag color={"geekblue"}>{currentPackage?.packageData?.name} ({currentPackage.code}/{currentPackage.version})</Tag>
                 </Header>
                 <Layout>

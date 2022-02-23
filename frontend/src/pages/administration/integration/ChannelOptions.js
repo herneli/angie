@@ -163,8 +163,9 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                 break;
         }
 
+        console.log(channel)
 
-        setEditingData({ ...channel });
+        setEditingData(channel);
     };
 
     return (
@@ -204,7 +205,9 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                         uiSchema={editTabFormSchema.uiSchema}
                         widgets={formConfig.widgets}
                         onChange={(e) => setEditingData(e.formData)}
-                        onSubmit={(e) => onOk(e)}
+                        onSubmit={(e) => { e.formData={...e.formData,...editingData}; 
+                                            onOk(e)
+                        }}
                         onError={(e) => console.log(e)}>
                         <></>
                     </ConditionalForm>
