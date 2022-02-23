@@ -696,18 +696,22 @@ exports.seed = async function (knex) {
                     {
                         title: "Email",
                         field: "email",
+                        key:"users.data->>'email'",
                     },
                     {
                         title: "Roles",
                         field: ["roles"],
+                        key:"users.data->>'roles'",
                     },
                     {
                         title: "Organization",
                         field: ["organization_data"],
+                        key:"users.data->>'organization_data'",
                     },
                     {
                         title: "Fecha Creación",
                         field: "created_timestamp",
+                        key:"users.data->>'created_timestamp'",
                     },
                 ],
                 schema: {
@@ -1047,10 +1051,12 @@ exports.seed = async function (knex) {
                     {
                         title: "Nombre",
                         field: "name",
+                        key:"data->>'name'",
                     },
                     {
                         title: "Configuration",
                         field: "config",
+                        key:"data->>'config'",
                     },
                 ],
                 schema: {
@@ -1108,10 +1114,12 @@ exports.seed = async function (knex) {
                     {
                         title: "Ruta",
                         field: "value",
+                        key:"data->>'value'",
                     },
                     {
                         title: "Roles",
                         field: "roles",
+                        key:"data->>'roles'",
                     },
                 ],
                 schema: {
