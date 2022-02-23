@@ -380,7 +380,8 @@
         "traces_from_message": "Trazas del mensaje",
         "start": "Inicio",
         "end": "Fin",
-        "jum_server": "Servidor JUM"
+        "jum_server": "Servidor JUM",
+        "empty_traces": "Para ver las trazas del mensaje debes aumentar el nivel de traza en los ajustes del canal."
     },
     "entity": {
         "id": "Identificador",
