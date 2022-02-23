@@ -48,6 +48,7 @@ const SubMenu = ({ parent, url, packageInfo }) => {
             <Menu
                 mode="inline"
                 openKeys={childrenKeys}
+                onOpenChange={setChildrenKeys}
                 style={{ height: "100%", borderRight: 0 }}
                 selectedKeys={[selected]}>
                 {paintedMenu}
