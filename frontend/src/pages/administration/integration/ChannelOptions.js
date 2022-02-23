@@ -162,10 +162,8 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
             default:
                 break;
         }
-
-        console.log(channel)
-
-        setEditingData(channel);
+        editingData.deployment_options = channel.deployment_options
+        setEditingData(editingData);
     };
 
     return (
@@ -205,8 +203,9 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                         uiSchema={editTabFormSchema.uiSchema}
                         widgets={formConfig.widgets}
                         onChange={(e) => setEditingData(e.formData)}
-                        onSubmit={(e) => { e.formData={...e.formData,...editingData}; 
-                                            onOk(e)
+                        onSubmit={(e) => { 
+                            e.formData = editingData; 
+                            onOk(e)
                         }}
                         onError={(e) => console.log(e)}>
                         <></>
