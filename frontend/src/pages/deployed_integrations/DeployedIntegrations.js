@@ -66,6 +66,7 @@ const DeployedIntegrations = () => {
     const [loading, setLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
     const [agents, setAgents] = useState([]);
+    const [searchValue, setSearchValue] = useState();
     const { currentUser } = useAngieSession();
 
     const [filters, setFilters] = useState({});
@@ -124,7 +125,10 @@ const DeployedIntegrations = () => {
         filters.limit = pagination?.pageSize || 10;
         filters.start = (pagination?.current - 1 || 0) * (pagination?.pageSize || 10);
 
-        filters["enabled"] = true;
+        if (!filters["enabled::text"]) {
+            //Default por defecto
+            filters["enabled"] = true;
+        }
         try {
             const response = await axios.post("/integration/list/deployed", filters);
 
@@ -219,9 +223,17 @@ const DeployedIntegrations = () => {
      */
     const drawIntegrationStatus = (record) => {
         if (record?.deployment_config?.enabled) {
-            return <Tag color="green">{T.translate("common.enabled")}</Tag>;
+            return (
+                <Tag style={{ cursor: "pointer" }} onClick={() => tagFilter(`enabled:true`)} color="green">
+                    {T.translate("common.enabled")}
+                </Tag>
+            );
         }
-        return <Tag color="red">{T.translate("common.disabled")}</Tag>;
+        return (
+            <Tag style={{ cursor: "pointer" }} onClick={() => tagFilter(`enabled:true`)} color="red">
+                {T.translate("common.disabled")}
+            </Tag>
+        );
     };
 
     /**
@@ -246,7 +258,13 @@ const DeployedIntegrations = () => {
     const onSearch = ({ filter }) => {
         let newFilters = {};
         if (filter && filter.indexOf(":") !== -1) {
-            newFilters = Utils.getFiltersByPairs((key) => `data->>'${key}'`, filter);
+            newFilters = Utils.getFiltersByPairs((key) => {
+                //Campos especiales
+                if (["organization_id", "enabled"].indexOf(key) !== -1) {
+                    return `${key}::text`;
+                }
+                return `data->>'${key}'`;
+            }, filter);
         } else if (filter) {
             newFilters["integration"] = {
                 type: "full-text-psql",
@@ -302,9 +320,13 @@ const DeployedIntegrations = () => {
      */
     const renderOrganization = (item) => {
         const org = getOrganizationById(item?.deployment_config?.organization_id);
-        return T.translate("deployed_integrations.integration_form_subtitle", {
-            name: org?.name || "-",
-        });
+        return (
+            <Tag style={{ cursor: "pointer" }} onClick={() => org && tagFilter(`${org.id}`)}>
+                {T.translate("deployed_integrations.integration_form_subtitle", {
+                    name: org?.name || "-",
+                })}
+            </Tag>
+        );
     };
 
     /**
@@ -340,10 +362,15 @@ const DeployedIntegrations = () => {
                         <Divider type="vertical" />
                     </div>
                     <div>
-                        <Tag color={"gold"}>
+                        <Tag
+                            color={"gold"}
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
+                                tagFilter(`package_code:${item.package_code} package_version:${item.package_version}`)
+                            }>
                             {item.package_code}@{item.package_version}
                         </Tag>
-                        <Tag>{renderOrganization(item)}</Tag>
+                        {renderOrganization(item)}
                         {drawIntegrationStatus(item)}
                     </div>
                 </Space>
@@ -368,6 +395,14 @@ const DeployedIntegrations = () => {
                 />
             </List.Item>
         );
+    };
+
+    /**
+     *
+     */
+    const tagFilter = (filter) => {
+        setSearchValue(filter);
+        onSearch({ filter });
     };
 
     /**
@@ -431,7 +466,11 @@ const DeployedIntegrations = () => {
 
     return (
         <Content className={"deployedIntegrations"}>
-            <BasicFilter hideDateFilter onSearch={onSearch}>
+            <BasicFilter
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                hideDateFilter
+                onSearch={onSearch}>
                 <IconButton
                     key="reload"
                     onClick={() => search(pagination, filters)}

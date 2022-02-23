@@ -80,6 +80,7 @@ exports.up = async (knex) => {
         });
     }
 
+
     
     await knex("integration_config").update({ document_type: "checkpoint" }).where({ document_type: "tag" });
 
