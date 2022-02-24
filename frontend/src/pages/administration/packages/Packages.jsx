@@ -137,9 +137,12 @@ export default function Packages({ history }) {
                 title: T.translate("packages.version"),
                 key: "version",
                 dataIndex: "version",
-                render: (text, record) => (
-                    <Link to={"packages/" + record.code + "/versions/" + record.version}>{text}</Link>
-                ),
+                render: (text, record) => {
+                    if (!packageData.remote || record.local_commit) {
+                        return <Link to={"packages/" + record.code + "/versions/" + record.version}>{text}</Link>;
+                    }
+                    return text;
+                },
             },
             { title: T.translate("packages.local_commit"), key: "local_commit", dataIndex: "local_commit" },
             { title: T.translate("packages.remote_commit"), key: "remote_commit", dataIndex: "remote_commit" },

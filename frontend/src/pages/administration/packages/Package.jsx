@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout, Tag } from "antd";
+import { Button, Layout, Space, Tag } from "antd";
 import { Route, Switch } from "react-router";
 import { useRouteMatch } from "react-router-dom";
 import T from "i18n-react";
@@ -50,9 +50,19 @@ export default function Package({ match }) {
     return (
         <PackageContextProvider currentPackage={currentPackage} dependencies={dependiencies}>
             <Layout>
-                <Header className={classes.header} style={{ backgroundColor: "#deefff"}}>
-                    <Button type="primary" onClick={(e) => history.goBack()} icon={<LeftOutlined />} size={"small"} style={{height: 22}}/>
-                    <Tag color={"geekblue"}>{currentPackage?.packageData?.name} ({currentPackage.code}/{currentPackage.version})</Tag>
+                <Header className={classes.header} style={{ backgroundColor: "#deefff" }}>
+                    <Space>
+                        <Button
+                            type="primary"
+                            onClick={(e) => history.push('/packages')}
+                            icon={<LeftOutlined />}
+                            size={"small"}
+                            style={{ height: 19, verticalAlign: "-1px" }}
+                        />
+                        <Tag color={"geekblue"}>
+                            {currentPackage?.packageData?.name} ({currentPackage.code}/{currentPackage.version})
+                        </Tag>
+                    </Space>
                 </Header>
                 <Layout>
                     <SubMenu
