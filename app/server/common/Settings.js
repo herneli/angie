@@ -23,7 +23,7 @@ export default class Settings {
         nconf.defaults({
             "core.keycloak": {
                 //Default from .env
-                url: process.env.KEYCLOAK_URL,
+                url: process.env.KEYCLOAK_REDIRECT_URL,
                 realm: process.env.KEYCLOAK_REALM,
                 "front-client": process.env.KEYCLOAK_FRONT_CLI,
             },

@@ -15,9 +15,10 @@ try {
 var appVersion = versions && versions[0] ? versions[0].title.replace(/Versi[oó]n /, '') : '1.0.0';
 
 var viewpath = './frontend';
-var outputdir = './out/output/';
+var outputdir = './out/';
 var angieout = outputdir + '/angie';
 var installpkg = 'ANGIE-' + appVersion + "b" + comp.number + '.install.zip';
+var configpkg = 'ANGIE-' + appVersion + "b" + comp.number + '.baseconfig.zip';
 
 /**
  * Elimina completamente
@@ -143,7 +144,7 @@ function hashVersion(done) {
 
 
 /**
- * Empaqueta la version de actualizacion
+ * Empaqueta la version 
  */
 function createInstaller(done) {
     return gulp.src([
@@ -155,11 +156,26 @@ function createInstaller(done) {
         .on('end', done);
 }
 
+/**
+ * Empaqueta la configuración
+ */
+function createBaseConfig(done) {
+    return gulp.src([
+        'angie-docker/**/**',
+        '!angie-docker/prometheus/prometheus_data/**',
+        '!angie-docker/postgres/data/**',
+        '!angie-docker/elastic/**',
+        '!angie-docker/kibana/**'
+
+    ], { base: '.', dot: true })
+        .pipe(zip(configpkg))
+        .pipe(gulp.dest(outputdir))
+        .on('end', done);
+}
+
 
 /**
  * Realiza el proceso de build completo 
  */
-module.exports.compile = gulp.series(fullclean, buildView, copyServer, installServerDeps, dedupe, cleanNode, copyView, hashVersion, createInstaller);
-
-
+module.exports.compile = gulp.series(fullclean, buildView, copyServer, installServerDeps, dedupe, cleanNode, copyView, hashVersion, createInstaller, createBaseConfig);
 

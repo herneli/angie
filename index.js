@@ -127,6 +127,9 @@ module.exports = async () => {
                 action: "sameorigin",
             },
             hsts: false,
+            crossOriginEmbedderPolicy: false,
+            crossOriginOpenerPolicy: false,
+            crossOriginResourcePolicy: false,
             contentSecurityPolicy: false, //TODO: Revisar funcionamiento
             // contentSecurityPolicy: {
             //     useDefaults: false,

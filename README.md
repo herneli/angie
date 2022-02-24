@@ -8,15 +8,15 @@ Proyecto utilizado para el control de la mensajería entre diferentes sistemas. 
 
 NodeJS 12.XX o superior
 
-```javascript
+```
 
-> npm install
+$:> npm install
 ```
 
 Generar las claves de privadas:
 
 ```
-> node .\execute.js --generateKeys
+$:> node .\execute.js --generateKeys
 ```
 
 Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anteriormente en `CRYPT_IV` y `CRYPT_SECRET`.
@@ -26,7 +26,7 @@ Copiar el archivo `.env.sample` a `.env` y establecer las claves generadas anter
 Generar secret para JUM-Agents:
 
 ```
-> node .\execute.js --jumSecret
+$:> node .\execute.js --jumSecret
 ```
 
 Establecer la clave generada anteriormente en `JUM_AGENTS_SECRET` dentro del archivo `.env`.
@@ -71,8 +71,8 @@ Con 3 Gb es suficiente para los contenedores actuales.
 Ejecutar el servidor
 
 ```shell
-> npm run view
-> node execute.js
+$:> npm run view
+$:> node execute.js
 ```
 
 Este comando cargará la base de datos y demás componentes necesarios para el funcionamiento de la aplicación. Iniciará la escucha en los puertos:
@@ -88,13 +88,13 @@ En el archivo `knexfile.js` se establecen las propiedades de acceso a la base de
 Up:
 
 ```
-> node knex-cli.js migrate:latest  --env development
+$:> node knex-cli.js migrate:latest  --env development
 ```
 
 Down:
 
 ```
-> node knex-cli.js migrate:rollback  --env development
+$:> node knex-cli.js migrate:rollback  --env development
 ```
 
 `knex-cli` es un acceso rápido a la librería knex para poderlo ejecutar aunque la dependencia no se encuentre instalada en el sistema. Se utiliza exactamente igual que Knex. Mas info: https://knexjs.org/#Migrations-CLI
@@ -102,7 +102,7 @@ Down:
 Para crear nuevas migraciones:
 
 ```
-> node knex-cli.js  migrate:make migration_name
+$:> node knex-cli.js  migrate:make migration_name
 ```
 
 #### Database Seeds
@@ -110,13 +110,13 @@ Para crear nuevas migraciones:
 Los ficheros de seed para rellenar tablas de la base de datos se ejecutan mediante:
 
 ```
-> node knex-cli.js seed:run [--specific=file.js] //El archivo es opcional
+$:> node knex-cli.js seed:run [--specific=file.js] //El archivo es opcional
 ```
 
 Para crear nuevos archivos:
 
 ```
-> node knex-cli.js seed:make seed_name
+$:> node knex-cli.js seed:make seed_name
 ```
 
 Dentro del sistema de seeds se ha creado un seed especial `default_data_load` encargado de cargar archivos JSON de la carpeta `seeds/data`.
@@ -134,7 +134,7 @@ Este sistema utiliza un sistema en el que:
 Para la generación de los distribuibles, es necesario ejecutar
 
 ```shell
-gulp compile
+$:> gulp compile
 ```
 
 Esto creará una carpeta out/output en la raíz del proyecto incluyendo los distribuibles de la aplicación.
@@ -143,7 +143,18 @@ Esto creará una carpeta out/output en la raíz del proyecto incluyendo los dist
 
 Se proporcionarán los siguientes entregables:
 
--   angie-vx.x.x.zip
+-   **ANGIE-x.x.xbyyy.install.zip** -> Instalador de la aplicacion
+-   **ANGIE-x.x.xbyyy.baseconfig.zip** -> Configuración base docker containers
+
+
+### Docker image build
+
+Para la generación de la imagen docker es necesario ejecutar el siguiente comando:
+```
+$:> docker build . -t landra/angie
+```
+
+> Es necesario haber compilado el proyecto previamente (ver [Compilación](#compilación))
 
 ## Configuración Keycloak
 
@@ -182,7 +193,12 @@ Configuraciones necesarias:
 **Autologin OAuth Grafana**
 
 19. Crear cliente **grafana**
-20. En la configuración del cliente **grafana** con el Access Type: public establecer `Root URL: http://localhost:3100/`, `Valid Redirect URIs: http://localhost:3100/*`, `Admin URL: http://localhost:3100/` y `Web Origins: *`.
+20. En la configuración del cliente **grafana** con :
+   - Access Type: `public` 
+   - Root URL: `http://localhost:3100/`
+   - Valid Redirect URIs: `http://localhost:3100/*`
+   - Admin URL: `http://localhost:3100/` 
+   - Web Origins: `*`.
 
 
 ## Tests
@@ -190,7 +206,7 @@ Configuraciones necesarias:
 La realización de tests se realiza utilizando la librería **mocha**, los ficheros se almacenan en la carpeta test
 
 ```shell
-mocha test
+$:> mocha test
 ```
 
 ## Api Reference
@@ -199,11 +215,9 @@ La api doc se genera automáticamente. Los datos de solicitudes y respuestas se 
 
 Se puede consultar en: http://localhost:3105/api-docs
 
-## Licensing
 
-TODO
-
-**TODO** Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
+## **TODO** 
+Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
 
 ## Información Desarrollo
 
@@ -218,3 +232,127 @@ El sistema se conecta a JUM-Angie mediante `socketio`. Para habilitar la conexi�
 Desde JUM-Angie es importante configurar en el parámetro `roche.angie.socketio.secret` el mismo valor.
 
 Para mas información de la conexión ver el Readme del otro proyecto.
+
+
+
+# Docker Deployment
+
+
+El despliegue mediante docker se puede hacer mediante la utilización del siguiente `docker-compose`:
+
+``` yml
+version: '3'
+services:
+
+    angie_postgre:
+        image: postgres:13
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=root
+        volumes:
+            - ./postgres/data:/var/lib/postgresql/data
+            - ./dbinit:/docker-entrypoint-initdb.d/
+        ports:
+            - 3132:5432/tcp
+
+    angie_keycloak:
+        image: quay.io/keycloak/keycloak:latest
+        ports:
+            - 3114:8080
+        volumes:
+            - ./keycloak/themes/angie:/opt/jboss/keycloak/themes/angie
+        environment:
+            DB_VENDOR: POSTGRES
+            DB_ADDR: angie_postgre
+            DB_DATABASE: keycloak
+            DB_USER: postgres
+            DB_SCHEMA: public
+            DB_PASSWORD: root
+            KEYCLOAK_USER: admin
+            KEYCLOAK_PASSWORD: admin
+            JAVA_OPTS_APPEND: "-Dkeycloak.profile.feature.upload_scripts=enabled"
+        depends_on:
+            - angie_postgre
+    
+    angie_prometheus:
+      container_name: angie_prometheus
+      image: prom/prometheus
+      ports:
+        - 3190:9090
+      command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--storage.tsdb.retention=30d'
+        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+        - '--web.console.templates=/usr/share/prometheus/consoles'
+      volumes:
+        - ./prometheus/:/etc/prometheus/
+        - ./prometheus/prometheus_data:/prometheus
+      
+    angie_grafana:
+      container_name: angie_grafana
+      image: grafana/grafana
+      ports:
+        - 3100:3100
+      volumes:
+        - ./grafana/etc/grafana:/etc/grafana
+        - ./grafana/var/lib/grafana:/var/lib/grafana
+        - ./grafana/var/log/grafana:/var/log/grafana
+      user: "1000"
+      depends_on:
+            - angie_prometheus
+            - angie_keycloak
+    
+    angie:
+      container_name: angie
+      image: landra/angie
+      ports:
+        - 3105:3105
+        - 3106:3106
+      environment:
+          DATABASE_HOST: angie_postgre
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: root
+          DATABASE_NAME: angie
+          KEYCLOAK_REDIRECT_URL: http://localhost:3114/auth
+          KEYCLOAK_REALM: Angie
+          KEYCLOAK_BACK_CLI: angie-back
+          KEYCLOAK_FRONT_CLI: angie-front
+          KEYCLOAK_ADMIN_CLI: admin-cli
+          KEYCLOAK_ADMIN_SECRET: 40976b00-7419-4257-9432-61efb079ea92
+          CRYPT_IV: 0a5e07434deb42aff9611fb385715da8
+          CRYPT_SECRET: 02a11de935a009e5eece55ae8ea63c39edbecb36cb939b79b549622a91722d38
+          JUM_AGENTS_SECRET: 0f250d3e959eaea609043d25e2baccbe
+          PACKAGE_REPOSITORY: https://github.com/landra-sistemas/angie-package-repo.git
+
+      depends_on:
+            - angie_postgre
+            - angie_keycloak
+
+
+    jumangie1:
+      container_name: jumangie1
+      image: landra/jum-angie
+
+      environment:
+          SOCKETIO_ID: e9cbba1d-88b1-461f-94a9-7f4e426ead3d
+          SOCKETIO_NAME: JUM1
+          SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
+      depends_on:
+            - angie_postgre
+            - angie
+
+    jumangie2:
+      container_name: jumangie2
+      image: landra/jum-angie
+
+      environment:
+          SOCKETIO_ID: af394919-ee72-4516-822b-316e035b18ef
+          SOCKETIO_NAME: JUM_EXTRA
+          SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
+      depends_on:
+            - angie_postgre
+            - angie
+```
+
