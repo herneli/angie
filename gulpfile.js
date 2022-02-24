@@ -25,7 +25,7 @@ var configpkg = 'ANGIE-' + appVersion + "b" + comp.number + '.baseconfig.zip';
  */
 function fullclean() {
     return del([
-        outputdir + '/**/**'
+        outputdir + '**/**'
     ]);
 }
 
@@ -53,7 +53,7 @@ function copyServer(done) {
         'config/**',
         'migrations/**',
         'lib/**',
-        '.env.sample',
+        '.env.defaults',
         'package.json',
         'log4js.json',
         'version.json',

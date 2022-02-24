@@ -5,6 +5,8 @@ WORKDIR /home/node/angie
 
 COPY --chown=node out/angie ./
 
+RUN chmod 755 ./ -R
+
 USER node
 
 LABEL org.opencontainers.image.source="https://github.com/landra-sistemas/angie"

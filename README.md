@@ -237,6 +237,13 @@ Para mas información de la conexión ver el Readme del otro proyecto.
 
 # Docker Deployment
 
+Cargar las imágenes en docker en base a los archivos .tar:
+
+```
+$:> docker load --input .\jumangie-image-bXXX.tar
+$:> docker load --input .\angie-image-bXXX.tar
+```
+
 
 El despliegue mediante docker se puede hacer mediante la utilización del siguiente `docker-compose`:
 
@@ -302,7 +309,7 @@ services:
             - angie_keycloak
     
     angie:
-      image: landra/angie
+      image: ghcr.io/landra-sistemas/angie:latest
       ports:
         - 3105:3105
         - 3106:3106
@@ -323,7 +330,8 @@ services:
           CRYPT_SECRET: 02a11de935a009e5eece55ae8ea63c39edbecb36cb939b79b549622a91722d38
           JUM_AGENTS_SECRET: 0f250d3e959eaea609043d25e2baccbe
           PACKAGE_REPOSITORY: https://github.com/landra-sistemas/angie-package-repo.git
-
+      volumes:
+            - ./angie/logs:/home/node/angie/logs
       depends_on:
             - angie_postgre
             - angie_keycloak
@@ -331,7 +339,7 @@ services:
 
     jumangie1:
       container_name: jumangie1
-      image: landra/jum-angie
+      image: ghcr.io/landra-sistemas/jum-angie:latest
 
       environment:
           SPRING_DATASOURCE_URL: jdbc:postgresql://angie_postgre:5432/angie
@@ -344,7 +352,7 @@ services:
 
     jumangie2:
       container_name: jumangie2
-      image: landra/jum-angie
+      image: ghcr.io/landra-sistemas/jum-angie:latest
 
       environment:
           SPRING_DATASOURCE_URL: jdbc:postgresql://angie_postgre:5432/angie
