@@ -275,7 +275,6 @@ services:
             - angie_postgre
     
     angie_prometheus:
-      container_name: angie_prometheus
       image: prom/prometheus
       ports:
         - 3190:9090
@@ -290,7 +289,6 @@ services:
         - ./prometheus/prometheus_data:/prometheus
       
     angie_grafana:
-      container_name: angie_grafana
       image: grafana/grafana
       ports:
         - 3100:3100
@@ -304,7 +302,6 @@ services:
             - angie_keycloak
     
     angie:
-      container_name: angie
       image: landra/angie
       ports:
         - 3105:3105
@@ -315,6 +312,7 @@ services:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: root
           DATABASE_NAME: angie
+          KEYCLOAK_URL: http://angie_keycloak:8080/auth
           KEYCLOAK_REDIRECT_URL: http://localhost:3114/auth
           KEYCLOAK_REALM: Angie
           KEYCLOAK_BACK_CLI: angie-back
@@ -336,6 +334,7 @@ services:
       image: landra/jum-angie
 
       environment:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://angie_postgre:5432/angie
           SOCKETIO_ID: e9cbba1d-88b1-461f-94a9-7f4e426ead3d
           SOCKETIO_NAME: JUM1
           SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
@@ -348,6 +347,7 @@ services:
       image: landra/jum-angie
 
       environment:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://angie_postgre:5432/angie
           SOCKETIO_ID: af394919-ee72-4516-822b-316e035b18ef
           SOCKETIO_NAME: JUM_EXTRA
           SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
