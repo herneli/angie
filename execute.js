@@ -1,7 +1,7 @@
 require = require("esm")(module/*, options*/)
 
 
-require('dotenv').config();
+require('dotenv-defaults').config();
 //module dependencies.
 require('./index.js')().then(() => {
     //Nada que hacer aqui
