@@ -62,6 +62,7 @@ export class IntegrationChannelService {
         const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
+            if(!integration.data) continue;
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return integration;

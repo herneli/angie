@@ -147,12 +147,16 @@ export class IntegrationService extends BaseService {
 
         let { data, total } = await super.list(filters, start, limit);
 
-        for (const integration of data) {
-            if (integration.data.channels) {
-                for (let channel of integration.data.channels) {
-                    const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(channel.id);
-                    channel = await this.channelService.channelApplyStatus(channel, channelState);
-                    channel.agent = currentAgent;
+        if (!lodash.isEmpty(data)) {
+            for (const integration of data) {
+                if (integration.data && integration.data.channels) {
+                    for (let channel of integration.data.channels) {
+                        const { channelState, currentAgent } = await this.agentService.getChannelCurrentState(
+                            channel.id
+                        );
+                        channel = await this.channelService.channelApplyStatus(channel, channelState);
+                        channel.agent = currentAgent;
+                    }
                 }
             }
         }

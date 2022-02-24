@@ -164,14 +164,18 @@ export class IntegrationDao extends BaseKnexDao {
      * @returns
      */
     applyIntegrationDeployment(integrations) {
-        for (const integ of integrations) {
-            integ.data.deployment_config = integ.deployment_config;
-            if (integ.data.channels && integ.deployment_config) {
-                for (const chann of integ.data.channels) {
-                    chann.deployment_options =
-                        integ.deployment_config.channel_config && integ.deployment_config.channel_config[chann.id];
+        try {
+            for (const integ of integrations) {
+                integ.data.deployment_config = integ.deployment_config;
+                if (integ.data.channels && integ.deployment_config) {
+                    for (const chann of integ.data.channels) {
+                        chann.deployment_options =
+                            integ.deployment_config.channel_config && integ.deployment_config.channel_config[chann.id];
+                    }
                 }
             }
+        } catch (ex) {
+            console.debug(ex);
         }
         return integrations;
     }

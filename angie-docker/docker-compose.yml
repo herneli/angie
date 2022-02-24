@@ -2,6 +2,7 @@ version: '3'
 services:
 
     angie_postgre:
+        container_name: angie_postgre
         image: postgres:13
         environment:
             - POSTGRES_USER=postgres
@@ -43,6 +44,7 @@ services:
 
 
     angie_keycloak:
+        container_name: angie_keycloak
         image: quay.io/keycloak/keycloak:latest
         ports:
             - 3114:8080

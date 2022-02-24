@@ -7,6 +7,7 @@ COPY --chown=node out/angie ./
 
 USER node
 
+LABEL org.opencontainers.image.source="https://github.com/landra-sistemas/angie"
 
 ENV NODE_ENV="production"
 ENV KEYCLOAK_URL="http://angie_keycloak:8080/auth"

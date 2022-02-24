@@ -53,7 +53,6 @@ const channel = {
     last_updated: "2021-12-15T10:19:06.470Z",
 };
 
-
 const config_node_type = {
     name: "Tipos de Nodo",
     code: "node_type",
@@ -119,12 +118,14 @@ describe("IntegrationChannelService", async () => {
                 return sql.indexOf("config_model") !== -1 && bindings[0] === "node_type";
             })
             .response([config_node_type]);
-            
+
         tracker.on
             .select(({ sql, bindings }) => {
                 return sql.indexOf("integration_config") !== -1 && bindings[0] === "node_type";
             })
             .response(node_types);
+
+        tracker.on.select('"integration_deployment"').response([{}]);
     });
 
     // afterEach(() => {
@@ -138,8 +139,6 @@ describe("IntegrationChannelService", async () => {
 
         expect(route).not.to.be.null;
 
-        expect(route).to.be.eq(
-            '<routes xmlns="http://camel.apache.org/schema/spring"><route  id="a36834f3-397d-4582-bf19-aa02203ac712"> <from uri="direct:a36834f3-397d-4582-bf19-aa02203ac712"/> <to uri="log:debug"/> </route><route id="3f5effce-d8c0-4f07-b011-3f4e7ac7db14">\n    <from uri="direct:3f5effce-d8c0-4f07-b011-3f4e7ac7db14"/>\n    <bean ref="debugBean" method="debug" />\n    <multicast>\n        <to uri="direct:a36834f3-397d-4582-bf19-aa02203ac712"/>\n    </multicast>\n</route></routes>'
-        );
+        expect(route).to.be.eq(`<routes xmlns=\"http://camel.apache.org/schema/spring\"><route id=\"a36834f3-397d-4582-bf19-aa02203ac712\" group=\"\"><description>Log</description> <from uri=\"direct:a36834f3-397d-4582-bf19-aa02203ac712\"/> <to uri=\"log:debug\"/> </route><route id=\"3f5effce-d8c0-4f07-b011-3f4e7ac7db14\" group=\"\"><description>Debug</description>\n    <from uri=\"direct:3f5effce-d8c0-4f07-b011-3f4e7ac7db14\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        <to uri=\"direct:a36834f3-397d-4582-bf19-aa02203ac712\"/>\n    </multicast>\n</route></routes>\"            +\"<routes xmlns=\"http://camel.apache.org/schema/spring\"><route  id=\"a36834f3-397d-4582-bf19-aa02203ac712\"> <from uri=\"direct:a36834f3-397d-4582-bf19-aa02203ac712\"/> <to uri=\"log:debug\"/> </route><route id=\"3f5effce-d8c0-4f07-b011-3f4e7ac7db14\">\n    <from uri=\"direct:3f5effce-d8c0-4f07-b011-3f4e7ac7db14\"/>\n    <bean ref=\"debugBean\" method=\"debug\" />\n    <multicast>\n        <to uri=\"direct:a36834f3-397d-4582-bf19-aa02203ac712\"/>\n    </multicast>\n</route></routes>`);
     });
 });
