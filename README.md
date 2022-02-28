@@ -145,6 +145,8 @@ Se proporcionarán los siguientes entregables:
 
 -   **ANGIE-x.x.xbyyy.install.zip** -> Instalador de la aplicacion
 -   **ANGIE-x.x.xbyyy.baseconfig.zip** -> Configuración base docker containers
+-   **angie-image-bxxx.tar** -> Contenedor docker para Angie
+-   **jumangie-image-bxxx.tar** -> Contenedor docker par JUMAngie
 
 
 ### Docker image build
@@ -216,9 +218,6 @@ La api doc se genera automáticamente. Los datos de solicitudes y respuestas se 
 Se puede consultar en: http://localhost:3105/api-docs
 
 
-## **TODO** 
-Continuar mejorando esta documentación a medida que se implementan mas partes dentro del proyecto.
-
 ## Información Desarrollo
 
 El proyecto ha sido desarrollado utilizando el [Framework Lisco](http://github.com/landra-sistemas/lisco).
@@ -261,6 +260,11 @@ services:
             - ./dbinit:/docker-entrypoint-initdb.d/
         ports:
             - 3132:5432/tcp
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
 
     angie_keycloak:
         image: quay.io/keycloak/keycloak:latest
@@ -278,8 +282,14 @@ services:
             KEYCLOAK_USER: admin
             KEYCLOAK_PASSWORD: admin
             JAVA_OPTS_APPEND: "-Dkeycloak.profile.feature.upload_scripts=enabled"
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:8080/auth/"]
+          interval: 5s
+          timeout: 2s
+          retries: 15
         depends_on:
-            - angie_postgre
+            angie_postgre:
+              condition: service_healthy
     
     angie_prometheus:
       image: prom/prometheus
@@ -305,8 +315,10 @@ services:
         - ./grafana/var/log/grafana:/var/log/grafana
       user: "1000"
       depends_on:
-            - angie_prometheus
-            - angie_keycloak
+            angie_keycloak:
+                condition: service_healthy
+            angie_prometheus:
+                condition: service_started
     
     angie:
       image: ghcr.io/landra-sistemas/angie:latest
@@ -333,8 +345,10 @@ services:
       volumes:
             - ./angie/logs:/home/node/angie/logs
       depends_on:
-            - angie_postgre
-            - angie_keycloak
+            angie_postgre:
+                condition: service_healthy
+            angie_keycloak:
+                condition: service_healthy
 
 
     jumangie1:
@@ -347,8 +361,10 @@ services:
           SOCKETIO_NAME: JUM1
           SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
       depends_on:
-            - angie_postgre
-            - angie
+            angie_postgre:
+                condition: service_healthy
+            angie:
+                condition: service_started
 
     jumangie2:
       container_name: jumangie2
@@ -360,7 +376,8 @@ services:
           SOCKETIO_NAME: JUM_EXTRA
           SOCKETIO_SECRET: 0f250d3e959eaea609043d25e2baccbe
       depends_on:
-            - angie_postgre
-            - angie
+            angie_postgre:
+                condition: service_healthy
+            angie:
+                condition: service_started
 ```
-

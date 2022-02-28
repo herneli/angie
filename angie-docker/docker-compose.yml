@@ -1,6 +1,5 @@
-version: '3'
+version: "3"
 services:
-
     angie_postgre:
         container_name: angie_postgre
         image: postgres:13
@@ -12,7 +11,12 @@ services:
             - ./dbinit:/docker-entrypoint-initdb.d/
         ports:
             - 3132:5432/tcp
-        
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
     # angie_elasticsearch:
     #     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
     #     environment:
@@ -30,18 +34,17 @@ services:
     #         - 3108:5601
     #     volumes:
     #         - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-        
+
     #     depends_on:
     #         - angie_elasticsearch
     #     links:
     #         - "angie_elasticsearch:angie_elasticsearch"
 
-    # angie_rabbitmq: 
+    # angie_rabbitmq:
     #     image: rabbitmq:management
-    #     ports: 
+    #     ports:
     #         - 3111:5672
     #         - 3112:15672
-
 
     angie_keycloak:
         container_name: angie_keycloak
@@ -60,39 +63,46 @@ services:
             KEYCLOAK_USER: admin
             KEYCLOAK_PASSWORD: admin
             JAVA_OPTS_APPEND: "-Dkeycloak.profile.feature.upload_scripts=enabled"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080/auth/"]
+            interval: 5s
+            timeout: 2s
+            retries: 15
         depends_on:
-            - angie_postgre
-    
+            angie_postgre:
+                condition: service_healthy
+
     angie_prometheus:
-      container_name: angie_prometheus
-      image: prom/prometheus
-      ports:
-        - 3190:9090
-      command:
-        - '--config.file=/etc/prometheus/prometheus.yml'
-        - '--storage.tsdb.path=/prometheus'
-        - '--storage.tsdb.retention=30d'
-        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-        - '--web.console.templates=/usr/share/prometheus/consoles'
-      volumes:
-        - ./prometheus/:/etc/prometheus/
-        - ./prometheus/prometheus_data:/prometheus
-      # depends_on:
-      #   - node_exporter
+        container_name: angie_prometheus
+        image: prom/prometheus
+        ports:
+            - 3190:9090
+        command:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention=30d"
+            - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+            - "--web.console.templates=/usr/share/prometheus/consoles"
+        volumes:
+            - ./prometheus/:/etc/prometheus/
+            - ./prometheus/prometheus_data:/prometheus
+        # depends_on:
+        #   - node_exporter
     angie_grafana:
-      container_name: angie_grafana
-      image: grafana/grafana
-      ports:
-        - 3100:3100
-      volumes:
-        - ./grafana/etc/grafana:/etc/grafana
-        - ./grafana/var/lib/grafana:/var/lib/grafana
-        - ./grafana/var/log/grafana:/var/log/grafana
-      user: "1000"
-      depends_on:
-            - angie_prometheus
-            - angie_keycloak
-    
+        container_name: angie_grafana
+        image: grafana/grafana
+        ports:
+            - 3100:3100
+        volumes:
+            - ./grafana/etc/grafana:/etc/grafana
+            - ./grafana/var/lib/grafana:/var/lib/grafana
+            - ./grafana/var/log/grafana:/var/log/grafana
+        user: "1000"
+        depends_on:
+            angie_keycloak:
+                condition: service_healthy
+            angie_prometheus:
+                condition: service_started
 
     # node_exporter:
     #   image: quay.io/prometheus/node-exporter:latest
