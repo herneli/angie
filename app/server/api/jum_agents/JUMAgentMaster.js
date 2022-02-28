@@ -5,7 +5,6 @@ import moment from "moment";
 import lodash from "lodash";
 
 import { Utils } from "lisco";
-import { LibraryService } from "../library/LibraryService";
 
 /**
  * Clase ejecutada únicamente en el hilo principal de la aplicación y encargada de la gestión de los eventos
@@ -15,6 +14,11 @@ class JUMAgentMaster {
     constructor() {
         this.service = new JUMAgentService();
     }
+
+    redeployNotRunningChannels = lodash.debounce(() => {
+        console.debug("Redeploying not running channels");
+        this.service.redeployNotRunningChannels();
+    }, process.env.JUM_AGENTS_REDEPLOY_DELAY, { 'leading': false, 'trailing': true });
 
     /**
      * Metodo encargado de la lógica principal de conexión para los agentes
@@ -95,7 +99,8 @@ class JUMAgentMaster {
                 await Utils.sleep(((agent.options && agent.options.autostart_delay) || 5) * 1000);
 
                 //Redesplegar canales detenidos
-                await this.service.redeployNotRunningChannels(agent);
+                this.redeployNotRunningChannels();
+
             } catch (ex) {
                 console.error(ex);
                 socket.emit("messages", "An error ocurred:" + ex);
