@@ -6,6 +6,8 @@ import MultiTargetNode from "../../../components/react-flow/custom_nodes/MultiTa
 import ButtonNode from "../../../components/react-flow/custom_nodes/ButtonNode";
 import CommentNode from "../../../components/react-flow/custom_nodes/CommentNode";
 import AngieDefaultNode from "../../../components/react-flow/custom_nodes/AngieDefaultNode";
+import AngieOutputNode from "../../../components/react-flow/custom_nodes/AngieOutputNode";
+import AngieInputNode from "../../../components/react-flow/custom_nodes/AngieInputNode";
 import Transformer from "./Transformer";
 import Messages from "../message/Messages";
 
@@ -35,6 +37,8 @@ const customNodes = {
     ButtonNode: ButtonNode,
     CommentNode: CommentNode,
     AngieDefaultNode: AngieDefaultNode,
+    AngieOutputNode: AngieOutputNode,
+    AngieInputNode: AngieInputNode,
 };
 
 const Channel = ({
