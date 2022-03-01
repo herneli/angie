@@ -23,13 +23,13 @@ const Monitoring = ({ app }) => {
                     <Switch>
                         <PrivateRoute
                             roles={["admin"]}
-                            path="/monitoring/jum_contexts"
+                            path="/monitoring/jum_contexts/:channel?"
                             component={JumContexts}
                             {...defaultProps}
                         />
                         <PrivateRoute
                             roles={["admin"]}
-                            path="/monitoring/jum_servers"
+                            path="/monitoring/jum_servers/:server?"
                             component={JumServers}
                             {...defaultProps}
                         />
@@ -42,9 +42,8 @@ const Monitoring = ({ app }) => {
                     </Switch>
                 </Content>
             </Layout>
-
         </Layout>
     );
-}
+};
 
 export default Monitoring;
