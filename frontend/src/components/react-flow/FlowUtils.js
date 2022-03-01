@@ -100,7 +100,7 @@ export function drawTags(tags) {
     if (tags && tags.length > 0) {
         return (
             <div style={{ float: 'right' }}>
-                <Badge count={getTagsCount(tags)} title={getTagsTitle(tags)} style={{ backgroundColor: 'pink' }} />
+                <Badge count={getTagsCount(tags)} title={getTagsTitle(tags)} style={{ backgroundColor: 'darkcyan' }} />
             </div>
         );
     }
