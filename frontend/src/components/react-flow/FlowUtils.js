@@ -1,4 +1,5 @@
 import { Position } from "react-flow-renderer";
+import { Badge } from 'antd';
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
@@ -62,11 +63,11 @@ export function getEdgeParams(source, target) {
     const sourcePos = getEdgePosition(source, sourceIntersectionPoint);
     const targetPos = getEdgePosition(target, targetIntersectionPoint);
 
-    if(sourcePos === Position.Top){
+    if (sourcePos === Position.Top) {
         sourceIntersectionPoint.x -= 10;
         targetIntersectionPoint.x -= 10;
     }
-    if(sourcePos === Position.Left){
+    if (sourcePos === Position.Left) {
         sourceIntersectionPoint.y -= 10;
         targetIntersectionPoint.y -= 5;
     }
@@ -80,4 +81,30 @@ export function getEdgeParams(source, target) {
         targetPos,
     };
 }
+
+function getTagsTitle(tags) {
+    if (!tags || tags.length === 0) {
+        return "";
+    }
+    return tags.join();
+}
+
+function getTagsCount(tags) {
+    if (!tags || tags.length === 0) {
+        return "";
+    }
+    return tags.length;
+}
+
+export function drawTags(tags) {
+    if (tags && tags.length > 0) {
+        return (
+            <div style={{ float: 'right' }}>
+                <Badge count={getTagsCount(tags)} title={getTagsTitle(tags)} style={{ backgroundColor: 'pink' }} />
+            </div>
+        );
+    }
+    return <></>;
+}
+
 

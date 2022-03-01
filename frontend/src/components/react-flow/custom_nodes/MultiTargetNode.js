@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import { Handle } from "react-flow-renderer";
+import { drawTags } from '../FlowUtils';
 
 import lodash from "lodash";
 
@@ -34,6 +35,7 @@ const MultiTargetNode = (node) => {
     return (
         <div style={{ minHeight: 16, height: height, minWidth: width }}>
             <Handle type="target" position="left" isConnectable={isConnectable} />
+            {drawTags(data.tags)}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "95%" }}>
                 {" "}
                 {data.label}{" "}

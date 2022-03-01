@@ -809,8 +809,8 @@ exports.seed = async function (knex) {
                         react_component_type: {
                             title: "Tipo Componente",
                             type: "string",
-                            enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode"],
-                            enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode"],
+                            enum: ["default", "output", "input", "MultiTargetNode", "ButtonNode", "CommentNode", "AngieDefaultNode"],
+                            enumNames: ["Default", "Output", "Input", "MultiTargetNode", "ButtonNode", "CommentNode", "AngieDefaultNode"],
                         },
                         custom_color: { title: "Personalizar", type: "boolean" },
                         component_border_color: { title: "Borde", type: "string" },

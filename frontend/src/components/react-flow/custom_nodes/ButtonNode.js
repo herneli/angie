@@ -5,6 +5,7 @@ import T from "i18n-react";
 
 import { Handle } from "react-flow-renderer";
 import { useCurrentChannel } from "../../../providers/channels/ChannelContext";
+import { drawTags } from '../FlowUtils';
 
 async function callApi(node, currentChannel, channelStatus) {
     const { data } = node;
@@ -37,6 +38,7 @@ const ButtonNode = (node) => {
                 minHeight: 18,
             }}>
             <Handle type="source" position="right" isConnectable={isConnectable} />
+            {drawTags(data.tags)}
             <div
                 style={{
                     display: "flex",

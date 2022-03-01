@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import MultiTargetNode from "../../../components/react-flow/custom_nodes/MultiTargetNode";
 import ButtonNode from "../../../components/react-flow/custom_nodes/ButtonNode";
 import CommentNode from "../../../components/react-flow/custom_nodes/CommentNode";
+import AngieDefaultNode from "../../../components/react-flow/custom_nodes/AngieDefaultNode";
 import Transformer from "./Transformer";
 import Messages from "../message/Messages";
 
@@ -33,6 +34,7 @@ const customNodes = {
     MultiTargetNode: MultiTargetNode,
     ButtonNode: ButtonNode,
     CommentNode: CommentNode,
+    AngieDefaultNode: AngieDefaultNode,
 };
 
 const Channel = ({
