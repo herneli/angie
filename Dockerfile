@@ -10,7 +10,7 @@ WORKDIR /home/node/angie
 
 COPY --chown=node out/angie ./
 
-RUN chmod 775 ./
+RUN chmod 777 ./
 
 USER node
 
