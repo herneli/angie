@@ -3,6 +3,7 @@ import { notification, Select } from "antd";
 import axios from "axios";
 import T from "i18n-react";
 import CustomIframe from "../../components/iframe/CustomIframe";
+import Config from "../../common/Config";
 
 const { Option, OptGroup } = Select;
 
@@ -72,12 +73,12 @@ const JumContexts = () => {
     return (
         <div style={{ height: "100%", display: "flex", gap: ".5rem", flexDirection: "column" }}>
             {grafanaLogged === false && (
-                <iframe src="http://localhost:3100" onLoad={updateGrafanaLogged} style={{ display: "none" }} />
+                <iframe src={Config.getGrafanaURL()} onLoad={updateGrafanaLogged} style={{ display: "none" }} />
             )}
             {drawChannelsSelect()}
             {loaded && grafanaLogged && (
                 <CustomIframe
-                    src={`http://localhost:3100/d/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=${channelSelected}&var-routeId=All&var-routeDescription=All&theme=light&kiosk`}
+                    src={`${Config.getGrafanaURL()}/d/AfEg2exnz/jumangie-contexts?orgId=1&refresh=5s&var-context=${channelSelected}&var-routeId=All&var-routeDescription=All&theme=light&kiosk`}
                     frameBorder={0}
                     width={"100%"}
                     height={"100%"}

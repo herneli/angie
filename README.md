@@ -267,7 +267,7 @@ services:
           retries: 5
 
     angie_keycloak:
-        image: quay.io/keycloak/keycloak:latest
+        image: quay.io/keycloak/keycloak:15.0.2
         ports:
             - 3114:8080
         volumes:

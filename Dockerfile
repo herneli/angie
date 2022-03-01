@@ -5,6 +5,7 @@ RUN apk -U upgrade \
     git \
     openssh
 
+USER node
 # Create app directory
 WORKDIR /home/node/angie
 
@@ -12,7 +13,6 @@ COPY --chown=node out/angie ./
 
 RUN chmod 777 ./
 
-USER node
 
 LABEL org.opencontainers.image.source="https://github.com/landra-sistemas/angie"
 
