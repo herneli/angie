@@ -1,11 +1,16 @@
 FROM node:16-alpine
 
+RUN apk -U upgrade \
+  && apk add --no-cache \
+    git \
+    openssh
+
 # Create app directory
 WORKDIR /home/node/angie
 
 COPY --chown=node out/angie ./
 
-RUN chmod 755 ./ -R
+RUN chmod 775 ./
 
 USER node
 
