@@ -4,6 +4,7 @@ import { Card, Col, Divider, Image, Layout, Row, Timeline } from "antd";
 import GridLayout from "react-grid-layout";
 import { Typography } from "antd";
 import CustomIframe from "../components/iframe/CustomIframe";
+import Config from "../common/Config";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -18,28 +19,28 @@ const Home = () => {
                 <Col span={16}>
                     <Card style={{ margin: 5 }}>
                         <CustomIframe
-                            src="http://localhost:3100/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=2&theme=light"
+                            src={`${Config.getGrafanaURL()}/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=2&theme=light`}
                             width="100%"
                             frameBorder="0"
                             title="CPU"></CustomIframe>
                     </Card>
                     <Card style={{ margin: 5 }}>
                         <CustomIframe
-                            src="http://localhost:3100/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=4&theme=light"
+                            src={`${Config.getGrafanaURL()}/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=4&theme=light`}
                             width="100%"
                             frameBorder="0"
                             title="Memory"></CustomIframe>
                     </Card>
                     <Card style={{ margin: 5 }}>
                         <CustomIframe
-                            src="http://localhost:3100/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=6&theme=light"
+                            src={`${Config.getGrafanaURL()}/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=6&theme=light`}
                             width="100%"
                             frameBorder="0"
                             title="Event loop delay"></CustomIframe>
                     </Card>
                     <Card style={{ margin: 5 }}>
                         <CustomIframe
-                            src="http://localhost:3100/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=8&theme=light"
+                            src={`${Config.getGrafanaURL()}/d-solo/5JC-1cank/angie?orgId=1&refresh=5s&panelId=8&theme=light`}
                             width="100%"
                             frameBorder="0"
                             title="Handlers"></CustomIframe>

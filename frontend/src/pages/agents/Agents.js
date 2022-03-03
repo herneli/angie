@@ -18,10 +18,12 @@ import {
     mdiCastAudioVariant,
     mdiLibrary,
     mdiCertificate,
+    mdiMonitorEye,
+    mdiChartBar,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import AgentOptions from "./AgentOptions";
 import AgentLibraries from "./AgentLibraries";
 import IconButton from "../../components/button/IconButton";
@@ -63,7 +65,7 @@ const Agents = () => {
     const [sort, setSort] = useState({});
 
     const classes = useStyles();
-
+    const history = useHistory();
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
@@ -93,6 +95,12 @@ const Agents = () => {
             });
         }
         setLoading(false);
+    };
+
+    const showStats = (agent) => {
+        history.push({
+            pathname: `/monitoring/jum_servers/${agent.name}`,
+        });
     };
 
     const forceStatusReload = async (agent) => {
@@ -255,7 +263,7 @@ const Agents = () => {
         {
             title: T.translate("agents.columns.actions"),
             key: "action",
-            width: 350,
+            width: 380,
             render: (text, record) => {
                 if (record.meta) {
                     return (
@@ -327,6 +335,19 @@ const Agents = () => {
                                         path={mdiTextLong}
                                         className={classes.icon}
                                         title={T.translate("common.button.log")}
+                                    />
+                                }
+                            />
+                            <Button
+                                key="stats"
+                                type="text"
+                                onClick={() => showStats(record)}
+                                disabled={record.status === "offline"}
+                                icon={
+                                    <Icon
+                                        path={mdiMonitorEye}
+                                        className={classes.icon}
+                                        title={T.translate("menu.monitoring.title")}
                                     />
                                 }
                             />

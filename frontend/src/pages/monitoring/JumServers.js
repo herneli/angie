@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
-import { notification, Select } from "antd";
+import { message, notification, Select } from "antd";
 import axios from "axios";
 import T from "i18n-react";
 import CustomIframe from "../../components/iframe/CustomIframe";
+import Config from "../../common/Config";
+import GrafanaFilter from "./GrafanaFilter";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
 const JumContexts = () => {
-    let [jumServers, setJumServers] = useState([]);
-    let [jumServerSelected, setJumServerSelected] = useState("");
-    let [loaded, setLoaded] = useState(false);
-    let [grafanaLogged, setGrafanaLogged] = useState(false);
+    const params = useParams();
+    const [jumServers, setJumServers] = useState([]);
+    const [jumServerSelected, setJumServerSelected] = useState(null);
+    const [loaded, setLoaded] = useState(false);
+    const [grafanaLogged, setGrafanaLogged] = useState(false);
+    const [iframeRefresh, setIframeRefresh] = useState("&refresh=5s");
+    const [dateTimeRanges, setDateTimeRanges] = useState("");
+    const [reload, setReload] = useState(0);
 
     const handleJumServerChange = (value) => {
         if (value) {
@@ -33,6 +40,7 @@ const JumContexts = () => {
         return (
             <Select
                 style={{ width: 300 }}
+                value={jumServerSelected}
                 placeholder={T.translate("messages.jum_server")}
                 onChange={handleJumServerChange}>
                 {drawJumServers()}
@@ -43,7 +51,16 @@ const JumContexts = () => {
         try {
             const response = await axios.get("/jum_agent/list/scrape");
             if (response && response.data) {
-                let jumServers = response.data;
+                const jumServers = response.data;
+                if (params.server) {
+                    const isValidServer = checkValidServer(params.server, jumServers);
+                    if (isValidServer) {
+                        setJumServerSelected(params.server);
+                        setLoaded(true);
+                    } else {
+                        message.info(T.translate("monitoring.server_info"));
+                    }
+                }
                 setJumServers(jumServers);
             }
         } catch (ex) {
@@ -52,6 +69,21 @@ const JumContexts = () => {
                 description: T.translate("common.messages.error.description", { error: ex }),
             });
         }
+    };
+
+    /**
+     * Comprueba que el server obtenido a través de la url es válido
+     * @param {} serverToCheck - Server obtenido de los params
+     * @param {*} integrations
+     * @returns
+     */
+    const checkValidServer = (serverToCheck, servers) => {
+        for (let server of servers) {
+            if (server?.labels?.jum_name === serverToCheck && server.labels.status === "online") {
+                return true;
+            }
+        }
+        return false;
     };
 
     const updateGrafanaLogged = (event) => {
@@ -65,17 +97,26 @@ const JumContexts = () => {
     return (
         <div style={{ height: "100%", display: "flex", gap: ".5rem", flexDirection: "column" }}>
             {grafanaLogged === false && (
-                <iframe src="http://localhost:3100" onLoad={updateGrafanaLogged} style={{ display: "none" }} />
+                <iframe src={Config.getGrafanaURL()} onLoad={updateGrafanaLogged} style={{ display: "none" }} />
             )}
-            {drawJumServersSelect()}
+            <div>
+                {drawJumServersSelect()}
+                <GrafanaFilter
+                    setIframeRefresh={setIframeRefresh}
+                    setReload={setReload}
+                    setDateTimeRange={setDateTimeRanges}
+                />
+            </div>
+
             {loaded && grafanaLogged && (
                 <CustomIframe
-                    src={`http://localhost:3100/d/7ajyUjt7k/jumangie-servers?orgId=1&refresh=5s&var-jum_name=${jumServerSelected}&theme=light&kiosk`}
+                    src={`${Config.getGrafanaURL()}/d/7ajyUjt7k/jumangie-servers?orgId=1&refresh=5s&var-jum_name=${jumServerSelected}&theme=light${iframeRefresh}${dateTimeRanges}&kiosk`}
                     frameBorder={0}
                     width={"100%"}
                     height={"100%"}
                     title="JumServers"
                     delay={80}
+                    key={`JumMonitoring_${reload}`}
                 />
             )}
         </div>

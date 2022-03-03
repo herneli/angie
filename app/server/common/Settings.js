@@ -27,6 +27,9 @@ export default class Settings {
                 realm: process.env.KEYCLOAK_REALM,
                 "front-client": process.env.KEYCLOAK_FRONT_CLI,
             },
+            "core.grafana": {
+                "url": process.env.GRAFANA_URL
+            },
             ...this.baseSettings,
         });
 

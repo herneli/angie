@@ -55,7 +55,12 @@
             "last_24": "24 Horas",
             "last_48": "48 Horas",
             "week": "1 Semana",
-            "month": "1 Mes"
+            "month": "1 Mes",
+            "last_month": "Último mes",
+            "last_week": "Última semana",
+            "last_hour": "Última hora",
+            "last_minutes": "Últimos {minutes} minutos",
+            "last_hours": "Últimas {hours} horas"
         },
         "messages": {
             "saved": {
@@ -414,5 +419,9 @@
             "tooltip_count_success_rec": "Recibidos Ok",
             "tooltip_count_success_sent": "Enviados Ok"
         }
+    },
+    "monitoring": {
+        "server_info": "El servidor indicado no existe o no está disponible",
+        "channel_info": "El canal indicado no existe o no está disponible"
     }
 }
