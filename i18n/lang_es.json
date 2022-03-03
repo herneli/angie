@@ -385,6 +385,9 @@
         "traces_from_message": "Trazas del mensaje",
         "start": "Inicio",
         "end": "Fin",
+        "resend": "Seleccionar nodo para reenvio",
+        "resend_info": "¡ Cuidado esto puede provocar un error en el canal !",
+        "resend_body": "Reenviar cuerpo a...",
         "jum_server": "Servidor JUM",
         "empty_traces": "Para ver las trazas del mensaje debes aumentar el nivel de traza en los ajustes del canal."
     },

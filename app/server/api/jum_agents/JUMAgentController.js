@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { BaseController, JsonResponse } from "lisco";
 import { JUMAgentService } from ".";
+import { IntegrationService } from "../integration";
 
 export class JUMAgentController extends BaseController {
     configure() {
@@ -43,6 +44,13 @@ export class JUMAgentController extends BaseController {
             "/jum_agent/:id/get_dependencies",
             expressAsyncHandler((req, res, next) => {
                 this.getDependencies(req, res, next);
+            })
+        );
+
+        this.router.post(
+            "/jum_agent/resend",
+            expressAsyncHandler((req, res, next) => {
+                this.resendMessage(req, res, next);
             })
         );
 
@@ -117,6 +125,22 @@ export class JUMAgentController extends BaseController {
             const service = new JUMAgentService();
 
             const res = await service.sendCommand(request.params.id, "/agent/log");
+
+            response.json(new JsonResponse(res.status, res.data));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async resendMessage(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            let jum_agent = await service.getChannelCurrentAgent(request.body.channel)
+            delete request.body.integration;
+            let params = request.body
+
+
+            const res = await service.sendCommand(jum_agent.id, "/channel/resend", params);
 
             response.json(new JsonResponse(res.status, res.data));
         } catch (ex) {
