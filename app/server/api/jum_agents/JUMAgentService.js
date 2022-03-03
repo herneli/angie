@@ -704,7 +704,7 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Devuelve un array con los id de los certificados asignados al agent con id pasado como parámetro.
+     * Devuelve un array con los id de los certificados asignados en base de datos al agent con id pasado como parámetro.
      *
      * @param {*} id
      * @returns array
@@ -714,15 +714,22 @@ export class JUMAgentService extends BaseService {
     }
 
     /**
-     * Actualiza los certificados asignados a un agent.
+     * Actualiza en base de datos los certificados asignados a un agent con el .
      * 
      * @param {*} id 
      * @param {*} certificate_ids 
      */
     async updateCertificates(id, certificate_ids) {
         await this.dao.updateCertificates(id, certificate_ids);
+        await this.reloadCertificates(id);
     }
 
+    /**
+     * Recarga en el agente los certificados que tenga asignados por base de datos.
+     * 
+     * @param {*} agent_id 
+     * @returns 
+     */
     async reloadCertificates(agent_id) {
         let certificates = await this.getCertificates(agent_id);
 
