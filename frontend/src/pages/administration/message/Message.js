@@ -1,4 +1,4 @@
-import { Modal, Timeline, Spin, Divider, Button, Space } from "antd";
+import { Modal, Timeline, Spin, Divider, Button, Space, notification } from "antd";
 import Icon from "@mdi/react";
 import lodash from "lodash";
 import axios from "axios";
@@ -251,8 +251,10 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                         <Spin tip={T.translate("application.loading")} />
                     </div>
-                ) : (
+                ) : messages?.length > 0 ? (
                     <Timeline mode="left">{timelineItems}</Timeline>
+                ) : (
+                    <p>{T.translate("messages.empty_traces")}</p>
                 )}
             </Modal>
             {showData && (
@@ -305,6 +307,10 @@ const getChannelNodes = async (integration, channel) => {
         }
     } catch (error) {
         console.error(error);
+        notification.error({
+            message: T.translate("common.messages.error.title"),
+            description: T.translate("common.messages.error.description", { error: error }),
+        });
     }
 };
 
@@ -320,5 +326,9 @@ export const getMessageTraces = async (channel, messageId) => {
         return response.data || [];
     } catch (error) {
         console.error(error);
+        notification.error({
+            message: T.translate("common.messages.error.title"),
+            description: T.translate("common.messages.error.description", { error: error }),
+        });
     }
 };
