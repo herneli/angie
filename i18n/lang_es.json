@@ -103,10 +103,22 @@
         "options": {
             "edit_title": "Editar opciones agente"
         },
+        "actions": {
+            "configure": "Configurar",
+            "view_libs": "Ver librerías",
+            "reload_libs": "Recargar librerías",
+            "configure_certificates": "Configurar certificados",
+            "reload_status": "Recargar estado"
+        },
         "libraries": {
             "edit_title": "Editar librerías",
             "title": "Librerías",
             "library": "Librería"
+        },
+        "certificates": {
+            "edit_title": "Editar certificados",
+            "title": "Certificados",
+            "certificate": "Certificado"
         }
     },
     "deployed_integrations": {
@@ -199,7 +211,8 @@
             "users": "Usuarios",
             "profiles": "Perfiles",
             "organization": "Organizaciones",
-            "sections": "Secciones"
+            "sections": "Secciones",
+            "certificate": "Certificados"
         },
         "packages": {
             "title": "Paquetes",

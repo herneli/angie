@@ -593,7 +593,7 @@ export class JUMAgentService extends BaseService {
      * @param {*} agent
      */
     async redeployNotRunningChannels() {
-        const { data: onlineAgents } = await super.list({ status: 'online'}, null, null);
+        const { data: onlineAgents } = await super.list({ status: "online" }, null, null);
 
         const channelService = new IntegrationChannelService();
         const channels = await channelService.listAllChannels();
@@ -702,4 +702,43 @@ export class JUMAgentService extends BaseService {
             throw new Error(response.data);
         }
     }
+
+    /**
+     * Devuelve un array con los id de los certificados asignados al agent con id pasado como parámetro.
+     *
+     * @param {*} id
+     * @returns array
+     */
+    getCertificates(id) {
+        return this.dao.getCertificates(id);
+    }
+
+    /**
+     * Actualiza los certificados asignados a un agent.
+     * 
+     * @param {*} id 
+     * @param {*} certificate_ids 
+     */
+    async updateCertificates(id, certificate_ids) {
+        await this.dao.updateCertificates(id, certificate_ids);
+    }
+
+    async reloadCertificates(agent_id) {
+        let certificates = await this.getCertificates(agent_id);
+
+        const response = await this.sendCommand(agent_id, "/agent/load_certificates", certificates);
+
+        if (response && response.data) {
+            return response.data;
+        }
+
+        if (!response) {
+            throw new Error("No response from the Reload of certificates");
+        }
+
+        if (!response.success) {
+            throw new Error(response.data);
+        }
+    }
+
 }

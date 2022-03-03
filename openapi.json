@@ -3809,9 +3809,37 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "example": "<route id=\"demo\" group=\"\"><description>HTTP Output</description>\n    <from uri=\"direct:demo\"/>\n    \n    <to uri=\"http://127.0.0.1:8787\"/>\n    \n    <to uri=\"mock:empty\" />\n</route>"
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "number",
+                  "example": 1
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "integration"
+        ],
+        "produces": [
+          "application/json"
         ]
       }
     },
@@ -4464,8 +4492,67 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
-        "tags": []
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "angie.core": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "Angie Core"
+                        },
+                        "remote": {
+                          "type": "string",
+                          "example": "https://github.com/landra-sistemas/angie-package-core.git"
+                        },
+                        "local": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "angie.hl7": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "Angie HL7"
+                        },
+                        "remote": {
+                          "type": "string",
+                          "example": "https://github.com/hernaj34/angie-hl7.git"
+                        },
+                        "local": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/packages/{package_code}": {
@@ -4507,8 +4594,99 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
-        "tags": []
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "remote_commit": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "local_commit": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "dependencies": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "array"
+                        }
+                      },
+                      "modified": {
+                        "type": "null"
+                      },
+                      "abbreviation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "code",
+                      "version",
+                      "remote_commit",
+                      "local_commit",
+                      "dependencies",
+                      "modified",
+                      "abbreviation"
+                    ]
+                  },
+                  "example": [
+                    {
+                      "id": 16,
+                      "code": "angie.integraciones",
+                      "version": "1.0.0",
+                      "remote_commit": null,
+                      "local_commit": null,
+                      "dependencies": [
+                        [
+                          "angie.core",
+                          "1.0.0"
+                        ]
+                      ],
+                      "modified": null,
+                      "abbreviation": "angie.integraciones@1.0.0"
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/packages/{package_code}/versions": {
@@ -6467,6 +6645,40 @@
         "tags": []
       }
     },
+    "/jum_agent/{id}/get_certificates": {
+      "get": {
+        "summary": "/jum_agent/{id}/get_certificates",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/{id}/update_certificates": {
+      "post": {
+        "summary": "/jum_agent/{id}/update_certificates",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/section": {
       "get": {
         "summary": "/section",
@@ -6673,8 +6885,70 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
-        "tags": []
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "group_id": {
+                        "type": "string"
+                      },
+                      "artifact_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "group_id",
+                      "artifact_id",
+                      "version"
+                    ]
+                  },
+                  "example": [
+                    {
+                      "id": "56cc4a8a-ae30-4e9c-bca6-d8a4089522e7",
+                      "group_id": "org.apache.camel",
+                      "artifact_id": "camel-http",
+                      "version": null
+                    }
+                  ]
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "total": {
+                  "type": "string",
+                  "example": "9"
+                },
+                "message": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          },
+          "304": {}
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       },
       "post": {
         "summary": "/library",

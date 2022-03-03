@@ -46,6 +46,20 @@ export class JUMAgentController extends BaseController {
             })
         );
 
+        this.router.get(
+            "/jum_agent/:id/get_certificates",
+            expressAsyncHandler((req, res, next) => {
+                this.getCertificates(req, res, next);
+            })
+        );
+
+        this.router.post(
+            "/jum_agent/:id/update_certificates",
+            expressAsyncHandler((req, res, next) => {
+                this.updateCertificates(req, res, next);
+            })
+        );
+
         return this.router;
     }
 
@@ -119,6 +133,30 @@ export class JUMAgentController extends BaseController {
             const res = await service.sendCommand(request.params.id, "/agent/log");
 
             response.json(new JsonResponse(res.status, res.data));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async getCertificates(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+
+            const res = await service.getCertificates(request.params.id);
+            
+            response.json(new JsonResponse(true,res));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async updateCertificates(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            
+            await service.updateCertificates(request.params.id, request.body.certificate_ids);
+
+            response.json(new JsonResponse(true));
         } catch (ex) {
             next(ex);
         }
