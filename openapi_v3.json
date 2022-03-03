@@ -4120,7 +4120,36 @@
     "/integration_channel/to_camel/specific_node": {
       "post": {
         "summary": "/integration_channel/to_camel/specific_node",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "<route id=\"demo\" group=\"\"><description>HTTP Output</description>\n    <from uri=\"direct:demo\"/>\n    \n    <to uri=\"http://127.0.0.1:8787\"/>\n    \n    <to uri=\"mock:empty\" />\n</route>"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "integration"
         ]
@@ -4270,6 +4299,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": ""
           }
         },
         "tags": [
@@ -4769,7 +4801,67 @@
     "/packages/remote_list": {
       "get": {
         "summary": "/packages/remote_list",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "angie.core": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Angie Core"
+                            },
+                            "remote": {
+                              "type": "string",
+                              "example": "https://github.com/landra-sistemas/angie-package-core.git"
+                            },
+                            "local": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        },
+                        "angie.hl7": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Angie HL7"
+                            },
+                            "remote": {
+                              "type": "string",
+                              "example": "https://github.com/hernaj34/angie-hl7.git"
+                            },
+                            "local": {
+                              "type": "boolean",
+                              "example": false
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -4808,7 +4900,94 @@
     "/packages/all/versions": {
       "get": {
         "summary": "/packages/all/versions",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "remote_commit": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "local_commit": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "dependencies": {
+                            "items": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "nullable": true,
+                            "type": "array"
+                          },
+                          "modified": {
+                            "nullable": true
+                          },
+                          "abbreviation": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "version",
+                          "remote_commit",
+                          "local_commit",
+                          "dependencies",
+                          "modified",
+                          "abbreviation"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": 16,
+                          "code": "angie.integraciones",
+                          "version": "1.0.0",
+                          "remote_commit": null,
+                          "local_commit": null,
+                          "dependencies": [
+                            [
+                              "angie.core",
+                              "1.0.0"
+                            ]
+                          ],
+                          "modified": null,
+                          "abbreviation": "angie.integraciones@1.0.0"
+                        }
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -6691,6 +6870,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": ""
           }
         },
         "tags": []
@@ -6767,6 +6949,40 @@
     "/jum_agent/{id}/get_dependencies": {
       "get": {
         "summary": "/jum_agent/{id}/get_dependencies",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/{id}/get_certificates": {
+      "get": {
+        "summary": "/jum_agent/{id}/get_certificates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/jum_agent/{id}/update_certificates": {
+      "post": {
+        "summary": "/jum_agent/{id}/update_certificates",
         "parameters": [
           {
             "name": "id",
@@ -6962,7 +7178,70 @@
     "/library": {
       "get": {
         "summary": "/library",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "group_id": {
+                            "type": "string"
+                          },
+                          "artifact_id": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "group_id",
+                          "artifact_id",
+                          "version"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": "56cc4a8a-ae30-4e9c-bca6-d8a4089522e7",
+                          "group_id": "org.apache.camel",
+                          "artifact_id": "camel-http",
+                          "version": null
+                        }
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "string",
+                      "example": "9"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {

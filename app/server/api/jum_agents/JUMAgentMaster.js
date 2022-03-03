@@ -87,6 +87,7 @@ class JUMAgentMaster {
                 //Instala las dependencias en el agente
                 if(agent.approved == true){
                     await this.service.reloadDependencies(agent);
+                    await this.service.reloadCertificates(agent.id);
                 }
                 //Finalizada la instalación se marca como online
                 agent.status = JUMAgent.STATUS_ONLINE;
