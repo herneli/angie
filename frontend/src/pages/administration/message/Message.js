@@ -6,9 +6,6 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import T from "i18n-react";
 import {
-    RightCircleOutlined
-} from "@ant-design/icons";
-import {
     mdiTimelinePlus,
     mdiTimelineMinus,
     mdiMessagePlus,
@@ -52,22 +49,19 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
         setData();
     }, []);
 
-
-    const resendMessage = async (messageContent,endpoint) => {
+    const resendMessage = async (messageContent, endpoint) => {
         let message = {
             content: {
                 content: messageContent,
-                endpoint: endpoint
+                endpoint: endpoint,
             },
             integration: integration,
             channel: channel,
-            routeId: endpoint
-        }
-        
+            routeId: endpoint,
+        };
 
         const response = await axios.post("/jum_agent/resend", message);
-
-    }
+    };
 
     const groupedMessages = groupNodes(messages, nodes);
 
@@ -84,11 +78,11 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             ? T.translate("common.error")
             : T.translate("messages.node_unknown");
 
-
         const timelineContent = item.data.map((trace, index, array) => {
             const message = trace.data;
 
-            const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
+            const date = moment.unix(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
+
             if (index === 0) {
                 messageStart = date;
                 exchange = message.exchange_id;
@@ -287,7 +281,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     nodes={nodes}
                     groupedMessages={groupedMessages}
                     resendMessage={(messageContent, endpoint) => {
-                        resendMessage(messageContent, endpoint)
+                        resendMessage(messageContent, endpoint);
                     }}
                     onCancel={() => {
                         setShowData(null);

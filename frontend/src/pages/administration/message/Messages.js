@@ -122,8 +122,10 @@ const Messages = (props) => {
 
                 const parsedMessages = messages.map((message) => {
                     const { message_id, status, date_processed, date_reception } = message;
-
-                    const elapsed = moment(date_processed) - moment(date_reception) || "---";
+                    let elapsed = moment(date_processed) - moment(date_reception);
+                    if (elapsed === undefined) {
+                        elapsed = "---";
+                    }
 
                     return {
                         breadcrumb_id: message_id,
