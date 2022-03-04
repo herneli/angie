@@ -7,6 +7,7 @@ import { JUMAgentService } from "../jum_agents";
 import { IntegrationService } from "../integration";
 import { MessageService } from "../messages";
 import { ChannelHandlebarsHelpers } from "./";
+import { PackageVersionService } from "../package/PackageVersionService";
 
 let Handlebars;
 
@@ -62,7 +63,7 @@ export class IntegrationChannelService {
         const { data: integrations } = await integrationService.list();
 
         for (const integration of integrations) {
-            if(!integration.data) continue;
+            if (!integration.data) continue;
             const found = lodash.find(integration.data.channels, { id: channelId });
             if (found) {
                 return integration;
@@ -155,9 +156,21 @@ export class IntegrationChannelService {
         }
 
         const configService = new ConfigurationService();
+        const packageVersionService = new PackageVersionService();
 
-        const { data: node_types } = await configService.list("node_type");
         const integration = await this.getIntegrationByChannel(channel.id);
+
+        const pkg = await packageVersionService.getPackageVersion(
+            integration.package_code,
+            integration.package_version
+        );
+
+        const { data: node_types } = await configService.list("node_type", {
+            "package_code,package_version": {
+                type: "in",
+                value: [...pkg.dependencies, [integration.package_code, integration.package_version]],
+            },
+        });
 
         const nodes = lodash.cloneDeep(channel.nodes);
 

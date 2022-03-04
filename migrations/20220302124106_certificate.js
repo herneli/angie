@@ -18,14 +18,13 @@ exports.up = async function (knex) {
             table.unique(["jum_agent_id", "certificate_id"]);
         });
     }
-
 };
 
 exports.down = async function (knex) {
-    if (await knex.schema.hasTable("certificate")) {
-        await knex.schema.dropTable("certificate");
-    }    
     if (await knex.schema.hasTable("jum_agent_certificate")) {
         await knex.schema.dropTable("jum_agent_certificate");
+    }
+    if (await knex.schema.hasTable("certificate")) {
+        await knex.schema.dropTable("certificate");
     }
 };
