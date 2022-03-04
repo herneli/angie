@@ -120,33 +120,21 @@ export class MessageDao extends BaseKnexDao {
     }
 
     async getChannelMessageCount(channelId) {
-        const knex = KnexConnector.connection;
-        this.tableName = `zmessages`;
+        this.tableName = `message_counts`;
+        const filter = { channel_id: channelId };
         const messages = { total: 0, error: 0, sent: 0 };
 
-        //Los filtros se establecen manualmente al ser estáticos y utilizarse directamente el método search()
-        const query = `select count(*) as "total",
-                              count(case WHEN status = 'error' then 1 ELSE NULL END) as "error"
-                        from zmessages
-                        where channel_id = '${channelId}'`;
-
         try {
-            const response = await knex.raw(query);
-            const responseData = (response.rows && response.rows[0]) || false;
-
-            if (responseData) {
-                messages.total = responseData.total || 0;
-                messages.error = responseData.error || 0;
+            const response = await this.loadFilteredData(filter, 0, 1000);
+            if (response && response[0]) {
+                messages.total = response[0].total || 0;
+                messages.error = response[0].error || 0;
                 messages.sent = messages.total - messages.error;
             }
         } catch (e) {
-            if (e.body && e.body.status === 404) {
-                // console.log("Canal sin mensajes");
-            } else {
-                console.error("Error de conexión con Elastic:");
-                console.error(e);
-                return false;
-            }
+            console.error("Error de conexión con la base de datos: ");
+            console.error(e);
+            return false;
         }
         return messages;
     }
