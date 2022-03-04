@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { BaseController, JsonResponse } from "lisco";
 import { JUMAgentService } from ".";
+import { IntegrationService } from "../integration";
 
 export class JUMAgentController extends BaseController {
     configure() {
@@ -43,6 +44,27 @@ export class JUMAgentController extends BaseController {
             "/jum_agent/:id/get_dependencies",
             expressAsyncHandler((req, res, next) => {
                 this.getDependencies(req, res, next);
+            })
+        );
+
+        this.router.post(
+            "/jum_agent/resend",
+            expressAsyncHandler((req, res, next) => {
+                this.resendMessage(req, res, next);
+            })
+        );
+        
+        this.router.get(
+            "/jum_agent/:id/get_certificates",
+            expressAsyncHandler((req, res, next) => {
+                this.getCertificates(req, res, next);
+            })
+        );
+
+        this.router.post(
+            "/jum_agent/:id/update_certificates",
+            expressAsyncHandler((req, res, next) => {
+                this.updateCertificates(req, res, next);
             })
         );
 
@@ -119,6 +141,46 @@ export class JUMAgentController extends BaseController {
             const res = await service.sendCommand(request.params.id, "/agent/log");
 
             response.json(new JsonResponse(res.status, res.data));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async resendMessage(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            let jum_agent = await service.getChannelCurrentAgent(request.body.channel)
+            delete request.body.integration;
+            let params = request.body
+
+
+            const res = await service.sendCommand(jum_agent.id, "/channel/resend", params);
+
+            response.json(new JsonResponse(res.status, res.data));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+    
+    async getCertificates(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+
+            const res = await service.getCertificates(request.params.id);
+            
+            response.json(new JsonResponse(true,res));
+        } catch (ex) {
+            next(ex);
+        }
+    }
+
+    async updateCertificates(request, response, next) {
+        try {
+            const service = new JUMAgentService();
+            
+            await service.updateCertificates(request.params.id, request.body.certificate_ids);
+
+            response.json(new JsonResponse(true));
         } catch (ex) {
             next(ex);
         }

@@ -17,16 +17,20 @@ import {
     mdiTrashCan,
     mdiCastAudioVariant,
     mdiLibrary,
+    mdiCertificate,
+    mdiMonitorEye,
+    mdiChartBar,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import AgentOptions from "./AgentOptions";
 import AgentLibraries from "./AgentLibraries";
 import IconButton from "../../components/button/IconButton";
 import Utils from "../../common/Utils";
 import AceEditor from "../../components/ace-editor/AceEditor";
 import BasicFilter from "../../components/basic-filter/BasicFilter";
+import AgentCertificates from "./AgentCertificates";
 
 const { Content } = Layout;
 const useStyles = createUseStyles({
@@ -53,6 +57,7 @@ const Agents = () => {
     let [optionsVisible, setOptionsVisible] = useState(false);
     let [librariesVisible, setLibrariesVisible] = useState(false);
     let [agentDependenciesVisible, setAgentDependenciesVisible] = useState(false);
+    let [agentCertificatesVisible, setAgentCertificatesVisible] = useState(false);
     let [currentAgent, setCurrentAgent] = useState(null);
 
     const [filters, setFilters] = useState({});
@@ -60,7 +65,7 @@ const Agents = () => {
     const [sort, setSort] = useState({});
 
     const classes = useStyles();
-
+    const history = useHistory();
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
 
@@ -90,6 +95,12 @@ const Agents = () => {
             });
         }
         setLoading(false);
+    };
+
+    const showStats = (agent) => {
+        history.push({
+            pathname: `/monitoring/jum_servers/${agent.name}`,
+        });
     };
 
     const forceStatusReload = async (agent) => {
@@ -252,7 +263,7 @@ const Agents = () => {
         {
             title: T.translate("agents.columns.actions"),
             key: "action",
-            width: 300,
+            width: 380,
             render: (text, record) => {
                 if (record.meta) {
                     return (
@@ -283,7 +294,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiLibrary}
                                         className={classes.icon}
-                                        title={T.translate("agent.actions.view_libs")}
+                                        title={T.translate("agents.actions.view_libs")}
                                     />
                                 }
                             />
@@ -297,11 +308,24 @@ const Agents = () => {
                                     <Icon
                                         path={mdiCastAudioVariant}
                                         className={classes.icon}
-                                        title={T.translate("agent.actions.reload_libs")}
+                                        title={T.translate("agents.actions.reload_libs")}
                                     />
                                 }
                             />
-
+                            <Button
+                                key="options"
+                                type="text"
+                                onClick={() => {
+                                    showAgentCertificates(record);
+                                }}
+                                icon={
+                                    <Icon
+                                        path={mdiCertificate}
+                                        className={classes.icon}
+                                        title={T.translate("agents.actions.configure_certificates")}
+                                    />
+                                }
+                            />
                             <Button
                                 key="log"
                                 type="text"
@@ -315,6 +339,19 @@ const Agents = () => {
                                 }
                             />
                             <Button
+                                key="stats"
+                                type="text"
+                                onClick={() => showStats(record)}
+                                disabled={record.status === "offline"}
+                                icon={
+                                    <Icon
+                                        path={mdiMonitorEye}
+                                        className={classes.icon}
+                                        title={T.translate("menu.monitoring.title")}
+                                    />
+                                }
+                            />
+                            <Button
                                 key="log"
                                 type="text"
                                 onClick={() => forceStatusReload(record)}
@@ -322,7 +359,7 @@ const Agents = () => {
                                     <Icon
                                         path={mdiReload}
                                         className={classes.icon}
-                                        title={T.translate("agent.actions.reload_status")}
+                                        title={T.translate("agents.actions.reload_status")}
                                     />
                                 }
                             />
@@ -389,6 +426,16 @@ const Agents = () => {
         setAgentDependenciesVisible(false);
     };
 
+    const showAgentCertificates = (agent) => {
+        setCurrentAgent(agent);
+        setAgentCertificatesVisible(true);
+    };
+
+    const hideAgentCertificates = () => {
+        setAgentCertificatesVisible(false);
+        setCurrentAgent(null);
+    }
+
     const saveAgent = async ({ formData }) => {
         //TODo
         try {
@@ -417,6 +464,20 @@ const Agents = () => {
 
         cancelLibraries();
     };
+
+    const saveCertificates = async ({ formData }) => {
+        try {
+            await axios.post(`/jum_agent/${formData.id}/update_certificates`, { certificate_ids: formData.certificate_ids });
+            await search(pagination, filters, sort);
+        } catch (ex) {
+            notification.error({
+                message: T.translate("common.messages.error.title"),
+                description: T.translate("common.messages.error.description", { error: ex }),
+            });
+        }
+
+        hideAgentCertificates();
+    }
 
     const onSearch = ({ filter }) => {
         let newFilters = {};
@@ -478,6 +539,14 @@ const Agents = () => {
                     visible={agentDependenciesVisible}
                     onOk={saveLibraries}
                     onCancel={cancelLibraries}
+                />
+            )}
+            {agentCertificatesVisible && (
+                <AgentCertificates
+                    agent={currentAgent}
+                    visible={agentCertificatesVisible}
+                    onOk={saveCertificates}
+                    onCancel={hideAgentCertificates}
                 />
             )}
             {optionsVisible && (

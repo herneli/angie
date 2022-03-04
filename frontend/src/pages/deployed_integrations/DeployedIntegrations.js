@@ -7,7 +7,15 @@ import lodash from "lodash";
 import T from "i18n-react";
 
 import Icon from "@mdi/react";
-import { mdiPlayCircle, mdiSourceBranchPlus, mdiStopCircle, mdiTextLong, mdiMessage, mdiRefresh } from "@mdi/js";
+import {
+    mdiPlayCircle,
+    mdiSourceBranchPlus,
+    mdiStopCircle,
+    mdiTextLong,
+    mdiMessage,
+    mdiRefresh,
+    mdiMonitorEye,
+} from "@mdi/js";
 import { createUseStyles } from "react-jss";
 import ChannelActions from "../administration/integration/ChannelActions";
 import { Link, useHistory } from "react-router-dom";
@@ -112,6 +120,12 @@ const DeployedIntegrations = () => {
         });
     };
 
+    const showStats = (channel) => {
+        history.push({
+            pathname: `/monitoring/jum_contexts/${channel.name}`,
+        });
+    };
+
     /**
      * Realiza la busqueda teniendo en cuenta la paginacion y los filtros
      *
@@ -160,6 +174,7 @@ const DeployedIntegrations = () => {
      * @returns
      */
     const drawChannelActionButtons = (integration, record) => {
+        console.log(record);
         return (
             <Space size="middle">
                 {integration?.deployment_config?.enabled && record.enabled && record.status === "Started" && (
@@ -206,11 +221,19 @@ const DeployedIntegrations = () => {
                     icon={{ path: mdiTextLong, size: 0.6, title: T.translate("common.button.log") }}
                 />
                 <IconButton
+                    key="stats"
+                    onClick={() => {
+                        showStats(record, integration);
+                    }}
+                    disabled={record.status !== "Started"}
+                    icon={{ path: mdiMonitorEye, size: 0.7, title: T.translate("menu.monitoring.title") }}
+                />
+                <IconButton
                     key="messages"
                     onClick={() => {
                         showMessages(record, integration);
                     }}
-                    icon={{ path: mdiMessage, size: 0.6, title: "Mensajes" }}
+                    icon={{ path: mdiMessage, size: 0.6, title: T.translate("menu.explore.messages") }}
                 />
             </Space>
         );
