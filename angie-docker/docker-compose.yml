@@ -9,6 +9,7 @@ services:
         volumes:
             - ./postgres/data:/var/lib/postgresql/data
             - ./dbinit:/docker-entrypoint-initdb.d/
+            - ./postgres/angie_postgresql.conf:/etc/postgresql.conf
         ports:
             - 3132:5432/tcp
         healthcheck:
