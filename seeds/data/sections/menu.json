@@ -70,6 +70,12 @@
                                 "value": "/organization",
                                 "icon": "mdiHomeGroup",
                                 "title": "menu.administration.organization"
+                            },
+                            {
+                                "key": "certificate",
+                                "value": "/certificate",
+                                "icon": "mdiCertificate",
+                                "title": "menu.administration.certificate"
                             }
                         ]
                     }

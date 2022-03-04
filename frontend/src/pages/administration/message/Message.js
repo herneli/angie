@@ -6,6 +6,9 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import T from "i18n-react";
 import {
+    RightCircleOutlined
+} from "@ant-design/icons";
+import {
     mdiTimelinePlus,
     mdiTimelineMinus,
     mdiMessagePlus,
@@ -49,6 +52,23 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
         setData();
     }, []);
 
+
+    const resendMessage = async (messageContent,endpoint) => {
+        let message = {
+            content: {
+                content: messageContent,
+                endpoint: endpoint
+            },
+            integration: integration,
+            channel: channel,
+            routeId: endpoint
+        }
+        
+
+        const response = await axios.post("/jum_agent/resend", message);
+
+    }
+
     const groupedMessages = groupNodes(messages, nodes);
 
     const timelineItems = groupedMessages.map((item, msgIndex) => {
@@ -63,6 +83,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             : item.error
             ? T.translate("common.error")
             : T.translate("messages.node_unknown");
+
 
         const timelineContent = item.data.map((trace, index, array) => {
             const message = trace.data;
@@ -228,6 +249,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                                     title: `${T.translate("messages.body")} (${nodeName})`,
                                     node: nodeName,
                                     content: messageContent,
+                                    nodes: nodes,
                                 });
                             }}
                         />
@@ -261,6 +283,12 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                 <MessageDataModal
                     visible={Boolean(showData)}
                     messageData={showData}
+                    route={showData}
+                    nodes={nodes}
+                    groupedMessages={groupedMessages}
+                    resendMessage={(messageContent, endpoint) => {
+                        resendMessage(messageContent, endpoint)
+                    }}
                     onCancel={() => {
                         setShowData(null);
                     }}

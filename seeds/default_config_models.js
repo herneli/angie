@@ -1470,5 +1470,52 @@ exports.seed = async function (knex) {
                 },
             },
         },
+        {
+            code: "certificate",
+            name: "certificate",
+            data: {
+                code: "certificate",
+                name: "Certificados",
+                id_mode: "uuid",
+                table: "certificate",
+                documentType: "certificate",
+                listFields: [
+                    {
+                        title: "Code",
+                        field: "code",
+                        link: true
+                    },
+                ],
+                schema: {
+                    type: "object",
+                    required: ["code"],
+                    properties: {
+                        code: {
+                            type: "string",
+                        },
+                        password: {
+                            type: "string",
+                        },
+                        file: {
+                            type: "string",
+                        }
+                    },
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "3",
+                    },
+                    password: {
+                        "ui:columnSize": "3",
+                        "ui:widget": "password",
+                    },
+                    file: {
+                        "ui:widget": "file",
+                        "ui:options": { accept: ".p12" },
+                        "ui:columnSize": "6",
+                    },
+                },
+            },
+        },
     ]);
 };

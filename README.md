@@ -252,10 +252,12 @@ services:
 
     angie_postgre:
         image: postgres:13
+        user: postgres
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=root
         volumes:
+            - ./postgres/postgresql.conf:/etc/postgresql.conf
             - ./postgres/data:/var/lib/postgresql/data
             - ./dbinit:/docker-entrypoint-initdb.d/
         ports:
@@ -331,6 +333,7 @@ services:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: root
           DATABASE_NAME: angie
+          GRAFANA_URL: http://localhost:3100
           KEYCLOAK_URL: http://angie_keycloak:8080/auth
           KEYCLOAK_REDIRECT_URL: http://localhost:3114/auth
           KEYCLOAK_REALM: Angie
@@ -344,6 +347,13 @@ services:
           PACKAGE_REPOSITORY: https://github.com/landra-sistemas/angie-package-repo.git
       volumes:
             - ./angie/logs:/home/node/angie/logs
+      
+      healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:3105/"]
+          interval: 5s
+          timeout: 2s
+          retries: 15
+          
       depends_on:
             angie_postgre:
                 condition: service_healthy
