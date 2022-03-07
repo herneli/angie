@@ -1,13 +1,10 @@
-import { Modal, Timeline, Spin, Divider, Button, Space } from "antd";
+import { Modal, Timeline, Spin, Divider, Button, Space, notification } from "antd";
 import Icon from "@mdi/react";
 import lodash from "lodash";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import T from "i18n-react";
-import {
-    RightCircleOutlined
-} from "@ant-design/icons";
 import {
     mdiTimelinePlus,
     mdiTimelineMinus,
@@ -52,22 +49,19 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
         setData();
     }, []);
 
-
-    const resendMessage = async (messageContent,endpoint) => {
+    const resendMessage = async (messageContent, endpoint) => {
         let message = {
             content: {
                 content: messageContent,
-                endpoint: endpoint
+                endpoint: endpoint,
             },
             integration: integration,
             channel: channel,
-            routeId: endpoint
-        }
-        
+            routeId: endpoint,
+        };
 
         const response = await axios.post("/jum_agent/resend", message);
-
-    }
+    };
 
     const groupedMessages = groupNodes(messages, nodes);
 
@@ -84,11 +78,11 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
             ? T.translate("common.error")
             : T.translate("messages.node_unknown");
 
-
         const timelineContent = item.data.map((trace, index, array) => {
             const message = trace.data;
 
-            const date = moment(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
+            const date = moment.unix(message.date_time).format("DD/MM/YYYY HH:mm:ss:SSS");
+
             if (index === 0) {
                 messageStart = date;
                 exchange = message.exchange_id;
@@ -273,8 +267,10 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                         <Spin tip={T.translate("application.loading")} />
                     </div>
-                ) : (
+                ) : messages?.length > 0 ? (
                     <Timeline mode="left">{timelineItems}</Timeline>
+                ) : (
+                    <p>{T.translate("messages.empty_traces")}</p>
                 )}
             </Modal>
             {showData && (
@@ -285,7 +281,7 @@ export default function MessageGroup({ visible, onCancel, messageData, integrati
                     nodes={nodes}
                     groupedMessages={groupedMessages}
                     resendMessage={(messageContent, endpoint) => {
-                        resendMessage(messageContent, endpoint)
+                        resendMessage(messageContent, endpoint);
                     }}
                     onCancel={() => {
                         setShowData(null);
@@ -333,6 +329,10 @@ const getChannelNodes = async (integration, channel) => {
         }
     } catch (error) {
         console.error(error);
+        notification.error({
+            message: T.translate("common.messages.error.title"),
+            description: T.translate("common.messages.error.description", { error: error }),
+        });
     }
 };
 
@@ -348,5 +348,9 @@ export const getMessageTraces = async (channel, messageId) => {
         return response.data || [];
     } catch (error) {
         console.error(error);
+        notification.error({
+            message: T.translate("common.messages.error.title"),
+            description: T.translate("common.messages.error.description", { error: error }),
+        });
     }
 };
