@@ -100,7 +100,7 @@ export default function PackageVersionDependencies({ baseVersion, onOk, onCancel
                 uiSchema={formSchema.uiSchema}
                 widgets={formConfig.widgets}
                 onChange={(e) => setDependencies(e.formData.dependencies)}
-                onSubmit={(e) => handleSaveDependencies(e)}
+                onSubmit={(e) => handleSaveDependencies()}
                 onError={(e) => console.log(e)}>
                 <></>
             </ConditionalForm>

@@ -26,7 +26,7 @@ export default function ExpressionMemberSelector({
     const packageData = usePackage();
 
     useEffect(() => {
-        if (open && (!membersForType || !areSameTypes(membersForType.type, getLastExpressionMember().type))) {
+        if (open && (!membersForType || !areSameTypes(membersForType?.type, getLastExpressionMember().type))) {
             calculateMembers();
         }
     }, [expression, open]);
