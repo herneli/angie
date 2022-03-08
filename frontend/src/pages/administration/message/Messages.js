@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, notification, Table, Space } from "antd";
+import { Button, notification, Table, Space, Tag, Spin } from "antd";
 import axios from "axios";
 import moment from "moment";
 import Message from "./Message";
@@ -9,9 +9,11 @@ import { useParams } from "react-router";
 import Icon from "@mdi/react";
 import { mdiDownload, mdiEmailOff, mdiEmailCheck, mdiMagnifyPlus } from "@mdi/js";
 import { createUseStyles } from "react-jss";
-import { Content } from "antd/lib/layout/layout";
+import Layout, { Content, Header } from "antd/lib/layout/layout";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
 import Utils from "../../../common/Utils";
+import { LeftOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router";
 
 const useStyles = createUseStyles({
     card: {
@@ -28,6 +30,11 @@ const useStyles = createUseStyles({
         width: 20,
         height: 20,
     },
+    header: {
+        backgroundColor: "white",
+        height: 40,
+        lineHeight: "40px",
+    },
 });
 
 const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
@@ -35,6 +42,7 @@ const defaultDates = [moment().subtract(15, "day"), moment().endOf("day")];
 const Messages = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [channelName, setChannelName] = useState("");
 
     const [filters, setFilters] = useState({});
     const [pagination, setPagination] = useState({ showSizeChanger: true });
@@ -44,6 +52,7 @@ const Messages = (props) => {
     const [detailedMessage, setDetailedMessage] = useState([]);
     const [currentDates, setCurrentDates] = useState(defaultDates);
 
+    const history = useHistory();
     const params = useParams();
     let channel = "";
     let integration = "";
@@ -57,10 +66,30 @@ const Messages = (props) => {
     }
 
     useEffect(() => {
+        // Solo busca el nombre del canal cuando no estamos directamente en el propio canal
+        if (!props.channel) {
+            getChannelName(integration, channel);
+        }
         search(pagination, filters, sort);
     }, [props.debugData]);
 
     const classes = useStyles();
+
+    /**
+     * Función que obtiene el nombre del canal al que pertenecen los mensajes
+     * @param {String} integrationId
+     * @param {String} channelId
+     */
+    const getChannelName = async (integrationId, channelId) => {
+        try {
+            const response = await axios.get(`/integration/${integrationId}/channel/${channelId}`);
+            const channelName = response.data.data.name;
+            setChannelName(channelName);
+        } catch (e) {
+            setChannelName(true);
+            console.error(e);
+        }
+    };
 
     const search = async (pagination, filters = {}, sorts) => {
         setLoading(true);
@@ -93,8 +122,10 @@ const Messages = (props) => {
 
                 const parsedMessages = messages.map((message) => {
                     const { message_id, status, date_processed, date_reception } = message;
-
-                    const elapsed = moment(date_processed) - moment(date_reception) || "---";
+                    let elapsed = moment(date_processed) - moment(date_reception);
+                    if (elapsed === undefined) {
+                        elapsed = "---";
+                    }
 
                     return {
                         breadcrumb_id: message_id,
@@ -247,6 +278,10 @@ const Messages = (props) => {
                 start: dates[0].toISOString(),
                 end: dates[1].toISOString(),
             };
+
+            setCurrentDates(dates);
+        } else {
+            setCurrentDates(undefined);
         }
 
         setFilters(newFilters);
@@ -285,48 +320,70 @@ const Messages = (props) => {
             )}
         </>
     ) : (
-        <Content>
-            <BasicFilter defaultDates={defaultDates} onSearch={onSearch}>
-                <Button
-                    icon={<Icon path={mdiDownload} className={classes.icon} />}
-                    type="text"
-                    onClick={() => handleDownloadTable(dataSource)}
-                />
-            </BasicFilter>
-            <br />
+        <>
+            <Header className={classes.header} style={{ backgroundColor: "#deefff" }}>
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={(e) => history.push("/integrations/deployed")}
+                        icon={<LeftOutlined />}
+                        size={"small"}
+                        style={{ height: 19, verticalAlign: "-1px" }}
+                    />
+                    <Tag color={"geekblue"}>{T.translate("menu.integrations")}</Tag>
+                </Space>
+            </Header>
+            {channelName ? (
+                <Content className="packageContent">
+                    <h1>
+                        {T.translate("messages.messages_from_channel")} <i>{channelName}</i>
+                    </h1>
+                    <BasicFilter defaultDates={defaultDates} onSearch={onSearch}>
+                        <Button
+                            icon={<Icon path={mdiDownload} className={classes.icon} />}
+                            type="text"
+                            onClick={() => handleDownloadTable(dataSource)}
+                        />
+                    </BasicFilter>
+                    <br />
 
-            {dataSource && (
-                <Table
-                    loading={loading}
-                    key="messages-table"
-                    dataSource={dataSource}
-                    columns={columns}
-                    onChange={(pagination, tableFilters, sort) => {
-                        setSort(sort);
-                        setPagination(pagination);
-                        search(pagination, filters, sort);
-                    }}
-                    pagination={pagination}
-                    rowKey={"id"}
-                    childrenColumnName={"channels"}
-                    bordered
-                    sort
-                    scroll={{ x: 1100 }}
-                />
+                    {dataSource && (
+                        <Table
+                            loading={loading}
+                            key="messages-table"
+                            dataSource={dataSource}
+                            columns={columns}
+                            onChange={(pagination, tableFilters, sort) => {
+                                setSort(sort);
+                                setPagination(pagination);
+                                search(pagination, filters, sort);
+                            }}
+                            size={"middle"}
+                            pagination={pagination}
+                            rowKey={"id"}
+                            childrenColumnName={"channels"}
+                            bordered
+                            sort
+                            scroll={{ x: 1100 }}
+                        />
+                    )}
+                    {messageModalVisible && (
+                        <Message
+                            classes={classes}
+                            visible={messageModalVisible}
+                            messageData={detailedMessage}
+                            integration={integration}
+                            channel={channel}
+                            onCancel={() => {
+                                setDetailedMessage([]);
+                                setMessageModalVisible(false);
+                            }}></Message>
+                    )}
+                </Content>
+            ) : (
+                <Spin style={{ background: "white", paddingTop: "25%" }}></Spin>
             )}
-            {messageModalVisible && (
-                <Message
-                    classes={classes}
-                    visible={messageModalVisible}
-                    messageData={detailedMessage}
-                    integration={integration}
-                    channel={channel}
-                    onCancel={() => {
-                        setDetailedMessage([]);
-                        setMessageModalVisible(false);
-                    }}></Message>
-            )}
-        </Content>
+        </>
     );
 };
 

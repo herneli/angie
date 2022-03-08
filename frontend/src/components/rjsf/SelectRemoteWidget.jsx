@@ -58,7 +58,12 @@ export default class SelectRemoteWidget extends Component {
         const { schema } = this.props;
         let { selectOptions, filters = null } = this.props.options;
         let valueField = "code";
+        let valuePrefix = "";
+        let valueSuffix = "";
         let labelField = "name";
+        let labelPrefix = "";
+        let labelSuffix = "";
+        let showId = true;
         let path = null;
 
         // Parse selectOptions field for config
@@ -70,14 +75,29 @@ export default class SelectRemoteWidget extends Component {
             if (config.value) {
                 valueField = config.value;
             }
+            if (config.valuePrefix) {
+                valuePrefix = config.valuePrefix;
+            }
+            if (config.valueSuffix) {
+                valueSuffix = config.valueSuffix;
+            }
             if (config.label) {
                 labelField = config.label;
+            }
+            if (config.labelPrefix) {
+                labelPrefix = config.labelPrefix;
+            }
+            if (config.labelSuffix) {
+                labelSuffix = config.labelSuffix;
+            }
+            if (config.showId) {
+                showId = config.showId;
             }
         }
         getselectOptions(url, filters, path).then((entries) => {
             let options = entries.map((entry) => ({
-                value: get(entry, valueField),
-                label: get(entry, labelField) + " (" + get(entry, valueField) + ")",
+                value: valuePrefix + get(entry, valueField) + valueSuffix,
+                label: labelPrefix + get(entry, labelField) + (showId && showId === true ? " (" + get(entry, valueField) + ")" : "") + labelSuffix,
             }));
             options = [{ value: null, label: T.translate("Select...") }, ...options];
 

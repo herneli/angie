@@ -1,4 +1,4 @@
-import { App, BaseController, JsonResponse } from "lisco";
+import { BaseController, JsonResponse, KnexConnector } from "lisco";
 import { MessageService } from ".";
 import expressAsyncHandler from "express-async-handler";
 
@@ -33,6 +33,13 @@ export class MessageController extends BaseController {
                 this.getMessageTraces(request, response, next);
             })
         );
+
+        setInterval(async () => {
+            //TODO: Añadir intervalo de recarga personalizado en la (futura) vista de control de tareas programaddas
+            const knex = KnexConnector.connection;
+            await knex.raw("REFRESH MATERIALIZED VIEW message_counts;");
+            // console.log("Reloading message_counts");
+        }, 30 * 1000);
 
         return this.router;
     }
