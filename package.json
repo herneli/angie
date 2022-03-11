@@ -19,6 +19,7 @@
     "@keycloak/keycloak-admin-client": "^15.0.2",
     "axios": "^0.24.0",
     "bodybuilder": "^2.4.0",
+    "bree": "^7.2.0",
     "compare-versions": "^4.1.2",
     "dotenv-defaults": "^5.0.0",
     "esm": "^3.2.25",

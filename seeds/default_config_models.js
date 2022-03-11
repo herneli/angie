@@ -1517,5 +1517,130 @@ exports.seed = async function (knex) {
                 },
             },
         },
+        {
+            code: "task",
+            name: "Tareas",
+            data: {
+                code: "task",
+                name: "Tareas",
+                id_mode: "uuid",
+                table: "task",
+                documentType: "task",
+                listFields: [
+                    {
+                        title: "Name",
+                        field: "code",
+                        link: true
+                    },
+                    {
+                        title: "Tipo",
+                        field: "type",
+                        key: "data->>'type'",
+                    },                    
+                    {
+                        title: "Activa",
+                        field: "enabled",
+                        key: "data->>'enabled'",
+                        type: "boolean"
+                    },
+                    {
+                        title: "Programación",
+                        field: "scheduling",
+                        key: "data->>'scheduling'",
+                    },
+                ],
+                schema: {
+                    type: "object",
+                    required: ["code", "type", "scheduling", "enabled"],
+                    properties: {
+                        code: {
+                            title: "Code",
+                            type: "string",
+                        },
+                        type: {
+                            title: "Tipo",
+                            type: "string",
+                            enum: ["prune_channels", "refresh_materialized_views", "refresh_users"],
+                            enumNames: ["Limpiar canales", "Refrescar Materialized Views", "Refrescar Usuarios"]
+                        },
+                        enabled: {
+                            title: "Activa",
+                            type: "boolean",
+                            default: true
+                        },
+                        scheduling: {
+                            title: "Programación (cron / later)",
+                            type: "string",
+                        },
+                        prune_channels_options: {
+                            title: "Opciones Prune canales",
+                            type: "object",
+                            required: ["channel_ids"],
+                            properties: {
+                                channel_ids: {
+                                    title: "Canales",
+                                    type: "array",
+                                    items: {
+                                        type: "string",
+                                        enum: [],
+                                    },
+                                    uniqueItems: true,
+                                }       
+                            }
+                        },
+                        refresh_materialized_views_options: {
+                            title: "Opciones Refrescar Materialized Views",
+                            type: "object",
+                            required: ["materialized_views"],
+                            properties: {
+                                materialized_views: {
+                                    title: "Materialized Views",
+                                    type: "array",
+                                    items: {
+                                        type: "string",
+                                        enum: [],
+                                    },
+                                    uniqueItems: true,
+                                }       
+                            }
+                        }
+                    }
+                },
+                uiSchema: {
+                    code: {
+                        "ui:columnSize": "4",
+                    },
+                    type: {
+                        "ui:columnSize": "4",
+                    },
+                    enabled: {
+                        // "ui:disabled": true,
+                        "ui:widget": "checkbox",
+                        "ui:columnSize": "2",
+                    },
+                    scheduling: {
+                        "ui:columnSize": "12",
+                    },
+                    prune_channels_options: {
+                        "condition": "type=prune_channels",
+                        channel_ids: {
+                            "ui:columnSize": "6",
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:mode": "multiple",
+                            "ui:selectOptions": "/channel/all#path=data&value=id&label=name&showId=false",
+                        }  
+                    },
+                    refresh_materialized_views_options: {
+                        "condition": "type=refresh_materialized_views",
+                        materialized_views: {
+                            "ui:columnSize": "6",
+                            "ui:widget": "SelectRemoteWidget",
+                            "ui:mode": "multiple",
+                            "ui:selectOptions": "/materialized_view#path=data&value=matviewname&label=matviewname&showId=false",
+                        }   
+                    }
+                },
+            },
+        },
     ]);
 };

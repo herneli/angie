@@ -165,13 +165,22 @@
         "channel": {
             "edit_title": "Editar Canal",
             "trace_logs": "Trazar Logs",
+            "trace_logs_no": "No Trazar Logs",
             "trace_levels": "Niveles de Traza",
             "trace_properties": "Trazar Propiedades",
+            "trace_properties_no": "No Trazar Propiedades",
             "trace_headers": "Trazar Cabeceras",
             "additional_props": "Propiedades Adicionales",
             "trace_stats": "Almacenar Estadisticas (Stats)",
             "trace_incoming_message": "Almacenar Mensajes Entrada",
             "trace_outgoing_message": "Almacenar Mensajes Salida",
+            "prune_configuration": "Configuración limpieza",
+            "prune_metadata": "Metadata",
+            "prune_metadata_no": "No metadata",
+            "prune_messages": "Mensajes",
+            "prune_messages_no": "No mensajes",
+            "days_prune_metadata": "Días metadata",
+            "days_prune_messages": "Días mensajes",
             "button": {
                 "deploy": "Desplegar",
                 "undeploy": "Replegar",
@@ -219,7 +228,8 @@
             "profiles": "Perfiles",
             "organization": "Organizaciones",
             "sections": "Secciones",
-            "certificate": "Certificados"
+            "certificate": "Certificados",
+            "task": "Tareas"
         },
         "packages": {
             "title": "Paquetes",
@@ -246,7 +256,16 @@
             "sync_users": "Sincronizar Usuarios",
             "manage_users": "Gestionar Usuarios"
         },
-
+        "task_actions": {
+            "show_task_log": "Mostrar Log",
+            "task_log_title": "Log de tareas ejecutadas"
+        },
+        "task_log_columns": {
+            "code": "Code",
+            "startdate": "Inicio",
+            "enddate": "Final",
+            "error": "Error"
+        },
         "node_types": {
             "test_button": "Probar Formulario"
         }

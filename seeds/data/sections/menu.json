@@ -76,6 +76,12 @@
                                 "value": "/certificate",
                                 "icon": "mdiCertificate",
                                 "title": "menu.administration.certificate"
+                            },
+                            {
+                                "key": "task",
+                                "value": "/task",
+                                "icon": "mdiCertificate",
+                                "title": "menu.administration.task"
                             }
                         ]
                     }

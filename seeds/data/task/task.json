@@ -1,0 +1,22 @@
+[
+    {
+        "id": "9dbb882c-e9f8-4760-b462-3d8013fc001a",
+        "code": "Refrescar materialized views",
+        "type": "refresh_materialized_views",
+        "enabled": true,
+        "scheduling": "every 1 mins",
+        "refresh_materialized_views_options": {
+            "materialized_views": [
+                "message_counts",
+                "tagged_messages"
+            ]
+        }
+    },
+    {
+        "id": "f6209d55-98fd-4723-85e7-ba1a9e80b05d",
+        "code": "Refrescar usuarios",
+        "type": "refresh_users",
+        "enabled": true,
+        "scheduling": "*/5 * * * *"
+    }
+]
