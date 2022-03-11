@@ -75,6 +75,12 @@ export class IntegrationChannelController extends BaseController {
                 this.getAllChannelsByIntegration(request, response, next);
             })
         );
+        this.router.get(
+            `/channel/all`,
+            expressAsyncHandler((request, response, next) => {
+                this.getAllChannels(request, response, next);
+            })
+        );
         return this.router;
     }
 
@@ -227,4 +233,18 @@ export class IntegrationChannelController extends BaseController {
         }
     }
 
+    async getAllChannels(request, response, next) {
+        try {
+            let service = new IntegrationChannelService();
+
+            let res = await service.listAllChannels();
+            const jsRes = new JsonResponse(true, res, null, 1);
+
+            response.json(jsRes.toJson());
+
+            response.status(200).end();
+        } catch (e) {
+            next(e);
+        }
+    }
 }

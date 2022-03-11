@@ -51,6 +51,10 @@ export default function ModelTable({
                 if (field.link) {
                     obj.render = (text, record) => <Link to={modelInfo.code + "/" + record.id}>{text}</Link>;
                 }
+
+                if (field.type === "boolean") {
+                    obj.render = (value, record) => value ? T.translate("common.yes") : T.translate("common.no");
+                }
                 return obj;
             });
 

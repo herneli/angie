@@ -7,6 +7,8 @@ const SwitchField = function (props) {
             id="custom"
             className={props.value ? "checked" : "unchecked"}
             checked={props.value}
+            disabled={props.disabled}
+            readonly={props.readonly}
             onChange={(checked) => props.onChange(checked)}
         />
     );

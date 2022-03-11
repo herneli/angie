@@ -1,6 +1,6 @@
 import Form from "@rjsf/antd";
 
-import { Button, Card, Col, Collapse, Divider, Modal, Row, Slider, Switch } from "antd";
+import { Button, Card, Col, Collapse, Divider, Modal, Row, Slider, Switch, Input } from "antd";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 
 import T from "i18n-react";
@@ -95,17 +95,55 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
     const [levelOfStorage, setLevelOfStorage] = useState(0);
     const [traceProperties, setTraceProperties] = useState(false);
     const [tracefile, setTraceFile] = useState(false);
+    const [pruneMetadata, setPruneMetadata] = useState(false);
+    const [daysPruneMetadata, setDaysPruneMetadata] = useState(7);
+    const [pruneMessages, setPruneMessages] = useState(false);
+    const [daysPruneMessages, setDaysPruneMessages] = useState(7);
 
     const changeProperties = (e) => {
-        channel.deployment_options.trace_properties = e;
-
-        setEditingData({ ...channel });
+        const { deployment_options } = editingData;
+        deployment_options.trace_properties = e;
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
     };
 
     const changeFile = (e) => {
-        channel.deployment_options.trace_file = e;
+        const { deployment_options } = editingData;
+        deployment_options.trace_file = e;
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
+    };
 
-        setEditingData({ ...channel });
+    const changePruneMetadata = (e) => {
+        const { deployment_options } = editingData;
+        deployment_options.prune_metadata = e;
+        setPruneMetadata(e);
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
+    };
+    
+    const changeDaysPruneMetadata = (value) => {
+        const { deployment_options } = editingData;
+        deployment_options.days_prune_metadata = value;
+        setDaysPruneMetadata(value);
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
+    };
+
+    const changePruneMessages = (e) => {
+        const { deployment_options } = editingData;
+        deployment_options.prune_messages = e;
+        setPruneMessages(e);
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
+    };
+    
+    const changeDaysPruneMessages = (value) => {
+        const { deployment_options } = editingData;
+        deployment_options.days_prune_messages = value;
+        setDaysPruneMessages(value);
+        setEditingData({ ...editingData, deployment_options });
+        channel.deployment_options = deployment_options;
     };
 
     useEffect(() => {
@@ -123,6 +161,24 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
             if (channel.deployment_options.trace_file) {
                 setTraceFile(true);
             }
+
+            if (channel.deployment_options.prune_metadata) {
+                setPruneMetadata(true);
+            }
+            if (channel.deployment_options.days_prune_metadata) {
+                setDaysPruneMetadata(channel.deployment_options.days_prune_metadata);
+            } else {
+                channel.deployment_options.days_prune_metadata = daysPruneMetadata;
+            }
+            if (channel.deployment_options.prune_messages) {
+                setPruneMessages(true);
+            }
+            if (channel.deployment_options.days_prune_messages) {
+                setDaysPruneMessages(channel.deployment_options.days_prune_messages);
+            } else {
+                channel.deployment_options.days_prune_messages = daysPruneMessages;
+            }            
+            
             //Check level of storage
             if (channel.deployment_options.trace_stats) {
                 setLevelOfStorage(33);
@@ -222,8 +278,46 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                                 <Col span={10}>
                                     <p>{T.translate("integrations.channel.additional_props")}</p>
                                     <Divider/>
-                                    <p>{T.translate("integrations.channel.trace_logs")}</p><Switch defaultChecked={tracefile} onChange={(e) => { changeFile(e) }} />
-                                    <p>{T.translate("integrations.channel.trace_properties")}</p><Switch defaultChecked={traceProperties} onChange={(e) => { changeProperties(e) }} />
+                                    <div style={{ display: "flex", width: "100%", justifyContent: "space-around"}}>
+                                        <Switch 
+                                            checkedChildren={T.translate("integrations.channel.trace_logs")} 
+                                            unCheckedChildren={T.translate("integrations.channel.trace_logs_no")} 
+                                            defaultChecked={tracefile} 
+                                            onChange={(e) => { changeFile(e) }} />
+                                        <Switch 
+                                            checkedChildren={T.translate("integrations.channel.trace_properties")} 
+                                            unCheckedChildren={T.translate("integrations.channel.trace_properties_no")} 
+                                            defaultChecked={traceProperties} 
+                                            onChange={(e) => { changeProperties(e) }} />
+                                    </div>
+                                    <Divider/>
+                                    <p>{T.translate("integrations.channel.prune_configuration")}</p>
+                                    <div style={{ display: "flex", width: "100%", justifyContent: "space-around"}}>
+                                        <Switch 
+                                            checkedChildren={T.translate("integrations.channel.prune_metadata")} 
+                                            unCheckedChildren={T.translate("integrations.channel.prune_metadata_no")} 
+                                            defaultChecked={pruneMetadata} 
+                                            onChange={(e) => { changePruneMetadata(e) }} />
+                                        <Switch 
+                                            checkedChildren={T.translate("integrations.channel.prune_messages")} 
+                                            unCheckedChildren={T.translate("integrations.channel.prune_messages_no")} 
+                                            defaultChecked={pruneMessages} 
+                                            onChange={(e) => { changePruneMessages(e) }} />
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", width: "100%", justifyContent: "space-around", padding:"10px"}}>
+                                        <Input 
+                                            style={{ marginTop: "10px" }}
+                                            disabled={!pruneMetadata}
+                                            addonBefore={T.translate("integrations.channel.days_prune_metadata")} 
+                                            value={daysPruneMetadata} type="number" 
+                                            onChange={(e) => changeDaysPruneMetadata(e.target.value)} />
+                                        <Input 
+                                            style={{ marginTop: "10px" }}
+                                            disabled={!pruneMessages}
+                                            addonBefore={T.translate("integrations.channel.days_prune_messages")} 
+                                            value={daysPruneMessages} type="number" 
+                                            onChange={(e) => changeDaysPruneMessages(e.target.value)} />
+                                    </div>
                                  </Col>
                             </Row>
                         </Panel>

@@ -7,6 +7,7 @@ import SubMenu from "../../layout/SubMenu";
 import ModelAdmin from "../../pages/configuration/ModelAdmin";
 import ModelEdit from "../configuration/ModelEdit";
 import UsersConfig from "./Users/UsersConfig";
+import TasksConfig from "./task/TasksConfig";
 
 const Administration = ({ app }) => {
     const { Content } = Layout;
@@ -34,6 +35,20 @@ const Administration = ({ app }) => {
                             roles={["admin"]}
                             path="/admin/users"
                             component={UsersConfig}
+                            {...defaultProps}
+                        />
+
+                        <PrivateRoute
+                            roles={["admin"]}
+                            path="/admin/task/:id"
+                            component={ModelEdit}
+                            model={"task"}
+                            {...defaultProps}
+                        />
+                        <PrivateRoute
+                            roles={["admin"]}
+                            path="/admin/task"
+                            component={TasksConfig}
                             {...defaultProps}
                         />
 

@@ -18,11 +18,14 @@ import { contentSecurityPolicy } from "helmet";
 
 import lodash from "lodash";
 import { JUMAgentController, JUMAgentMaster } from "./app/server/api/jum_agents";
+import { TaskScheduler } from "./app/server/api/task";
 import Cache from "./app/server/common/Cache";
 import { LibraryController } from "./app/server/api/library/LibraryController";
 import { EntityController } from "./app/server/api/entity";
 import { MetricsController } from "./app/server/api/metrics/MetricsControler";
 import { CheckpointController } from "./app/server/api/checkpoints";
+import { TaskController } from "./app/server/api/task/TaskController";
+import { TaskLogController } from "./app/server/api/task_log/TaskLogController";
 
 module.exports = async () => {
     Runtime(); //Ejecuta la Runtime para los comandos como generateKeys,etc.
@@ -113,6 +116,8 @@ module.exports = async () => {
         new EntityController(),
         new MetricsController(),
         new CheckpointController(),
+        new TaskController(),
+        new TaskLogController(),
     ];
 
     const directives = {
@@ -152,6 +157,8 @@ module.exports = async () => {
             await UserService.importKeycloakUsers();
             console.log("Import Process has being completed.");
         }, 2 * 1000);
+
+        await TaskScheduler.start();
     };
 
     await Cache.resetAll();
