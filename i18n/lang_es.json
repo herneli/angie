@@ -190,7 +190,9 @@
             "stoped": "Detenido",
             "undeployed": "Sin Desplegar",
             "sidebar": {
-                "title": "*Paleta Nodos*"
+                "title": "*Paleta de Nodos*",
+                "show_all": "Mostrar todos",
+                "collapse_all": "Ocultar todos"
             },
             "node": {
                 "settings_title": "Opciónes Nodo: {label}",
