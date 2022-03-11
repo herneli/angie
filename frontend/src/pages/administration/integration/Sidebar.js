@@ -6,11 +6,16 @@ import T from "i18n-react";
 
 import { Collapse } from "antd";
 import BasicFilter from "../../../components/basic-filter/BasicFilter";
+import { mdiArrowCollapseVertical, mdiArrowExpandVertical } from "@mdi/js";
+import Icon from "@mdi/react";
 
 const { Panel } = Collapse;
 
 const Sidebar = ({ nodeTypes }) => {
     const [nodes, setNodes] = useState(nodeTypes);
+    const [groupKeys, setGroupKeys] = useState([]);
+    const [activeKeys, setActiveKeys] = useState([]);
+    const allExpanded = activeKeys?.length === groupKeys.length;
 
     /**
      * Función que filtra los nombres de la lista de nodos
@@ -44,29 +49,36 @@ const Sidebar = ({ nodeTypes }) => {
         const sorted = lodash.sortBy(types, "group");
         const grouped = sorted && sorted.length !== 0 ? lodash.groupBy(sorted, "group") : {};
 
-        let result = [];
+        if (groupKeys.length === 0) {
+            setGroupKeys(Object.keys(grouped));
+        }
+
+        const result = [];
+
         for (const group in grouped) {
             let child = grouped[group];
             result.push(
                 <Panel header={group} key={group} className="avoid-selection">
-                    {child.map((type) => (
-                        <div
-                            key={type.id}
-                            className={"avoid-selection dndnode " + type.react_component_type}
-                            style={{
-                                borderColor: type.custom_color && type.component_border_color,
-                                background: type.custom_color && type.component_bg_color,
-                            }}
-                            onDragStart={(event) =>
-                                onDragStart(event, type.code, {
-                                    label: type.name,
-                                    ...JSON.parse(type.defaults),
-                                })
-                            }
-                            draggable>
-                            {type.name}
-                        </div>
-                    ))}
+                    <div>
+                        {child.map((type) => (
+                            <div
+                                key={type.id}
+                                className={"avoid-selection dndnode " + type.react_component_type}
+                                style={{
+                                    borderColor: type.custom_color && type.component_border_color,
+                                    background: type.custom_color && type.component_bg_color,
+                                }}
+                                onDragStart={(event) =>
+                                    onDragStart(event, type.code, {
+                                        label: type.name,
+                                        ...JSON.parse(type.defaults),
+                                    })
+                                }
+                                draggable>
+                                {type.name}
+                            </div>
+                        ))}
+                    </div>
                 </Panel>
             );
         }
@@ -83,7 +95,27 @@ const Sidebar = ({ nodeTypes }) => {
                     paddingBottom: "1rem",
                     borderBottom: "1px solid lightgrey",
                 }}>
-                <span className="description avoid-selection">{T.translate("integrations.channel.sidebar.title")}</span>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span className="description avoid-selection">
+                        {T.translate("integrations.channel.sidebar.title")}
+                    </span>
+                    <Icon
+                        path={!allExpanded ? mdiArrowExpandVertical : mdiArrowCollapseVertical}
+                        size={0.7}
+                        title={
+                            !allExpanded
+                                ? T.translate("integrations.channel.sidebar.show_all")
+                                : T.translate("integrations.channel.sidebar.collapse_all")
+                        }
+                        style={{ cursor: "pointer" }}
+                        onClick={(e) => {
+                            if (!allExpanded) {
+                                setActiveKeys(groupKeys);
+                            } else {
+                                setActiveKeys([]);
+                            }
+                        }}></Icon>
+                </div>
                 <BasicFilter
                     hideDateFilter
                     size="small"
@@ -91,6 +123,7 @@ const Sidebar = ({ nodeTypes }) => {
                         const term = e.filter.toLowerCase();
                         if (term) {
                             const filteredNodes = filterNodes(term);
+                            setActiveKeys(groupKeys);
                             setNodes(filteredNodes);
                         } else {
                             setNodes(nodeTypes);
@@ -98,7 +131,10 @@ const Sidebar = ({ nodeTypes }) => {
                     }}
                 />
             </div>
-            <Collapse ghost={true}>{drawGroupedTypes(nodes)}</Collapse>
+
+            <Collapse activeKey={activeKeys} onChange={setActiveKeys} ghost={true}>
+                {drawGroupedTypes(nodes)}
+            </Collapse>
         </aside>
     );
 };
