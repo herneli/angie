@@ -71,6 +71,7 @@ const TaskLog = ({ visible, onClose }) => {
                 key: "error",
                 dataIndex: "error",
                 sorter: true,
+                render: (value, record) => value ? T.translate("common.yes") : T.translate("common.no"),
             },
         ];
     };
