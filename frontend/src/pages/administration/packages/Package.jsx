@@ -46,7 +46,7 @@ export default function Package({ match }) {
     if (!currentPackage) {
         return "Loading";
     }
-    const dependiencies = [[currentPackage.code, currentPackage.version], ...(currentPackage.dependencies || [])];
+    const dependiencies = [[currentPackage?.code, currentPackage?.version], ...(currentPackage?.dependencies || [])];
     return (
         <PackageContextProvider currentPackage={currentPackage} dependencies={dependiencies}>
             <Layout>
@@ -54,7 +54,7 @@ export default function Package({ match }) {
                     <Space>
                         <Button
                             type="primary"
-                            onClick={(e) => history.push('/packages')}
+                            onClick={(e) => history.push("/packages")}
                             icon={<LeftOutlined />}
                             size={"small"}
                             style={{ height: 19, verticalAlign: "-1px" }}

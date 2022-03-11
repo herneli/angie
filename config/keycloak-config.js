@@ -6,7 +6,7 @@ let _keycloak;
 function initKeycloak() {
     var keycloakConfig = {
         realm: process.env.KEYCLOAK_REALM,
-        "auth-server-url": process.env.KEYCLOAK_URL,
+        "auth-server-url": process.env.KEYCLOAK_REDIRECT_URL,
         "ssl-required": "external",
         resource: process.env.KEYCLOAK_BACK_CLI,
         "public-client": true,

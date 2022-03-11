@@ -14,7 +14,7 @@ const ConditionalForm = React.forwardRef((props, ref) => {
         };
         setInitialValues(initValues);
 
-        const initialState = processForm(initValues.originalSchema, initValues.originalUISchema, formData);
+        const initialState = processForm(initValues?.originalSchema, initValues?.originalUISchema, formData);
         // setState(initialState);
         return initialState;
     };

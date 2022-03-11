@@ -223,7 +223,7 @@ const DeployedIntegrations = () => {
                 <IconButton
                     key="stats"
                     onClick={() => {
-                        showStats(record, integration);
+                        showStats(record);
                     }}
                     disabled={record.status !== "Started"}
                     icon={{ path: mdiMonitorEye, size: 0.7, title: T.translate("menu.monitoring.title") }}

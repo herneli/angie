@@ -78,7 +78,7 @@ export default function MessageDataModal({
                         disabled={
                             !content || content.includes("[Body is instance of") || content.includes("com.roche.angie")
                         }
-                        title={content ? "Resend" : "Resend"}
+                        title={"Resend"}
                         onClick={() => {
                             if (endpoint.length > 0) {
                                 resendMessage(content, endpoint);

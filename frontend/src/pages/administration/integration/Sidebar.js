@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 
 import lodash from "lodash";
 
 import T from "i18n-react";
 
+import { Collapse } from "antd";
+import BasicFilter from "../../../components/basic-filter/BasicFilter";
+
+const { Panel } = Collapse;
+
 const Sidebar = ({ nodeTypes }) => {
+    const [nodes, setNodes] = useState(nodeTypes);
+
+    /**
+     * Función que filtra los nombres de la lista de nodos
+     * @param {*} term -
+     * @returns
+     */
+    const filterNodes = (term) => {
+        return nodeTypes.filter((node) => {
+            return node.name.toLowerCase().includes(term);
+        });
+    };
+
     /**
      * Evento desencadenado al "arrastrar" un nodo
      * @param {*} event
@@ -29,11 +47,8 @@ const Sidebar = ({ nodeTypes }) => {
         let result = [];
         for (const group in grouped) {
             let child = grouped[group];
-
             result.push(
-                <div key={group}>
-                    <span className="avoid-selection">{group}</span>
-                    <hr />
+                <Panel header={group} key={group} className="avoid-selection">
                     {child.map((type) => (
                         <div
                             key={type.id}
@@ -52,7 +67,7 @@ const Sidebar = ({ nodeTypes }) => {
                             {type.name}
                         </div>
                     ))}
-                </div>
+                </Panel>
             );
         }
 
@@ -61,9 +76,29 @@ const Sidebar = ({ nodeTypes }) => {
 
     return (
         <aside>
-            <div className="description avoid-selection">{T.translate("integrations.channel.sidebar.title")}</div>
-
-            {drawGroupedTypes(nodeTypes)}
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    paddingBottom: "1rem",
+                    borderBottom: "1px solid lightgrey",
+                }}>
+                <span className="description avoid-selection">{T.translate("integrations.channel.sidebar.title")}</span>
+                <BasicFilter
+                    hideDateFilter
+                    size="small"
+                    onSearch={(e) => {
+                        const term = e.filter.toLowerCase();
+                        if (term) {
+                            const filteredNodes = filterNodes(term);
+                            setNodes(filteredNodes);
+                        } else {
+                            setNodes(nodeTypes);
+                        }
+                    }}
+                />
+            </div>
+            <Collapse ghost={true}>{drawGroupedTypes(nodes)}</Collapse>
         </aside>
     );
 };

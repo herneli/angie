@@ -7,9 +7,6 @@
                 "fallback": "es",
                 "available": ["es", "en"]
             }
-        },
-        "jum": {
-            "url": "http://127.0.0.1:6100"
         }
     }
 }

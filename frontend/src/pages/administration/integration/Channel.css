@@ -5,10 +5,9 @@
 }
 
 .dndflow aside {
-    border-right: 1px solid #eee;
-    padding: 15px 10px;
+    padding: 10px;
     font-size: 12px;
-    background: #e4e9f5;
+    background: #deefff;
     overflow: auto;
 }
 
@@ -111,16 +110,13 @@
     stroke-width: 3px;
 }
 
-
 .avoid-selection {
     user-select: none;
 }
 
-
 .dndflow .react-flow__node-ButtonNode {
     border-color: #237a52;
 }
-
 
 .dndflow .react-flow__node-CommentNode {
     border-color: #7a7423;

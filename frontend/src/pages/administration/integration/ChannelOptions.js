@@ -218,7 +218,10 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
             default:
                 break;
         }
-        editingData.deployment_options = channel.deployment_options
+        if (!editingData) {
+            editingData = {};
+        }
+        editingData.deployment_options = channel.deployment_options;
         setEditingData(editingData);
     };
 
@@ -248,8 +251,8 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                     {T.translate("common.button.accept")}
                 </Button>,
             ]}>
-             {editingData && (
-                <> 
+            {editingData && (
+                <>
                     <ConditionalForm
                         ref={editTabFormEl}
                         ObjectFieldTemplate={formConfig.ObjectFieldTemplate}
@@ -259,22 +262,31 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                         uiSchema={editTabFormSchema.uiSchema}
                         widgets={formConfig.widgets}
                         onChange={(e) => setEditingData(e.formData)}
-                        onSubmit={(e) => { 
-                            e.formData = editingData; 
-                            onOk(e)
+                        onSubmit={(e) => {
+                            e.formData = editingData;
+                            onOk(e);
                         }}
                         onError={(e) => console.log(e)}>
                         <></>
                     </ConditionalForm>
-                    <Collapse accordion  defaultActiveKey="1">
-                        <Panel header={T.translate("integrations.channel.trace_levels")}  key="1">
+                    <Collapse accordion defaultActiveKey="1">
+                        <Panel header={T.translate("integrations.channel.trace_levels")} key="1">
                             <Row>
-                                <Col span={12}>  
-                                    <div style={{display: 'block',height: 300,marginLeft: 70}}>
-                                        <Slider vertical marks={marks} tooltipVisible={false} step={null} defaultValue={levelOfStorage} onChange={(e) =>{ setLevelsOfStorage(e)}} />
+                                <Col span={12}>
+                                    <div style={{ display: "block", height: 300, marginLeft: 70 }}>
+                                        <Slider
+                                            vertical
+                                            marks={marks}
+                                            tooltipVisible={false}
+                                            step={null}
+                                            defaultValue={levelOfStorage}
+                                            onChange={(e) => {
+                                                setLevelsOfStorage(e);
+                                            }}
+                                        />
                                     </div>
                                 </Col>
-                                <Divider style={{height: 300}} type="vertical" />
+                                <Divider style={{ height: 300 }} type="vertical" />
                                 <Col span={10}>
                                     <p>{T.translate("integrations.channel.additional_props")}</p>
                                     <Divider/>
@@ -321,9 +333,8 @@ const ChannelOptions = ({ visible, onOk, onCancel, channel }) => {
                                  </Col>
                             </Row>
                         </Panel>
-                     </Collapse>
+                    </Collapse>
                 </>
-          
             )}
         </Modal>
     );
