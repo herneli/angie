@@ -2,7 +2,7 @@ import Form from "@rjsf/antd";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import T from "i18n-react";
-import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Drawer, Alert } from "antd";
+import { Button, notification, message, PageHeader, Popconfirm, Space, Tabs, Tag, Spin } from "antd";
 
 import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator";
 
@@ -127,6 +127,7 @@ const Integration = () => {
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
     const [nodeTypes, setNodeTypes] = useState([]);
     const [organizations, setOrganizations] = useState([]);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         loadNodeTypes();
@@ -192,6 +193,7 @@ const Integration = () => {
             const types = await api.getModelDataList("node_type", { params: { filters } });
             setNodeTypes(types);
             await Transformer.init(types);
+            setLoaded(true);
         } catch (ex) {
             console.error(ex);
         }
@@ -843,21 +845,33 @@ const Integration = () => {
                             </Popconfirm>
                         }
                         closable={true}>
-                        <Channel
-                            channel={channel}
-                            channelStatus={channelStatuses[channel.id]}
-                            onChannelUpdate={onChannelUpdate}
-                            nodeTypes={nodeTypes}
-                            undo={undo}
-                            redo={redo}
-                            debugVisible={debugVisible}
-                            warningNodeVisible={warningNodeVisible}
-                            setWarningIcon={setWarningIcon}
-                            debugData={debugData}
-                            warningClose={() => setWarningNodeVisible(false)}
-                            debugClose={() => setDebugVisible(false)}
-                            reloadDebug={() => showChannelDebug()}
-                        />
+                        {loaded ? (
+                            <Channel
+                                channel={channel}
+                                channelStatus={channelStatuses[channel.id]}
+                                onChannelUpdate={onChannelUpdate}
+                                nodeTypes={nodeTypes}
+                                undo={undo}
+                                redo={redo}
+                                debugVisible={debugVisible}
+                                warningNodeVisible={warningNodeVisible}
+                                setWarningIcon={setWarningIcon}
+                                debugData={debugData}
+                                warningClose={() => setWarningNodeVisible(false)}
+                                debugClose={() => setDebugVisible(false)}
+                                reloadDebug={() => showChannelDebug()}
+                            />
+                        ) : (
+                            <div
+                                style={{
+                                    height: "50vh",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}>
+                                <Spin></Spin>
+                            </div>
+                        )}
                     </TabPane>
                 ))}
             </Tabs>
