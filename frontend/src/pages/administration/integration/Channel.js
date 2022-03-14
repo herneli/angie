@@ -530,8 +530,7 @@ const Channel = ({
                                     </ReactFlow>
                                 </Dropdown>
                             </div>
-
-                            <Sidebar nodeTypes={nodeTypes} />
+                            {nodeTypes && nodeTypes.length > 0 && <Sidebar nodeTypes={nodeTypes} />}
 
                             <NodeEditModal
                                 selectedType={selectedType}
