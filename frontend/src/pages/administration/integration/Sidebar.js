@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import lodash from "lodash";
 
@@ -16,6 +16,11 @@ const Sidebar = ({ nodeTypes }) => {
     const [groupKeys, setGroupKeys] = useState([]);
     const [activeKeys, setActiveKeys] = useState([]);
     const allExpanded = activeKeys?.length === groupKeys.length;
+
+    //Se despliegan todas las categorías por defecto
+    useEffect(() => {
+        setActiveKeys(groupKeys);
+    }, []);
 
     /**
      * Función que filtra los nombres de la lista de nodos
