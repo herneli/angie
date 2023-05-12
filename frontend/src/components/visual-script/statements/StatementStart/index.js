@@ -37,24 +37,8 @@ export const registry = {
                     type: {
                         type: "string",
                         title: "Tipo",
-                        enum: [
-                            "array",
-                            "boolean",
-                            "date",
-                            "number",
-                            "integer",
-                            "object",
-                            "string",
-                        ],
-                        enumNames: [
-                            "Lista",
-                            "Boleano",
-                            "Fecha",
-                            "Decimal",
-                            "Entero",
-                            "Objeto",
-                            "String",
-                        ],
+                        enum: ["array", "boolean", "date", "number", "integer", "object", "string"],
+                        enumNames: ["Lista", "Boleano", "Fecha", "Decimal", "Entero", "Objeto", "String"],
                         default: "",
                     },
                 },
@@ -64,13 +48,7 @@ export const registry = {
                             {
                                 properties: {
                                     type: {
-                                        enum: [
-                                            "boolean",
-                                            "date",
-                                            "number",
-                                            "integer",
-                                            "string",
-                                        ],
+                                        enum: ["boolean", "date", "number", "integer", "string"],
                                     },
                                     selectOptions: {
                                         title: "Valores remotos",

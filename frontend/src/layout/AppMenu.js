@@ -120,7 +120,7 @@ const AppMenu = ({ app }) => {
     return (
         <div>
             <div className="logo">
-                <img alt="logo" src={process.env.PUBLIC_URL + "/logo512.png"} />
+                <img alt="logo" src={process.env.PUBLIC_URL + "/logo_roche.png"} />
             </div>
             <Menu selectedKeys={[selected]} mode="horizontal">
                 <Menu.Item key="/" icon={<Icon path={mdiHome} size={0.6} />}>
@@ -167,7 +167,7 @@ const AppMenu = ({ app }) => {
                                 {keycloak.tokenParsed.preferred_username}
                             </Menu.Item>
                         </Popover>
-                        <Menu.Item key="logoutButton"  style={{marginTop : "-0.4%"}} className="logoutBtn">
+                        <Menu.Item key="logoutButton" style={{ marginTop: "-0.4%" }} className="logoutBtn">
                             <Button
                                 type="primary"
                                 size="middle"

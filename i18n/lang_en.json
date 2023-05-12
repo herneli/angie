@@ -1,0 +1,404 @@
+{
+    "application": {
+        "unauthorized": "Permission denied",
+        "loading": "Loading...",
+        "user_info": {
+            "title": "User information",
+            "user_label": "*User: *",
+            "user_email": "*Email: *",
+            "organization_label": "*Asssigned Orgs: *",
+            "current_organization_label": "*Current Org.: *",
+            "organization_change_label": "_(change)_",
+            "change_org": "Change Organizaton",
+            "logout": "Logout",
+            "logout_title": "Closed session",
+            "login": "Login",
+            "organizations": {
+                "all": "All",
+                "assigned": "Assigned to me"
+            }
+        }
+    },
+    "common": {
+        "button": {
+            "search": "Search",
+            "edit": "Edit",
+            "cancel": "Cancel",
+            "clean": "Clean",
+            "delete": "Delete",
+            "remove": "Remove",
+            "save": "Save",
+            "update": "Update",
+            "refresh": "Refresh",
+            "accept": "Accept",
+            "add": "Add",
+            "import": "Import",
+            "send": "Send",
+            "filter": "Filter",
+            "validate": "Validate",
+            "enable": "Enable",
+            "disable": "Disable",
+            "out": "Exit",
+            "close": "Close",
+            "ok": "Accept",
+            "clear": "Clear",
+            "load": "Load",
+            "finish": "Finish",
+            "add_selection": "Select / unselect all",
+            "resend": "Re-send",
+            "confirm": "Cofirm",
+            "libraries": "Libraries",
+            "log": "Log"
+        },
+        "date_ranges": {
+            "today": "Today",
+            "last_24": "24 Hours",
+            "last_48": "48 Hours",
+            "week": "1 Week",
+            "month": "1 Month"
+        },
+        "messages": {
+            "saved": {
+                "title": "Saved successfuly",
+                "ok_desc": "The item has been saved successfuly"
+            },
+            "deleted": {
+                "title": "Deleted successfuly",
+                "description": "The item has been deleted successfully"
+            },
+            "error": {
+                "title": "Error",
+                "agent_not_connected": "The agent is not connected",
+                "description": "An unknown error has occurred. Check the log for more information."
+            }
+        },
+        "help": "Help",
+        "warning": "Warning",
+        "success": "Success",
+        "yes": "Yes",
+        "no": "No",
+        "all": "All",
+        "info": "Information",
+        "load": "Load",
+        "error": "Error",
+        "question": "Are you sure?",
+        "confirm": "Confirmation",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "required": "Required"
+    },
+    "navigation": {
+        "changes_lost": {
+            "title": "Change without saving",
+            "message": "There are pending changes, if you continue your changes will be lost, are you sure?"
+        }
+    },
+    "agents": {
+        "columns": {
+            "name": "Name",
+            "status": "Status",
+            "approved": "Approved",
+            "actions": "Actions"
+        },
+        "options": {
+            "edit_title": "Edit agent options"
+        },
+        "libraries": {
+            "edit_title": "Edit libraries",
+            "title": "Libraries",
+            "library": "Library"
+        }
+    },
+    "deployed_integrations": {
+        "integration_form_subtitle": "Organization: {name}",
+        "channel": {
+            "button": {
+                "deploy": "Deploy",
+                "undeploy": "Un-deploy"
+            },
+            "started": "Started",
+            "stoped": "Stoped",
+            "undeployed": "Un-deployed"
+        },
+        "agent_actions": {
+            "title": "Agent actions",
+            "move": "Move channel",
+            "any_available": "Any available"
+        }
+    },
+    "integrations": {
+        "button": {
+            "confirmSave": "Confirm and save"
+        },
+        "integration_form_title": "Integration: {name}",
+        "integration_form_subtitle": "Organization: {name}",
+        "integration_edit_title": "Editing item",
+        "columns": {
+            "name": "Name",
+            "description": "Description",
+            "status": "Status",
+            "organization": "Organization",
+            "messages_sent": "Sent",
+            "messages_error": "Errors",
+            "messages_total": "Total",
+            "last_updated": "Last updated",
+            "version": "Version",
+            "actions": "Actions"
+        },
+        "channel": {
+            "edit_title": "Edit channel",
+            "trace_logs": "Trace kigs",
+            "trace_levels": "Tace levels",
+            "trace_properties": "Trace properties",
+            "trace_headers": "Trace headers",
+            "additional_props": "Additional properties",
+            "trace_stats": "Store Statistics",
+            "trace_incoming_message": "Store incomming messages",
+            "trace_outgoing_message": "Store outgoing messages",
+            "button": {
+                "deploy": "Deploy",
+                "undeploy": "Un-deploy",
+                "stop": "Stop",
+                "start": "Start",
+                "delete": "Delete channel"
+            },
+            "context_menu": {
+                "configure": "Configure",
+                "copy": "Copy",
+                "cut": "Cut",
+                "paste": "Paste",
+                "delete": "Delete"
+            },
+            "started": "Started",
+            "stoped": "Stoped",
+            "undeployed": "Un-deployed",
+            "sidebar": {
+                "title": "*Node palette*"
+            },
+            "node": {
+                "settings_title": "Node options: {label}",
+                "info": "The following nodes are those whose reference code has not been found in the Nodes of the package/version, please select the appropriate node type for each Node not found.",
+                "type_modal": "Nodes with errors"
+            },
+            "inject_channel_stopped": "It is necessary to deploy the channel in order to perform this action."
+        }
+    },
+    "menu": {
+        "explore": {
+            "title": "Explore",
+            "entity": "Entities",
+            "messages": "Messages"
+        },
+        "integrations": "Integrations",
+        "dashboard": "Dashboard",
+        "agents": "Agents",
+        "administration": {
+            "title": "Administration",
+            "management": "Management",
+            "tooling": "Utilities",
+            "users": "Users",
+            "profiles": "Profiles",
+            "organization": "Organizations",
+            "sections": "Sections"
+        },
+        "packages": {
+            "title": "Packages",
+            "integrations": "Integrations",
+            "integration_config": "Integration configuration",
+            "node_types": "Node types",
+            "entity_type": "Entity types",
+            "entity_mapper": "Entity mapping",
+            "checkpoint": "Checkpoints",
+            "scripting": "Scripting",
+            "contexts": "Contexts",
+            "objects": "Objects",
+            "methods": "Methods"
+        },
+        "monitoring": {
+            "title": "Monitoring",
+            "jum_contexts": "Contexts JUM",
+            "jum_servers": "Servers JUM",
+            "angie_node": "Angie"
+        }
+    },
+    "administration": {
+        "user_actions": {
+            "sync_users": "Sync users",
+            "manage_users": "Manage users"
+        },
+        "node_types": {
+            "test_button": "Test form"
+        }
+    },
+    "packages": {
+        "actions": "Actions",
+        "camel_components": "Camel components",
+        "code": "Code",
+        "configure": "Configure",
+        "contexts": "Contexts",
+        "copy_version": "Copy version",
+        "delete_package_confirmation": "Are you sure you want to delete the package?",
+        "delete_package_version_confirmation": "Are you sure you want to delete the version?",
+        "delete_package": "Delete package",
+        "delete_successful": "Deleted successfully",
+        "delete_error": "Error deleting",
+        "dependencies": "Dependencies",
+        "enter_required_fields": "Please enter the mandatory fields",
+        "id": "Id",
+        "import": "Import",
+        "import_successful": "Import successfully",
+        "import_error": "Error importing",
+        "integrations": "Integrations",
+        "local_commit": "Local commit",
+        "methods": "Methods",
+        "name": "Name",
+        "new_version": "New version",
+        "node_types": "Node types",
+        "objects": "Objects",
+        "package_version_copy_successful": "Version ccopied successfully",
+        "package_version_copy_error": "Error copying the version",
+        "package_save_successful": "Package updated successfully",
+        "package_save_error": "Error saving the package",
+        "placement": "Placement",
+        "placement_local": "Local",
+        "placement_remote": "Remote",
+        "publish": "Publish",
+        "publish_successful": "Version published successfully",
+        "publish_error": "Error plublishing the version",
+        "refresh_status": "Refresh status",
+        "remote": "Remote",
+        "remote_package": "Remote package",
+        "remote_commit": "Remote commit",
+        "remote_package_not_selected": "Select a remote package",
+        "remote_status_updated": "Status updated",
+        "remote_status_error": "Error updating status",
+        "select_package": "Select a package",
+        "version": "Version",
+        "versions": "Versions",
+        "version_dependencies": {
+            "title": "Dependencies",
+            "saved_succesfully": "Dependencies saved successfully",
+            "error_msg": "Error updating dependencies",
+            "field_title": "Select dependencies of the version"
+        }
+    },
+    "configuration": {
+        "actions": "ACtions",
+        "add_item": "Add element",
+        "cancel": "Cancelr",
+        "close": "Close",
+        "confirm": "Confirm",
+        "delete_item": "Delete item",
+        "do_you_want_to_delete_the_item": "Do you want to delete the item?",
+        "do_you_want_to_duplicate_the_item": "Do you want to duplicate the item?",
+        "download_json_item": "Export item as JSON",
+        "duplicate_item": "Duplicate item",
+        "edit_item": "Edit item",
+        "end_of_loading_json_file": "JSON file has beed loaded",
+        "error_loading_json_file": "Error loading json",
+        "export_as_json": "Export as JSON",
+        "grouping_placeholder": "Drag headers to group",
+        "grouping_groupedBy": "Grouped by",
+        "no_overwrite": "No override",
+        "overwrite": "Override",
+        "return": "Return",
+        "save": "Save",
+        "text": "If you want to overwrite the data, enter the following text and click Overwrite",
+        "upload_json_file": "Load JSON file"
+    },
+    "visual_script": {
+        "add_expression": "Add expression",
+        "add_rule": "Add rule",
+        "add_rule_group": "Add group",
+        "accept": "Accept",
+        "all_following_rules_met": "rules must meet",
+        "any_following_rules_met": "of the rules must meet",
+        "cancel": "Cancel",
+        "clipoard": "Clipboard",
+        "condition_yes": "Yes",
+        "condition_no": "No",
+        "confirm_delete": "Are you sure you want to delete?",
+        "cut": "Cut",
+        "delete_previous": "Previous",
+        "edit": "Edit",
+        "edit_method_parameters": "Parameters for \"{method}\"",
+        "edit_script": "Update script",
+        "end": "End",
+        "execute_following_expressions": "Execute the following expressions",
+        "following_rules_met": "Following rues must meet",
+        "loop_repeat": "Repeat",
+        "loop_to_variable": "in variable",
+        "new_expression": "Select...",
+        "new_comment": "New comment",
+        "new_condition": "New condition",
+        "new_expression_group": "New expression group",
+        "new_loop": "Nuevo loop",
+        "operator_not": "no",
+        "rule_all": "All",
+        "rule_any": "Any",
+        "save": "Save",
+        "script_saved": "Script saved",
+        "select_component": "Select component",
+        "select_comment": "Comment",
+        "select_condition": "Condition",
+        "select_expression_group": "Expression group",
+        "select_loop": "Loop",
+        "select_start": "Start",
+        "select_end": "End",
+        "start": "Start",
+        "variables": "Variables"
+    },
+    "messages": {
+        "channel": "Channel",
+        "status": "Status",
+        "message_id": "Message ID",
+        "date_reception": "Reception date",
+        "date_processed": "Processed date",
+        "type": "Type",
+        "elapsed": "Elapsed",
+        "actions": "Actions",
+        "download_json_item": "Export as JSON",
+        "show_timeline": "Show timeline",
+        "show_traces": "Show traces",
+        "hide_traces": "Hide traces",
+        "download_traces": "Download traces",
+        "body": "Body",
+        "show_body": "Show message body",
+        "body_undefined": "Undefined body for current message",
+        "node_unknown": "Node deleted",
+        "sent": "Sent",
+        "received": "Received",
+        "event": "Event",
+        "date_time": "Date",
+        "error_message": "Error message",
+        "exception": "Exception",
+        "show_headers": "Show headers",
+        "headers": "Headers",
+        "show_exception": "Show exception",
+        "messages_from_channel": "Channel messages",
+        "traces_from_message": "Message traces",
+        "start": "Start",
+        "end": "End",
+        "jum_server": "JUM Server",
+        "empty_traces": "To see the message traces you must increase the trace level in the channel settings."
+    },
+    "entity": {
+        "id": "Id",
+        "type": "Type",
+        "date": "Creation date",
+        "organization": "Organization",
+        "detail": {
+            "title": "Entity detail",
+            "breadcrumb": "Entity: *{id}*",
+            "messages": "Messages",
+            "count_error_rec": "Rec. Error",
+            "count_error_sent": "Sent Error",
+            "count_success_rec": "Rec. Ok",
+            "count_success_sent": "Sent Ok",
+            "tooltip_count_error_rec": "Received with error",
+            "tooltip_count_error_sent": "Sent with Error",
+            "tooltip_count_success_rec": "Received Ok",
+            "tooltip_count_success_sent": "Sent Ok"
+        }
+    }
+}

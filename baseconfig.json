@@ -3,7 +3,7 @@
         "application": {
             "name": "Angie",
             "lang": {
-                "current": "es",
+                "current": "en",
                 "fallback": "es",
                 "available": ["es", "en"]
             }
